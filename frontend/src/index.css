@@ -1,0 +1,85 @@
+﻿@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #262626;
+  --color-secondary: #FAF6EE;
+  --color-gold: #C19A6B;
+  --color-gold-hover: #C27C5B;
+  --color-ivory: #F8F3E7;
+  --color-camel: #C49362;
+  --color-terracotta: #B65737;
+  --color-olive: #5C6835;
+  --color-teal-deep: #2F6F73;
+  --color-brick: #9D2F25;
+  --color-chocolate: #3A2119;
+  --color-warm-navy: #243A56;
+  --color-carbon: #4E535C;
+  
+  --font-sans: "Montserrat", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+@layer base {
+  :root {
+    --surface-page: #F8F3E7;
+    --surface-panel: #FFFDF6;
+    --surface-panel-muted: #F0E6D4;
+    --surface-control: #FFFCF2;
+    --border-soft: #D7C29A;
+    --border-strong: #A57B44;
+    --text-main: #2F241D;
+    --text-muted: #6E6255;
+    --accent-main: #C49362;
+    --accent-hover: #B65737;
+    --accent-secondary: #5C6835;
+    --shadow-warm: 0 18px 45px rgba(58, 33, 25, 0.12);
+  }
+
+  .dark {
+    --surface-page: #100C0A;
+    --surface-panel: #1B1411;
+    --surface-panel-muted: #261C17;
+    --surface-control: #241A16;
+    --border-soft: #4A352B;
+    --border-strong: #C49362;
+    --text-main: #FAF6EE;
+    --text-muted: #B7A997;
+    --accent-main: #D0A06C;
+    --accent-hover: #B65737;
+    --accent-secondary: #7A844A;
+    --shadow-warm: 0 22px 60px rgba(0, 0, 0, 0.46), 0 0 0 1px rgba(208, 160, 108, 0.08);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 18% 8%, rgba(196, 147, 98, 0.14), transparent 28rem),
+      linear-gradient(135deg, var(--surface-page), #EFE3C9 100%);
+    color: var(--text-main);
+    font-family: var(--font-sans) !important;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .dark body {
+    background:
+      radial-gradient(circle at 12% 0%, rgba(182, 87, 55, 0.18), transparent 28rem),
+      radial-gradient(circle at 82% 12%, rgba(92, 104, 53, 0.12), transparent 24rem),
+      linear-gradient(135deg, #100C0A, #17100D 55%, #211713 100%);
+    color: var(--color-secondary);
+  }
+
+  h1, h2, h3, h4, .font-title {
+    font-family: var(--font-serif) !important;
+  }
+
+
+  .theme-switching,
+  .theme-switching * {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  input, textarea, select, button {
+    font: inherit;
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with favorites",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "favorites": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["userId", "email", "role"]
+    },
+    "Property": {
+      "title": "Property",
+      "description": "Property listing",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "operation": { "type": "string", "enum": ["Venta", "Alquiler", "Inversión"] },
+        "type": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "exchangeRate": { "type": "string" },
+        "rooms": { "type": "number" },
+        "area": { "type": "string" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "agentId": { "type": "string" },
+        "amenities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "images": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["title", "operation", "price", "lat", "lng", "createdAt"]
+    },
+    "Agent": {
+      "title": "Agent",
+      "description": "Real estate agent",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "whatsapp": { "type": "string" }
+      },
+      "required": ["name", "whatsapp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/properties/{propertyId}": {
+      "schema": { "$ref": "#/entities/Property" },
+      "description": "Property listings"
+    },
+    "/agents/{agentId}": {
+      "schema": { "$ref": "#/entities/Agent" },
+      "description": "Real estate agents"
+    }
+  }
+}
