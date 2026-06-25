@@ -505,17 +505,17 @@ useEffect(() => {
             {formatPropertyPrice(p.price, p.currency)}
           </span>
           
-          <div className="flex flex-col gap-2.5 text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium tracking-wider uppercase border-t border-[var(--border-soft)] dark:border-[var(--border-soft)] pt-4 mt-auto">
-             <div className="flex items-center gap-3">
-                <Bed size={15} className="text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
-                <span>{p.rooms} dorm</span>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium tracking-wider uppercase border-t border-[var(--border-soft)] dark:border-[var(--border-soft)] pt-3 mt-auto">
+             <div className="flex min-w-0 items-center gap-2">
+                <Bed size={14} className="shrink-0 text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
+                <span className="truncate">{p.rooms} dorm</span>
              </div>
-             <div className="flex items-center gap-3">
-                <Bath size={15} className="text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
-                <span>{p.bathrooms} baño{p.bathrooms === 1 ? "" : "s"}</span>
+             <div className="flex min-w-0 items-center gap-2">
+                <Bath size={14} className="shrink-0 text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
+                <span className="truncate">{p.bathrooms} baño{p.bathrooms === 1 ? "" : "s"}</span>
              </div>
-             <div className="flex items-center gap-3">
-                <Building size={15} className="text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
+             <div className="col-span-2 flex min-w-0 items-center gap-2">
+                <Building size={14} className="shrink-0 text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
                 <span className="truncate">{p.area}</span>
              </div>
           </div>
