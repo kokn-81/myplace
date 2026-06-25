@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Property } from "../types";
 // @ts-ignore
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -308,25 +308,25 @@ useEffect(() => {
       </div>
       {dashboardLink ? (
         <Link to={dashboardLink} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
-          <LogOut size={14} /> {roleLoading ? "..." : dashboardLabel}
+          <LogOut size={14} /> <span className="hidden sm:inline">{roleLoading ? "..." : dashboardLabel}</span>
         </Link>
       ) : user ? (
         <button onClick={handleLogout} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
-          <LogOut size={14} /> Salir
+          <LogOut size={14} /> <span className="hidden sm:inline">Salir</span>
         </button>
       ) : (
         <button onClick={handleLogin} disabled={authLoading} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
-          <ShieldCheck size={14} /> Entrar
+          <ShieldCheck size={14} /> <span className="hidden sm:inline">Entrar</span>
         </button>
       )}
 
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[60%] max-w-2xl z-10">
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[74%] sm:w-[82%] md:w-[60%] max-w-[calc(100vw-8.5rem)] md:max-w-2xl z-10">
         <form 
           onSubmit={handleAskGemini} 
           className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
         >
-          <div className="pl-4 pr-2 flex items-center">
+          <div className="pl-3 pr-1.5 sm:pl-4 sm:pr-2 flex items-center">
             {isAsking ? (
               <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
             ) : (
@@ -340,7 +340,7 @@ useEffect(() => {
             onChange={(e) => setGeminiQuery(e.target.value)}
             disabled={isAsking}
             placeholder={isAsking ? "IA analizando..." : "Ej: Depto pet-friendly..."}
-            className="w-full bg-transparent border-none outline-none px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-sm md:text-sm tracking-wide disabled:opacity-50"
+            className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
           />
           
           {aiFilteredIds !== null && (
@@ -353,7 +353,7 @@ useEffect(() => {
           <button 
             type="submit" 
             disabled={isAsking} 
-            className="bg-[var(--accent-main)] text-[#2F241D] px-5 py-2 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
+            className="bg-[var(--accent-main)] text-[#2F241D] px-4 sm:px-5 py-2 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
           >
             <Search size={14} className="md:hidden" />
             <span className="hidden md:inline">Buscar</span>
