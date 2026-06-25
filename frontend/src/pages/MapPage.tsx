@@ -298,7 +298,7 @@ useEffect(() => {
       </main>
 
       {/* BOTONES SUPERIORES (Laterales) */}
-      <div className="absolute top-6 left-6 z-10">
+      <div className="absolute top-6 left-6 z-10 hidden md:block">
         <button 
           onClick={() => applyTheme(!isDarkMode)}
           className="p-3 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur-md rounded-xl shadow-lg border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-main)] hover:bg-[var(--accent-hover)] hover:text-white transition-colors flex items-center justify-center"
@@ -307,21 +307,84 @@ useEffect(() => {
         </button>
       </div>
       {dashboardLink ? (
-        <Link to={dashboardLink} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
+        <Link to={dashboardLink} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white hidden md:flex items-center gap-2 transition-colors z-10">
           <LogOut size={14} /> <span className="hidden sm:inline">{roleLoading ? "..." : dashboardLabel}</span>
         </Link>
       ) : user ? (
-        <button onClick={handleLogout} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
+        <button onClick={handleLogout} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white hidden md:flex items-center gap-2 transition-colors z-10">
           <LogOut size={14} /> <span className="hidden sm:inline">Salir</span>
         </button>
       ) : (
-        <button onClick={handleLogin} disabled={authLoading} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2 transition-colors z-10">
+        <button onClick={handleLogin} disabled={authLoading} className="absolute top-6 right-6 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur px-4 py-2.5 rounded-xl border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] shadow-lg text-xs font-bold text-[var(--color-ivory)] dark:text-[var(--text-muted)] hover:bg-[var(--accent-hover)] hover:text-white hidden md:flex items-center gap-2 transition-colors z-10">
           <ShieldCheck size={14} /> <span className="hidden sm:inline">Entrar</span>
         </button>
       )}
 
+      {/* HUD MOVIL: controles compactos en una sola fila */}
+      <div className="absolute left-4 right-4 top-5 z-10 flex items-center gap-2 md:hidden">
+        <button 
+          onClick={() => applyTheme(!isDarkMode)}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]"
+          aria-label="Cambiar tema"
+        >
+          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+
+        <form 
+          onSubmit={handleAskGemini} 
+          className="min-w-0 flex-1 rounded-full border border-[var(--border-soft)] bg-[rgba(255,253,246,0.9)] p-1 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(16,12,10,0.62)]"
+        >
+          <div className="flex items-center">
+            <div className="flex items-center pl-3 pr-1">
+              {isAsking ? (
+                <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+              ) : (
+                <Sparkles className="h-5 w-4 text-[var(--accent-main)]" />
+              )}
+            </div>
+
+            <input 
+              type="text" 
+              value={geminiQuery}
+              onChange={(e) => setGeminiQuery(e.target.value)}
+              disabled={isAsking}
+              placeholder={isAsking ? "IA analizando..." : "Ej: Depto pet-friendly..."}
+              className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-[var(--text-main)] outline-none placeholder-[var(--text-muted)] disabled:opacity-50"
+            />
+
+            {aiFilteredIds !== null && (
+              <button type="button" onClick={clearAiFilters} className="p-1.5 text-stone-500 transition-colors hover:text-red-400" title="Limpiar filtros">
+                <X size={15} />
+              </button>
+            )}
+
+            <button 
+              type="submit" 
+              disabled={isAsking} 
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-main)] text-[#2F241D] shadow-md transition-colors hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-70"
+              aria-label="Buscar"
+            >
+              <Search size={16} />
+            </button>
+          </div>
+        </form>
+
+        {dashboardLink ? (
+          <Link to={dashboardLink} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]" aria-label={dashboardLabel}>
+            <LogOut size={16} />
+          </Link>
+        ) : user ? (
+          <button onClick={handleLogout} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]" aria-label="Salir">
+            <LogOut size={16} />
+          </button>
+        ) : (
+          <button onClick={handleLogin} disabled={authLoading} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-60" aria-label="Entrar">
+            <ShieldCheck size={16} />
+          </button>
+        )}
+      </div>
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[74%] sm:w-[82%] md:w-[60%] max-w-[calc(100vw-8.5rem)] md:max-w-2xl z-10">
+      <div className="absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
         <form 
           onSubmit={handleAskGemini} 
           className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
