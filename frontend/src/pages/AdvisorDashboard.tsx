@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, LogOut, Moon, Save, ShieldCheck, Sun, UploadCloud, UserCircle, X } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
@@ -201,6 +201,7 @@ export default function AdvisorDashboard() {
       precio_usd: Number(fd.get("price")) || 0,
       moneda: formCurrency,
       habitaciones: Number(fd.get("rooms")) || 0,
+      banos: Number(fd.get("bathrooms")) || 1,
       ciudad: (fd.get("area") as string) || formZone || "Santa Cruz",
       lat,
       lng,
@@ -332,11 +333,12 @@ export default function AdvisorDashboard() {
             </div>
           </div>
 
-          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
             <CustomSelect value={formOperation} onChange={setFormOperation} placeholder="Operacion" options={[{ value: "Venta", label: "Venta" }, { value: "Alquiler", label: "Alquiler" }, { value: "Inversion", label: "Inversion" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <CustomSelect value={formType} onChange={setFormType} placeholder="Tipo" options={[{ value: "Departamento", label: "Departamento" }, { value: "Casa", label: "Casa" }, { value: "Terreno", label: "Terreno" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <input name="rooms" type="number" required placeholder="Habitaciones" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+            <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="Baños" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
             {isCustomZone ? (
               <div className="flex relative">
                 <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Norte" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />

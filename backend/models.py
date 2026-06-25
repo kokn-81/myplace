@@ -1,4 +1,4 @@
-﻿from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -22,6 +22,7 @@ class InmuebleDB(Base):
     precio_usd = Column(Float)
     moneda = Column(String, default="$ (USD)")
     habitaciones = Column(Integer)
+    banos = Column(Integer, default=1)
     ciudad = Column(String)
     lat = Column(Float)
     lng = Column(Float)

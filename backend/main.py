@@ -1,4 +1,4 @@
-﻿# backend/main.py
+# backend/main.py
 import os
 import time
 import json
@@ -50,6 +50,7 @@ class InmuebleCreate(BaseModel):
     precio_usd: float
     moneda: Optional[str] = "$ (USD)"
     habitaciones: int
+    banos: Optional[int] = 1
     ciudad: str
     lat: float
     lng: float
@@ -94,7 +95,7 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
         
         catalogo = "CATALOGO DE INMUEBLES DISPONIBLES PARA ESTE PASO (Motor Inmobiliario Bolivia):\n"
         for inm in inmuebles:
-            catalogo += f"- ID:{inm.id} | Ref #{inm.id} | {inm.operacion} | {inm.tipo_inmueble} en {inm.ciudad}. {inm.habitaciones} habitaciones. Precio: {inm.precio_usd} {inm.moneda}. Descripcion: {inm.descripcion}.\n"
+            catalogo += f"- ID:{inm.id} | Ref #{inm.id} | {inm.operacion} | {inm.tipo_inmueble} en {inm.ciudad}. {inm.habitaciones} habitaciones. {getattr(inm, 'banos', 1) or 1} banos. Precio: {inm.precio_usd} {inm.moneda}. Descripcion: {inm.descripcion}.\n"
             
         if not inmuebles:
             catalogo = "Actualmente no hay inmuebles disponibles dentro de los filtros previos."
@@ -116,7 +117,7 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
         - Si el usuario busca en dolares y la propiedad esta en Bolivianos, haz la conversion inversa.
 
         REGLAS DE FILTRADO:
-        1. Filtra por operacion, tipo de inmueble, zona, habitaciones y precio cuando el usuario lo mencione.
+        1. Filtra por operacion, tipo de inmueble, zona, habitaciones, banos y precio cuando el usuario lo mencione.
         2. Si el usuario pide un limite de precio, la propiedad debe cumplir matematicamente tras la conversion de moneda.
 
         FORMATO DE RESPUESTA:
@@ -248,6 +249,7 @@ async def crear_inmueble(
             precio_usd=inmueble.precio_usd, 
             moneda=inmueble.moneda, 
             habitaciones=inmueble.habitaciones,
+            banos=inmueble.banos or 1,
             ciudad=inmueble.ciudad, 
             lat=inmueble.lat, 
             lng=inmueble.lng, 
@@ -289,6 +291,7 @@ async def obtener_inmuebles(db: Session = Depends(get_db)):
         texto_amenidades = str(inm.amenidades) if inm.amenidades else ""
         inm_dict["amenidades"] = [am.strip() for am in texto_amenidades.split(",") if am.strip()]
         
+        inm_dict["banos"] = getattr(inm, "banos", 1) or 1
         inm_dict["agente_id"] = str(inm.agente_id) if inm.agente_id else "0"
         resultado.append(inm_dict)
         

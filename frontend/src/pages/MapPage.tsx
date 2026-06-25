@@ -6,7 +6,7 @@ import Map, { Marker } from "react-map-gl/mapbox";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
-import { Search, MapPin, Building, Bed, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck } from "lucide-react";
+import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { API_BASE, AppRole, fetchAuthProfile } from "../roleAccess";
@@ -152,6 +152,7 @@ export default function MapPage() {
           title: inm.titulo,
           price: inm.precio_usd,
           rooms: inm.habitaciones,
+          bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
           area: inm.ciudad,
           lat: inm.lat,
           lng: inm.lng,
@@ -510,6 +511,10 @@ useEffect(() => {
                 <span>{p.rooms} dorm</span>
              </div>
              <div className="flex items-center gap-3">
+                <Bath size={15} className="text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
+                <span>{p.bathrooms} baño{p.bathrooms === 1 ? "" : "s"}</span>
+             </div>
+             <div className="flex items-center gap-3">
                 <Building size={15} className="text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
                 <span className="truncate">{p.area}</span>
              </div>
@@ -708,19 +713,23 @@ useEffect(() => {
                      <div className="flex flex-col gap-5">
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Building size={16}/> Referencia</span>
-                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] font-medium">#{selectedProperty.id}</span>
+                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">#{selectedProperty.id}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Bed size={16}/> Habitaciones</span>
-                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] font-medium">{selectedProperty.rooms} dorm.</span>
+                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.rooms}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
+                           <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Bath size={16}/> Baños</span>
+                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.bathrooms}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><MapPin size={16}/> Zona</span>
-                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] font-medium">{selectedProperty.area}</span>
+                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.area}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Building size={16}/> Tipo</span>
-                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] font-medium uppercase text-xs tracking-wider">{selectedProperty.type || "Departamento"}</span>
+                           <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.type || "Departamento"}</span>
                         </div>
                      </div>
 

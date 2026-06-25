@@ -1,4 +1,4 @@
-﻿export interface Property {
+export interface Property {
   id: string;
   title: string;
   description: string;
@@ -8,6 +8,7 @@
   currency: string;
   exchangeRate?: string;
   rooms: number;
+  bathrooms: number;
   area: string;
   lat: number;
   lng: number;

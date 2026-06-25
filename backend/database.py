@@ -1,4 +1,4 @@
-﻿from sqlalchemy import create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from config import ADMIN_EMAILS, AUTHORIZED_ADVISOR_EMAILS, AUTO_CREATE_TABLES, DATABASE_URL, IS_SQLITE
@@ -20,6 +20,7 @@ def init_db() -> None:
 
         Base.metadata.create_all(bind=engine)
         ensure_sqlite_agent_email_column()
+        ensure_sqlite_inmueble_banos_column()
     seed_authorized_users()
 
 
@@ -31,6 +32,19 @@ def ensure_sqlite_agent_email_column() -> None:
         columns = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(agentes)").fetchall()]
         if columns and "email" not in columns:
             conn.exec_driver_sql("ALTER TABLE agentes ADD COLUMN email VARCHAR")
+
+
+
+
+def ensure_sqlite_inmueble_banos_column() -> None:
+    if not IS_SQLITE:
+        return
+
+    with engine.begin() as conn:
+        columns = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(inmuebles)").fetchall()]
+        if columns and "banos" not in columns:
+            conn.exec_driver_sql("ALTER TABLE inmuebles ADD COLUMN banos INTEGER DEFAULT 1")
+            conn.exec_driver_sql("UPDATE inmuebles SET banos = 1 WHERE banos IS NULL")
 
 
 def seed_authorized_users() -> None:
