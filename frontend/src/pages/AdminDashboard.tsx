@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle } from "lucide-react";
+import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil } from "lucide-react";
 import { CustomSelect } from "../components/CustomSelect";
 import { API_BASE, AppRole, authFetch, fetchAuthProfile } from "../roleAccess";
 
@@ -23,32 +23,42 @@ export default function AdminDashboard() {
   const [roleLoading, setRoleLoading] = useState<boolean>(false);
   const isAdmin = role === "admin";
   const [catalog, setCatalog] = useState<any[]>([]);
-  useEffect(() => {
-    fetch(`${API_BASE}/inmuebles`)
-      .then(res => res.json())
-      .then(data => setCatalog(data))
-      .catch(err => console.error(err));
+  const fetchCatalog = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/inmuebles`);
+      const data = await res.json();
+      setCatalog(data);
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchCatalog();
+  }, [fetchCatalog]);
   const handleDeleteProperty = async (id: string) => {
     if (!window.confirm("Seguro que deseas eliminar permanentemente este inmueble?")) return;
     try {
       const res = await authFetch(`/inmuebles/${id}`, user, { method: "DELETE" });
       if (res.ok) {
         setCatalog(catalog.filter(p => p.id !== id));
-        alert("Inmueble eliminado con exito.");
+        alert("Inmueble eliminado con éxito.");
       }
     } catch (error) {
       console.error("Error al eliminar:", error);
     }
-  };  
+  };
 
   // --- ESTADOS DE DATOS ---
   const [agents, setAgents] = useState<LocalAgent[]>([]);
   const [showAgentModal, setShowAgentModal] = useState<boolean>(false);
+  const [editingAgent, setEditingAgent] = useState<LocalAgent | null>(null);
+  const [editingProperty, setEditingProperty] = useState<any | null>(null);
+  const [isSavingEdit, setIsSavingEdit] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
-  
+
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme');
     const dark = saved ? saved === 'dark' : document.documentElement.classList.contains('dark');
@@ -103,6 +113,7 @@ export default function AdminDashboard() {
 
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
     try {
       await signInWithPopup(auth, provider);
     } catch (error: any) {
@@ -138,7 +149,7 @@ export default function AdminDashboard() {
     const whatsapp = fd.get("whatsapp") as string;
     const email = ((fd.get("email") as string) || "").trim().toLowerCase();
     if (!name || !whatsapp) return;
-    
+
     try {
       const payload = { nombre: name, whatsapp: whatsapp, email: email || undefined };
       const response = await authFetch("/agentes", user, {
@@ -148,30 +159,109 @@ export default function AdminDashboard() {
       });
       if (!response.ok) throw new Error("Fallo en el motor Python");
 
-      setSuccessMsg("Asesor guardado exitosamente!");
+      setSuccessMsg("Asesor guardado con éxito.");
       (e.target as HTMLFormElement).reset();
-      await fetchAgentes(); 
+      await fetchAgentes();
     } catch (err: any) {
       setErrorMsg("Error: " + err.message);
     }
   };
 
   const handleDeleteAgent = async (id: string) => {
-    if (!window.confirm("Confirmas la destruccion de este Asesor y TODOS sus inmuebles vinculados?")) return;
+    if (!window.confirm("¿Confirmas la eliminación de este asesor y todos sus inmuebles vinculados?")) return;
     try {
       const response = await authFetch(`/agentes/${id}`, user, { method: "DELETE" });
-      if (!response.ok) throw new Error("Error en el motor de destruccion");
-      setSuccessMsg("Registro purgado con exito!");
-      await fetchAgentes(); 
+      if (!response.ok) throw new Error("Error al eliminar el asesor");
+      setSuccessMsg("Registro eliminado con éxito.");
+      await fetchAgentes();
     } catch (err: any) {
       setErrorMsg("Error al purgar: " + err.message);
+    }
+  };
+  const getPropertyImageLinks = (inm: any) => Array.isArray(inm.images) ? inm.images.join(", ") : (inm.imagenes || "");
+  const getPropertyAmenitiesText = (inm: any) => Array.isArray(inm.amenidades) ? inm.amenidades.join(", ") : (inm.amenidades || "");
+
+  const handleUpdateAgent = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingAgent) return;
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") || "").trim();
+    const whatsapp = String(fd.get("whatsapp") || "").trim();
+    const email = String(fd.get("email") || "").trim().toLowerCase();
+    if (!name || !whatsapp) return;
+
+    setErrorMsg("");
+    setSuccessMsg("");
+    try {
+      const response = await authFetch(`/agentes/${editingAgent.id}`, user, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre: name, whatsapp, email: email || undefined }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || "No se pudo editar el asesor.");
+      setSuccessMsg("Asesor actualizado con éxito.");
+      setEditingAgent(null);
+      await fetchAgentes();
+    } catch (err: any) {
+      setErrorMsg("Error al editar asesor: " + err.message);
+    }
+  };
+
+  const handleUpdateProperty = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingProperty) return;
+    const fd = new FormData(e.currentTarget);
+    const coordsParts = String(fd.get("coords") || "").split(",").map((s) => parseFloat(s.trim()));
+    const lat = coordsParts.length === 2 && !Number.isNaN(coordsParts[0]) ? coordsParts[0] : Number(editingProperty.lat || 0);
+    const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
+    const payload = {
+      titulo: String(fd.get("title") || "").trim() || "Propiedad sin titulo",
+      precio_usd: Number(fd.get("price")) || 0,
+      moneda: String(fd.get("currency") || "$ (USD)"),
+      habitaciones: Number(fd.get("rooms")) || 0,
+      banos: Number(fd.get("bathrooms")) || 1,
+      ciudad: String(fd.get("area") || "").trim() || "Santa Cruz",
+      lat,
+      lng,
+      operacion: String(fd.get("operation") || "Venta"),
+      tipo_inmueble: String(fd.get("type") || "Departamento"),
+      descripcion: String(fd.get("description") || "").trim() || "Sin descripcion.",
+      agente_id: Number(fd.get("agentId")) || 0,
+      imagenes: String(fd.get("imageLinks") || "").trim(),
+      amenidades: String(fd.get("amenities") || "").trim(),
+    };
+
+    if (!payload.agente_id) {
+      setErrorMsg("Selecciona un asesor para el inmueble.");
+      return;
+    }
+
+    setIsSavingEdit(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    try {
+      const response = await authFetch(`/inmuebles/${editingProperty.id}`, user, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || "No se pudo editar el inmueble.");
+      setSuccessMsg("Inmueble actualizado con éxito.");
+      setEditingProperty(null);
+      await fetchCatalog();
+    } catch (err: any) {
+      setErrorMsg("Error al editar inmueble: " + err.message);
+    } finally {
+      setIsSavingEdit(false);
     }
   };
   const handleAddProperty = async (e: React.FormEvent) => {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
     const fd = new FormData(target);
-    
+
     setIsUploading(true);
 
     try {
@@ -213,14 +303,12 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
-        alert("Inmueble publicado con exito!");
+        alert("Inmueble publicado con éxito!");
         target.reset();
         setAmenities([]);
         setImageLinks("");
-        
-        const resCatalog = await fetch(`${API_BASE}/inmuebles`);
-        const dataCatalog = await resCatalog.json();
-        setCatalog(dataCatalog);
+
+        await fetchCatalog();
       } else {
         alert("El servidor rechazo los datos. Revisa la consola.");
       }
@@ -308,7 +396,8 @@ export default function AdminDashboard() {
         <div className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] p-8 rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-soft)] text-center max-w-md w-full">
           <ShieldCheck className="w-12 h-12 text-[var(--accent-main)] mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[var(--text-main)] mb-2">Acceso admin restringido</h2>
-          <p className="text-sm text-[var(--text-muted)] mb-6">Tu correo no tiene permisos de administrador.</p>
+          <p className="text-sm text-[var(--text-muted)] mb-2">Tu correo no tiene permisos de administrador.</p>
+          {user?.email && <p className="text-xs text-[var(--accent-main)] mb-6">Sesión actual: {user.email}</p>}
           <div className="flex gap-2 justify-center">
             <Link to="/" className="bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold px-4 py-3 rounded transition-colors uppercase tracking-widest text-xs shadow-md">Volver al mapa</Link>
             <button onClick={handleLogout} className="border border-[var(--border-soft)] text-[var(--text-muted)] font-bold px-4 py-3 rounded uppercase tracking-widest text-xs">Salir</button>
@@ -345,7 +434,7 @@ export default function AdminDashboard() {
         <form onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 dark:border-red-800 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 dark:border-green-800 rounded font-bold">{successMsg}</div>}
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -356,9 +445,9 @@ export default function AdminDashboard() {
                   </button>
                 )}
               </div>
-              
+
               {isAdmin ? (
-                <CustomSelect 
+                <CustomSelect
                   name="agentId"
                   value={formAgentId}
                   onChange={setFormAgentId}
@@ -376,7 +465,7 @@ export default function AdminDashboard() {
 
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2 block">Titulo Comercial</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2 block">Título Comercial</label>
               <input name="title" required type="text" placeholder="Ej: Hermosa Casa en Urubo" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
             </div>
           </div>
@@ -384,12 +473,12 @@ export default function AdminDashboard() {
           <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
             <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operacion</label>
-              <CustomSelect 
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operación</label>
+              <CustomSelect
                 name="operation"
                 value={formOperation}
                 onChange={setFormOperation}
-                placeholder="Operacion"
+                placeholder="Operación"
                 options={[{ value: "Venta", label: "Venta" }, { value: "Alquiler", label: "Alquiler" }, { value: "Inversion", label: "Inversion" }]}
                 wrapperClassName="relative w-full"
                 triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]"
@@ -397,7 +486,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Tipo</label>
-              <CustomSelect 
+              <CustomSelect
                 name="type"
                 value={formType}
                 onChange={setFormType}
@@ -423,7 +512,7 @@ export default function AdminDashboard() {
                    <button type="button" onClick={() => { setIsCustomZone(false); setFormZone(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-red-500"><X size={14}/></button>
                 </div>
               ) : (
-                <CustomSelect 
+                <CustomSelect
                   name="area"
                   value={formZone}
                   onChange={(val: string) => {
@@ -442,7 +531,7 @@ export default function AdminDashboard() {
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold mb-2">Datos Monetarios</h3>
             <div>
               <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Moneda</label>
-              <CustomSelect 
+              <CustomSelect
                 name="currency"
                 value={formCurrency}
                 onChange={setFormCurrency}
@@ -460,7 +549,7 @@ export default function AdminDashboard() {
               <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">
                 T/C (Cambio) {formCurrency === 'Bs' && <span className="text-red-500 lowercase ml-1">(no aplica)</span>}
               </label>
-              <CustomSelect 
+              <CustomSelect
                 name="exchangeRate"
                 value={formExchangeRate}
                 onChange={setFormExchangeRate}
@@ -479,30 +568,30 @@ export default function AdminDashboard() {
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">Descripcion y Amenidades</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">Descripción y Amenidades</label>
             <textarea name="description" rows={5} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] mb-4" placeholder={"Ej: Hermoso departamento de 1 dormitorio amoblado..."} />
-            
+
             <div className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-2 focus-within:border-gold flex flex-wrap gap-2 items-center mb-4 min-h-[46px]">
               {amenities.map(am => (
                 <span key={am} className="bg-[var(--accent-main)]/15 text-[var(--accent-main)] text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
                   {am} <button type="button" onClick={() => removeAmenity(am)} className="hover:text-red-500"><X size={12}/></button>
                 </span>
               ))}
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={amenityInput}
                 onChange={(e) => setAmenityInput(e.target.value)}
                 onKeyDown={handleKeyDownAmenity}
-                className="bg-transparent outline-none text-[var(--text-main)] dark:text-[var(--text-main)] text-sm flex-1 min-w-[150px] placeholder:text-stone-400 dark:placeholder:text-stone-500" 
-                placeholder={amenities.length === 0 ? "Anadir amenidades (presiona Enter)" : "Anadir mas..."} 
+                className="bg-transparent outline-none text-[var(--text-main)] dark:text-[var(--text-main)] text-sm flex-1 min-w-[150px] placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                placeholder={amenities.length === 0 ? "Añadir amenidades (presiona Enter)" : "Añadir más..."}
               />
             </div>
-            
+
             <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">
               Multimedia de la Propiedad
             </label>
             <p className="text-[10px] text-stone-500 mb-3 italic">
-              Sube imagenes o videos desde tu ordenador, o pega URLs directas de Cloudinary separadas por coma.
+              Sube imágenes o videos desde tu ordenador, o pega URLs directas de Cloudinary separadas por coma.
             </p>
 
             <div className="mb-4 flex flex-col md:flex-row md:items-center gap-3 rounded border border-dashed border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 p-4">
@@ -519,59 +608,154 @@ export default function AdminDashboard() {
                 />
               </label>
               <span className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-                Puedes seleccionar varias fotos o videos a la vez. Las URLs apareceran abajo automaticamente.
+                Puedes seleccionar varias fotos o videos a la vez. Las URLs aparecerán abajo automáticamente.
               </span>
             </div>
 
-            <textarea 
-              name="imageLinks" 
+            <textarea
+              name="imageLinks"
               required
-              rows={4} 
+              rows={4}
               value={imageLinks}
               onChange={(e) => setImageLinks(e.target.value)}
-              className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] mb-4" 
-              placeholder="Ej: https://res.cloudinary.com/.../foto1.jpg, https://res.cloudinary.com/.../foto2.jpg" 
+              className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] mb-4"
+              placeholder="Ej: https://res.cloudinary.com/.../foto1.jpg, https://res.cloudinary.com/.../foto2.jpg"
             />
           </div>
 
           <button disabled={isUploading} type="submit" className="w-full bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold py-4 rounded shadow-md transition-colors uppercase tracking-widest text-sm flex justify-center items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
-            {isUploading ? <><Loader2 size={18} className="animate-spin" /> Procesando Inyeccion...</> : <><Save size={18} /> Publicar Inmueble en Base de Datos</>}
+            {isUploading ? <><Loader2 size={18} className="animate-spin" /> Procesando...</> : <><Save size={18} /> Publicar Inmueble</>}
           </button>
         </form>
       </div>
 
+
+      {isAdmin && editingProperty && (
+        <div className="fixed inset-0 bg-[rgba(58,33,25,0.22)] dark:bg-[rgba(16,12,10,0.72)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded-xl max-w-3xl w-full shadow-[var(--shadow-warm)] max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b border-[var(--border-soft)]">
+              <h3 className="text-[var(--text-main)] uppercase tracking-widest text-sm font-bold flex items-center gap-2"><Pencil className="text-[var(--accent-main)]" size={16}/> Editar Inmueble #{editingProperty.id}</h3>
+              <button onClick={() => setEditingProperty(null)} className="text-stone-400 hover:text-primary dark:hover:text-white"><X size={18}/></button>
+            </div>
+
+            <form onSubmit={handleUpdateProperty} className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Título Comercial</label>
+                  <input name="title" required defaultValue={editingProperty.titulo || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Asesor</label>
+                  <select name="agentId" required defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option value="">Selecciona un asesor...</option>
+                    {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operación</label>
+                  <select name="operation" defaultValue={editingProperty.operacion || "Venta"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option>Venta</option>
+                    <option>Alquiler</option>
+                    <option>Anticrético</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Tipo</label>
+                  <select name="type" defaultValue={editingProperty.tipo_inmueble || "Departamento"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option>Departamento</option>
+                    <option>Casa</option>
+                    <option>Oficina</option>
+                    <option>Terreno</option>
+                    <option>Local Comercial</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Moneda</label>
+                  <select name="currency" defaultValue={editingProperty.moneda || "$ (USD)"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option>$ (USD)</option>
+                    <option>Bs</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Precio</label>
+                  <input name="price" type="number" required defaultValue={editingProperty.precio_usd || 0} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Habitaciones</label>
+                  <input name="rooms" type="number" min="0" defaultValue={editingProperty.habitaciones || 0} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Baños</label>
+                  <input name="bathrooms" type="number" min="0" defaultValue={editingProperty.banos || 1} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Zona</label>
+                  <input name="area" defaultValue={editingProperty.ciudad || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Coordenadas</label>
+                  <input name="coords" defaultValue={`${editingProperty.lat || 0}, ${editingProperty.lng || 0}`} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Descripción</label>
+                <textarea name="description" rows={5} defaultValue={editingProperty.descripcion || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Amenidades</label>
+                <textarea name="amenities" rows={3} defaultValue={getPropertyAmenitiesText(editingProperty)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" placeholder="Piscina, Parqueo, Sauna" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Imágenes / videos</label>
+                <textarea name="imageLinks" rows={3} defaultValue={getPropertyImageLinks(editingProperty)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" placeholder="URLs separadas por coma" />
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setEditingProperty(null)} className="border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-main)] font-bold px-5 py-3 rounded transition-colors">Cancelar</button>
+                <button disabled={isSavingEdit} type="submit" className="bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold px-5 py-3 rounded shadow-md transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                  {isSavingEdit ? <><Loader2 size={18} className="animate-spin" /> Guardando...</> : <><Save size={18} /> Guardar Cambios</>}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {/* MODAL SOLO VISIBLE PARA ADMINISTRADORES */}
       {isAdmin && showAgentModal && (
         <div className="fixed inset-0 bg-[rgba(58,33,25,0.22)] dark:bg-[rgba(16,12,10,0.72)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded-xl max-w-md w-full shadow-[var(--shadow-warm)] flex flex-col max-h-[90vh]">
-            
+
             <div className="flex justify-between items-center p-6 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] shrink-0">
               <h3 className="text-[var(--text-main)] dark:text-[var(--text-main)] uppercase tracking-widest text-sm font-bold flex items-center gap-2"><ShieldCheck className="text-[var(--accent-main)]" size={16}/> Protocolo Admin: Gestor de Asesores</h3>
               <button onClick={() => setShowAgentModal(false)} className="text-stone-400 hover:text-primary dark:hover:text-white"><X size={18}/></button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto flex-1 space-y-8">
-              <form onSubmit={handleAddAgent} className="space-y-4">
-                <h4 className="text-[10px] uppercase tracking-wider font-bold text-[var(--accent-main)] mb-2">+ Alta de Credencial</h4>
+              <form key={editingAgent?.id || "new-agent"} onSubmit={editingAgent ? handleUpdateAgent : handleAddAgent} className="space-y-4">
+                <h4 className="text-[10px] uppercase tracking-wider font-bold text-[var(--accent-main)] mb-2">{editingAgent ? "Editar Credencial" : "+ Alta de Credencial"}</h4>
                 <div>
-                  <input name="name" required type="text" placeholder="Nombre Completo" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                  <input name="name" required type="text" placeholder="Nombre Completo" defaultValue={editingAgent?.name || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
                 </div>
                 <div>
-                  <input name="whatsapp" required type="text" placeholder="WhatsApp (Ej: 59170000000)" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                  <input name="whatsapp" required type="text" placeholder="WhatsApp (Ej: 59170000000)" defaultValue={editingAgent?.whatsapp || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
                 </div>
                                 <div>
-                  <input name="email" type="email" placeholder="Email Google autorizado (opcional)" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                  <input name="email" type="email" placeholder="Email Google autorizado (opcional)" defaultValue={editingAgent?.email || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
                 </div>
-                <button type="submit" className="w-full bg-[var(--accent-secondary)] dark:bg-[var(--accent-main)] text-white dark:text-[#1B1411] shadow-md font-bold text-xs py-2 rounded hover:bg-[var(--color-teal-deep)] dark:hover:bg-[var(--accent-main)] transition-colors">Crear Asesor</button>
+                <button type="submit" className="w-full bg-[var(--accent-secondary)] dark:bg-[var(--accent-main)] text-white dark:text-[#1B1411] shadow-md font-bold text-xs py-2 rounded hover:bg-[var(--color-teal-deep)] dark:hover:bg-[var(--accent-main)] transition-colors">{editingAgent ? "Guardar Cambios" : "Crear Asesor"}</button>
+                {editingAgent && (
+                  <button type="button" onClick={() => setEditingAgent(null)} className="w-full border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-main)] font-bold text-xs py-2 rounded transition-colors">Cancelar edición</button>
+                )}
               </form>
 
               <hr className="border-[var(--border-soft)] dark:border-[var(--border-soft)]" />
 
               <div>
-                <h4 className="text-[10px] uppercase tracking-wider font-bold text-red-500 mb-4">Modulo de Destruccion</h4>
+                <h4 className="text-[10px] uppercase tracking-wider font-bold text-red-500 mb-4">Módulo de Gestión</h4>
                 <div className="space-y-2">
                   {agents.length === 0 ? (
-                    <p className="text-xs text-stone-500 italic">Base de datos vacia.</p>
+                    <p className="text-xs text-stone-500 italic">Base de datos vacía.</p>
                   ) : (
                     agents.map(a => (
                       <div key={a.id} className="flex justify-between items-center bg-[var(--surface-panel-muted)] dark:bg-[rgba(38,28,23,0.68)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] p-2 rounded">
@@ -580,9 +764,14 @@ export default function AdminDashboard() {
                           <p className="text-[10px] text-stone-500">{a.whatsapp}</p>
                           {a.email && <p className="text-[10px] text-stone-500">{a.email}</p>}
                         </div>
-                        <button onClick={() => handleDeleteAgent(a.id)} className="text-red-400 hover:text-red-600 bg-red-50 dark:bg-[rgba(157,47,37,0.16)] p-2 rounded transition-colors" title="Eliminar Asesor">
-                          <Trash2 size={14} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setEditingAgent(a)} className="text-[var(--color-teal-deep)] dark:text-[var(--accent-main)] hover:bg-[rgba(42,95,96,0.1)] p-2 rounded transition-colors" title="Editar Asesor">
+                            <Pencil size={14} />
+                          </button>
+                          <button onClick={() => handleDeleteAgent(a.id)} className="text-red-400 hover:text-red-600 bg-red-50 dark:bg-[rgba(157,47,37,0.16)] p-2 rounded transition-colors" title="Eliminar Asesor">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
                     ))
                   )}
@@ -596,18 +785,18 @@ export default function AdminDashboard() {
       {/* SECCION DE GESTION DE INMUEBLES */}
       <div className="mt-12 bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] p-8">
         <h3 className="text-lg font-bold text-[var(--text-main)] dark:text-[var(--text-main)] mb-6 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
-          Gestion de Inmuebles Publicados
+          Gestión de Inmuebles Publicados
         </h3>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)]">
             <thead className="bg-[var(--surface-control)] dark:bg-[var(--surface-control)] text-xs uppercase font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)]">
               <tr>
                 <th className="px-4 py-3 rounded-l-lg">ID</th>
                 <th className="px-4 py-3">Titulo</th>
-                <th className="px-4 py-3">Operacion</th>
+                <th className="px-4 py-3">Operación</th>
                 <th className="px-4 py-3">Precio</th>
-                <th className="px-4 py-3 rounded-r-lg text-right">Accion</th>
+                <th className="px-4 py-3 rounded-r-lg text-right">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -618,12 +807,20 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3">{inm.operacion}</td>
                   <td className="px-4 py-3">{inm.moneda} {inm.precio_usd}</td>
                   <td className="px-4 py-3 text-right">
-                    <button 
-                      onClick={() => handleDeleteProperty(inm.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 px-3 py-1.5 rounded transition font-bold"
-                    >
-                      Eliminar
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setEditingProperty(inm)}
+                        className="text-[var(--color-teal-deep)] dark:text-[var(--accent-main)] hover:bg-[rgba(42,95,96,0.1)] dark:hover:bg-[rgba(201,159,112,0.12)] px-3 py-1.5 rounded transition font-bold"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProperty(inm.id)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 px-3 py-1.5 rounded transition font-bold"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

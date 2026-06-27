@@ -1,4 +1,4 @@
-﻿import os
+import os
 from pathlib import Path
 
 
@@ -25,7 +25,7 @@ load_env_file()
 def get_database_url() -> str:
     url = os.getenv("DATABASE_URL", "").strip()
     if not url:
-        return "sqlite:///./inmobiliaria.db"
+        return f"sqlite:///{(BASE_DIR / 'inmobiliaria.db').as_posix()}"
 
     if url.startswith("postgres://"):
         return url.replace("postgres://", "postgresql+psycopg://", 1)
@@ -42,7 +42,7 @@ AUTO_CREATE_TABLES = os.getenv("AUTO_CREATE_TABLES", "true").strip().lower() not
 
 
 def get_cors_origins() -> list[str]:
-    raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173")
+    raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173")
     return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 

@@ -67,6 +67,21 @@ const formatPropertyPrice = (price: number, currency?: string) => {
   return `${symbol} ${Number(price || 0).toLocaleString("es-BO")}`;
 };
 
+const normalizeWhatsappNumber = (value?: string) => {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("591")) return digits;
+  if (digits.length === 8) return `591${digits}`;
+  return digits;
+};
+
+const getWhatsappContactUrl = (property: Property) => {
+  const phone = normalizeWhatsappNumber(property.agentWhatsapp);
+  if (!phone) return "";
+  const message = `Hola, quisiera recibir informacion sobre el inmueble #${property.id} - ${property.title}.`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+};
+
 export default function MapPage() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -117,7 +132,9 @@ export default function MapPage() {
   const handleLogin = async () => {
     try {
       setLoginError("");
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      await signInWithPopup(auth, provider);
     } catch (error: any) {
       setLoginError(error.message || "No se pudo iniciar sesion.");
     }
@@ -144,7 +161,7 @@ export default function MapPage() {
 
         const resInmuebles = await fetch(`${API_BASE}/inmuebles`);
         if (!resInmuebles.ok) throw new Error("Fallo en la conexion al motor Python");
-        
+
         const datosPython = await resInmuebles.json();
 
         const propiedadesMapeadas: Property[] = datosPython.map((inm: any) => ({
@@ -160,10 +177,12 @@ export default function MapPage() {
           type: inm.tipo_inmueble,
           description: inm.descripcion,
           amenities: Array.isArray(inm.amenidades) ? inm.amenidades : [],
-          images: normalizeMediaLinks(inm), 
-          currency: inm.moneda, 
-          exchangeRate: "Oficial", 
-          agentId: inm.agente_id
+          images: normalizeMediaLinks(inm),
+          currency: inm.moneda,
+          exchangeRate: "Oficial",
+          agentId: inm.agente_id,
+          agentName: inm.agente?.name ?? inm.agente_nombre ?? "",
+          agentWhatsapp: inm.agente?.whatsapp ?? inm.agente_whatsapp ?? "",
         }));
 
         setProperties(propiedadesMapeadas);
@@ -190,9 +209,9 @@ export default function MapPage() {
       clearAiFilters();
       return;
     }
-    
+
     setIsAsking(true);
-    
+
     try {
       const candidateIds = aiFilteredIds?.map((id) => Number(id)).filter((id) => !Number.isNaN(id));
       const res = await fetch(`${API_BASE}/chat`, {
@@ -201,13 +220,13 @@ export default function MapPage() {
         body: JSON.stringify({
           mensaje: query,
           candidate_ids: candidateIds && candidateIds.length > 0 ? candidateIds : undefined,
-        }), 
+        }),
       });
-      
+
       if (!res.ok) throw new Error("Fallo en la red neuronal");
-      
+
       const data = await res.json();
-      
+
       if (data.ids && Array.isArray(data.ids)) {
         const stringIds = data.ids.map((id: number | string) => id.toString());
         setAiFilteredIds(stringIds);
@@ -220,7 +239,7 @@ export default function MapPage() {
       }
     } catch (err) {
       console.error("Fallo critico en motor semantico:", err);
-      setAiFilteredIds([]); 
+      setAiFilteredIds([]);
     } finally {
       setIsAsking(false);
     }
@@ -250,17 +269,25 @@ export default function MapPage() {
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobileCarousel, setIsMobileCarousel] = useState(() => window.innerWidth < 768);
 
-// Limitamos el carrusel a bloques de 2 elementos
-const visibleProperties = useMemo(() => {
-  return filteredProperties.slice(currentIndex, currentIndex + 2);
-}, [filteredProperties, currentIndex]);
+  useEffect(() => {
+    const handleResize = () => setIsMobileCarousel(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-useEffect(() => {
-  if (currentIndex >= filteredProperties.length) {
-    setCurrentIndex(Math.max(0, filteredProperties.length - 2));
-  }
-}, [currentIndex, filteredProperties.length]);
+  const carouselStep = isMobileCarousel ? 1 : 2;
+
+  const visibleProperties = useMemo(() => {
+    return filteredProperties.slice(currentIndex, currentIndex + carouselStep);
+  }, [filteredProperties, currentIndex, carouselStep]);
+
+  useEffect(() => {
+    if (currentIndex >= filteredProperties.length) {
+      setCurrentIndex(Math.max(0, filteredProperties.length - carouselStep));
+    }
+  }, [carouselStep, currentIndex, filteredProperties.length]);
 
   const renderedMarkers = useMemo(() => filteredProperties.map(p => (
     <Marker
@@ -274,10 +301,10 @@ useEffect(() => {
 >
   {/* MARCADOR IVORY WHITE (Minimalista) */}
   <div className="w-5 h-5 md:w-6 md:h-6 bg-[var(--accent-hover)] dark:bg-[#FAF8F5] rounded-full border-[2.5px] border-[var(--color-chocolate)] dark:border-[var(--border-soft)] shadow-[0_0_0_4px_rgba(248,243,231,0.85),0_8px_22px_rgba(58,33,25,0.28)] dark:shadow-[0_0_15px_rgba(250,248,245,0.4)] cursor-pointer hover:scale-125 hover:bg-[var(--accent-secondary)] dark:hover:bg-[var(--accent-main)] hover:border-[var(--color-chocolate)] dark:hover:border-white transition-all duration-300 flex items-center justify-center group relative z-10">
-    
+
     {/* Nucleo oscuro para darle profundidad */}
     <div className="w-1.5 h-1.5 bg-[var(--color-ivory)] dark:bg-[var(--surface-panel)] rounded-full group-hover:bg-white transition-colors" />
-    
+
   </div>
 </Marker>
   )), [filteredProperties, selectedProperty]);
@@ -285,7 +312,7 @@ useEffect(() => {
   return (
     // CONTENEDOR MAESTRO: 100% Pantalla
     <div className="relative h-screen w-full overflow-hidden bg-[var(--surface-page)] dark:bg-[var(--surface-panel)] font-sans">
-      
+
       {/* CAPA 0: EL MAPA DE FONDO */}
       <main className="absolute inset-0 z-0">
         <Map
@@ -300,7 +327,7 @@ useEffect(() => {
 
       {/* BOTONES SUPERIORES (Laterales) */}
       <div className="absolute top-6 left-6 z-10 hidden md:block">
-        <button 
+        <button
           onClick={() => applyTheme(!isDarkMode)}
           className="p-3 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur-md rounded-xl shadow-lg border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-main)] hover:bg-[var(--accent-hover)] hover:text-white transition-colors flex items-center justify-center"
         >
@@ -323,7 +350,7 @@ useEffect(() => {
 
       {/* HUD MOVIL: controles compactos en una sola fila */}
       <div className="absolute left-4 right-4 top-5 z-10 flex items-center gap-2 md:hidden">
-        <button 
+        <button
           onClick={() => applyTheme(!isDarkMode)}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]"
           aria-label="Cambiar tema"
@@ -331,8 +358,8 @@ useEffect(() => {
           {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
-        <form 
-          onSubmit={handleAskGemini} 
+        <form
+          onSubmit={handleAskGemini}
           className="min-w-0 flex-1 rounded-full border border-[var(--border-soft)] bg-[rgba(255,253,246,0.9)] p-1 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(16,12,10,0.62)]"
         >
           <div className="flex items-center">
@@ -344,8 +371,8 @@ useEffect(() => {
               )}
             </div>
 
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={geminiQuery}
               onChange={(e) => setGeminiQuery(e.target.value)}
               disabled={isAsking}
@@ -359,9 +386,9 @@ useEffect(() => {
               </button>
             )}
 
-            <button 
-              type="submit" 
-              disabled={isAsking} 
+            <button
+              type="submit"
+              disabled={isAsking}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-main)] text-[#2F241D] shadow-md transition-colors hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-70"
               aria-label="Buscar"
             >
@@ -386,8 +413,8 @@ useEffect(() => {
       </div>
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
       <div className="absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
-        <form 
-          onSubmit={handleAskGemini} 
+        <form
+          onSubmit={handleAskGemini}
           className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
         >
           <div className="pl-3 pr-1.5 sm:pl-4 sm:pr-2 flex items-center">
@@ -397,16 +424,16 @@ useEffect(() => {
               <Sparkles className="h-6 w-4 text-[var(--accent-main)]" />
             )}
           </div>
-          
-          <input 
-            type="text" 
+
+          <input
+            type="text"
             value={geminiQuery}
             onChange={(e) => setGeminiQuery(e.target.value)}
             disabled={isAsking}
             placeholder={isAsking ? "IA analizando..." : "Ej: Depto pet-friendly..."}
             className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
           />
-          
+
           {aiFilteredIds !== null && (
             <button type="button" onClick={clearAiFilters} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Limpiar filtros">
               <X size={16} />
@@ -414,9 +441,9 @@ useEffect(() => {
           )}
 
           {/* Boton Conserje: Ajustado en padding y tipografia para ser compacto */}
-          <button 
-            type="submit" 
-            disabled={isAsking} 
+          <button
+            type="submit"
+            disabled={isAsking}
             className="bg-[var(--accent-main)] text-[#2F241D] px-4 sm:px-5 py-2 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
           >
             <Search size={14} className="md:hidden" />
@@ -441,31 +468,31 @@ useEffect(() => {
       </div>
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
-<div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[98%] max-w-[1080px] h-[240px] z-20 flex items-center justify-between gap-2 md:gap-4">
-  
-  <button 
-    onClick={() => setCurrentIndex(prev => Math.max(0, prev - 2))} 
+<div className="absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1080px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
+
+  <button
+    onClick={() => setCurrentIndex(prev => Math.max(0, prev - carouselStep))}
     disabled={currentIndex === 0}
-    className="shrink-0 p-3 rounded-full bg-[var(--accent-main)]/85 dark:bg-[rgba(27,20,17,0.94)] text-[#2F241D] dark:text-[var(--text-main)] disabled:opacity-30 hover:bg-[var(--accent-hover)] hover:text-white transition-all shadow-xl"
+    className="absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
   >
     <ChevronLeft size={28} />
   </button>
 
   {/* Contenedor central expandido */}
-  <div className="flex-1 flex gap-6 h-full overflow-hidden justify-center items-center">
+  <div className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-6 md:px-0">
     {visibleProperties.map((p) => {
       const coverUrl = p.images[0];
       const isCollection = isCloudinaryCollectionUrl(coverUrl);
 
       return (
-      <div 
-        key={p.id} 
+      <div
+        key={p.id}
         onClick={() => setSelectedProperty(p)}
         // Tarjetas mas anchas (460px) y mas bajas (210px)
-        className="w-[460px] h-[210px] bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] rounded-xl overflow-hidden border border-[var(--border-strong)]/50 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] cursor-pointer hover:ring-2 ring-[var(--accent-main)] transition-all duration-300 flex flex-row group shrink-0"
+        className="flex h-[210px] w-full max-w-[430px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-all duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[460px] md:max-w-none"
       >
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
-        <div className="w-[50%] h-full relative shrink-0 overflow-hidden">
+        <div className="relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
           {coverUrl && !isCollection ? (
             isVideoUrl(coverUrl) ? (
               <video
@@ -476,9 +503,9 @@ useEffect(() => {
                 preload="metadata"
               />
             ) : (
-              <img 
-                src={coverUrl} 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+              <img
+                src={coverUrl}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 alt={p.title}
               />
             )
@@ -492,20 +519,20 @@ useEffect(() => {
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[var(--surface-panel)] dark:to-stone-900 pointer-events-none" />
         </div>
-        
+
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
-        <div className="w-[50%] p-5 flex flex-col justify-center text-[var(--text-main)] dark:text-[var(--text-main)] bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] relative">
-          
+        <div className="relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
+
           <span className="text-[10px] text-[var(--accent-main)] font-bold tracking-[0.18em] uppercase mb-2">Ref. #{p.id}</span>
-          <h3 className="text-sm font-bold leading-snug line-clamp-2 tracking-wide mb-2 pr-2">
+          <h3 className="mb-2 line-clamp-2 text-[13px] font-bold leading-snug tracking-wide md:text-sm">
             {p.title}
           </h3>
-          
-          <span className="text-base text-[var(--accent-main)] font-bold mb-4 block">
+
+          <span className="mb-3 block text-sm font-bold text-[var(--accent-main)] md:mb-4 md:text-base">
             {formatPropertyPrice(p.price, p.currency)}
           </span>
-          
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium tracking-wider uppercase border-t border-[var(--border-soft)] dark:border-[var(--border-soft)] pt-3 mt-auto">
+
+          <div className="mt-auto grid grid-cols-2 gap-x-2 gap-y-2 border-t border-[var(--border-soft)] pt-3 text-[9px] font-medium uppercase tracking-wider text-[var(--text-muted)] dark:border-[var(--border-soft)] dark:text-[var(--text-muted)] md:gap-x-4 md:text-[10px]">
              <div className="flex min-w-0 items-center gap-2">
                 <Bed size={14} className="shrink-0 text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
                 <span className="truncate">{p.rooms} dorm</span>
@@ -524,10 +551,10 @@ useEffect(() => {
     )})}
   </div>
 
-  <button 
-    onClick={() => setCurrentIndex(prev => Math.min(filteredProperties.length - 2, prev + 2))} 
-    disabled={currentIndex + 2 >= filteredProperties.length}
-    className="shrink-0 p-3 rounded-full bg-[var(--accent-main)]/85 dark:bg-[rgba(27,20,17,0.94)] text-[#2F241D] dark:text-[var(--text-main)] disabled:opacity-30 hover:bg-[var(--accent-hover)] hover:text-white transition-all shadow-xl"
+  <button
+    onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep))}
+    disabled={currentIndex + carouselStep >= filteredProperties.length}
+    className="absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
   >
     <ChevronRight size={28} />
   </button>
@@ -536,7 +563,7 @@ useEffect(() => {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA (Desliza desde abajo) */}
       <AnimatePresence>
         {selectedProperty && (
-          <motion.div 
+          <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -544,7 +571,7 @@ useEffect(() => {
             className="fixed inset-0 w-full h-full bg-[var(--surface-panel)] dark:bg-[var(--surface-page)] z-[100] flex flex-col overflow-y-auto"
           >
             {/* Boton de Cierre Flotante */}
-            <button 
+            <button
               onClick={() => setSelectedProperty(null)}
               className="fixed top-6 right-6 md:right-10 p-3 bg-[var(--color-chocolate)]/90 backdrop-blur-md rounded-full text-[var(--color-ivory)] hover:bg-[var(--accent-hover)] transition-all z-50 shadow-2xl border border-[var(--accent-main)]/40"
             >
@@ -657,7 +684,7 @@ useEffect(() => {
 
             {/* CONTENIDO EDITORIAL (Maxima Legibilidad) */}
             <div className="w-full max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-12 shrink-0">
-               
+
                {/* Columna Izquierda: Informacion Extendida */}
                <div className="flex-1">
                   <span className="text-[var(--accent-main)] text-xs font-bold uppercase tracking-[0.24em] block mb-4">Ref. #{selectedProperty.id}</span>
@@ -667,13 +694,13 @@ useEffect(() => {
                   <p className="text-2xl text-[var(--accent-main)] font-medium mb-10">
                     {formatPropertyPrice(selectedProperty.price, selectedProperty.currency)}
                   </p>
-                  
+
                   {/* Bloque de Descripcion */}
                   <div className="mb-12">
                     <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-4 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-2">
                       Descripcion de la Propiedad
                     </h4>
-                    <p className="text-[var(--text-main)] dark:text-[var(--text-muted)] leading-relaxed text-base whitespace-pre-wrap font-light">
+                    <p className="text-[var(--text-main)] dark:text-[var(--text-muted)] leading-7 text-[15px] whitespace-pre-wrap font-normal">
                        {selectedProperty.description || "Esta propiedad exclusiva cuenta con acabados de primera calidad y diseno de vanguardia. Contacte a nuestro equipo para obtener el dossier completo y coordinar una visita privada."}
                     </p>
                   </div>
@@ -683,22 +710,22 @@ useEffect(() => {
                     <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-4 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-2">
                       Amenities & Detalles
                     </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 text-sm text-[var(--text-main)] dark:text-[var(--text-muted)]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm text-[var(--text-main)] dark:text-[var(--text-muted)]">
                       {/* Renderizado dinamico o estatico de prueba */}
                       {selectedProperty.amenities ? (
                         selectedProperty.amenities.map((amenity, index) => (
-                          <div key={index} className="flex items-center gap-2">
+                          <div key={index} className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45">
                             <Sparkles size={14} className="text-[var(--accent-main)]" />
                             <span>{amenity}</span>
                           </div>
                         ))
                       ) : (
                         <>
-                          <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Coworking Space</span></div>
-                          <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Piscina Infinita</span></div>
-                          <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Gimnasio Equipado</span></div>
-                          <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Seguridad 24/7</span></div>
-                          <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Pet Friendly</span></div>
+                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Coworking Space</span></div>
+                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Piscina Infinita</span></div>
+                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Gimnasio Equipado</span></div>
+                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Seguridad 24/7</span></div>
+                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Pet Friendly</span></div>
                         </>
                       )}
                     </div>
@@ -709,7 +736,7 @@ useEffect(() => {
                <div className="w-full md:w-[380px] shrink-0">
                   <div className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/40 dark:border-[var(--border-soft)] rounded-xl p-8 sticky top-8 shadow-[var(--shadow-warm)]">
                      <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-6">Ficha Tecnica</h4>
-                     
+
                      <div className="flex flex-col gap-5">
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Building size={16}/> Referencia</span>
@@ -733,9 +760,24 @@ useEffect(() => {
                         </div>
                      </div>
 
-                     <button className="w-full bg-[var(--accent-main)] text-[#2F241D] font-bold uppercase tracking-[0.15em] text-xs py-4 rounded-lg mt-8 hover:bg-[var(--accent-hover)] hover:text-white transition-colors shadow-lg">
-                       Contactar Agente
-                     </button>
+                     {getWhatsappContactUrl(selectedProperty) ? (
+                       <a
+                         href={getWhatsappContactUrl(selectedProperty)}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="block w-full rounded-lg bg-[var(--accent-main)] py-4 mt-8 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#2F241D] shadow-lg transition-colors hover:bg-[var(--accent-hover)] hover:text-white"
+                       >
+                         Contactar Agente
+                       </a>
+                     ) : (
+                       <button
+                         type="button"
+                         disabled
+                         className="w-full rounded-lg bg-[var(--surface-control)] py-4 mt-8 text-xs font-bold uppercase tracking-[0.15em] text-[var(--text-muted)] opacity-70"
+                       >
+                         Contacto no disponible
+                       </button>
+                     )}
                   </div>
                </div>
 

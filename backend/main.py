@@ -293,10 +293,63 @@ async def obtener_inmuebles(db: Session = Depends(get_db)):
         
         inm_dict["banos"] = getattr(inm, "banos", 1) or 1
         inm_dict["agente_id"] = str(inm.agente_id) if inm.agente_id else "0"
+        if inm.agente:
+            inm_dict["agente"] = {
+                "id": str(inm.agente.id),
+                "name": inm.agente.nombre,
+                "whatsapp": inm.agente.whatsapp,
+            }
+            inm_dict["agente_nombre"] = inm.agente.nombre
+            inm_dict["agente_whatsapp"] = inm.agente.whatsapp
+        else:
+            inm_dict["agente"] = None
+            inm_dict["agente_nombre"] = ""
+            inm_dict["agente_whatsapp"] = ""
         resultado.append(inm_dict)
         
     return resultado
 
+
+@app.put("/api/inmuebles/{inmueble_id}", status_code=200)
+async def actualizar_inmueble(
+    inmueble_id: int,
+    inmueble: InmuebleCreate,
+    db: Session = Depends(get_db),
+    current_profile: dict = Depends(require_admin),
+):
+    try:
+        inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id).first()
+        if not inmueble_db:
+            raise HTTPException(status_code=404, detail="Inmueble no encontrado")
+
+        existe_agente = db.query(AgenteDB).filter(AgenteDB.id == inmueble.agente_id).first()
+        if not existe_agente:
+            raise HTTPException(status_code=400, detail="El asesor designado no existe.")
+
+        inmueble_db.titulo = inmueble.titulo
+        inmueble_db.precio_usd = inmueble.precio_usd
+        inmueble_db.moneda = inmueble.moneda
+        inmueble_db.habitaciones = inmueble.habitaciones
+        inmueble_db.banos = inmueble.banos or 1
+        inmueble_db.ciudad = inmueble.ciudad
+        inmueble_db.lat = inmueble.lat
+        inmueble_db.lng = inmueble.lng
+        inmueble_db.operacion = inmueble.operacion
+        inmueble_db.tipo_inmueble = inmueble.tipo_inmueble
+        inmueble_db.descripcion = inmueble.descripcion
+        inmueble_db.amenidades = inmueble.amenidades
+        inmueble_db.imagenes = inmueble.imagenes
+        inmueble_db.agente_id = inmueble.agente_id
+
+        db.commit()
+        db.refresh(inmueble_db)
+        return {"status": "success", "id": inmueble_db.id}
+    except HTTPException as http_err:
+        db.rollback()
+        raise http_err
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 @app.delete("/api/inmuebles/{inmueble_id}", status_code=200)
 async def eliminar_inmueble(inmueble_id: int, db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
     try:
@@ -369,6 +422,35 @@ async def obtener_agente_por_email(email: str, db: Session = Depends(get_db), cu
     if not agente:
         raise HTTPException(status_code=404, detail="Asesor no registrado")
     return {"id": str(agente.id), "name": agente.nombre, "whatsapp": agente.whatsapp, "email": agente.email}
+
+@app.put("/api/agentes/{agente_id}", status_code=200)
+async def actualizar_agente(agente_id: int, agente: AgenteSchema, db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
+    try:
+        agente_db = db.query(AgenteDB).filter(AgenteDB.id == agente_id).first()
+        if not agente_db:
+            raise HTTPException(status_code=404, detail="Asesor no encontrado")
+
+        email_normalizado = normalize_email(agente.email) or None
+        if email_normalizado:
+            agente_con_email = db.query(AgenteDB).filter(AgenteDB.email == email_normalizado, AgenteDB.id != agente_id).first()
+            if agente_con_email:
+                raise HTTPException(status_code=400, detail="Ese email ya esta asignado a otro asesor.")
+
+        agente_db.nombre = agente.nombre
+        agente_db.whatsapp = agente.whatsapp
+        agente_db.email = email_normalizado
+        if email_normalizado:
+            upsert_authorized_user(db, email_normalizado, "advisor")
+
+        db.commit()
+        db.refresh(agente_db)
+        return {"status": "success", "id": agente_db.id, "nombre": agente_db.nombre, "email": agente_db.email}
+    except HTTPException as http_err:
+        db.rollback()
+        raise http_err
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 @app.delete("/api/agentes/{agente_id}", status_code=200)
 async def eliminar_agente(agente_id: int, db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
     try:

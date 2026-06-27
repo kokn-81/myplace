@@ -13,6 +13,8 @@ export interface Property {
   lat: number;
   lng: number;
   agentId?: string;
+  agentName?: string;
+  agentWhatsapp?: string;
   amenities: string[];
   images: string[];
   createdAt?: number;

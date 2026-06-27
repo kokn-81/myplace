@@ -107,7 +107,9 @@ export default function AdvisorDashboard() {
 
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      await signInWithPopup(auth, provider);
     } catch (error: any) {
       setErrorMsg(error.message || "No se pudo iniciar sesion.");
     }

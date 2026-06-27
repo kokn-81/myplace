@@ -1,4 +1,4 @@
-﻿import json
+import json
 from pathlib import Path
 from typing import Any, Literal, Optional
 
@@ -7,7 +7,7 @@ from firebase_admin import auth as firebase_auth
 from firebase_admin import credentials, initialize_app, get_app
 from sqlalchemy.orm import Session
 
-from config import BASE_DIR, FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT_JSON, FIREBASE_SERVICE_ACCOUNT_PATH
+from config import ADMIN_EMAILS, AUTHORIZED_ADVISOR_EMAILS, BASE_DIR, FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT_JSON, FIREBASE_SERVICE_ACCOUNT_PATH
 from database import SessionLocal
 from models import UsuarioAutorizadoDB
 
@@ -53,6 +53,11 @@ def get_role_for_email(db: Session, email: Optional[str]) -> AppRole:
     normalized = normalize_email(email)
     if not normalized:
         return "user"
+
+    if normalized in ADMIN_EMAILS:
+        return "admin"
+    if normalized in AUTHORIZED_ADVISOR_EMAILS:
+        return "advisor"
 
     user = db.query(UsuarioAutorizadoDB).filter(UsuarioAutorizadoDB.email == normalized).first()
     if user and user.role in {"admin", "advisor"}:
