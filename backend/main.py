@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
-from models import AgenteDB, InmuebleDB
+from models import AgenteDB, InmuebleDB, OfertaDB
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -44,23 +44,31 @@ app.mount("/uploads", StaticFiles(directory=CARPETA_UPLOADS), name="uploads")
 # --- 2. MODELOS FISICOS RELACIONALES (SQLAlchemy) ---
 init_db()
 
-# 2. EL MOLDE AHORA ESPERA TEXTO
+# 2. El inmueble describe la propiedad fisica; las ofertas describen venta/alquiler.
+class OfertaSchema(BaseModel):
+    operacion: str
+    precio: float
+    moneda: Optional[str] = "$ (USD)"
+    agente_id: Optional[int] = None
+    estado: Optional[str] = "Publicado"
+
+
 class InmuebleCreate(BaseModel):
     titulo: str
-    precio_usd: float
+    precio_usd: Optional[float] = 0
     moneda: Optional[str] = "$ (USD)"
     habitaciones: int
     banos: Optional[int] = 1
     ciudad: str
     lat: float
     lng: float
-    operacion: str
+    operacion: Optional[str] = "Venta"
     tipo_inmueble: str
     descripcion: str
-    agente_id: int
-    imagenes: str = ""    # ðŸ”‘ Ahora es texto
-    amenidades: str = ""  # ðŸ”‘ Ahora es texto
-
+    agente_id: Optional[int] = None
+    imagenes: str = ""
+    amenidades: str = ""
+    ofertas: Optional[List[OfertaSchema]] = None
 class AgenteSchema(BaseModel):
     nombre: str
     whatsapp: str
@@ -79,6 +87,141 @@ def get_db():
         db.close()
 
 
+
+def serializar_oferta(oferta: OfertaDB) -> dict:
+    agente = oferta.agente
+    return {
+        "id": str(oferta.id),
+        "operacion": oferta.operacion,
+        "precio": oferta.precio,
+        "moneda": oferta.moneda or "$ (USD)",
+        "estado": oferta.estado or "Publicado",
+        "agente_id": str(oferta.agente_id) if oferta.agente_id else "0",
+        "agente": {
+            "id": str(agente.id),
+            "name": agente.nombre,
+            "whatsapp": agente.whatsapp,
+        } if agente else None,
+    }
+
+
+def obtener_oferta_principal(inmueble: InmuebleDB) -> Optional[OfertaDB]:
+    ofertas_publicadas = [oferta for oferta in inmueble.ofertas if (oferta.estado or "Publicado") == "Publicado"]
+    if ofertas_publicadas:
+        return ofertas_publicadas[0]
+    return inmueble.ofertas[0] if inmueble.ofertas else None
+
+
+def obtener_lista_imagenes(inm: InmuebleDB) -> List[str]:
+    texto_imagenes = str(inm.imagenes) if inm.imagenes else ""
+    return [url.strip() for url in texto_imagenes.split(",") if url.strip()]
+
+
+def obtener_lista_amenidades(inm: InmuebleDB) -> List[str]:
+    texto_amenidades = str(inm.amenidades) if inm.amenidades else ""
+    return [am.strip() for am in texto_amenidades.split(",") if am.strip()]
+
+
+def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
+    inm_dict["banos"] = getattr(inm, "banos", 1) or 1
+    inm_dict["agente_id"] = str(inm.agente_id) if inm.agente_id else "0"
+
+    ofertas = [serializar_oferta(oferta) for oferta in inm.ofertas]
+    inm_dict["ofertas"] = ofertas
+    oferta_principal = obtener_oferta_principal(inm)
+
+    if oferta_principal:
+        inm_dict["operacion"] = oferta_principal.operacion
+        inm_dict["precio_usd"] = oferta_principal.precio
+        inm_dict["moneda"] = oferta_principal.moneda or "$ (USD)"
+        inm_dict["agente_id"] = str(oferta_principal.agente_id) if oferta_principal.agente_id else inm_dict["agente_id"]
+        if oferta_principal.agente:
+            inm_dict["agente"] = {
+                "id": str(oferta_principal.agente.id),
+                "name": oferta_principal.agente.nombre,
+                "whatsapp": oferta_principal.agente.whatsapp,
+            }
+            inm_dict["agente_nombre"] = oferta_principal.agente.nombre
+            inm_dict["agente_whatsapp"] = oferta_principal.agente.whatsapp
+    elif inm.agente:
+        inm_dict["agente"] = {
+            "id": str(inm.agente.id),
+            "name": inm.agente.nombre,
+            "whatsapp": inm.agente.whatsapp,
+        }
+        inm_dict["agente_nombre"] = inm.agente.nombre
+        inm_dict["agente_whatsapp"] = inm.agente.whatsapp
+    else:
+        inm_dict["agente"] = None
+        inm_dict["agente_nombre"] = ""
+        inm_dict["agente_whatsapp"] = ""
+
+    return inm_dict
+
+
+def serializar_inmueble(inm: InmuebleDB) -> dict:
+    inm_dict = inm.__dict__.copy()
+    inm_dict.pop("_sa_instance_state", None)
+    inm_dict["images"] = obtener_lista_imagenes(inm)
+    inm_dict["amenidades"] = obtener_lista_amenidades(inm)
+    inm_dict["detalle_completo"] = True
+    return aplicar_oferta_principal(inm, inm_dict)
+
+
+def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
+    imagenes = obtener_lista_imagenes(inm)
+    inm_dict = {
+        "id": inm.id,
+        "titulo": inm.titulo,
+        "precio_usd": inm.precio_usd,
+        "moneda": inm.moneda,
+        "habitaciones": inm.habitaciones,
+        "banos": getattr(inm, "banos", 1) or 1,
+        "ciudad": inm.ciudad,
+        "lat": inm.lat,
+        "lng": inm.lng,
+        "operacion": inm.operacion,
+        "tipo_inmueble": inm.tipo_inmueble,
+        "amenidades": obtener_lista_amenidades(inm),
+        "images": imagenes[:1],
+        "detalle_completo": False,
+    }
+    return aplicar_oferta_principal(inm, inm_dict)
+
+
+
+def normalizar_ofertas(inmueble: InmuebleCreate) -> List[OfertaSchema]:
+    if inmueble.ofertas:
+        ofertas = [oferta for oferta in inmueble.ofertas if oferta.operacion and oferta.precio is not None]
+        if ofertas:
+            return ofertas
+
+    if not inmueble.agente_id:
+        raise HTTPException(status_code=400, detail="Selecciona un asesor para la oferta.")
+
+    return [OfertaSchema(
+        operacion=inmueble.operacion or "Venta",
+        precio=float(inmueble.precio_usd or 0),
+        moneda=inmueble.moneda or "$ (USD)",
+        agente_id=inmueble.agente_id,
+        estado="Publicado",
+    )]
+
+
+def validar_agentes_de_ofertas(ofertas: List[OfertaSchema], db: Session, current_profile: dict) -> List[tuple[OfertaSchema, AgenteDB]]:
+    validadas = []
+    for oferta in ofertas:
+        if not oferta.agente_id:
+            raise HTTPException(status_code=400, detail="Cada oferta debe tener un asesor asignado.")
+        agente = db.query(AgenteDB).filter(AgenteDB.id == oferta.agente_id).first()
+        if not agente:
+            raise HTTPException(status_code=400, detail="El asesor designado no existe.")
+        if current_profile["role"] == "advisor" and normalize_email(agente.email) != current_profile["email"]:
+            raise HTTPException(status_code=403, detail="Solo puedes publicar ofertas bajo tu propio perfil de asesor.")
+        validadas.append((oferta, agente))
+    return validadas
+
+
 @app.get("/api/auth/me")
 async def obtener_perfil_actual(profile: dict = Depends(get_current_profile)):
     return profile
@@ -95,8 +238,12 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
         
         catalogo = "CATALOGO DE INMUEBLES DISPONIBLES PARA ESTE PASO (Motor Inmobiliario Bolivia):\n"
         for inm in inmuebles:
-            catalogo += f"- ID:{inm.id} | Ref #{inm.id} | {inm.operacion} | {inm.tipo_inmueble} en {inm.ciudad}. {inm.habitaciones} habitaciones. {getattr(inm, 'banos', 1) or 1} banos. Precio: {inm.precio_usd} {inm.moneda}. Descripcion: {inm.descripcion}.\n"
-            
+            ofertas_texto = "; ".join(
+                f"{oferta.operacion}: {oferta.precio} {oferta.moneda or '$ (USD)'}"
+                for oferta in inm.ofertas
+                if (oferta.estado or "Publicado") == "Publicado"
+            ) or f"{inm.operacion}: {inm.precio_usd} {inm.moneda}"
+            catalogo += f"- ID:{inm.id} | Ref #{inm.id} | {inm.tipo_inmueble} en {inm.ciudad}. {inm.habitaciones} habitaciones. {getattr(inm, 'banos', 1) or 1} banos. Ofertas: {ofertas_texto}. Descripcion: {inm.descripcion}.\n"
         if not inmuebles:
             catalogo = "Actualmente no hay inmuebles disponibles dentro de los filtros previos."
 
@@ -118,7 +265,8 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
 
         REGLAS DE FILTRADO:
         1. Filtra por operacion, tipo de inmueble, zona, habitaciones, banos y precio cuando el usuario lo mencione.
-        2. Si el usuario pide un limite de precio, la propiedad debe cumplir matematicamente tras la conversion de moneda.
+        2. Si el usuario quiere alquilar, evalua solo ofertas de Alquiler. Si quiere comprar, evalua solo ofertas de Venta.
+        3. Si el usuario pide un limite de precio, la oferta correcta debe cumplir matematicamente tras la conversion de moneda.
 
         FORMATO DE RESPUESTA:
         Devuelve unica y exclusivamente un arreglo JSON con numeros de ID, por ejemplo [1, 4].
@@ -236,38 +384,44 @@ async def crear_inmueble(
     current_profile: dict = Depends(require_advisor_or_admin),
 ):
     try:
-        # 1. Verificamos que el asesor exista (Mantenemos tu regla de negocio)
-        existe_agente = db.query(AgenteDB).filter(AgenteDB.id == inmueble.agente_id).first()
-        if not existe_agente:
-            raise HTTPException(status_code=400, detail="El asesor designado no existe.")
-        if current_profile["role"] == "advisor" and normalize_email(existe_agente.email) != current_profile["email"]:
-            raise HTTPException(status_code=403, detail="Solo puedes publicar inmuebles bajo tu propio perfil de asesor.")
+        ofertas = normalizar_ofertas(inmueble)
+        ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
+        oferta_principal, agente_principal = ofertas_validadas[0]
 
-        # 2. Guardamos las estructuras JSON directamente en la Base de Datos
         nuevo_inmueble = InmuebleDB(
-            titulo=inmueble.titulo, 
-            precio_usd=inmueble.precio_usd, 
-            moneda=inmueble.moneda, 
+            titulo=inmueble.titulo,
+            precio_usd=oferta_principal.precio,
+            moneda=oferta_principal.moneda,
             habitaciones=inmueble.habitaciones,
             banos=inmueble.banos or 1,
-            ciudad=inmueble.ciudad, 
-            lat=inmueble.lat, 
-            lng=inmueble.lng, 
-            operacion=inmueble.operacion,
-            tipo_inmueble=inmueble.tipo_inmueble, 
+            ciudad=inmueble.ciudad,
+            lat=inmueble.lat,
+            lng=inmueble.lng,
+            operacion=oferta_principal.operacion,
+            tipo_inmueble=inmueble.tipo_inmueble,
             descripcion=inmueble.descripcion,
-            # Guardamos los arrays directamente en las columnas JSON correspondientes
-            amenidades=inmueble.amenidades, 
-            imagenes=inmueble.imagenes, 
-            agente_id=inmueble.agente_id
+            amenidades=inmueble.amenidades,
+            imagenes=inmueble.imagenes,
+            agente_id=agente_principal.id,
         )
-        
+
         db.add(nuevo_inmueble)
+        db.flush()
+
+        for oferta, agente in ofertas_validadas:
+            db.add(OfertaDB(
+                inmueble_id=nuevo_inmueble.id,
+                operacion=oferta.operacion,
+                precio=oferta.precio,
+                moneda=oferta.moneda or "$ (USD)",
+                estado=oferta.estado or "Publicado",
+                agente_id=agente.id,
+            ))
+
         db.commit()
         db.refresh(nuevo_inmueble)
-        
-        return {"status": "success", "message": "Inmueble publicado en la nube con Ã©xito", "id": nuevo_inmueble.id}
-        
+
+        return {"status": "success", "message": "Inmueble publicado en la nube con exito", "id": nuevo_inmueble.id}
     except HTTPException as http_err:
         # Mantenemos los errores controlados (como el del agente inexistente)
         raise http_err
@@ -275,39 +429,24 @@ async def crear_inmueble(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error en el servidor: {str(e)}")
 
+@app.get("/api/inmuebles/resumen")
+async def obtener_inmuebles_resumen(db: Session = Depends(get_db)):
+    inmuebles_db = db.query(InmuebleDB).all()
+    return [serializar_inmueble_resumen(inm) for inm in inmuebles_db]
+
+
 @app.get("/api/inmuebles")
 async def obtener_inmuebles(db: Session = Depends(get_db)):
     inmuebles_db = db.query(InmuebleDB).all()
-    resultado = []
-    
-    for inm in inmuebles_db:
-        inm_dict = inm.__dict__.copy()
-        inm_dict.pop('_sa_instance_state', None)
-        
-        # ðŸ”‘ SEPARAMOS POR COMAS PARA QUE REACT RECIBA LA LISTA PERFECTA
-        texto_imagenes = str(inm.imagenes) if inm.imagenes else ""
-        inm_dict["images"] = [url.strip() for url in texto_imagenes.split(",") if url.strip()]
-        
-        texto_amenidades = str(inm.amenidades) if inm.amenidades else ""
-        inm_dict["amenidades"] = [am.strip() for am in texto_amenidades.split(",") if am.strip()]
-        
-        inm_dict["banos"] = getattr(inm, "banos", 1) or 1
-        inm_dict["agente_id"] = str(inm.agente_id) if inm.agente_id else "0"
-        if inm.agente:
-            inm_dict["agente"] = {
-                "id": str(inm.agente.id),
-                "name": inm.agente.nombre,
-                "whatsapp": inm.agente.whatsapp,
-            }
-            inm_dict["agente_nombre"] = inm.agente.nombre
-            inm_dict["agente_whatsapp"] = inm.agente.whatsapp
-        else:
-            inm_dict["agente"] = None
-            inm_dict["agente_nombre"] = ""
-            inm_dict["agente_whatsapp"] = ""
-        resultado.append(inm_dict)
-        
-    return resultado
+    return [serializar_inmueble(inm) for inm in inmuebles_db]
+
+
+@app.get("/api/inmuebles/{inmueble_id}")
+async def obtener_inmueble_detalle(inmueble_id: int, db: Session = Depends(get_db)):
+    inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id).first()
+    if not inmueble_db:
+        raise HTTPException(status_code=404, detail="Inmueble no encontrado")
+    return serializar_inmueble(inmueble_db)
 
 
 @app.put("/api/inmuebles/{inmueble_id}", status_code=200)
@@ -322,24 +461,35 @@ async def actualizar_inmueble(
         if not inmueble_db:
             raise HTTPException(status_code=404, detail="Inmueble no encontrado")
 
-        existe_agente = db.query(AgenteDB).filter(AgenteDB.id == inmueble.agente_id).first()
-        if not existe_agente:
-            raise HTTPException(status_code=400, detail="El asesor designado no existe.")
+        ofertas = normalizar_ofertas(inmueble)
+        ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
+        oferta_principal, agente_principal = ofertas_validadas[0]
 
         inmueble_db.titulo = inmueble.titulo
-        inmueble_db.precio_usd = inmueble.precio_usd
-        inmueble_db.moneda = inmueble.moneda
+        inmueble_db.precio_usd = oferta_principal.precio
+        inmueble_db.moneda = oferta_principal.moneda
         inmueble_db.habitaciones = inmueble.habitaciones
         inmueble_db.banos = inmueble.banos or 1
         inmueble_db.ciudad = inmueble.ciudad
         inmueble_db.lat = inmueble.lat
         inmueble_db.lng = inmueble.lng
-        inmueble_db.operacion = inmueble.operacion
+        inmueble_db.operacion = oferta_principal.operacion
         inmueble_db.tipo_inmueble = inmueble.tipo_inmueble
         inmueble_db.descripcion = inmueble.descripcion
         inmueble_db.amenidades = inmueble.amenidades
         inmueble_db.imagenes = inmueble.imagenes
-        inmueble_db.agente_id = inmueble.agente_id
+        inmueble_db.agente_id = agente_principal.id
+
+        inmueble_db.ofertas.clear()
+        db.flush()
+        for oferta, agente in ofertas_validadas:
+            inmueble_db.ofertas.append(OfertaDB(
+                operacion=oferta.operacion,
+                precio=oferta.precio,
+                moneda=oferta.moneda or "$ (USD)",
+                estado=oferta.estado or "Publicado",
+                agente_id=agente.id,
+            ))
 
         db.commit()
         db.refresh(inmueble_db)

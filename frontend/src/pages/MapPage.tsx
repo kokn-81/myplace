@@ -1,8 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Property } from "../types";
-// @ts-ignore
-import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker } from "react-map-gl/mapbox";
+import React, { Suspense, lazy, useCallback, useEffect, useState, useMemo } from "react";
+import { Property, PropertyOffer } from "../types";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
@@ -10,6 +7,8 @@ import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, Ch
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { API_BASE, AppRole, fetchAuthProfile } from "../roleAccess";
+
+const MapCanvas = lazy(() => import("../components/MapCanvas"));
 
 
 
@@ -40,6 +39,45 @@ const normalizeMediaLinks = (inm: any): string[] => {
   }
 
   return [];
+};
+
+const mapApiProperty = (inm: any): Property => {
+  const offers: PropertyOffer[] = Array.isArray(inm.ofertas)
+    ? inm.ofertas.map((offer: any) => ({
+        id: offer.id?.toString(),
+        operation: offer.operacion,
+        price: Number(offer.precio ?? 0),
+        currency: offer.moneda || "$ (USD)",
+        status: offer.estado || "Publicado",
+        agentId: offer.agente_id?.toString(),
+        agentName: offer.agente?.name ?? "",
+        agentWhatsapp: offer.agente?.whatsapp ?? "",
+      }))
+    : [];
+  const primaryOffer = offers[0];
+
+  return {
+    id: inm.id.toString(),
+    title: inm.titulo,
+    price: Number(primaryOffer?.price ?? inm.precio_usd ?? 0),
+    rooms: inm.habitaciones,
+    bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
+    area: inm.ciudad,
+    lat: inm.lat,
+    lng: inm.lng,
+    operation: primaryOffer?.operation ?? inm.operacion,
+    type: inm.tipo_inmueble,
+    description: inm.descripcion || "",
+    amenities: Array.isArray(inm.amenidades) ? inm.amenidades : [],
+    images: normalizeMediaLinks(inm),
+    currency: primaryOffer?.currency ?? inm.moneda,
+    exchangeRate: "Oficial",
+    agentId: primaryOffer?.agentId ?? inm.agente_id,
+    agentName: primaryOffer?.agentName ?? inm.agente?.name ?? inm.agente_nombre ?? "",
+    agentWhatsapp: primaryOffer?.agentWhatsapp ?? inm.agente?.whatsapp ?? inm.agente_whatsapp ?? "",
+    offers,
+    detailsLoaded: Boolean(inm.detalle_completo),
+  };
 };
 
 const renderMedia = (url: string, className: string, alt: string, controls = false) => (
@@ -75,10 +113,67 @@ const normalizeWhatsappNumber = (value?: string) => {
   return digits;
 };
 
-const getWhatsappContactUrl = (property: Property) => {
-  const phone = normalizeWhatsappNumber(property.agentWhatsapp);
+type SearchIntent = "rent" | "buy" | null;
+
+const detectSearchIntent = (queries: string[]): SearchIntent => {
+  const text = queries.join(" ").toLowerCase();
+  if (/(^|\s)(alquilar|alquiler|rentar|renta|arriendo|arrendar)(\s|$)/.test(text)) return "rent";
+  if (/(^|\s)(comprar|compra|venta|vender|adquirir)(\s|$)/.test(text)) return "buy";
+  return null;
+};
+
+const normalizeOfferOperation = (operation?: string) => {
+  const value = String(operation || "").toLowerCase();
+  if (value.includes("alquiler") || value.includes("renta") || value.includes("arrendar")) return "rent";
+  if (value.includes("venta") || value.includes("compra") || value.includes("comprar")) return "buy";
+  return null;
+};
+
+const selectPropertyOffer = (property: Property, intent: SearchIntent): PropertyOffer => {
+  const offers = property.offers?.filter((offer) => (offer.status || "Publicado") === "Publicado") ?? [];
+  const matchingOffer = intent ? offers.find((offer) => normalizeOfferOperation(offer.operation) === intent) : undefined;
+  return matchingOffer || offers[0] || {
+    operation: property.operation,
+    price: property.price,
+    currency: property.currency,
+    agentId: property.agentId,
+    agentName: property.agentName,
+    agentWhatsapp: property.agentWhatsapp,
+  };
+};
+
+const getPropertyOffers = (property: Property): PropertyOffer[] => {
+  const offers = property.offers?.filter((offer) => (offer.status || "Publicado") === "Publicado") ?? [];
+  if (offers.length > 0) return offers;
+  return [{
+    operation: property.operation,
+    price: property.price,
+    currency: property.currency,
+    agentId: property.agentId,
+    agentName: property.agentName,
+    agentWhatsapp: property.agentWhatsapp,
+  }];
+};
+
+const hasRentAndSaleOffers = (property: Property) => {
+  const offerTypes = getPropertyOffers(property).map((offer) => normalizeOfferOperation(offer.operation));
+  return offerTypes.includes("rent") && offerTypes.includes("buy");
+};
+
+const getCarouselOfferLabel = (property: Property, offer: PropertyOffer, intent: SearchIntent) => {
+  if (!intent && hasRentAndSaleOffers(property)) return "Alquiler / Venta";
+  return offer.operation;
+};
+
+const shouldShowCarouselPrice = (property: Property, intent: SearchIntent) => {
+  return Boolean(intent) || getPropertyOffers(property).length === 1;
+};
+
+const getWhatsappContactUrl = (property: Property, offer?: PropertyOffer) => {
+  const phone = normalizeWhatsappNumber(offer?.agentWhatsapp || property.agentWhatsapp);
   if (!phone) return "";
-  const message = `Hola, quisiera recibir informacion sobre el inmueble #${property.id} - ${property.title}.`;
+  const operationText = offer?.operation ? ` (${offer.operation})` : "";
+  const message = `Hola, quisiera recibir informacion sobre el inmueble #${property.id}${operationText} - ${property.title}.`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 };
 
@@ -90,6 +185,21 @@ export default function MapPage() {
   const [loginError, setLoginError] = useState("");
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+
+  const selectProperty = useCallback(async (property: Property) => {
+    setSelectedProperty(property);
+    if (property.detailsLoaded) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/inmuebles/${property.id}`);
+      if (!res.ok) return;
+      const detail = mapApiProperty(await res.json());
+      setProperties((current) => current.map((item) => (item.id === detail.id ? detail : item)));
+      setSelectedProperty(detail);
+    } catch (error) {
+      console.error("Error cargando detalle del inmueble:", error);
+    }
+  }, []);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [galleryDirection, setGalleryDirection] = useState(1);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -99,13 +209,19 @@ export default function MapPage() {
     localStorage.setItem('theme', dark ? 'dark' : 'light');
     return dark;
   });
+  const [isThemeTransitioning, setIsThemeTransitioning] = useState(false);
 
   const applyTheme = (dark: boolean) => {
+    setIsThemeTransitioning(true);
     document.documentElement.classList.add('theme-switching');
     document.documentElement.classList.toggle('dark', dark);
     localStorage.setItem('theme', dark ? 'dark' : 'light');
     setIsDarkMode(dark);
-    window.setTimeout(() => document.documentElement.classList.remove('theme-switching'), 90);
+
+    window.setTimeout(() => {
+      document.documentElement.classList.remove('theme-switching');
+      setIsThemeTransitioning(false);
+    }, 420);
   };
 
   useEffect(() => {
@@ -152,6 +268,7 @@ export default function MapPage() {
   const [isAsking, setIsAsking] = useState(false);
   const [aiFilteredIds, setAiFilteredIds] = useState<string[] | null>(null);
   const [aiFilterHistory, setAiFilterHistory] = useState<string[]>([]);
+  const [activeSearchIntent, setActiveSearchIntent] = useState<SearchIntent>(null);
 
 
   // [OPALO-BRIDGE] Lectura Consolidada
@@ -159,33 +276,11 @@ export default function MapPage() {
     const fetchDatos = async () => {
       try {
 
-        const resInmuebles = await fetch(`${API_BASE}/inmuebles`);
+        const resInmuebles = await fetch(`${API_BASE}/inmuebles/resumen`);
         if (!resInmuebles.ok) throw new Error("Fallo en la conexion al motor Python");
 
         const datosPython = await resInmuebles.json();
-
-        const propiedadesMapeadas: Property[] = datosPython.map((inm: any) => ({
-          id: inm.id.toString(),
-          title: inm.titulo,
-          price: inm.precio_usd,
-          rooms: inm.habitaciones,
-          bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
-          area: inm.ciudad,
-          lat: inm.lat,
-          lng: inm.lng,
-          operation: inm.operacion,
-          type: inm.tipo_inmueble,
-          description: inm.descripcion,
-          amenities: Array.isArray(inm.amenidades) ? inm.amenidades : [],
-          images: normalizeMediaLinks(inm),
-          currency: inm.moneda,
-          exchangeRate: "Oficial",
-          agentId: inm.agente_id,
-          agentName: inm.agente?.name ?? inm.agente_nombre ?? "",
-          agentWhatsapp: inm.agente?.whatsapp ?? inm.agente_whatsapp ?? "",
-        }));
-
-        setProperties(propiedadesMapeadas);
+        setProperties(datosPython.map(mapApiProperty));
       } catch (error) {
         console.error("Error cargando el catalogo:", error);
       }
@@ -210,6 +305,7 @@ export default function MapPage() {
       return;
     }
 
+    const queryIntent = detectSearchIntent([query]);
     setIsAsking(true);
 
     try {
@@ -231,11 +327,13 @@ export default function MapPage() {
         const stringIds = data.ids.map((id: number | string) => id.toString());
         setAiFilteredIds(stringIds);
         setAiFilterHistory((current) => [...current, query]);
+        if (queryIntent) setActiveSearchIntent(queryIntent);
         setGeminiQuery("");
         setCurrentIndex(0);
       } else {
         setAiFilteredIds([]);
         setAiFilterHistory((current) => [...current, query]);
+        if (queryIntent) setActiveSearchIntent(queryIntent);
       }
     } catch (err) {
       console.error("Fallo critico en motor semantico:", err);
@@ -250,6 +348,9 @@ export default function MapPage() {
     if (aiFilteredIds !== null && !aiFilteredIds.includes(p.id)) return false;
     return true;
   }), [properties, aiFilteredIds]);
+
+  const searchIntent = useMemo(() => activeSearchIntent ?? detectSearchIntent(aiFilterHistory), [activeSearchIntent, aiFilterHistory]);
+  const selectedDisplayOffer = selectedProperty ? selectPropertyOffer(selectedProperty, searchIntent) : null;
 
   useEffect(() => {
     setGalleryIndex(0);
@@ -289,25 +390,6 @@ export default function MapPage() {
     }
   }, [carouselStep, currentIndex, filteredProperties.length]);
 
-  const renderedMarkers = useMemo(() => filteredProperties.map(p => (
-    <Marker
-  key={p.id}
-  longitude={p.lng}
-  latitude={p.lat}
-  onClick={(e) => {
-    e.originalEvent.stopPropagation();
-    setSelectedProperty(p);
-  }}
->
-  {/* MARCADOR IVORY WHITE (Minimalista) */}
-  <div className="w-5 h-5 md:w-6 md:h-6 bg-[var(--accent-hover)] dark:bg-[#FAF8F5] rounded-full border-[2.5px] border-[var(--color-chocolate)] dark:border-[var(--border-soft)] shadow-[0_0_0_4px_rgba(248,243,231,0.85),0_8px_22px_rgba(58,33,25,0.28)] dark:shadow-[0_0_15px_rgba(250,248,245,0.4)] cursor-pointer hover:scale-125 hover:bg-[var(--accent-secondary)] dark:hover:bg-[var(--accent-main)] hover:border-[var(--color-chocolate)] dark:hover:border-white transition-all duration-300 flex items-center justify-center group relative z-10">
-
-    {/* Nucleo oscuro para darle profundidad */}
-    <div className="w-1.5 h-1.5 bg-[var(--color-ivory)] dark:bg-[var(--surface-panel)] rounded-full group-hover:bg-white transition-colors" />
-
-  </div>
-</Marker>
-  )), [filteredProperties, selectedProperty]);
 
   return (
     // CONTENEDOR MAESTRO: 100% Pantalla
@@ -315,14 +397,32 @@ export default function MapPage() {
 
       {/* CAPA 0: EL MAPA DE FONDO */}
       <main className="absolute inset-0 z-0">
-        <Map
-          mapboxAccessToken={MAPBOX_TOKEN}
-          initialViewState={{ longitude: -63.18, latitude: -17.784, zoom: 13 }}
-          style={{ width: '100%', height: '100%' }}
-          mapStyle={isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
+        <Suspense
+          fallback={
+            <div className="flex h-full w-full items-center justify-center bg-[var(--surface-page)] text-[var(--accent-main)] dark:bg-[var(--surface-panel)]">
+              <div className="h-8 w-8 rounded-full border-2 border-[var(--accent-main)] border-t-transparent animate-spin" />
+            </div>
+          }
         >
-          {renderedMarkers}
-        </Map>
+          <MapCanvas
+            mapboxToken={MAPBOX_TOKEN}
+            properties={filteredProperties}
+            isDarkMode={isDarkMode}
+            onSelectProperty={selectProperty}
+          />
+        </Suspense>
+        <AnimatePresence>
+          {isThemeTransitioning && (
+            <motion.div
+              key="theme-transition-veil"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeInOut" }}
+              className="theme-transition-veil pointer-events-none absolute inset-0 z-10 bg-[var(--surface-page)] dark:bg-[var(--surface-panel)]"
+            />
+          )}
+        </AnimatePresence>
       </main>
 
       {/* BOTONES SUPERIORES (Laterales) */}
@@ -468,7 +568,7 @@ export default function MapPage() {
       </div>
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
-<div className="absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1080px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
+<div className="absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
 
   <button
     onClick={() => setCurrentIndex(prev => Math.max(0, prev - carouselStep))}
@@ -479,17 +579,19 @@ export default function MapPage() {
   </button>
 
   {/* Contenedor central expandido */}
-  <div className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-6 md:px-0">
+  <div className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0">
     {visibleProperties.map((p) => {
       const coverUrl = p.images[0];
       const isCollection = isCloudinaryCollectionUrl(coverUrl);
+      const displayOffer = selectPropertyOffer(p, searchIntent);
+      const showCarouselPrice = shouldShowCarouselPrice(p, searchIntent);
 
       return (
       <div
         key={p.id}
-        onClick={() => setSelectedProperty(p)}
-        // Tarjetas mas anchas (460px) y mas bajas (210px)
-        className="flex h-[210px] w-full max-w-[430px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-all duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[460px] md:max-w-none"
+        onClick={() => selectProperty(p)}
+        // Tarjetas compactas para que el borde respire completo
+        className="flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-all duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none"
       >
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
         <div className="relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
@@ -528,9 +630,16 @@ export default function MapPage() {
             {p.title}
           </h3>
 
-          <span className="mb-3 block text-sm font-bold text-[var(--accent-main)] md:mb-4 md:text-base">
-            {formatPropertyPrice(p.price, p.currency)}
-          </span>
+          <div className={`mb-3 flex min-w-0 items-baseline md:mb-4 ${showCarouselPrice ? "justify-between gap-3" : ""}`}>
+            <span className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] md:text-xs">
+              {getCarouselOfferLabel(p, displayOffer, searchIntent)}
+            </span>
+            {showCarouselPrice && (
+              <span className="shrink-0 text-sm font-bold text-[var(--accent-main)] md:text-base">
+                {formatPropertyPrice(displayOffer.price, displayOffer.currency)}
+              </span>
+            )}
+          </div>
 
           <div className="mt-auto grid grid-cols-2 gap-x-2 gap-y-2 border-t border-[var(--border-soft)] pt-3 text-[9px] font-medium uppercase tracking-wider text-[var(--text-muted)] dark:border-[var(--border-soft)] dark:text-[var(--text-muted)] md:gap-x-4 md:text-[10px]">
              <div className="flex min-w-0 items-center gap-2">
@@ -691,9 +800,17 @@ export default function MapPage() {
                   <h2 className="text-3xl md:text-5xl font-serif text-[var(--text-main)] dark:text-[var(--text-main)] leading-tight mb-4 tracking-wide">
                     {selectedProperty.title}
                   </h2>
-                  <p className="text-2xl text-[var(--accent-main)] font-medium mb-10">
-                    {formatPropertyPrice(selectedProperty.price, selectedProperty.currency)}
-                  </p>
+                  <div className="mb-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {getPropertyOffers(selectedProperty).map((offer) => {
+                      const isActiveOffer = selectedDisplayOffer && normalizeOfferOperation(offer.operation) === normalizeOfferOperation(selectedDisplayOffer.operation);
+                      return (
+                        <div key={offer.id || offer.operation} className={`rounded-lg border px-4 py-3 shadow-sm ${isActiveOffer ? "border-[var(--accent-main)] bg-[var(--accent-main)]/10" : "border-[var(--border-soft)] bg-[var(--surface-panel)]/65 dark:bg-[var(--surface-control)]/45"}`}>
+                          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">{offer.operation}</div>
+                          <div className="mt-1 text-xl font-semibold text-[var(--accent-main)]">{formatPropertyPrice(offer.price, offer.currency)}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
                   {/* Bloque de Descripcion */}
                   <div className="mb-12">
@@ -742,6 +859,17 @@ export default function MapPage() {
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Building size={16}/> Referencia</span>
                            <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">#{selectedProperty.id}</span>
                         </div>
+                        <div className="border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
+                           <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Sparkles size={16}/> Ofertas</span>
+                           <div className="mt-3 space-y-2">
+                             {getPropertyOffers(selectedProperty).map((offer) => (
+                               <div key={offer.id || offer.operation} className="flex items-center justify-between gap-3 rounded-lg bg-[var(--surface-panel-muted)] px-3 py-2 text-sm dark:bg-[var(--surface-control)]/45">
+                                 <span className="font-semibold text-[var(--text-main)] dark:text-[var(--text-main)]">{offer.operation}</span>
+                                 <span className="shrink-0 font-bold text-[var(--accent-main)]">{formatPropertyPrice(offer.price, offer.currency)}</span>
+                               </div>
+                             ))}
+                           </div>
+                        </div>
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Bed size={16}/> Habitaciones</span>
                            <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.rooms}</span>
@@ -760,9 +888,9 @@ export default function MapPage() {
                         </div>
                      </div>
 
-                     {getWhatsappContactUrl(selectedProperty) ? (
+                     {getWhatsappContactUrl(selectedProperty, selectedDisplayOffer || undefined) ? (
                        <a
-                         href={getWhatsappContactUrl(selectedProperty)}
+                         href={getWhatsappContactUrl(selectedProperty, selectedDisplayOffer || undefined)}
                          target="_blank"
                          rel="noopener noreferrer"
                          className="block w-full rounded-lg bg-[var(--accent-main)] py-4 mt-8 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#2F241D] shadow-lg transition-colors hover:bg-[var(--accent-hover)] hover:text-white"

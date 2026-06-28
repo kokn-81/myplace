@@ -64,6 +64,29 @@ export default function AdvisorDashboard() {
     [catalog, currentAgent?.id]
   );
   const defaultZones = ["Norte", "Sur", "Este", "Oeste", "Equipetrol", "Urubo", "Centro"];
+  const operationOptions = [
+    { value: "Venta", label: "Venta" },
+    { value: "Alquiler", label: "Alquiler" },
+    { value: "Alquiler y Venta", label: "Alquiler y Venta" },
+    { value: "Inversion", label: "Inversion" },
+  ];
+
+  const buildOffersPayload = (fd: FormData, operation: string, agentId: number, fallbackCurrency: string) => {
+    if (operation === "Alquiler y Venta") {
+      return [
+        { operacion: "Alquiler", precio: Number(fd.get("rentPrice")) || 0, moneda: String(fd.get("rentCurrency") || "Bs"), agente_id: agentId, estado: "Publicado" },
+        { operacion: "Venta", precio: Number(fd.get("salePrice")) || 0, moneda: String(fd.get("saleCurrency") || "$ (USD)"), agente_id: agentId, estado: "Publicado" },
+      ].filter((offer) => offer.precio > 0);
+    }
+    return [{ operacion: operation, precio: Number(fd.get("price")) || 0, moneda: fallbackCurrency, agente_id: agentId, estado: "Publicado" }];
+  };
+
+  const formatOffersSummary = (property: any) => {
+    const offers = Array.isArray(property?.ofertas) && property.ofertas.length > 0
+      ? property.ofertas
+      : [{ operacion: property.operacion, precio: property.precio_usd, moneda: property.moneda }];
+    return offers.map((offer: any) => `${offer.operacion}: ${offer.moneda || "$ (USD)"} ${Number(offer.precio || 0).toLocaleString("es-BO")}`).join(" · ");
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -198,21 +221,31 @@ export default function AdvisorDashboard() {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const agentId = Number(currentAgent.id);
+    const offers = buildOffersPayload(fd, formOperation, agentId, formCurrency);
+    const primaryOffer = offers[0];
+    if (offers.length === 0) {
+      setErrorMsg("Agrega al menos una oferta con precio.");
+      setIsUploading(false);
+      return;
+    }
+
     const payload = {
       titulo: (fd.get("title") as string) || "Propiedad sin titulo",
-      precio_usd: Number(fd.get("price")) || 0,
-      moneda: formCurrency,
+      precio_usd: primaryOffer.precio,
+      moneda: primaryOffer.moneda,
       habitaciones: Number(fd.get("rooms")) || 0,
       banos: Number(fd.get("bathrooms")) || 1,
       ciudad: (fd.get("area") as string) || formZone || "Santa Cruz",
       lat,
       lng,
-      operacion: formOperation,
+      operacion: primaryOffer.operacion,
       tipo_inmueble: formType,
       descripcion: (fd.get("description") as string) || "Sin descripcion.",
-      agente_id: Number(currentAgent.id),
+      agente_id: agentId,
       imagenes: imageLinks || (fd.get("imageLinks") as string),
       amenidades: amenities.join(","),
+      ofertas: offers,
     };
 
     try {
@@ -337,7 +370,7 @@ export default function AdvisorDashboard() {
 
           <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
-            <CustomSelect value={formOperation} onChange={setFormOperation} placeholder="Operacion" options={[{ value: "Venta", label: "Venta" }, { value: "Alquiler", label: "Alquiler" }, { value: "Inversion", label: "Inversion" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+            <CustomSelect value={formOperation} onChange={setFormOperation} placeholder="Operacion" options={operationOptions} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <CustomSelect value={formType} onChange={setFormType} placeholder="Tipo" options={[{ value: "Departamento", label: "Departamento" }, { value: "Casa", label: "Casa" }, { value: "Terreno", label: "Terreno" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <input name="rooms" type="number" required placeholder="Habitaciones" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
             <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="Baños" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
@@ -351,11 +384,38 @@ export default function AdvisorDashboard() {
             )}
           </div>
 
-          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--accent-main)]/50 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold mb-2">Datos Monetarios</h3>
-            <CustomSelect value={formCurrency} onChange={setFormCurrency} placeholder="Moneda" options={[{ value: "$ (USD)", label: "$ (USD)" }, { value: "Bs", label: "Bs" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
-            <input name="price" type="number" required placeholder="Precio" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <CustomSelect value={formExchangeRate} onChange={setFormExchangeRate} placeholder="T/C" options={[{ value: "Oficial", label: "Oficial" }, { value: "Mercado Paralelo", label: "Mercado Paralelo" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--accent-main)]/50 grid grid-cols-1 md:grid-cols-5 gap-4">
+            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold mb-2">Ofertas Comerciales</h3>
+            {formOperation === "Alquiler y Venta" ? (
+              <>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Moneda Alquiler</label>
+                  <select name="rentCurrency" defaultValue="Bs" className="h-10 w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"><option>Bs</option><option>$ (USD)</option></select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Precio Alquiler</label>
+                  <input name="rentPrice" type="number" required placeholder="Precio alquiler" className="h-10 w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Moneda Venta</label>
+                  <select name="saleCurrency" defaultValue="$ (USD)" className="h-10 w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"><option>$ (USD)</option><option>Bs</option></select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Precio Venta</label>
+                  <input name="salePrice" type="number" required placeholder="Precio venta" className="h-10 w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">T/C (Cambio)</label>
+                  <CustomSelect value={formExchangeRate} onChange={setFormExchangeRate} placeholder="T/C" options={[{ value: "Oficial", label: "Oficial" }, { value: "Mercado Paralelo", label: "Mercado Paralelo" }]} triggerClassName="h-10 bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+                </div>
+              </>
+            ) : (
+              <>
+                <CustomSelect value={formCurrency} onChange={setFormCurrency} placeholder="Moneda" options={[{ value: "$ (USD)", label: "$ (USD)" }, { value: "Bs", label: "Bs" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+                <input name="price" type="number" required placeholder="Precio" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                <CustomSelect value={formExchangeRate} onChange={setFormExchangeRate} placeholder="T/C" options={[{ value: "Oficial", label: "Oficial" }, { value: "Mercado Paralelo", label: "Mercado Paralelo" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+              </>
+            )}
           </div>
 
           <div>
@@ -399,8 +459,8 @@ export default function AdvisorDashboard() {
                   <tr key={inm.id} className="border-b border-[var(--border-soft)] last:border-0">
                     <td className="px-4 py-3 font-mono font-bold text-[var(--color-chocolate)] dark:text-[var(--accent-main)]">#{inm.id}</td>
                     <td className="px-4 py-3 font-medium text-[var(--text-main)]">{inm.titulo}</td>
-                    <td className="px-4 py-3">{inm.operacion}</td>
-                    <td className="px-4 py-3">{inm.moneda} {inm.precio_usd}</td>
+                    <td className="px-4 py-3">{inm.ofertas?.length > 1 ? "Alquiler y Venta" : inm.operacion}</td>
+                    <td className="px-4 py-3">{formatOffersSummary(inm)}</td>
                   </tr>
                 ))}
                 {advisorCatalog.length === 0 && <tr><td colSpan={4} className="text-center py-6 italic text-stone-400">Todavia no publicaste inmuebles.</td></tr>}

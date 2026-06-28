@@ -12,6 +12,7 @@ class AgenteDB(Base):
     whatsapp = Column(String)
     email = Column(String, index=True, nullable=True, unique=True)
     inmuebles = relationship("InmuebleDB", back_populates="agente", cascade="all, delete-orphan")
+    ofertas = relationship("OfertaDB", back_populates="agente", cascade="all, delete-orphan")
 
 
 class InmuebleDB(Base):
@@ -33,6 +34,22 @@ class InmuebleDB(Base):
     imagenes = Column(String)
     agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=False)
     agente = relationship("AgenteDB", back_populates="inmuebles")
+    ofertas = relationship("OfertaDB", back_populates="inmueble", cascade="all, delete-orphan")
+
+
+class OfertaDB(Base):
+    __tablename__ = "ofertas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    inmueble_id = Column(Integer, ForeignKey("inmuebles.id", ondelete="CASCADE"), nullable=False, index=True)
+    operacion = Column(String, index=True, nullable=False)
+    precio = Column(Float, nullable=False, default=0)
+    moneda = Column(String, default="$ (USD)")
+    estado = Column(String, default="Publicado", index=True)
+    agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=False, index=True)
+
+    inmueble = relationship("InmuebleDB", back_populates="ofertas")
+    agente = relationship("AgenteDB", back_populates="ofertas")
 
 
 class UsuarioAutorizadoDB(Base):

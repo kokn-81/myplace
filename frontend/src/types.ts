@@ -1,3 +1,14 @@
+export interface PropertyOffer {
+  id?: string;
+  operation: "Venta" | "Alquiler" | "Inversion" | "Inversión";
+  price: number;
+  currency: string;
+  status?: string;
+  agentId?: string;
+  agentName?: string;
+  agentWhatsapp?: string;
+}
+
 export interface Property {
   id: string;
   title: string;
@@ -15,8 +26,10 @@ export interface Property {
   agentId?: string;
   agentName?: string;
   agentWhatsapp?: string;
+  offers?: PropertyOffer[];
   amenities: string[];
   images: string[];
+  detailsLoaded?: boolean;
   createdAt?: number;
 }
 

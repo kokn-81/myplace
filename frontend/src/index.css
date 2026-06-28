@@ -74,8 +74,7 @@
   }
 
 
-  .theme-switching,
-  .theme-switching * {
+  .theme-switching :not(.theme-transition-veil):not(.theme-transition-veil *) {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
   }
