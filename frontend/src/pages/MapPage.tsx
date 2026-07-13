@@ -579,20 +579,29 @@ export default function MapPage() {
   </button>
 
   {/* Contenedor central expandido */}
-  <div className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0">
-    {visibleProperties.map((p) => {
-      const coverUrl = p.images[0];
-      const isCollection = isCloudinaryCollectionUrl(coverUrl);
-      const displayOffer = selectPropertyOffer(p, searchIntent);
-      const showCarouselPrice = shouldShowCarouselPrice(p, searchIntent);
+  <motion.div
+    layout
+    className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
+  >
+    <AnimatePresence mode="popLayout" initial={false}>
+      {visibleProperties.map((p, index) => {
+        const coverUrl = p.images[0];
+        const isCollection = isCloudinaryCollectionUrl(coverUrl);
+        const displayOffer = selectPropertyOffer(p, searchIntent);
+        const showCarouselPrice = shouldShowCarouselPrice(p, searchIntent);
 
-      return (
-      <div
-        key={p.id}
-        onClick={() => selectProperty(p)}
-        // Tarjetas compactas para que el borde respire completo
-        className="flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-all duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none"
-      >
+        return (
+        <motion.div
+          layout
+          key={p.id}
+          initial={{ opacity: 0, x: 42, y: 10, scale: 0.96 }}
+          animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+          exit={{ opacity: 0, x: -34, y: 8, scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9, delay: index * 0.035 }}
+          onClick={() => selectProperty(p)}
+          // Tarjetas compactas para que el borde respire completo
+          className="group flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-shadow duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none"
+        >
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
         <div className="relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
           {coverUrl && !isCollection ? (
@@ -656,9 +665,10 @@ export default function MapPage() {
              </div>
           </div>
         </div>
-      </div>
-    )})}
-  </div>
+        </motion.div>
+      )})}
+    </AnimatePresence>
+  </motion.div>
 
   <button
     onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep))}
