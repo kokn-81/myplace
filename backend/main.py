@@ -8,11 +8,13 @@ import unicodedata
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
-from models import AgenteDB, InmuebleDB, OfertaDB
+from models import AgenteDB, InmuebleDB, OfertaDB, SearchLogDB
+from nia_search import build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -66,6 +68,14 @@ class InmuebleCreate(BaseModel):
     operacion: Optional[str] = "Venta"
     tipo_inmueble: str
     estado: Optional[str] = "Borrador"
+    superficie_m2: Optional[float] = None
+    zona: Optional[str] = None
+    direccion: Optional[str] = None
+    piso: Optional[str] = None
+    amoblado: Optional[bool] = None
+    acepta_mascotas: Optional[bool] = None
+    parqueos: Optional[int] = None
+    baulera: Optional[bool] = None
     descripcion: str
     agente_id: Optional[int] = None
     imagenes: str = ""
@@ -161,6 +171,25 @@ def limpiar_amenidades_extraidas(data: dict) -> list[str]:
         resultado.append(texto)
     return resultado
 
+
+
+def inferir_bool_por_amenidad(amenidades: str, *terminos: str) -> bool:
+    texto = normalizar_texto_simple(amenidades)
+    return any(termino in texto for termino in terminos)
+
+
+def aplicar_campos_busqueda_inmueble(inmueble_db: InmuebleDB, inmueble: InmuebleCreate) -> None:
+    amenidades = inmueble.amenidades or ""
+    inmueble_db.superficie_m2 = inmueble.superficie_m2
+    inmueble_db.zona = (inmueble.zona or inmueble.ciudad or "").strip() or None
+    inmueble_db.direccion = (inmueble.direccion or "").strip() or None
+    inmueble_db.piso = (inmueble.piso or "").strip() or None
+    inmueble_db.amoblado = bool(inmueble.amoblado) if inmueble.amoblado is not None else inferir_bool_por_amenidad(amenidades, "amoblad", "equipad")
+    inmueble_db.acepta_mascotas = bool(inmueble.acepta_mascotas) if inmueble.acepta_mascotas is not None else inferir_bool_por_amenidad(amenidades, "mascota", "pet friendly")
+    inmueble_db.parqueos = max(int(inmueble.parqueos or 0), 1 if inferir_bool_por_amenidad(amenidades, "parqueo", "garaje", "garage", "estacionamiento") else 0)
+    inmueble_db.baulera = bool(inmueble.baulera) if inmueble.baulera is not None else inferir_bool_por_amenidad(amenidades, "baulera", "deposito")
+    inmueble_db.amenidades_normalizadas = normalize_amenities_text(amenidades)
+    inmueble_db.search_text = build_property_search_text(inmueble_db)
 
 def construir_faltantes_extraccion(data: dict) -> tuple[list[str], list[str]]:
     faltantes: list[str] = []
@@ -341,81 +370,21 @@ def validar_agentes_de_ofertas(ofertas: List[OfertaSchema], db: Session, current
 async def obtener_perfil_actual(profile: dict = Depends(get_current_profile)):
     return profile
 
-# --- 4. ENDPOINT NEURONAL (O.P.A.L.O.) ---
+# --- 4. ENDPOINT NIA: router eficiente por capas ---
 @app.post("/api/chat", status_code=200)
 async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)):
     try:
-        # Extraccion y normalizacion del catalogo en tiempo real.
-        query = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado")
-        if peticion.candidate_ids is not None:
-            query = query.filter(InmuebleDB.id.in_(peticion.candidate_ids))
-        inmuebles = query.all()
-        
-        catalogo = "CATALOGO DE INMUEBLES DISPONIBLES PARA ESTE PASO (Motor Inmobiliario Bolivia):\n"
-        for inm in inmuebles:
-            ofertas_texto = "; ".join(
-                f"{oferta.operacion}: {oferta.precio} {oferta.moneda or '$ (USD)'}"
-                for oferta in inm.ofertas
-                if (oferta.estado or "Publicado") == "Publicado"
-            ) or f"{inm.operacion}: {inm.precio_usd} {inm.moneda}"
-            catalogo += f"- ID:{inm.id} | Ref #{inm.id} | {inm.tipo_inmueble} en {inm.ciudad}. {inm.habitaciones} habitaciones. {getattr(inm, 'banos', 1) or 1} banos. Ofertas: {ofertas_texto}. Descripcion: {inm.descripcion}.\n"
-        if not inmuebles:
-            catalogo = "Actualmente no hay inmuebles disponibles dentro de los filtros previos."
-
-        # Prompt de IngenierÃ­a Estricta con Inteligencia Financiera Local
-        prompt_maestro = f"""
-        Actua como un motor de consultas semantico de alta precision para el mercado inmobiliario en Bolivia.
-        Tu objetivo es leer el catalogo y devolver los IDs que cumplen estrictamente con la peticion del usuario.
-        Si el usuario pregunta por una referencia como "#45", "inmueble 45" o "ID 45", debes devolver ese ID si existe en el catalogo.
-
-        CATALOGO DISPONIBLE:
-        {catalogo}
-
-        PETICION DEL USUARIO: "{peticion.mensaje}"
-
-        CONTEXTO ECONOMICO (Bolivia):
-        - Revisa si cada precio esta en "$ (USD)" o en "Bs".
-        - Si el usuario busca en Bolivianos y la propiedad esta en dolares, usa 1 USD = 6.96 Bs para evaluar.
-        - Si el usuario busca en dolares y la propiedad esta en Bolivianos, haz la conversion inversa.
-
-        REGLAS DE FILTRADO:
-        1. Filtra por operacion, tipo de inmueble, zona, habitaciones, banos y precio cuando el usuario lo mencione.
-        2. Si el usuario quiere alquilar, evalua solo ofertas de Alquiler. Si quiere comprar, evalua solo ofertas de Venta.
-        3. Si el usuario pide un limite de precio, la oferta correcta debe cumplir matematicamente tras la conversion de moneda.
-
-        FORMATO DE RESPUESTA:
-        Devuelve unica y exclusivamente un arreglo JSON con numeros de ID, por ejemplo [1, 4].
-        Si ninguna propiedad coincide, devuelve [].
-        """
-
-        if cliente_ia is None:
-            raise HTTPException(status_code=500, detail="Falta GEMINI_API_KEY en el backend.")
-
-        # Invocacion del modelo
-        respuesta = cliente_ia.models.generate_content(
-            model=MODELO_ACTIVO,
-            contents=prompt_maestro
+        resultado = efficient_property_search(
+            db=db,
+            message=peticion.mensaje,
+            candidate_ids=peticion.candidate_ids,
+            llm_client=cliente_ia,
+            llm_model=MODELO_ACTIVO,
         )
-        
-        # --- BLINDAJE DE PRODUCCIÃ“N ---
-        texto_limpio = respuesta.text.replace('```json', '').replace('```', '').strip()
-        
-        try:
-            # Intentamos leer como JSON estricto
-            ids_filtrados = json.loads(texto_limpio)
-            # Verificamos que realmente sea una lista
-            if not isinstance(ids_filtrados, list):
-                ids_filtrados = []
-        except json.JSONDecodeError:
-            # Si la IA desobedece y devuelve texto, asumimos 0 coincidencias y no rompemos el servidor
-            print(f"âš ï¸ Advertencia: La IA no devolviÃ³ JSON puro. Texto recibido: {texto_limpio}")
-            ids_filtrados = []
-        
-        return {"status": "success", "ids": ids_filtrados}
-        
+        return {"status": "success", **resultado}
     except Exception as e:
-        print(f"ðŸ”¥ ERROR INTERNO DE IA: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Fallo en el motor de filtrado: {str(e)}")
+        print(f"NIA search error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Fallo en el motor de busqueda: {str(e)}")
 
 
 @app.post("/api/inmuebles/extraer-datos", status_code=200)
@@ -447,6 +416,14 @@ async def extraer_datos_inmueble(
         "habitaciones": number | null,
         "banos": number | null,
         "ciudad": string | null,
+        "superficie_m2": number | null,
+        "zona": string | null,
+        "direccion": string | null,
+        "piso": string | null,
+        "amoblado": boolean | null,
+        "acepta_mascotas": boolean | null,
+        "parqueos": number | null,
+        "baulera": boolean | null,
         "lat": number | null,
         "lng": number | null,
         "descripcion": string | null,
@@ -467,6 +444,7 @@ async def extraer_datos_inmueble(
     - Parrafo 1: tipo de inmueble, operacion, edificio o zona, y ubicacion si esta disponible.
     - Parrafo 2: superficie, distribucion, dormitorios, banos y caracteristicas internas relevantes.
     - Parrafo 3: areas comunes, experiencia del edificio o valor para vivir, invertir o generar renta solo si el texto lo respalda.
+    - Extrae superficie_m2, zona, direccion, piso, amoblado, acepta_mascotas, parqueos y baulera cuando el texto lo diga; si no aparece, usa null.
     - En "amenidades" incluye solo beneficios concretos de la propiedad o edificio. No incluyas ciudad, zona, edificio, direccion, precio, superficie, habitaciones, banos, operacion ni datos generales.
     - Las imagenes no se extraen aqui: ya se suben por Cloudinary en el admin.
     - La propiedad siempre queda como Borrador.
@@ -500,6 +478,32 @@ async def extraer_datos_inmueble(
         "questions": list(dict.fromkeys(preguntas_finales)),
     }
 
+
+@app.get("/api/admin/nia/metrics")
+async def obtener_metricas_nia(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
+    total = db.query(func.count(SearchLogDB.id)).scalar() or 0
+    llm_count = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.llm_used == True).scalar() or 0  # noqa: E712
+    cache_hits = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.cache_hit == True).scalar() or 0  # noqa: E712
+    avg_latency = db.query(func.avg(SearchLogDB.latency_ms)).scalar() or 0
+    by_layer_rows = db.query(SearchLogDB.layer_used, func.count(SearchLogDB.id)).group_by(SearchLogDB.layer_used).all()
+    top_query_rows = (
+        db.query(SearchLogDB.query_normalized, func.count(SearchLogDB.id))
+        .group_by(SearchLogDB.query_normalized)
+        .order_by(func.count(SearchLogDB.id).desc())
+        .limit(8)
+        .all()
+    )
+
+    return {
+        "total_searches": total,
+        "llm_searches": llm_count,
+        "llm_percentage": round((llm_count / total) * 100, 2) if total else 0,
+        "cache_hits": cache_hits,
+        "cache_hit_percentage": round((cache_hits / total) * 100, 2) if total else 0,
+        "avg_latency_ms": round(float(avg_latency), 2),
+        "by_layer": {layer or "unknown": count for layer, count in by_layer_rows},
+        "top_queries": [{"query": query, "count": count} for query, count in top_query_rows],
+    }
 # --- 5. ENDPOINTS DE INMUEBLES CRUD (MODERNO JSON) ---
 @app.post("/api/cloudinary/upload")
 def subir_archivos_cloudinary(
@@ -605,6 +609,7 @@ async def crear_inmueble(
             agente_id=agente_principal.id,
         )
 
+        aplicar_campos_busqueda_inmueble(nuevo_inmueble, inmueble)
         db.add(nuevo_inmueble)
         db.flush()
 
@@ -618,6 +623,7 @@ async def crear_inmueble(
                 agente_id=agente.id,
             ))
 
+        invalidate_search_cache(db)
         db.commit()
         db.refresh(nuevo_inmueble)
 
@@ -687,6 +693,7 @@ async def actualizar_inmueble(
         inmueble_db.amenidades = inmueble.amenidades
         inmueble_db.imagenes = inmueble.imagenes
         inmueble_db.agente_id = agente_principal.id
+        aplicar_campos_busqueda_inmueble(inmueble_db, inmueble)
 
         inmueble_db.ofertas.clear()
         db.flush()
@@ -699,6 +706,7 @@ async def actualizar_inmueble(
                 agente_id=agente.id,
             ))
 
+        invalidate_search_cache(db)
         db.commit()
         db.refresh(inmueble_db)
         return {"status": "success", "id": inmueble_db.id}
@@ -714,6 +722,7 @@ async def eliminar_inmueble(inmueble_id: int, db: Session = Depends(get_db), cur
         inmueble = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id).first()
         if not inmueble: raise HTTPException(status_code=404, detail="No encontrado")
         db.delete(inmueble)
+        invalidate_search_cache(db)
         db.commit()
         return {"status": "success"}
     except HTTPException as http_err:

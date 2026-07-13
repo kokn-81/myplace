@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from database import Base
 
@@ -30,6 +31,16 @@ class InmuebleDB(Base):
     operacion = Column(String)
     tipo_inmueble = Column(String)
     estado = Column(String, default="Borrador", index=True)
+    superficie_m2 = Column(Float, nullable=True, index=True)
+    zona = Column(String, nullable=True, index=True)
+    direccion = Column(String, nullable=True)
+    piso = Column(String, nullable=True)
+    amoblado = Column(Boolean, default=False, index=True)
+    acepta_mascotas = Column(Boolean, default=False, index=True)
+    parqueos = Column(Integer, default=0, index=True)
+    baulera = Column(Boolean, default=False, index=True)
+    amenidades_normalizadas = Column(Text, nullable=True)
+    search_text = Column(Text, nullable=True)
     descripcion = Column(String)
     amenidades = Column(String)
     imagenes = Column(String)
@@ -59,4 +70,35 @@ class UsuarioAutorizadoDB(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, index=True, nullable=False, unique=True)
     role = Column(String, index=True, nullable=False, default="user")
+class SearchCacheDB(Base):
+    __tablename__ = "search_cache"
 
+    id = Column(Integer, primary_key=True, index=True)
+    query_normalized = Column(String, index=True, nullable=False)
+    candidate_ids_hash = Column(String, index=True, nullable=False, default="all")
+    result_ids = Column(Text, nullable=False, default="[]")
+    layer = Column(String, index=True, nullable=False)
+    filters_json = Column(Text, nullable=True)
+    expires_at = Column(DateTime, index=True, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), index=True)
+
+
+class SearchLogDB(Base):
+    __tablename__ = "search_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query_text = Column(Text, nullable=False)
+    query_normalized = Column(String, index=True, nullable=False)
+    filters_json = Column(Text, nullable=True)
+    layer_used = Column(String, index=True, nullable=False)
+    llm_used = Column(Boolean, default=False, index=True)
+    embedding_used = Column(Boolean, default=False, index=True)
+    cache_hit = Column(Boolean, default=False, index=True)
+    result_count = Column(Integer, default=0)
+    latency_ms = Column(Integer, default=0)
+    tokens_input = Column(Integer, default=0)
+    tokens_output = Column(Integer, default=0)
+    estimated_cost = Column(Float, default=0)
+    user_id = Column(String, nullable=True, index=True)
+    contacted_agent = Column(Boolean, default=False, index=True)
+    created_at = Column(DateTime, server_default=func.now(), index=True)

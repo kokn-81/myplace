@@ -23,6 +23,7 @@ export default function AdminDashboard() {
   const [roleLoading, setRoleLoading] = useState<boolean>(false);
   const isAdmin = role === "admin";
   const [catalog, setCatalog] = useState<any[]>([]);
+  const [niaMetrics, setNiaMetrics] = useState<any | null>(null);
   const fetchCatalog = useCallback(async () => {
     try {
       if (!user || !isAdmin) return;
@@ -34,9 +35,21 @@ export default function AdminDashboard() {
     }
   }, [user, isAdmin]);
 
+  const fetchNiaMetrics = useCallback(async () => {
+    try {
+      if (!user || !isAdmin) return;
+      const res = await authFetch("/admin/nia/metrics", user);
+      if (!res.ok) return;
+      setNiaMetrics(await res.json());
+    } catch (err) {
+      console.error("Error cargando metricas NIA:", err);
+    }
+  }, [user, isAdmin]);
+
   useEffect(() => {
     fetchCatalog();
-  }, [fetchCatalog]);
+    fetchNiaMetrics();
+  }, [fetchCatalog, fetchNiaMetrics]);
   const handleDeleteProperty = async (id: string) => {
     if (!window.confirm("Seguro que deseas eliminar permanentemente este inmueble?")) return;
     try {
@@ -610,6 +623,40 @@ export default function AdminDashboard() {
             Terminal activa. Operador autenticado: <span className="font-bold text-[var(--accent-main)]">{user.displayName}</span>
           </p>
         </header>
+
+        {niaMetrics && (
+          <section className="mb-8 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-warm)]">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Metricas NIA</h2>
+                <p className="text-xs text-[var(--text-muted)]">Uso del router por capas, cache y LLM.</p>
+              </div>
+              <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Objetivo LLM &lt; 10%</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Busquedas</p>
+                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.total_searches ?? 0}</p>
+              </div>
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">LLM</p>
+                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.llm_percentage ?? 0}%</p>
+              </div>
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Cache</p>
+                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.cache_hit_percentage ?? 0}%</p>
+              </div>
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Latencia</p>
+                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.avg_latency_ms ?? 0} ms</p>
+              </div>
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Capas</p>
+                <p className="text-xs font-bold text-[var(--text-main)]">{Object.entries(niaMetrics.by_layer || {}).map(([layer, count]) => `${layer}: ${count}`).join(" · ") || "Sin datos"}</p>
+              </div>
+            </div>
+          </section>
+        )}
 
         <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 dark:border-red-800 rounded font-bold">{errorMsg}</div>}

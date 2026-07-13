@@ -16,12 +16,13 @@ Base = declarative_base()
 def init_db() -> None:
     # Local-first convenience. In production, set AUTO_CREATE_TABLES=false and run Alembic.
     if AUTO_CREATE_TABLES:
-        from models import AgenteDB, InmuebleDB, UsuarioAutorizadoDB  # noqa: F401
+        from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB, UsuarioAutorizadoDB  # noqa: F401
 
         Base.metadata.create_all(bind=engine)
         ensure_sqlite_agent_email_column()
         ensure_sqlite_inmueble_banos_column()
         ensure_sqlite_inmueble_estado_column()
+        ensure_sqlite_nia_search_columns()
     seed_authorized_users()
 
 
@@ -60,6 +61,35 @@ def ensure_sqlite_inmueble_estado_column() -> None:
             conn.exec_driver_sql("ALTER TABLE inmuebles ADD COLUMN estado VARCHAR DEFAULT 'Publicado'")
             conn.exec_driver_sql("UPDATE inmuebles SET estado = 'Publicado' WHERE estado IS NULL OR estado = ''")
 
+
+
+def ensure_sqlite_nia_search_columns() -> None:
+    if not IS_SQLITE:
+        return
+
+    desired_columns = {
+        "superficie_m2": "FLOAT",
+        "zona": "VARCHAR",
+        "direccion": "VARCHAR",
+        "piso": "VARCHAR",
+        "amoblado": "BOOLEAN DEFAULT 0",
+        "acepta_mascotas": "BOOLEAN DEFAULT 0",
+        "parqueos": "INTEGER DEFAULT 0",
+        "baulera": "BOOLEAN DEFAULT 0",
+        "amenidades_normalizadas": "TEXT",
+        "search_text": "TEXT",
+    }
+
+    with engine.begin() as conn:
+        columns = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(inmuebles)").fetchall()]
+        if not columns:
+            return
+        for column, ddl in desired_columns.items():
+            if column not in columns:
+                conn.exec_driver_sql(f"ALTER TABLE inmuebles ADD COLUMN {column} {ddl}")
+        conn.exec_driver_sql("UPDATE inmuebles SET zona = COALESCE(NULLIF(zona, ''), ciudad) WHERE zona IS NULL OR zona = ''")
+        conn.exec_driver_sql("UPDATE inmuebles SET amenidades_normalizadas = LOWER(COALESCE(amenidades, '')) WHERE amenidades_normalizadas IS NULL")
+        conn.exec_driver_sql("UPDATE inmuebles SET search_text = LOWER(COALESCE(titulo, '') || ' ' || COALESCE(tipo_inmueble, '') || ' ' || COALESCE(operacion, '') || ' ' || COALESCE(ciudad, '') || ' ' || COALESCE(zona, '') || ' ' || COALESCE(amenidades, '')) WHERE search_text IS NULL OR search_text = ''")
 def seed_authorized_users() -> None:
     from models import UsuarioAutorizadoDB
 
