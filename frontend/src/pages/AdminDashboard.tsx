@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil } from "lucide-react";
+import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, Sparkles } from "lucide-react";
 import { CustomSelect } from "../components/CustomSelect";
 import { API_BASE, AppRole, authFetch, fetchAuthProfile } from "../roleAccess";
 
@@ -25,13 +25,14 @@ export default function AdminDashboard() {
   const [catalog, setCatalog] = useState<any[]>([]);
   const fetchCatalog = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/inmuebles`);
+      if (!user || !isAdmin) return;
+      const res = await authFetch("/inmuebles/admin", user);
       const data = await res.json();
       setCatalog(data);
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [user, isAdmin]);
 
   useEffect(() => {
     fetchCatalog();
@@ -88,6 +89,12 @@ export default function AdminDashboard() {
   const [imageLinks, setImageLinks] = useState<string>("");
   const [isCloudinaryUploading, setIsCloudinaryUploading] = useState<boolean>(false);
   const [amenityInput, setAmenityInput] = useState<string>("");
+  const [formStatus, setFormStatus] = useState<string>("Borrador");
+  const [isAiPanelOpen, setIsAiPanelOpen] = useState<boolean>(false);
+  const [aiText, setAiText] = useState<string>("");
+  const [isAiExtracting, setIsAiExtracting] = useState<boolean>(false);
+  const [aiQuestions, setAiQuestions] = useState<string[]>([]);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const defaultZones = ["Norte", "Sur", "Este", "Oeste", "Equipetrol", "Urubo", "Centro"];
   const allZones = Array.from(new Set<string>([...defaultZones]));
@@ -96,6 +103,11 @@ export default function AdminDashboard() {
     { value: "Alquiler", label: "Alquiler" },
     { value: "Alquiler y Venta", label: "Alquiler y Venta" },
     { value: "Inversion", label: "Inversion" },
+  ];
+  const propertyStatusOptions = [
+    { value: "Borrador", label: "Borrador" },
+    { value: "Publicado", label: "Publicado" },
+    { value: "Pausado", label: "Pausado" },
   ];
 
   const getOfferMode = (property: any) => {
@@ -111,7 +123,7 @@ export default function AdminDashboard() {
     return offers.find((offer: any) => String(offer.operacion).toLowerCase().includes(operation.toLowerCase()));
   };
 
-  const buildOffersPayload = (fd: FormData, operation: string, agentId: number, fallbackCurrency: string) => {
+  const buildOffersPayload = (fd: FormData, operation: string, agentId: number, fallbackCurrency: string, offerStatus = formStatus) => {
     if (operation === "Alquiler y Venta") {
       return [
         {
@@ -119,14 +131,14 @@ export default function AdminDashboard() {
           precio: Number(fd.get("rentPrice")) || 0,
           moneda: String(fd.get("rentCurrency") || "Bs"),
           agente_id: agentId,
-          estado: "Publicado",
+          estado: offerStatus,
         },
         {
           operacion: "Venta",
           precio: Number(fd.get("salePrice")) || 0,
           moneda: String(fd.get("saleCurrency") || "$ (USD)"),
           agente_id: agentId,
-          estado: "Publicado",
+          estado: offerStatus,
         },
       ].filter((offer) => offer.precio > 0);
     }
@@ -136,7 +148,7 @@ export default function AdminDashboard() {
       precio: Number(fd.get("price")) || 0,
       moneda: fallbackCurrency,
       agente_id: agentId,
-      estado: "Publicado",
+      estado: offerStatus,
     }];
   };
 
@@ -237,6 +249,103 @@ export default function AdminDashboard() {
   };
   const getPropertyImageLinks = (inm: any) => Array.isArray(inm.images) ? inm.images.join(", ") : (inm.imagenes || "");
   const getPropertyAmenitiesText = (inm: any) => Array.isArray(inm.amenidades) ? inm.amenidades.join(", ") : (inm.amenidades || "");
+  const setFormFieldValue = (name: string, value: unknown) => {
+    const field = formRef.current?.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+    if (!field || value === null || value === undefined || value === "") return;
+    field.value = String(value);
+  };
+
+  const normalizeAiOperation = (value?: string) => {
+    const normalized = String(value || "").toLowerCase();
+    if (normalized.includes("alquiler") && normalized.includes("venta")) return "Alquiler y Venta";
+    if (normalized.includes("alquiler")) return "Alquiler";
+    if (normalized.includes("inversion")) return "Inversion";
+    return "Venta";
+  };
+
+  const normalizeAiType = (value?: string) => {
+    const normalized = String(value || "").toLowerCase();
+    if (normalized.includes("casa")) return "Casa";
+    if (normalized.includes("terreno") || normalized.includes("lote")) return "Terreno";
+    if (normalized.includes("oficina")) return "Oficina";
+    if (normalized.includes("local")) return "Local Comercial";
+    return "Departamento";
+  };
+
+  const applyAiOfferFields = (data: any, operation: string) => {
+    const offers = Array.isArray(data.ofertas) ? data.ofertas : [];
+    if (operation === "Alquiler y Venta") {
+      const rent = offers.find((offer: any) => String(offer.operacion || "").toLowerCase().includes("alquiler"));
+      const sale = offers.find((offer: any) => String(offer.operacion || "").toLowerCase().includes("venta"));
+      setFormFieldValue("rentPrice", rent?.precio || "");
+      setFormFieldValue("rentCurrency", rent?.moneda || "Bs");
+      setFormFieldValue("salePrice", sale?.precio || "");
+      setFormFieldValue("saleCurrency", sale?.moneda || "$ (USD)");
+      return;
+    }
+
+    const mainOffer = offers[0];
+    setFormFieldValue("price", mainOffer?.precio || data.precio || "");
+  };
+
+  const handleAiExtractProperty = async () => {
+    const text = aiText.trim();
+    if (!text) {
+      setErrorMsg("Pega el texto del asesor antes de usar IA.");
+      return;
+    }
+
+    setIsAiExtracting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    setAiQuestions([]);
+
+    try {
+      const response = await authFetch("/inmuebles/extraer-datos", user, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: text }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || "No se pudo extraer la informacion.");
+
+      const data = result.data || {};
+      const operation = normalizeAiOperation(data.operacion);
+      const type = normalizeAiType(data.tipo_inmueble);
+      const currency = data.moneda === "Bs" ? "Bs" : "$ (USD)";
+
+      setFormOperation(operation);
+      setFormType(type);
+      setFormCurrency(currency);
+      setFormStatus("Borrador");
+
+      const zone = String(data.ciudad || "").trim();
+      if (zone) {
+        setIsCustomZone(!allZones.includes(zone));
+        setFormZone(zone);
+      }
+
+      if (Array.isArray(data.amenidades)) {
+        setAmenities(data.amenidades.map((item: unknown) => String(item).trim()).filter(Boolean));
+      }
+
+      setFormFieldValue("title", data.titulo);
+      setFormFieldValue("rooms", data.habitaciones);
+      setFormFieldValue("bathrooms", data.banos);
+      setFormFieldValue("description", data.descripcion);
+      if (data.lat !== null && data.lat !== undefined && data.lng !== null && data.lng !== undefined) {
+        setFormFieldValue("coords", `${data.lat}, ${data.lng}`);
+      }
+
+      window.setTimeout(() => applyAiOfferFields(data, operation), 0);
+      setAiQuestions(Array.isArray(result.questions) ? result.questions : []);
+      setSuccessMsg("La IA completo el borrador. Revisa los campos antes de guardar.");
+    } catch (err: any) {
+      setErrorMsg("Error con IA: " + err.message);
+    } finally {
+      setIsAiExtracting(false);
+    }
+  };
 
   const handleUpdateAgent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -274,7 +383,8 @@ export default function AdminDashboard() {
     const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
     const agentId = Number(fd.get("agentId")) || 0;
     const operation = String(fd.get("operation") || editOperation || "Venta");
-    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"));
+    const propertyStatus = String(fd.get("status") || editingProperty.estado || "Borrador");
+    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus);
     const primaryOffer = offers[0];
     const payload = {
       titulo: String(fd.get("title") || "").trim() || "Propiedad sin titulo",
@@ -501,9 +611,36 @@ export default function AdminDashboard() {
           </p>
         </header>
 
-        <form onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
+        <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 dark:border-red-800 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 dark:border-green-800 rounded font-bold">{successMsg}</div>}
+          <div className="rounded-xl border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/10 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Borrador asistido</h3>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">Pega el texto del asesor y la IA rellenara el formulario. Las imagenes se suben abajo con Cloudinary.</p>
+              </div>
+              <button type="button" onClick={() => setIsAiPanelOpen((open) => !open)} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--surface-control)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-main)] border border-[var(--border-soft)] hover:border-[var(--accent-main)] transition-colors">
+                <Sparkles size={16} /> Rellenar con IA
+              </button>
+            </div>
+            {isAiPanelOpen && (
+              <div className="mt-4 space-y-3">
+                <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={6} className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" placeholder="Ej: Casa en Urubo, venta, 4 dormitorios, 3 banos, piscina, churrasquera, precio 280000 dolares..." />
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                  <button type="button" disabled={isAiExtracting} onClick={handleAiExtractProperty} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--accent-main)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#2F241D] shadow-md hover:bg-[var(--accent-hover)] hover:text-white transition-colors disabled:opacity-60">
+                    {isAiExtracting ? <><Loader2 size={16} className="animate-spin" /> Leyendo texto...</> : <><Sparkles size={16} /> Completar borrador</>}
+                  </button>
+                  <span className="text-[11px] text-[var(--text-muted)]">Queda como Borrador hasta que lo publiques.</span>
+                </div>
+                {aiQuestions.length > 0 && (
+                  <div className="rounded border border-amber-300 bg-amber-50 p-3 text-xs font-semibold text-amber-800">
+                    {aiQuestions.map((question) => <p key={question}>{question}</p>)}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -540,6 +677,13 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-3 gap-4">
+            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Publicacion</h3>
+            <div>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Estado inicial</label>
+              <CustomSelect name="status" value={formStatus} onChange={setFormStatus} placeholder="Estado" options={propertyStatusOptions} wrapperClassName="relative w-full" triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+            </div>
+          </div>
           <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
             <div>
@@ -703,7 +847,7 @@ export default function AdminDashboard() {
           </div>
 
           <button disabled={isUploading} type="submit" className="w-full bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold py-4 rounded shadow-md transition-colors uppercase tracking-widest text-sm flex justify-center items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
-            {isUploading ? <><Loader2 size={18} className="animate-spin" /> Procesando...</> : <><Save size={18} /> Publicar Inmueble</>}
+            {isUploading ? <><Loader2 size={18} className="animate-spin" /> Procesando...</> : <><Save size={18} /> {formStatus === "Publicado" ? "Publicar Inmueble" : "Guardar Borrador"}</>}
           </button>
         </form>
       </div>
@@ -747,6 +891,14 @@ export default function AdminDashboard() {
                     <option>Oficina</option>
                     <option>Terreno</option>
                     <option>Local Comercial</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Estado del inmueble</label>
+                  <select name="status" defaultValue={editingProperty.estado || "Borrador"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option>Borrador</option>
+                    <option>Publicado</option>
+                    <option>Pausado</option>
                   </select>
                 </div>
                 {editOperation === "Alquiler y Venta" ? (
@@ -926,7 +1078,7 @@ export default function AdminDashboard() {
               ))}
               {catalog.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-6 italic text-stone-400">No hay inmuebles publicados.</td>
+                  <td colSpan={6} className="text-center py-6 italic text-stone-400">No hay inmuebles publicados.</td>
                 </tr>
               )}
             </tbody>

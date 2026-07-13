@@ -21,6 +21,7 @@ def init_db() -> None:
         Base.metadata.create_all(bind=engine)
         ensure_sqlite_agent_email_column()
         ensure_sqlite_inmueble_banos_column()
+        ensure_sqlite_inmueble_estado_column()
     seed_authorized_users()
 
 
@@ -46,6 +47,18 @@ def ensure_sqlite_inmueble_banos_column() -> None:
             conn.exec_driver_sql("ALTER TABLE inmuebles ADD COLUMN banos INTEGER DEFAULT 1")
             conn.exec_driver_sql("UPDATE inmuebles SET banos = 1 WHERE banos IS NULL")
 
+
+
+
+def ensure_sqlite_inmueble_estado_column() -> None:
+    if not IS_SQLITE:
+        return
+
+    with engine.begin() as conn:
+        columns = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(inmuebles)").fetchall()]
+        if columns and "estado" not in columns:
+            conn.exec_driver_sql("ALTER TABLE inmuebles ADD COLUMN estado VARCHAR DEFAULT 'Publicado'")
+            conn.exec_driver_sql("UPDATE inmuebles SET estado = 'Publicado' WHERE estado IS NULL OR estado = ''")
 
 def seed_authorized_users() -> None:
     from models import UsuarioAutorizadoDB
@@ -75,5 +88,6 @@ def upsert_role(db, email: str, role: str) -> None:
         return
 
     db.add(UsuarioAutorizadoDB(email=normalized, role=role))
+
 
 

@@ -4,6 +4,7 @@ import time
 import json
 import hashlib
 import requests
+import unicodedata
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -64,6 +65,7 @@ class InmuebleCreate(BaseModel):
     lng: float
     operacion: Optional[str] = "Venta"
     tipo_inmueble: str
+    estado: Optional[str] = "Borrador"
     descripcion: str
     agente_id: Optional[int] = None
     imagenes: str = ""
@@ -77,6 +79,119 @@ class AgenteSchema(BaseModel):
 class PeticionChat(BaseModel):
     mensaje: str
     candidate_ids: Optional[List[int]] = None
+
+
+class PeticionExtraccionInmueble(BaseModel):
+    texto: str
+ESTADOS_INMUEBLE = {"Borrador", "Publicado", "Pausado"}
+
+
+def normalizar_estado_inmueble(estado: Optional[str]) -> str:
+    estado_limpio = (estado or "Borrador").strip().capitalize()
+    return estado_limpio if estado_limpio in ESTADOS_INMUEBLE else "Borrador"
+
+
+def limpiar_respuesta_json(texto: str):
+    texto_limpio = (texto or "").replace("```json", "").replace("```", "").strip()
+    inicio = texto_limpio.find("{")
+    fin = texto_limpio.rfind("}")
+    if inicio >= 0 and fin >= inicio:
+        texto_limpio = texto_limpio[inicio:fin + 1]
+    return json.loads(texto_limpio)
+
+
+def obtener_valor(data: dict, clave: str):
+    valor = data.get(clave)
+    if isinstance(valor, str):
+        valor = valor.strip()
+    return valor
+
+
+AMENIDADES_DESCARTABLES = {
+    "santa cruz",
+    "santa cruz de la sierra",
+    "bolivia",
+    "equipetrol",
+    "equipetrol norte",
+}
+
+
+PATRONES_AMENIDAD_DESCARTABLE = (
+    "precio",
+    "ubicacion",
+    "direccion",
+    "superficie",
+    " m2",
+    "metro cuadrado",
+    "dormitorio",
+    "habitacion",
+    "alquiler",
+    "venta",
+    "dolar",
+    "boliviano",
+    "calle",
+    "avenida",
+    "zona",
+)
+
+
+def normalizar_texto_simple(valor) -> str:
+    texto = unicodedata.normalize("NFKD", str(valor or ""))
+    texto = "".join(caracter for caracter in texto if not unicodedata.combining(caracter))
+    return " ".join(texto.lower().strip().split())
+
+
+def limpiar_amenidades_extraidas(data: dict) -> list[str]:
+    amenidades = data.get("amenidades") if isinstance(data.get("amenidades"), list) else []
+    descartables = set(AMENIDADES_DESCARTABLES)
+    ciudad = normalizar_texto_simple(data.get("ciudad"))
+    if ciudad:
+        descartables.add(ciudad)
+
+    resultado: list[str] = []
+    vistas: set[str] = set()
+    for amenidad in amenidades:
+        texto = str(amenidad or "").strip()
+        clave = normalizar_texto_simple(texto)
+        if not clave or clave in vistas or clave in descartables:
+            continue
+        if any(patron in f" {clave}" for patron in PATRONES_AMENIDAD_DESCARTABLE):
+            continue
+        vistas.add(clave)
+        resultado.append(texto)
+    return resultado
+
+
+def construir_faltantes_extraccion(data: dict) -> tuple[list[str], list[str]]:
+    faltantes: list[str] = []
+    preguntas: list[str] = []
+
+    campos = [
+        ("titulo", "titulo comercial"),
+        ("operacion", "operacion: venta, alquiler o alquiler y venta"),
+        ("tipo_inmueble", "tipo de inmueble"),
+        ("moneda", "moneda"),
+        ("habitaciones", "cantidad de habitaciones"),
+        ("banos", "cantidad de banos"),
+        ("ciudad", "zona o ciudad"),
+        ("descripcion", "descripcion"),
+    ]
+    for clave, etiqueta in campos:
+        if obtener_valor(data, clave) in {None, ""}:
+            faltantes.append(clave)
+            preguntas.append(f"Falta {etiqueta}.")
+
+    ofertas = data.get("ofertas") if isinstance(data.get("ofertas"), list) else []
+    tiene_precio = obtener_valor(data, "precio") not in {None, ""} or any(oferta.get("precio") for oferta in ofertas if isinstance(oferta, dict))
+    if not tiene_precio:
+        faltantes.append("precio")
+        preguntas.append("Falta precio de la oferta.")
+
+    if obtener_valor(data, "lat") in {None, ""} or obtener_valor(data, "lng") in {None, ""}:
+        faltantes.append("coordenadas")
+        preguntas.append("Faltan coordenadas exactas del inmueble.")
+
+    return faltantes, preguntas
 
 # --- INYECCIÃ“N DE DEPENDENCIAS ---
 def get_db():
@@ -231,7 +346,7 @@ async def obtener_perfil_actual(profile: dict = Depends(get_current_profile)):
 async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)):
     try:
         # Extraccion y normalizacion del catalogo en tiempo real.
-        query = db.query(InmuebleDB)
+        query = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado")
         if peticion.candidate_ids is not None:
             query = query.filter(InmuebleDB.id.in_(peticion.candidate_ids))
         inmuebles = query.all()
@@ -301,6 +416,89 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
     except Exception as e:
         print(f"ðŸ”¥ ERROR INTERNO DE IA: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Fallo en el motor de filtrado: {str(e)}")
+
+
+@app.post("/api/inmuebles/extraer-datos", status_code=200)
+async def extraer_datos_inmueble(
+    peticion: PeticionExtraccionInmueble,
+    current_profile: dict = Depends(require_advisor_or_admin),
+):
+    texto = peticion.texto.strip()
+    if not texto:
+        raise HTTPException(status_code=400, detail="Pega el texto del asesor para poder extraer los datos.")
+    if cliente_ia is None:
+        raise HTTPException(status_code=500, detail="Falta GEMINI_API_KEY en el backend.")
+
+    prompt_extraccion = f"""
+    Extrae datos para cargar un inmueble en una app inmobiliaria de Bolivia.
+    Devuelve solo JSON valido, sin markdown ni explicaciones.
+
+    TEXTO DEL ASESOR:
+    {texto}
+
+    Usa esta forma exacta:
+    {{
+      "data": {{
+        "titulo": string | null,
+        "operacion": "Venta" | "Alquiler" | "Alquiler y Venta" | "Inversion" | null,
+        "tipo_inmueble": "Departamento" | "Casa" | "Terreno" | "Oficina" | "Local Comercial" | null,
+        "precio": number | null,
+        "moneda": "$ (USD)" | "Bs" | null,
+        "habitaciones": number | null,
+        "banos": number | null,
+        "ciudad": string | null,
+        "lat": number | null,
+        "lng": number | null,
+        "descripcion": string | null,
+        "amenidades": string[],
+        "estado": "Borrador",
+        "ofertas": [{{"operacion": string, "precio": number, "moneda": string}}]
+      }},
+      "missing_fields": string[],
+      "questions": string[]
+    }}
+
+    Reglas:
+    - No inventes coordenadas. Si no estan en el texto, usa null.
+    - Si dice dolares, USD o $, usa "$ (USD)". Si dice bolivianos o Bs, usa "Bs".
+    - Si hay precio de alquiler y venta, usa operacion "Alquiler y Venta" y llena ofertas.
+    - Redacta "descripcion" como texto comercial natural en 2 o 3 parrafos separados por una linea en blanco. En el string JSON usa \\n\\n para separar parrafos.
+    - No uses bullets, emojis, listas, encabezados ni etiquetas dentro de "descripcion".
+    - Parrafo 1: tipo de inmueble, operacion, edificio o zona, y ubicacion si esta disponible.
+    - Parrafo 2: superficie, distribucion, dormitorios, banos y caracteristicas internas relevantes.
+    - Parrafo 3: areas comunes, experiencia del edificio o valor para vivir, invertir o generar renta solo si el texto lo respalda.
+    - En "amenidades" incluye solo beneficios concretos de la propiedad o edificio. No incluyas ciudad, zona, edificio, direccion, precio, superficie, habitaciones, banos, operacion ni datos generales.
+    - Las imagenes no se extraen aqui: ya se suben por Cloudinary en el admin.
+    - La propiedad siempre queda como Borrador.
+    """
+
+    try:
+        respuesta = cliente_ia.models.generate_content(model=MODELO_ACTIVO, contents=prompt_extraccion)
+        resultado = limpiar_respuesta_json(respuesta.text or "")
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=502, detail="La IA no devolvio JSON valido para el formulario.") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"No se pudo extraer datos del texto: {str(exc)}") from exc
+
+    data = resultado.get("data", resultado)
+    if not isinstance(data, dict):
+        raise HTTPException(status_code=502, detail="La IA devolvio una estructura inesperada.")
+
+    data["estado"] = "Borrador"
+    data["amenidades"] = limpiar_amenidades_extraidas(data)
+    if not isinstance(data.get("ofertas"), list):
+        data["ofertas"] = []
+
+    faltantes, preguntas = construir_faltantes_extraccion(data)
+    preguntas_ia = resultado.get("questions") if isinstance(resultado.get("questions"), list) else []
+    preguntas_finales = [pregunta for pregunta in [*preguntas, *preguntas_ia] if isinstance(pregunta, str) and pregunta.strip()]
+
+    return {
+        "status": "success",
+        "data": data,
+        "missing_fields": sorted(set(faltantes)),
+        "questions": list(dict.fromkeys(preguntas_finales)),
+    }
 
 # --- 5. ENDPOINTS DE INMUEBLES CRUD (MODERNO JSON) ---
 @app.post("/api/cloudinary/upload")
@@ -387,6 +585,7 @@ async def crear_inmueble(
         ofertas = normalizar_ofertas(inmueble)
         ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
         oferta_principal, agente_principal = ofertas_validadas[0]
+        estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
 
         nuevo_inmueble = InmuebleDB(
             titulo=inmueble.titulo,
@@ -399,6 +598,7 @@ async def crear_inmueble(
             lng=inmueble.lng,
             operacion=oferta_principal.operacion,
             tipo_inmueble=inmueble.tipo_inmueble,
+            estado=estado_inmueble,
             descripcion=inmueble.descripcion,
             amenidades=inmueble.amenidades,
             imagenes=inmueble.imagenes,
@@ -421,7 +621,7 @@ async def crear_inmueble(
         db.commit()
         db.refresh(nuevo_inmueble)
 
-        return {"status": "success", "message": "Inmueble publicado en la nube con exito", "id": nuevo_inmueble.id}
+        return {"status": "success", "message": "Inmueble guardado como borrador", "id": nuevo_inmueble.id, "estado": nuevo_inmueble.estado}
     except HTTPException as http_err:
         # Mantenemos los errores controlados (como el del agente inexistente)
         raise http_err
@@ -431,19 +631,25 @@ async def crear_inmueble(
 
 @app.get("/api/inmuebles/resumen")
 async def obtener_inmuebles_resumen(db: Session = Depends(get_db)):
-    inmuebles_db = db.query(InmuebleDB).all()
+    inmuebles_db = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado").all()
     return [serializar_inmueble_resumen(inm) for inm in inmuebles_db]
 
 
 @app.get("/api/inmuebles")
 async def obtener_inmuebles(db: Session = Depends(get_db)):
+    inmuebles_db = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado").all()
+    return [serializar_inmueble(inm) for inm in inmuebles_db]
+
+
+@app.get("/api/inmuebles/admin")
+async def obtener_inmuebles_admin(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
     inmuebles_db = db.query(InmuebleDB).all()
     return [serializar_inmueble(inm) for inm in inmuebles_db]
 
 
 @app.get("/api/inmuebles/{inmueble_id}")
 async def obtener_inmueble_detalle(inmueble_id: int, db: Session = Depends(get_db)):
-    inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id).first()
+    inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id, InmuebleDB.estado == "Publicado").first()
     if not inmueble_db:
         raise HTTPException(status_code=404, detail="Inmueble no encontrado")
     return serializar_inmueble(inmueble_db)
@@ -464,6 +670,7 @@ async def actualizar_inmueble(
         ofertas = normalizar_ofertas(inmueble)
         ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
         oferta_principal, agente_principal = ofertas_validadas[0]
+        estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
 
         inmueble_db.titulo = inmueble.titulo
         inmueble_db.precio_usd = oferta_principal.precio
@@ -475,6 +682,7 @@ async def actualizar_inmueble(
         inmueble_db.lng = inmueble.lng
         inmueble_db.operacion = oferta_principal.operacion
         inmueble_db.tipo_inmueble = inmueble.tipo_inmueble
+        inmueble_db.estado = estado_inmueble
         inmueble_db.descripcion = inmueble.descripcion
         inmueble_db.amenidades = inmueble.amenidades
         inmueble_db.imagenes = inmueble.imagenes

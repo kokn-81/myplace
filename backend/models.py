@@ -29,6 +29,7 @@ class InmuebleDB(Base):
     lng = Column(Float)
     operacion = Column(String)
     tipo_inmueble = Column(String)
+    estado = Column(String, default="Borrador", index=True)
     descripcion = Column(String)
     amenidades = Column(String)
     imagenes = Column(String)
@@ -58,3 +59,4 @@ class UsuarioAutorizadoDB(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, index=True, nullable=False, unique=True)
     role = Column(String, index=True, nullable=False, default="user")
+
