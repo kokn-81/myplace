@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import re
 import time
 import unicodedata
@@ -17,6 +18,25 @@ USD_TO_BS = 6.96
 CACHE_TTL_GENERAL_MINUTES = 24 * 60
 CACHE_TTL_REFINED_MINUTES = 5
 MAX_RESULTS = 40
+
+
+def read_float_env(name: str, default: float = 0.0) -> float:
+    try:
+        return float(os.getenv(name, str(default)) or default)
+    except ValueError:
+        return default
+
+
+LLM_INPUT_COST_PER_1M = read_float_env("NIA_LLM_INPUT_COST_PER_1M")
+LLM_OUTPUT_COST_PER_1M = read_float_env("NIA_LLM_OUTPUT_COST_PER_1M")
+
+
+def estimate_llm_cost(input_tokens: int, output_tokens: int) -> float:
+    return round(
+        (float(input_tokens or 0) / 1_000_000) * LLM_INPUT_COST_PER_1M
+        + (float(output_tokens or 0) / 1_000_000) * LLM_OUTPUT_COST_PER_1M,
+        8,
+    )
 
 STOPWORDS = {
     "a", "al", "algo", "con", "de", "del", "el", "en", "la", "las", "los", "me",
@@ -562,6 +582,7 @@ def efficient_property_search(
             llm_used = True
 
     latency_ms = int((time.perf_counter() - started) * 1000)
+    estimated_cost = estimate_llm_cost(tokens_input, tokens_output)
     save_cache(db, query_normalized, candidates_hash, ids, layer, filters_dict, refined=bool(candidate_ids))
     log_search(
         db,
@@ -576,7 +597,7 @@ def efficient_property_search(
         latency_ms=latency_ms,
         tokens_input=tokens_input,
         tokens_output=tokens_output,
-        estimated_cost=0,
+        estimated_cost=estimated_cost,
     )
 
-    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used, "explanation": explanation}
+    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used, "explanation": explanation, "estimated_cost": estimated_cost}

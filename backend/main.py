@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
-from models import AgenteDB, InmuebleDB, OfertaDB, SearchLogDB
+from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB
 from nia_search import build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text
 from pydantic import BaseModel
 from typing import List, Optional
@@ -481,28 +481,115 @@ async def extraer_datos_inmueble(
 
 @app.get("/api/admin/nia/metrics")
 async def obtener_metricas_nia(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
+    def pct(part: int, whole: int) -> float:
+        return round((part / whole) * 100, 2) if whole else 0
+
+    def avg(values: list[float]) -> float:
+        return round(sum(values) / len(values), 2) if values else 0
+
+    def percentile(values: list[int], ratio: float) -> int:
+        if not values:
+            return 0
+        ordered = sorted(int(value or 0) for value in values)
+        index = min(len(ordered) - 1, max(0, round((len(ordered) - 1) * ratio)))
+        return ordered[index]
+
     total = db.query(func.count(SearchLogDB.id)).scalar() or 0
     llm_count = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.llm_used == True).scalar() or 0  # noqa: E712
+    embedding_count = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.embedding_used == True).scalar() or 0  # noqa: E712
     cache_hits = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.cache_hit == True).scalar() or 0  # noqa: E712
-    avg_latency = db.query(func.avg(SearchLogDB.latency_ms)).scalar() or 0
-    by_layer_rows = db.query(SearchLogDB.layer_used, func.count(SearchLogDB.id)).group_by(SearchLogDB.layer_used).all()
+    zero_results = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.result_count == 0).scalar() or 0
+    contacted = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.contacted_agent == True).scalar() or 0  # noqa: E712
+    active_cache_entries = db.query(func.count(SearchCacheDB.id)).filter(SearchCacheDB.expires_at > func.now()).scalar() or 0
+
+    latency_values = [row[0] or 0 for row in db.query(SearchLogDB.latency_ms).all()]
+    token_input_total = db.query(func.coalesce(func.sum(SearchLogDB.tokens_input), 0)).scalar() or 0
+    token_output_total = db.query(func.coalesce(func.sum(SearchLogDB.tokens_output), 0)).scalar() or 0
+    estimated_cost_total = db.query(func.coalesce(func.sum(SearchLogDB.estimated_cost), 0)).scalar() or 0
+
+    layer_rows = db.query(SearchLogDB.layer_used, func.count(SearchLogDB.id)).group_by(SearchLogDB.layer_used).all()
+    by_layer = {layer or "unknown": count for layer, count in layer_rows}
+    layer_details = []
+    for layer, count in layer_rows:
+        layer_name = layer or "unknown"
+        rows = db.query(SearchLogDB).filter(SearchLogDB.layer_used == layer).all()
+        layer_details.append({
+            "layer": layer_name,
+            "count": count,
+            "percentage": pct(count, total),
+            "avg_latency_ms": avg([row.latency_ms or 0 for row in rows]),
+            "avg_results": avg([row.result_count or 0 for row in rows]),
+            "llm_count": sum(1 for row in rows if row.llm_used),
+            "cache_hits": sum(1 for row in rows if row.cache_hit),
+            "tokens_input": sum(row.tokens_input or 0 for row in rows),
+            "tokens_output": sum(row.tokens_output or 0 for row in rows),
+        })
+    layer_details.sort(key=lambda item: item["count"], reverse=True)
+
     top_query_rows = (
-        db.query(SearchLogDB.query_normalized, func.count(SearchLogDB.id))
+        db.query(SearchLogDB.query_normalized, func.count(SearchLogDB.id), func.avg(SearchLogDB.result_count), func.avg(SearchLogDB.latency_ms))
         .group_by(SearchLogDB.query_normalized)
         .order_by(func.count(SearchLogDB.id).desc())
         .limit(8)
+        .all()
+    )
+    zero_query_rows = (
+        db.query(SearchLogDB.query_normalized, func.count(SearchLogDB.id))
+        .filter(SearchLogDB.result_count == 0)
+        .group_by(SearchLogDB.query_normalized)
+        .order_by(func.count(SearchLogDB.id).desc())
+        .limit(8)
+        .all()
+    )
+    recent_rows = (
+        db.query(SearchLogDB)
+        .order_by(SearchLogDB.created_at.desc())
+        .limit(12)
         .all()
     )
 
     return {
         "total_searches": total,
         "llm_searches": llm_count,
-        "llm_percentage": round((llm_count / total) * 100, 2) if total else 0,
+        "llm_percentage": pct(llm_count, total),
+        "embedding_searches": embedding_count,
+        "embedding_percentage": pct(embedding_count, total),
         "cache_hits": cache_hits,
-        "cache_hit_percentage": round((cache_hits / total) * 100, 2) if total else 0,
-        "avg_latency_ms": round(float(avg_latency), 2),
-        "by_layer": {layer or "unknown": count for layer, count in by_layer_rows},
-        "top_queries": [{"query": query, "count": count} for query, count in top_query_rows],
+        "cache_hit_percentage": pct(cache_hits, total),
+        "active_cache_entries": active_cache_entries,
+        "zero_result_searches": zero_results,
+        "zero_result_percentage": pct(zero_results, total),
+        "contacted_agent_searches": contacted,
+        "contact_rate_percentage": pct(contacted, total),
+        "avg_latency_ms": avg(latency_values),
+        "p50_latency_ms": percentile(latency_values, 0.5),
+        "p95_latency_ms": percentile(latency_values, 0.95),
+        "tokens_input_total": int(token_input_total),
+        "tokens_output_total": int(token_output_total),
+        "tokens_total": int((token_input_total or 0) + (token_output_total or 0)),
+        "estimated_cost_total": round(float(estimated_cost_total or 0), 6),
+        "by_layer": by_layer,
+        "layer_details": layer_details,
+        "top_queries": [
+            {"query": query, "count": count, "avg_results": round(float(avg_results or 0), 2), "avg_latency_ms": round(float(avg_latency or 0), 2)}
+            for query, count, avg_results, avg_latency in top_query_rows
+        ],
+        "zero_result_queries": [{"query": query, "count": count} for query, count in zero_query_rows],
+        "recent_searches": [
+            {
+                "query": row.query_normalized,
+                "layer": row.layer_used,
+                "result_count": row.result_count or 0,
+                "latency_ms": row.latency_ms or 0,
+                "cache_hit": bool(row.cache_hit),
+                "llm_used": bool(row.llm_used),
+                "embedding_used": bool(row.embedding_used),
+                "tokens": int((row.tokens_input or 0) + (row.tokens_output or 0)),
+                "estimated_cost": round(float(row.estimated_cost or 0), 6),
+                "created_at": row.created_at.isoformat() if row.created_at else None,
+            }
+            for row in recent_rows
+        ],
     }
 # --- 5. ENDPOINTS DE INMUEBLES CRUD (MODERNO JSON) ---
 @app.post("/api/cloudinary/upload")

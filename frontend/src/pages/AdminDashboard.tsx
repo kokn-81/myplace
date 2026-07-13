@@ -15,6 +15,22 @@ interface LocalAgent {
   email?: string;
 }
 
+const formatMetricNumber = (value: unknown, decimals = 0) => {
+  const number = Number(value ?? 0);
+  return Number.isFinite(number) ? number.toLocaleString("es-BO", { maximumFractionDigits: decimals, minimumFractionDigits: decimals }) : "0";
+};
+
+const formatMetricCurrency = (value: unknown) => {
+  const number = Number(value ?? 0);
+  return number > 0 ? `$ ${number.toFixed(4)}` : "$ 0";
+};
+
+const formatMetricDate = (value?: string | null) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString("es-BO", { dateStyle: "short", timeStyle: "short" });
+};
+
 export default function AdminDashboard() {
   // Estados de seguridad y roles
   const [user, setUser] = useState<User | null>(null);
@@ -628,38 +644,95 @@ export default function AdminDashboard() {
 
         {niaMetrics && (
           <section className="mb-8 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-warm)]">
-            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Metricas NIA</h2>
-                <p className="text-xs text-[var(--text-muted)]">Uso del router por capas, cache y LLM.</p>
+                <p className="text-xs text-[var(--text-muted)]">Coste, velocidad, cache, precision operativa y uso del LLM.</p>
               </div>
               <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Objetivo LLM &lt; 10%</span>
             </div>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Busquedas</p>
-                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.total_searches ?? 0}</p>
+
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              {[
+                ["Busquedas", formatMetricNumber(niaMetrics.total_searches), "Total registrado"],
+                ["LLM", `${formatMetricNumber(niaMetrics.llm_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.llm_searches)} consultas`],
+                ["Cache", `${formatMetricNumber(niaMetrics.cache_hit_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.active_cache_entries)} activas`],
+                ["Sin resultados", `${formatMetricNumber(niaMetrics.zero_result_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.zero_result_searches)} consultas`],
+                ["Latencia media", `${formatMetricNumber(niaMetrics.avg_latency_ms, 1)} ms`, `P95 ${formatMetricNumber(niaMetrics.p95_latency_ms)} ms`],
+                ["Embeddings", `${formatMetricNumber(niaMetrics.embedding_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.embedding_searches)} consultas`],
+                ["Tokens LLM", formatMetricNumber(niaMetrics.tokens_total), `${formatMetricNumber(niaMetrics.tokens_input_total)} in / ${formatMetricNumber(niaMetrics.tokens_output_total)} out`],
+                ["Costo estimado", formatMetricCurrency(niaMetrics.estimated_cost_total), "Configurable por modelo"],
+              ].map(([label, value, detail]) => (
+                <div key={label} className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
+                  <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">{label}</p>
+                  <p className="mt-1 text-xl font-bold text-[var(--text-main)]">{value}</p>
+                  <p className="mt-1 text-[10px] text-[var(--text-muted)]">{detail}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 grid gap-4 lg:grid-cols-2">
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-4">
+                <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-main)]">Capas del router</h3>
+                <div className="space-y-3">
+                  {(niaMetrics.layer_details || []).length === 0 ? <p className="text-xs text-[var(--text-muted)]">Sin datos.</p> : niaMetrics.layer_details.map((layer: any) => (
+                    <div key={layer.layer}>
+                      <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                        <span className="font-bold text-[var(--text-main)]">{layer.layer}</span>
+                        <span className="text-[var(--text-muted)]">{formatMetricNumber(layer.count)} / {formatMetricNumber(layer.percentage, 2)}%</span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded bg-[var(--surface-panel-muted)]">
+                        <div className="h-full bg-[var(--accent-main)]" style={{ width: `${Math.min(100, Number(layer.percentage || 0))}%` }} />
+                      </div>
+                      <p className="mt-1 text-[10px] text-[var(--text-muted)]">{formatMetricNumber(layer.avg_latency_ms, 1)} ms promedio · {formatMetricNumber(layer.avg_results, 1)} resultados promedio · {formatMetricNumber((layer.tokens_input || 0) + (layer.tokens_output || 0))} tokens</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">LLM</p>
-                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.llm_percentage ?? 0}%</p>
+
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-4">
+                <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-main)]">Consultas frecuentes</h3>
+                <div className="space-y-2">
+                  {(niaMetrics.top_queries || []).length === 0 ? <p className="text-xs text-[var(--text-muted)]">Sin datos.</p> : niaMetrics.top_queries.map((item: any) => (
+                    <div key={item.query} className="flex items-start justify-between gap-3 border-b border-[var(--border-soft)] pb-2 last:border-0 last:pb-0">
+                      <p className="text-xs font-medium text-[var(--text-main)]">{item.query}</p>
+                      <p className="shrink-0 text-right text-[10px] text-[var(--text-muted)]">{formatMetricNumber(item.count)}x<br />{formatMetricNumber(item.avg_results, 1)} res.</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Cache</p>
-                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.cache_hit_percentage ?? 0}%</p>
+            </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-4">
+                <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-main)]">Consultas sin resultados</h3>
+                <div className="space-y-2">
+                  {(niaMetrics.zero_result_queries || []).length === 0 ? <p className="text-xs text-[var(--text-muted)]">Sin fallos registrados.</p> : niaMetrics.zero_result_queries.map((item: any) => (
+                    <div key={item.query} className="flex justify-between gap-3 text-xs">
+                      <span className="text-[var(--text-main)]">{item.query}</span>
+                      <span className="font-bold text-[var(--accent-main)]">{formatMetricNumber(item.count)}x</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Latencia</p>
-                <p className="text-xl font-bold text-[var(--text-main)]">{niaMetrics.avg_latency_ms ?? 0} ms</p>
-              </div>
-              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Capas</p>
-                <p className="text-xs font-bold text-[var(--text-main)]">{Object.entries(niaMetrics.by_layer || {}).map(([layer, count]) => `${layer}: ${count}`).join(" · ") || "Sin datos"}</p>
+
+              <div className="rounded border border-[var(--border-soft)] bg-[var(--surface-control)] p-4">
+                <h3 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-main)]">Ultimas busquedas</h3>
+                <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
+                  {(niaMetrics.recent_searches || []).length === 0 ? <p className="text-xs text-[var(--text-muted)]">Sin datos.</p> : niaMetrics.recent_searches.map((item: any, index: number) => (
+                    <div key={`${item.created_at}-${index}`} className="rounded border border-[var(--border-soft)] bg-[var(--surface-panel)] p-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-xs font-medium text-[var(--text-main)]">{item.query}</p>
+                        <span className="shrink-0 rounded bg-[var(--accent-main)]/15 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-main)]">{item.layer}</span>
+                      </div>
+                      <p className="mt-1 text-[10px] text-[var(--text-muted)]">{formatMetricDate(item.created_at)} · {formatMetricNumber(item.result_count)} resultados · {formatMetricNumber(item.latency_ms)} ms · {item.cache_hit ? "cache" : "nuevo"} · {item.llm_used ? "LLM" : "sin LLM"}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
         )}
-
         <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 dark:border-red-800 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 dark:border-green-800 rounded font-bold">{successMsg}</div>}
