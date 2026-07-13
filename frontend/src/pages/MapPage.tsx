@@ -117,13 +117,8 @@ type SearchIntent = "rent" | "buy" | null;
 
 const detectSearchIntent = (queries: string[]): SearchIntent => {
   const text = queries.join(" ").toLowerCase();
-  const investmentIntent =
-    /(^|\s)(invertir|inversion|inversión|rentabilidad)(\s|$)/.test(text) ||
-    /generar\s+renta/.test(text) ||
-    /para\s+(rentar|alquilar|arrendar)/.test(text);
-
-  if (investmentIntent || /(^|\s)(comprar|compra|venta|vender|adquirir)(\s|$)/.test(text)) return "buy";
-  if (/(^|\s)(alquilar|alquiler|rentar|arriendo|arrendar)(\s|$)/.test(text)) return "rent";
+  if (/(^|\s)(alquilar|alquiler|rentar|renta|arriendo|arrendar)(\s|$)/.test(text)) return "rent";
+  if (/(^|\s)(comprar|compra|venta|vender|adquirir)(\s|$)/.test(text)) return "buy";
   return null;
 };
 

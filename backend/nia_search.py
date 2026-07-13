@@ -144,18 +144,12 @@ def parse_search_filters(message: str) -> SearchFilters:
     if ref:
         filters.reference_id = int(ref.group(1))
 
-    investment_intent = (
-        re.search(r"\b(invertir|inversion|inversión|rentabilidad)\b", text)
-        or re.search(r"\bgenerar\s+renta\b", text)
-        or re.search(r"\bpara\s+(rentar|alquilar|arrendar)\b", text)
-    )
-    buy_intent = re.search(r"\b(venta|comprar|compra|adquirir|vender)\b", text)
-    rent_intent = re.search(r"\b(alquiler|alquilar|rentar|arriendo|arrendar)\b", text)
-
-    if investment_intent or buy_intent:
-        filters.operation = "Venta"
-    elif rent_intent:
+    if re.search(r"\b(alquiler|alquilar|renta|rentar)\b", text):
         filters.operation = "Alquiler"
+    elif re.search(r"\b(venta|comprar|compra)\b", text):
+        filters.operation = "Venta"
+    elif re.search(r"\b(inversion|inversión)\b", text):
+        filters.operation = "Inversion"
 
     for canonical, synonyms in TYPE_SYNONYMS.items():
         if any(term in text for term in synonyms):
