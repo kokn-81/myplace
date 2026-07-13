@@ -375,6 +375,37 @@ def compact_catalog_for_llm(db: Session, candidate_ids: Optional[list[int]]) -> 
     return "\n".join(rows)
 
 
+def call_llm_for_explanation(db: Session, message: str, ids: list[int], llm_client, llm_model: str) -> tuple[str, int, int]:
+    if llm_client is None or not ids:
+        return "", 0, 0
+    catalog = compact_catalog_for_llm(db, ids[:10])
+    if not catalog:
+        return "", 0, 0
+    prompt = f"""
+Explica brevemente por que estos inmuebles fueron seleccionados para la busqueda del usuario.
+No agregues propiedades nuevas, no cambies IDs y no inventes datos.
+Maximo 3 frases, tono claro y comercial.
+
+RESULTADOS SELECCIONADOS POR EL MOTOR:
+{catalog}
+
+BUSQUEDA: {message}
+"""
+    last_exc = None
+    for attempt in range(3):
+        try:
+            response = llm_client.models.generate_content(model=llm_model, contents=prompt)
+            usage = getattr(response, "usage_metadata", None)
+            input_tokens = int(getattr(usage, "prompt_token_count", 0) or 0)
+            output_tokens = int(getattr(usage, "candidates_token_count", 0) or 0)
+            return (response.text or "").strip(), input_tokens, output_tokens
+        except Exception as exc:
+            last_exc = exc
+            if attempt < 2:
+                time.sleep(1 + attempt * 2)
+    print(f"NIA LLM explanation failed: {last_exc}")
+    return "", 0, 0
+
 def call_llm_for_ids(db: Session, message: str, candidate_ids: Optional[list[int]], llm_client, llm_model: str) -> tuple[list[int], int, int]:
     if llm_client is None:
         return [], 0, 0
@@ -504,7 +535,7 @@ def efficient_property_search(
             tokens_output=0,
             estimated_cost=0,
         )
-        return {"ids": cached["ids"], "layer": cached["layer"], "filters": cached["filters"], "cache_hit": True, "latency_ms": latency_ms, "llm_used": False}
+        return {"ids": cached["ids"], "layer": cached["layer"], "filters": cached["filters"], "cache_hit": True, "latency_ms": latency_ms, "llm_used": False, "explanation": ""}
 
     layer = "A_SQL"
     llm_used = False
@@ -518,7 +549,13 @@ def efficient_property_search(
         ids = run_semantic_lite_layer(db, message, candidate_ids, filters)
         layer = "B_SEMANTIC_LITE"
 
-    if not ids and filters.complex_reasoning:
+    explanation = ""
+    if filters.complex_reasoning and ids:
+        explanation, tokens_input, tokens_output = call_llm_for_explanation(db, message, ids, llm_client, llm_model)
+        if explanation:
+            layer = "C_LLM_EXPLAIN"
+            llm_used = True
+    elif not ids and filters.complex_reasoning:
         ids, tokens_input, tokens_output = call_llm_for_ids(db, message, candidate_ids, llm_client, llm_model)
         if ids:
             layer = "C_LLM_MINIMAL"
@@ -542,4 +579,4 @@ def efficient_property_search(
         estimated_cost=0,
     )
 
-    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used}
+    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used, "explanation": explanation}
