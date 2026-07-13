@@ -476,7 +476,7 @@ export default function MapPage() {
               value={geminiQuery}
               onChange={(e) => setGeminiQuery(e.target.value)}
               disabled={isAsking}
-              placeholder={isAsking ? "IA analizando..." : "Ej: Depto pet-friendly..."}
+              placeholder={isAsking ? "NIA analizando..." : "Dile a NIA como es tu proximo hogar..."}
               className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-[var(--text-main)] outline-none placeholder-[var(--text-muted)] disabled:opacity-50"
             />
 
@@ -530,7 +530,7 @@ export default function MapPage() {
             value={geminiQuery}
             onChange={(e) => setGeminiQuery(e.target.value)}
             disabled={isAsking}
-            placeholder={isAsking ? "IA analizando..." : "Ej: Depto pet-friendly..."}
+            placeholder={isAsking ? "NIA analizando..." : "Dile a NIA como es tu proximo hogar..."}
             className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
           />
 
