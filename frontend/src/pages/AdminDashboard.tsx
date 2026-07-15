@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, Sparkles, BarChart3 } from "lucide-react";
 import { CustomSelect } from "../components/CustomSelect";
-import { API_BASE, AppRole, authFetch, fetchAuthProfile } from "../roleAccess";
+import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 
 // Seguridad Firebase
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from "firebase/auth";
@@ -162,24 +162,39 @@ export default function AdminDashboard() {
     return offers.map((offer: any) => `${offer.operacion}: ${formatOfferPrice(offer)}`).join(" · ");
   };
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
-      setRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol admin:", error);
-          setRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol admin:", error);
+        if (!cachedProfile) setRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const handleLogin = async () => {
@@ -193,8 +208,10 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setRole("user");
   };
   const fetchAgentes = useCallback(async () => {
     try {
@@ -554,7 +571,7 @@ export default function AdminDashboard() {
   // Renderizado condicional
 
   // Carga de seguridad
-  if (authLoading || roleLoading) {
+  if (authLoading || (roleLoading && role === "user")) {
     return <div className="min-h-screen flex items-center justify-center bg-[var(--surface-page)] dark:bg-[var(--surface-panel)]"><Loader2 className="animate-spin text-[var(--accent-main)] w-8 h-8" /></div>;
   }
 

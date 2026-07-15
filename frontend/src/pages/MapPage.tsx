@@ -6,7 +6,7 @@ import { CustomSelect } from "../components/CustomSelect";
 import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { API_BASE, AppRole, fetchAuthProfile } from "../roleAccess";
+import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
 
@@ -225,24 +225,39 @@ export default function MapPage() {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
-      setUserRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setUserRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol:", error);
-          setUserRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setUserRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setUserRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setUserRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol:", error);
+        if (!cachedProfile) setUserRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const handleLogin = async () => {
@@ -257,8 +272,10 @@ export default function MapPage() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setUserRole("user");
   };
 
   const dashboardLink = userRole === "admin" ? "/admin" : userRole === "advisor" ? "/asesor" : null;

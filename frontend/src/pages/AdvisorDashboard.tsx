@@ -4,7 +4,7 @@ import { ArrowLeft, Loader2, LogOut, Moon, Save, ShieldCheck, Sun, UploadCloud, 
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { CustomSelect } from "../components/CustomSelect";
-import { API_BASE, AppRole, authFetch, fetchAuthProfile, normalizeEmail } from "../roleAccess";
+import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, normalizeEmail } from "../roleAccess";
 
 interface LocalAgent {
   id: string;
@@ -89,25 +89,40 @@ export default function AdvisorDashboard() {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
       setDisplayName(currentUser?.displayName || "");
-      setRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol asesor:", error);
-          setRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol asesor:", error);
+        if (!cachedProfile) setRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const fetchAgents = async () => {
@@ -139,8 +154,10 @@ export default function AdvisorDashboard() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setRole("user");
   };
 
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -270,7 +287,7 @@ export default function AdvisorDashboard() {
     }
   };
 
-  if (authLoading || roleLoading) {
+  if (authLoading || (roleLoading && role === "user")) {
     return <div className="min-h-screen flex items-center justify-center bg-[var(--surface-page)]"><Loader2 className="animate-spin text-[var(--accent-main)] w-8 h-8" /></div>;
   }
 
