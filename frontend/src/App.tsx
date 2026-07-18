@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 const MapPage = lazy(() => import("./pages/MapPage"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NiaMetricsDashboard = lazy(() => import("./pages/NiaMetricsDashboard"));
+const AdminCatalogDashboard = lazy(() => import("./pages/AdminCatalogDashboard"));
 const AdvisorDashboard = lazy(() => import("./pages/AdvisorDashboard"));
 
 const MAPBOX_TOKEN =
@@ -59,6 +60,7 @@ export default function App() {
           <Route path="/" element={<MapPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/nia-metrics" element={<NiaMetricsDashboard />} />
+          <Route path="/admin/catalogo" element={<AdminCatalogDashboard />} />
           <Route path="/asesor" element={<AdvisorDashboard />} />
         </Routes>
       </Suspense>

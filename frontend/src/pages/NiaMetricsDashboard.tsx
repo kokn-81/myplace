@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, BarChart3, Loader2, LogOut, Moon, ShieldCheck, Sun } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { AppRole, authFetch, fetchAuthProfile } from "../roleAccess";
-import { auth } from "../firebase";
+import { AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
+import { auth, authPersistenceReady } from "../firebase";
 
 const formatMetricNumber = (value: unknown, decimals = 0) => {
   const number = Number(value ?? 0);
@@ -53,24 +53,39 @@ export default function NiaMetricsDashboard() {
   }, [user, isAdmin]);
 
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
-      setRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol admin:", error);
-          setRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol admin:", error);
+        if (!cachedProfile) setRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -79,16 +94,18 @@ export default function NiaMetricsDashboard() {
 
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
+    await authPersistenceReady;
     await signInWithPopup(auth, provider);
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setRole("user");
   };
 
-  if (authLoading || roleLoading) {
+  if (authLoading || (roleLoading && role === "user")) {
     return <div className="min-h-screen flex items-center justify-center bg-[var(--surface-page)]"><Loader2 className="animate-spin text-[var(--accent-main)] w-8 h-8" /></div>;
   }
 
@@ -157,6 +174,7 @@ export default function NiaMetricsDashboard() {
                 ["Sin resultados", `${formatMetricNumber(niaMetrics.zero_result_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.zero_result_searches)} consultas`],
                 ["Latencia media", `${formatMetricNumber(niaMetrics.avg_latency_ms, 1)} ms`, `P95 ${formatMetricNumber(niaMetrics.p95_latency_ms)} ms`],
                 ["Embeddings", `${formatMetricNumber(niaMetrics.embedding_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.embedding_searches)} consultas`],
+                ["Cobertura emb.", `${formatMetricNumber(niaMetrics.embedding_coverage_percentage, 2)}%`, `${formatMetricNumber(niaMetrics.embedded_properties)} / ${formatMetricNumber(niaMetrics.total_properties)} inmuebles`],
                 ["Tokens LLM", formatMetricNumber(niaMetrics.tokens_total), `${formatMetricNumber(niaMetrics.tokens_input_total)} in / ${formatMetricNumber(niaMetrics.tokens_output_total)} out`],
                 ["Costo estimado", formatMetricCurrency(niaMetrics.estimated_cost_total), "Configurable por modelo"],
               ].map(([label, value, detail]) => (

@@ -5,10 +5,30 @@ import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
 import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { auth } from "../firebase";
-import { API_BASE, AppRole, fetchAuthProfile } from "../roleAccess";
+import { auth, authPersistenceReady } from "../firebase";
+import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
 
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
+
+type MapFocusTarget = {
+  longitude: number;
+  latitude: number;
+  zoom?: number;
+  key?: number;
+  label?: string;
+  source?: "user" | "search";
+};
+
+type MapLocationChoice = MapFocusTarget & {
+  id: string;
+  name: string;
+};
+
+type MapLocationResolution = {
+  focus?: MapFocusTarget | null;
+  choices?: MapLocationChoice[];
+  requestedLocation?: string;
+};
 
 
 
@@ -18,6 +38,154 @@ const MAPBOX_TOKEN =
   (import.meta as any).env?.VITE_MAPBOX_TOKEN ||
   (globalThis as any).VITE_MAPBOX_TOKEN ||
   "";
+
+const LOCATION_STOP_WORDS = new Set([
+  "alquiler",
+  "alquilar",
+  "renta",
+  "rentar",
+  "venta",
+  "comprar",
+  "compra",
+  "menos",
+  "mas",
+  "hasta",
+  "con",
+  "sin",
+  "zona",
+  "inmueble",
+  "depa",
+  "departamento",
+  "casa",
+]);
+
+const normalizePlainText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+const KNOWN_CITY_CHOICES: MapLocationChoice[] = [
+  {
+    id: "santa-cruz-bo",
+    name: "Santa Cruz de la Sierra, Bolivia",
+    longitude: -63.1812,
+    latitude: -17.7833,
+    zoom: 12.2,
+    source: "search",
+  },
+  {
+    id: "santa-cruz-tf",
+    name: "Santa Cruz de Tenerife, Espana",
+    longitude: -16.2518,
+    latitude: 28.4636,
+    zoom: 12.2,
+    source: "search",
+  },
+  {
+    id: "cochabamba-bo",
+    name: "Cochabamba, Bolivia",
+    longitude: -66.1568,
+    latitude: -17.3895,
+    zoom: 12.2,
+    source: "search",
+  },
+  {
+    id: "la-paz-bo",
+    name: "La Paz, Bolivia",
+    longitude: -68.1193,
+    latitude: -16.4897,
+    zoom: 12.2,
+    source: "search",
+  },
+  {
+    id: "medellin-co",
+    name: "Medellin, Colombia",
+    longitude: -75.5812,
+    latitude: 6.2442,
+    zoom: 12.2,
+    source: "search",
+  },
+];
+
+const findKnownCityChoices = (location: string): MapLocationChoice[] => {
+  const normalized = normalizePlainText(location);
+  if (normalized.length < 2) return [];
+
+  return KNOWN_CITY_CHOICES.filter((choice) => {
+    const normalizedName = normalizePlainText(choice.name);
+    const normalizedCity = normalizePlainText(choice.name.split(",")[0] || choice.name);
+    return normalizedName.includes(normalized) || normalizedCity.includes(normalized);
+  });
+};
+
+const getKnownLocationChoices = (location: string): MapLocationChoice[] => {
+  const normalized = normalizePlainText(location);
+  if (normalized === "santa cruz") return findKnownCityChoices(location);
+
+  const matches = findKnownCityChoices(location);
+  return matches.length === 1 ? matches : [];
+};
+
+const normalizeLocationCandidate = (value: string) => {
+  const cleaned = value
+    .replace(/[?!.]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return cleaned
+    .split(/\s+(?:con|hasta|por menos|por mas|menor a|mayor a|que tenga|y que|para)\s+/i)[0]
+    .replace(/[,:;]+$/g, "")
+    .trim();
+};
+
+const extractRequestedLocation = (query: string) => {
+  const normalized = query.replace(/\s+/g, " ").trim();
+  const matches = [...normalized.matchAll(/\ben\s+([^?!.]+)/gi)];
+  if (matches.length === 0) return "";
+
+  for (let i = matches.length - 1; i >= 0; i -= 1) {
+    const candidate = normalizeLocationCandidate(matches[i][1] || "");
+    const firstWord = candidate.toLowerCase().split(/\s+/)[0];
+    if (candidate.length >= 3 && !LOCATION_STOP_WORDS.has(firstWord)) return candidate;
+  }
+
+  return "";
+};
+
+const geocodeRequestedLocation = async (query: string): Promise<MapLocationResolution | null> => {
+  const location = extractRequestedLocation(query);
+  if (!location) return null;
+
+  const knownChoices = getKnownLocationChoices(location);
+  if (knownChoices.length > 1) {
+    return { choices: knownChoices, requestedLocation: location };
+  }
+
+  if (!MAPBOX_TOKEN) return null;
+
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${encodeURIComponent(MAPBOX_TOKEN)}&limit=1&language=es`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  const feature = data?.features?.[0];
+  const center = feature?.center;
+  if (!Array.isArray(center) || center.length < 2) return null;
+
+  return {
+    focus: {
+      longitude: Number(center[0]),
+      latitude: Number(center[1]),
+      zoom: 11.8,
+      key: Date.now(),
+      label: feature.place_name || location,
+      source: "search",
+    },
+    requestedLocation: location,
+  };
+};
 
 const isCloudinaryCollectionUrl = (url?: string) =>
   Boolean(url && /^https:\/\/collection\.cloudinary\.com\//i.test(url.trim()));
@@ -62,7 +230,7 @@ const mapApiProperty = (inm: any): Property => {
     price: Number(primaryOffer?.price ?? inm.precio_usd ?? 0),
     rooms: inm.habitaciones,
     bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
-    area: inm.ciudad,
+    area: inm.zona || inm.ciudad,
     lat: inm.lat,
     lng: inm.lng,
     operation: primaryOffer?.operation ?? inm.operacion,
@@ -114,6 +282,7 @@ const normalizeWhatsappNumber = (value?: string) => {
 };
 
 type SearchIntent = "rent" | "buy" | null;
+type GuidedOperation = "" | "Alquilar" | "Comprar" | "Ambos";
 
 const detectSearchIntent = (queries: string[]): SearchIntent => {
   const text = queries.join(" ").toLowerCase();
@@ -181,7 +350,7 @@ export default function MapPage() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(false);
-  const [userRole, setUserRole] = useState<AppRole>("user");
+  const [userRole, setUserRole] = useState<AppRole>(() => getLastCachedAuthProfile()?.role || "user");
   const [loginError, setLoginError] = useState("");
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
@@ -225,31 +394,46 @@ export default function MapPage() {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
-      setUserRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setUserRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol:", error);
-          setUserRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setUserRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setUserRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setUserRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol:", error);
+        if (!cachedProfile) setUserRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const handleLogin = async () => {
     try {
       setLoginError("");
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
+      await authPersistenceReady;
       await signInWithPopup(auth, provider);
     } catch (error: any) {
       setLoginError(error.message || "No se pudo iniciar sesion.");
@@ -257,8 +441,10 @@ export default function MapPage() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setUserRole("user");
   };
 
   const dashboardLink = userRole === "admin" ? "/admin" : userRole === "advisor" ? "/asesor" : null;
@@ -268,8 +454,47 @@ export default function MapPage() {
   const [isAsking, setIsAsking] = useState(false);
   const [aiFilteredIds, setAiFilteredIds] = useState<string[] | null>(null);
   const [aiFilterHistory, setAiFilterHistory] = useState<string[]>([]);
+  const [aiClarification, setAiClarification] = useState<string>("");
   const [activeSearchIntent, setActiveSearchIntent] = useState<SearchIntent>(null);
+  const [mapFocus, setMapFocus] = useState<MapFocusTarget | null>(null);
+  const [locationChoices, setLocationChoices] = useState<MapLocationChoice[]>([]);
+  const [locationQuestion, setLocationQuestion] = useState("");
+  const [customLocationText, setCustomLocationText] = useState("");
+  const [isCustomLocationOpen, setIsCustomLocationOpen] = useState(false);
+  const [isGuidedSearchOpen, setIsGuidedSearchOpen] = useState(false);
+  const [guidedStep, setGuidedStep] = useState(1);
+  const [guidedOperation, setGuidedOperation] = useState<GuidedOperation>("");
+  const [guidedBudget, setGuidedBudget] = useState("");
+  const [guidedCity, setGuidedCity] = useState("");
+  const [guidedCityChoice, setGuidedCityChoice] = useState<MapLocationChoice | null>(null);
+  const [isCitySuggestionsOpen, setIsCitySuggestionsOpen] = useState(false);
+  const [guidedZone, setGuidedZone] = useState("");
+  const [guidedPriority, setGuidedPriority] = useState("");
+  const [guidedError, setGuidedError] = useState("");
 
+  const citySuggestions = useMemo(() => findKnownCityChoices(guidedCity).slice(0, 5), [guidedCity]);
+  const guidedStepLabel = `${guidedStep} de 5`;
+
+
+  useEffect(() => {
+    if (!("geolocation" in navigator)) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMapFocus({
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
+          zoom: 13,
+          key: Date.now(),
+          source: "user",
+        });
+      },
+      () => {
+        // Si no hay permiso, el mapa queda en Santa Cruz como fallback inicial.
+      },
+      { enableHighAccuracy: false, timeout: 4500, maximumAge: 300000 }
+    );
+  }, []);
 
   // [OPALO-BRIDGE] Lectura Consolidada
   useEffect(() => {
@@ -289,32 +514,98 @@ export default function MapPage() {
     fetchDatos();
   }, []);
 
+  const handleLocationChoice = (choice: MapLocationChoice) => {
+    setMapFocus({
+      longitude: choice.longitude,
+      latitude: choice.latitude,
+      zoom: choice.zoom ?? 12.2,
+      key: Date.now(),
+      label: choice.name,
+      source: "search",
+    });
+    setLocationChoices([]);
+    setLocationQuestion("");
+    setCustomLocationText("");
+    setIsCustomLocationOpen(false);
+  };
+
+  const handleCustomLocationSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const value = customLocationText.trim();
+    if (!value) return;
+
+    try {
+      const resolution = await geocodeRequestedLocation(`en ${value}`);
+      if (resolution?.choices && resolution.choices.length > 1) {
+        setLocationQuestion(`A que ${resolution.requestedLocation || value} te refieres?`);
+        setLocationChoices(resolution.choices);
+        return;
+      }
+      if (resolution?.focus) {
+        setMapFocus(resolution.focus);
+        setLocationChoices([]);
+        setLocationQuestion("");
+        setCustomLocationText("");
+        setIsCustomLocationOpen(false);
+      } else {
+        setLocationQuestion(`No encontre "${value}". Prueba con ciudad y pais.`);
+      }
+    } catch (error) {
+      console.warn("No se pudo resolver la ubicacion escrita:", error);
+      setLocationQuestion(`No pude ubicar "${value}". Prueba con ciudad y pais.`);
+    }
+  };
+
+
   const clearAiFilters = () => {
     setAiFilteredIds(null);
     setAiFilterHistory([]);
+    setAiClarification("");
+    setLocationChoices([]);
+    setLocationQuestion("");
+    setCustomLocationText("");
+    setIsCustomLocationOpen(false);
     setGeminiQuery("");
     setCurrentIndex(0);
   };
 
   // [OPALO-BRIDGE] Motor de Filtrado Semantico acumulativo
-  const handleAskGemini = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const query = geminiQuery.trim();
-    if (!query) {
+  const runNiaSearch = async (query: string, options?: { candidateIds?: number[] | null; replaceHistory?: string[] }) => {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
       clearAiFilters();
       return;
     }
 
-    const queryIntent = detectSearchIntent([query]);
+    const queryIntent = detectSearchIntent([trimmedQuery]);
     setIsAsking(true);
+    setAiClarification("");
+    setLocationChoices([]);
+    setLocationQuestion("");
+    setCustomLocationText("");
+    setIsCustomLocationOpen(false);
+
+    geocodeRequestedLocation(trimmedQuery)
+      .then((resolution) => {
+        if (!resolution) return;
+        if (resolution.choices && resolution.choices.length > 1) {
+          setLocationQuestion(`A que ${resolution.requestedLocation || "ubicacion"} te refieres?`);
+          setLocationChoices(resolution.choices);
+          return;
+        }
+        if (resolution.focus) setMapFocus(resolution.focus);
+      })
+      .catch((error) => console.warn("No se pudo mover el mapa a la ubicacion solicitada:", error));
 
     try {
-      const candidateIds = aiFilteredIds?.map((id) => Number(id)).filter((id) => !Number.isNaN(id));
+      const candidateIds = options?.candidateIds === undefined
+        ? aiFilteredIds?.map((id) => Number(id)).filter((id) => !Number.isNaN(id))
+        : options.candidateIds || undefined;
       const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          mensaje: query,
+          mensaje: trimmedQuery,
           candidate_ids: candidateIds && candidateIds.length > 0 ? candidateIds : undefined,
         }),
       });
@@ -323,17 +614,26 @@ export default function MapPage() {
 
       const data = await res.json();
 
+      if (data.needs_clarification) {
+        setAiClarification(data.clarification || "Necesito un dato mas para buscar bien.");
+        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
+        setGeminiQuery(`${trimmedQuery} `);
+        return;
+      }
+
       if (data.ids && Array.isArray(data.ids)) {
         const stringIds = data.ids.map((id: number | string) => id.toString());
         setAiFilteredIds(stringIds);
-        setAiFilterHistory((current) => [...current, query]);
+        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
         if (queryIntent) setActiveSearchIntent(queryIntent);
+        setAiClarification("");
         setGeminiQuery("");
         setCurrentIndex(0);
       } else {
         setAiFilteredIds([]);
-        setAiFilterHistory((current) => [...current, query]);
+        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
         if (queryIntent) setActiveSearchIntent(queryIntent);
+        setAiClarification("");
       }
     } catch (err) {
       console.error("Fallo critico en motor semantico:", err);
@@ -342,12 +642,114 @@ export default function MapPage() {
       setIsAsking(false);
     }
   };
-  // --- LÃ“GICA DE INTERSECCIÃ“N DE FILTROS ---
-  const filteredProperties = useMemo(() => properties.filter((p) => {
-   // Si la IA filtrÃ³ algo y el ID no estÃ en la lista, lo ocultamos
-    if (aiFilteredIds !== null && !aiFilteredIds.includes(p.id)) return false;
-    return true;
-  }), [properties, aiFilteredIds]);
+
+
+  const handleRemoveAiFilter = async (indexToRemove: number) => {
+    const remainingFilters = aiFilterHistory.filter((_, index) => index !== indexToRemove);
+    if (remainingFilters.length === 0) {
+      clearAiFilters();
+      return;
+    }
+
+    setAiFilteredIds(null);
+    setAiClarification("");
+    setActiveSearchIntent(detectSearchIntent(remainingFilters));
+    setCurrentIndex(0);
+    await runNiaSearch(remainingFilters.join(" "), { candidateIds: null, replaceHistory: remainingFilters });
+  };
+
+  const goNextGuidedStep = () => {
+    if (guidedStep === 3 && !(guidedCityChoice?.name || guidedCity).trim()) {
+      setGuidedError("La ciudad es obligatoria para afinar la busqueda.");
+      setIsCitySuggestionsOpen(true);
+      return;
+    }
+    setGuidedError("");
+    setGuidedStep((step) => Math.min(5, step + 1));
+  };
+
+  const handleGuidedFormSubmit = async (event: React.FormEvent) => {
+    if (guidedStep < 5) {
+      event.preventDefault();
+      goNextGuidedStep();
+      return;
+    }
+    await handleGuidedSearchSubmit(event);
+  };
+  const handleAskGemini = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runNiaSearch(geminiQuery);
+  };
+
+  const handleGuidedCitySelect = (choice: MapLocationChoice, advance = false) => {
+    setGuidedCity(choice.name);
+    setGuidedCityChoice(choice);
+    setIsCitySuggestionsOpen(false);
+    setGuidedError("");
+    setMapFocus({
+      longitude: choice.longitude,
+      latitude: choice.latitude,
+      zoom: choice.zoom ?? 12.2,
+      key: Date.now(),
+      label: choice.name,
+      source: "search",
+    });
+    if (advance) window.setTimeout(() => setGuidedStep((step) => Math.min(5, step + 1)), 80);
+  };
+
+  const handleGuidedSearchSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const city = (guidedCityChoice?.name || guidedCity).trim();
+    if (!city) {
+      setGuidedError("La ciudad es obligatoria para afinar la busqueda.");
+      setIsCitySuggestionsOpen(true);
+      return;
+    }
+
+    const operationText =
+      guidedOperation === "Alquilar"
+        ? "quiero alquilar"
+        : guidedOperation === "Comprar"
+          ? "quiero comprar"
+          : guidedOperation === "Ambos"
+            ? "quiero alquilar o comprar"
+            : "busco";
+    const zone = guidedZone.trim();
+    const zoneText = zone && normalizePlainText(zone) !== "no estoy seguro" ? `zona ${zone}` : "";
+    const query = [
+      operationText,
+      "inmueble",
+      guidedBudget.trim(),
+      `en ${city}`,
+      zoneText,
+      guidedPriority.trim(),
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    if (guidedCityChoice) {
+      setMapFocus({
+        longitude: guidedCityChoice.longitude,
+        latitude: guidedCityChoice.latitude,
+        zoom: guidedCityChoice.zoom ?? 12.2,
+        key: Date.now(),
+        label: guidedCityChoice.name,
+        source: "search",
+      });
+    }
+
+    setGuidedError("");
+    await runNiaSearch(query);
+  };
+  // Conserva el orden de ranking que devuelve NIA. filter() sobre el catalogo original
+  // ocultaba inmuebles, pero perdia la prioridad de embeddings.
+  const filteredProperties = useMemo(() => {
+    if (aiFilteredIds === null) return properties;
+    const propertyById = new Map(properties.map((property) => [property.id, property]));
+    return aiFilteredIds
+      .map((id) => propertyById.get(id))
+      .filter((property): property is Property => Boolean(property));
+  }, [properties, aiFilteredIds]);
 
   const searchIntent = useMemo(() => activeSearchIntent ?? detectSearchIntent(aiFilterHistory), [activeSearchIntent, aiFilterHistory]);
   const selectedDisplayOffer = selectedProperty ? selectPropertyOffer(selectedProperty, searchIntent) : null;
@@ -409,6 +811,7 @@ export default function MapPage() {
             properties={filteredProperties}
             isDarkMode={isDarkMode}
             onSelectProperty={selectProperty}
+            focusLocation={mapFocus}
           />
         </Suspense>
         <AnimatePresence>
@@ -513,54 +916,316 @@ export default function MapPage() {
       </div>
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
       <div className="absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
-        <form
-          onSubmit={handleAskGemini}
-          className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
-        >
-          <div className="pl-3 pr-1.5 sm:pl-4 sm:pr-2 flex items-center">
-            {isAsking ? (
-              <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
-            ) : (
-              <Sparkles className="h-6 w-4 text-[var(--accent-main)]" />
+        {!isGuidedSearchOpen ? (
+          <>
+            <form
+              onSubmit={handleAskGemini}
+              className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
+            >
+              <div className="pl-3 pr-1.5 sm:pl-4 sm:pr-2 flex items-center">
+                {isAsking ? (
+                  <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+                ) : (
+                  <Sparkles className="h-6 w-4 text-[var(--accent-main)]" />
+                )}
+              </div>
+
+              <input
+                type="text"
+                value={geminiQuery}
+                onChange={(e) => setGeminiQuery(e.target.value)}
+                disabled={isAsking}
+                placeholder={isAsking ? "NIA analizando..." : "Dile a NIA como es tu proximo hogar..."}
+                className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
+              />
+
+              {aiFilteredIds !== null && (
+                <button type="button" onClick={clearAiFilters} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Limpiar filtros">
+                  <X size={16} />
+                </button>
+              )}
+
+              <button
+                type="submit"
+                disabled={isAsking}
+                className="bg-[var(--accent-main)] text-[#2F241D] px-5 sm:px-6 py-2.5 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
+              >
+                <Search size={14} className="md:hidden" />
+                <span className="hidden md:inline">Buscar</span>
+              </button>
+            </form>
+            <div className="mt-2 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsGuidedSearchOpen(true)}
+                className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/92 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--accent-main)] shadow-sm backdrop-blur transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D] dark:bg-[rgba(27,20,17,0.88)]"
+              >
+                Afinar con NIA
+              </button>
+            </div>
+          </>
+        ) : (
+          <motion.div
+            key="guided-search"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            <form
+              onSubmit={handleGuidedFormSubmit}
+              className="bg-[rgba(255,253,246,0.92)] dark:bg-[rgba(16,12,10,0.66)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--accent-main)]/60 transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.9)]"
+            >
+              <div className="pl-4 pr-2 flex items-center">
+                <Sparkles className="h-6 w-4 text-[var(--accent-main)]" />
+              </div>
+              <div className="hidden shrink-0 border-r border-[var(--border-soft)] pr-3 text-[9px] font-black uppercase tracking-[0.16em] text-[var(--accent-main)] md:block">
+                {guidedStep === 1 && "Que buscas?"}
+                {guidedStep === 2 && "Presupuesto"}
+                {guidedStep === 3 && "Ciudad"}
+                {guidedStep === 4 && "Zona"}
+                {guidedStep === 5 && "Que seria ideal para ti?"}
+              </div>
+
+              {guidedStep === 1 && (
+                <input
+                  value={guidedOperation}
+                  readOnly
+                  placeholder="Elige: alquilar, comprar o ambos"
+                  className="w-full min-w-0 bg-transparent border-none outline-none px-3 text-[var(--text-main)] placeholder-[var(--text-muted)] font-sans text-sm tracking-wide"
+                />
+              )}
+              {guidedStep === 2 && (
+                <input
+                  value={guidedBudget}
+                  onChange={(event) => setGuidedBudget(event.target.value)}
+                  placeholder="Ej. 6000 Bs"
+                  className="w-full min-w-0 bg-transparent border-none outline-none px-3 text-[var(--text-main)] placeholder-[var(--text-muted)] font-sans text-sm tracking-wide"
+                />
+              )}
+              {guidedStep === 3 && (
+                <div className="relative min-w-0 flex-1 px-2">
+                  <input
+                    value={guidedCity}
+                    onChange={(event) => {
+                      setGuidedCity(event.target.value);
+                      setGuidedCityChoice(null);
+                      setIsCitySuggestionsOpen(true);
+                      setGuidedError("");
+                    }}
+                    onFocus={() => setIsCitySuggestionsOpen(true)}
+                    onBlur={() => window.setTimeout(() => setIsCitySuggestionsOpen(false), 140)}
+                    placeholder="Ciudad obligatoria"
+                    className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-main)] placeholder-[var(--text-muted)]"
+                  />
+                  {isCitySuggestionsOpen && citySuggestions.length > 0 && (
+                    <div className="absolute left-2 right-2 top-[calc(100%+16px)] z-30 overflow-hidden rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)] text-left shadow-[0_14px_32px_rgba(58,33,25,0.18)] dark:bg-[rgba(27,20,17,0.98)]">
+                      {citySuggestions.map((choice) => (
+                        <button
+                          key={choice.id}
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => handleGuidedCitySelect(choice, true)}
+                          className="block w-full px-3 py-2 text-left text-xs font-semibold text-[var(--text-main)] transition-colors hover:bg-[var(--accent-main)]/15"
+                        >
+                          {choice.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {guidedStep === 4 && (
+                <input
+                  value={guidedZone}
+                  onChange={(event) => setGuidedZone(event.target.value)}
+                  placeholder="Zona opcional, ej. Equipetrol"
+                  className="w-full min-w-0 bg-transparent border-none outline-none px-3 text-[var(--text-main)] placeholder-[var(--text-muted)] font-sans text-sm tracking-wide"
+                />
+              )}
+              {guidedStep === 5 && (
+                <input
+                  value={guidedPriority}
+                  onChange={(event) => setGuidedPriority(event.target.value)}
+                  placeholder="Ej. pueda trabajar en remoto"
+                  className="w-full min-w-0 bg-transparent border-none outline-none px-3 text-[var(--text-main)] placeholder-[var(--text-muted)] font-sans text-sm tracking-wide"
+                />
+              )}
+
+              <span className="hidden shrink-0 rounded-full border border-[var(--accent-main)]/35 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-[var(--accent-main)] md:inline-flex">
+                {guidedStepLabel}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsGuidedSearchOpen(false)}
+                className="ml-1 p-2 text-stone-500 hover:text-red-400 transition-colors"
+                title="Cerrar guia"
+              >
+                <X size={16} />
+              </button>
+              {guidedStep < 5 ? (
+                <button
+                  type="button"
+                  onClick={goNextGuidedStep}
+                  className="bg-[var(--accent-main)] text-[#2F241D] px-5 sm:px-6 py-2.5 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
+                >
+                  Siguiente
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isAsking}
+                  className="bg-[var(--accent-main)] text-[#2F241D] px-5 sm:px-6 py-2.5 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
+                >
+                  Buscar
+                </button>
+              )}
+            </form>
+
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] uppercase tracking-[0.12em]">
+              <button
+                type="button"
+                onClick={() => setGuidedStep((step) => Math.max(1, step - 1))}
+                disabled={guidedStep === 1}
+                className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-4 py-2 font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Anterior
+              </button>
+              {guidedStep === 1 && (["Alquilar", "Comprar", "Ambos"] as GuidedOperation[]).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => { setGuidedOperation(option); window.setTimeout(() => setGuidedStep(2), 80); }}
+                  className={`rounded-full border px-4 py-2 font-bold shadow-sm transition-colors ${guidedOperation === option ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--border-soft)] bg-[var(--surface-panel)]/90 text-[var(--text-muted)] hover:border-[var(--accent-main)]"}`}
+                >
+                  {option}
+                </button>
+              ))}
+              {guidedStep === 2 && ["Hasta 5000 Bs", "Entre 7000 y 8000 Bs", "Entre 8000 y 10000 Bs"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => { setGuidedBudget(option); window.setTimeout(() => setGuidedStep(3), 80); }}
+                  className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-4 py-2 font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]"
+                >
+                  {option}
+                </button>
+              ))}
+              {guidedStep === 3 && (
+                <>
+                  {citySuggestions.slice(0, 2).map((choice) => (
+                    <button
+                      key={`quick-${choice.id}`}
+                      type="button"
+                      onClick={() => handleGuidedCitySelect(choice, true)}
+                      className="rounded-full border border-[var(--accent-main)]/45 bg-[var(--accent-main)]/10 px-4 py-2 font-bold text-[var(--accent-main)] shadow-sm transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
+                    >
+                      {choice.name.split(",")[0]}
+                    </button>
+                  ))}
+                  {guidedError && <span className="rounded-full border border-red-200 bg-red-50 px-4 py-2 font-bold text-red-600">{guidedError}</span>}
+                </>
+              )}
+              {guidedStep === 4 && (
+                <>
+                  {["Equipetrol", "Norte", "Urubo", "Centro"].map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => { setGuidedZone(option); window.setTimeout(() => setGuidedStep(5), 80); }}
+                      className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-4 py-2 font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => { setGuidedZone("No estoy seguro"); window.setTimeout(() => setGuidedStep(5), 80); }}
+                    className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-4 py-2 font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]"
+                  >
+                    No estoy seguro
+                  </button>
+                </>
+              )}
+              {guidedStep === 5 && ["pueda trabajar en remoto", "restaurantes y cafes cerca", "cerca del 4to anillo"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setGuidedPriority(option)}
+                  className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-4 py-2 font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+        {locationQuestion && (
+          <div className="mt-3 rounded-xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/95 p-3 text-left shadow-[0_18px_42px_rgba(58,33,25,0.18)] backdrop-blur-xl dark:bg-[rgba(27,20,17,0.94)]">
+            <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--accent-main)]">
+              <Sparkles size={14} />
+              <span>Pregunta de NIA</span>
+            </div>
+            <p className="mb-3 text-sm font-semibold normal-case tracking-normal text-[var(--text-main)]">{locationQuestion}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              {locationChoices.map((choice) => (
+                <button
+                  key={choice.id}
+                  type="button"
+                  onClick={() => handleLocationChoice(choice)}
+                  className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--accent-main)] transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
+                >
+                  {choice.name}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setIsCustomLocationOpen((open) => !open)}
+                className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)] transition-colors hover:border-[var(--accent-main)]"
+              >
+                Otro
+              </button>
+            </div>
+            {isCustomLocationOpen && (
+              <form onSubmit={handleCustomLocationSubmit} className="mt-3 flex gap-2">
+                <input
+                  value={customLocationText}
+                  onChange={(event) => setCustomLocationText(event.target.value)}
+                  placeholder="Ej. Santa Cruz de la Sierra, Bolivia"
+                  className="min-w-0 flex-1 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]"
+                />
+                <button type="submit" className="rounded-lg bg-[var(--accent-main)] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white">
+                  Usar
+                </button>
+              </form>
             )}
           </div>
-
-          <input
-            type="text"
-            value={geminiQuery}
-            onChange={(e) => setGeminiQuery(e.target.value)}
-            disabled={isAsking}
-            placeholder={isAsking ? "NIA analizando..." : "Dile a NIA como es tu proximo hogar..."}
-            className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
-          />
-
-          {aiFilteredIds !== null && (
-            <button type="button" onClick={clearAiFilters} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Limpiar filtros">
-              <X size={16} />
-            </button>
-          )}
-
-          {/* Boton Conserje: Ajustado en padding y tipografia para ser compacto */}
-          <button
-            type="submit"
-            disabled={isAsking}
-            className="bg-[var(--accent-main)] text-[#2F241D] px-4 sm:px-5 py-2 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
-          >
-            <Search size={14} className="md:hidden" />
-            <span className="hidden md:inline">Buscar</span>
-          </button>
-        </form>
-        {aiFilteredIds !== null && (
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[10px] uppercase tracking-[0.12em]">
+        )}
+        {(aiFilteredIds !== null || aiClarification) && (
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] uppercase tracking-[0.12em]">
             {aiFilterHistory.map((filter, index) => (
-              <span key={`${filter}-${index}`} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 dark:bg-[rgba(27,20,17,0.88)] px-3 py-1.5 text-[var(--text-muted)] shadow-sm">
-                {filter}
+              <span key={`${filter}-${index}`} className="inline-flex max-w-[560px] items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 py-1 pl-3 pr-1.5 text-[var(--text-muted)] shadow-sm dark:bg-[rgba(27,20,17,0.88)]">
+                <span className="truncate">{filter}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAiFilter(index)}
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/35"
+                  title="Quitar filtro"
+                >
+                  <X size={12} />
+                </button>
               </span>
             ))}
-            <span className="rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-1.5 font-bold text-[var(--accent-main)]">
-              {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
-            </span>
-            <button type="button" onClick={clearAiFilters} className="rounded-full bg-[var(--color-chocolate)] px-3 py-1.5 font-bold text-[var(--color-ivory)] transition-colors hover:bg-[var(--accent-hover)]">
+            {aiClarification ? (
+              <span className="rounded-full border border-amber-300/60 bg-amber-50 px-4 py-2 font-bold text-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+                {aiClarification}
+              </span>
+            ) : aiFilteredIds !== null ? (
+              <span className="rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-4 py-2 font-bold text-[var(--accent-main)]">
+                {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
+              </span>
+            ) : null}
+            <button type="button" onClick={clearAiFilters} className="rounded-full bg-[var(--color-chocolate)] px-4 py-2 font-bold text-[var(--color-ivory)] transition-colors hover:bg-[var(--accent-hover)]">
               Limpiar filtros
             </button>
           </div>
@@ -589,6 +1254,9 @@ export default function MapPage() {
         const isCollection = isCloudinaryCollectionUrl(coverUrl);
         const displayOffer = selectPropertyOffer(p, searchIntent);
         const showCarouselPrice = shouldShowCarouselPrice(p, searchIntent);
+        const globalResultRank = currentIndex + index;
+        const isRankedSearchResult = aiFilteredIds !== null && !aiClarification;
+        const isBestSearchMatch = isRankedSearchResult && globalResultRank === 0;
 
         return (
         <motion.div
@@ -600,8 +1268,13 @@ export default function MapPage() {
           transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9, delay: index * 0.035 }}
           onClick={() => selectProperty(p)}
           // Tarjetas compactas para que el borde respire completo
-          className="group flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border border-[var(--border-strong)]/50 bg-[var(--surface-panel)] shadow-[var(--shadow-warm)] ring-[var(--accent-main)] transition-shadow duration-300 hover:ring-2 dark:border-[var(--border-soft)] dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none"
+          className={`group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-0.5 hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
         >
+        {isRankedSearchResult && (
+          <span className={`absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-black shadow-md ${isBestSearchMatch ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 text-[var(--accent-main)]"}`} title={isBestSearchMatch ? "Mejor opcion" : `Opcion ${globalResultRank + 1}`}>
+            {globalResultRank + 1}
+          </span>
+        )}
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
         <div className="relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
           {coverUrl && !isCollection ? (
@@ -927,23 +1600,3 @@ export default function MapPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

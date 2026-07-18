@@ -9,27 +9,47 @@ from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
 from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB
-from nia_search import build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text
+from nia_search import EMBEDDINGS_ENABLED, EMBEDDING_MODEL, build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text, update_property_embedding
 from pydantic import BaseModel
 from typing import List, Optional
 
-# --- LIBRERÃA OFICIAL Y ACTUALIZADA ---
+# --- LIBRERIA OFICIAL Y ACTUALIZADA ---
 from google import genai
 
 app = FastAPI(title="Motor Inmobiliario Bolivia - O.P.A.L.O.")
 
-# --- CONFIGURACIÃ“N DE IA (ESCALABLE Y CON BYPASS DE RED) ---
-# ðŸ”´ INYECTA TU LLAVE AQUÃ
+# --- CONFIGURACION DE IA (ESCALABLE Y CON BYPASS DE RED) ---
+# INYECTA TU LLAVE AQUI
 LLAVE_REAL = os.getenv("GEMINI_API_KEY", "").strip()
 cliente_ia = genai.Client(api_key=LLAVE_REAL, http_options={'api_version': 'v1'}) if LLAVE_REAL else None
 MODELO_ACTIVO = 'gemini-2.5-flash'
+PUBLIC_CATALOG_CACHE_TTL_SECONDS = int(os.getenv("PUBLIC_CATALOG_CACHE_TTL_SECONDS", "60") or "60")
+_public_catalog_summary_cache: dict[str, object] = {"expires_at": 0.0, "data": None}
 
-# --- POLÃTICAS DE SEGURIDAD CORS ---
+
+def get_public_catalog_cache() -> Optional[list[dict]]:
+    cached_data = _public_catalog_summary_cache.get("data")
+    expires_at = float(_public_catalog_summary_cache.get("expires_at") or 0)
+    if cached_data is not None and expires_at > time.time():
+        return cached_data  # type: ignore[return-value]
+    return None
+
+
+def set_public_catalog_cache(data: list[dict]) -> None:
+    _public_catalog_summary_cache["data"] = data
+    _public_catalog_summary_cache["expires_at"] = time.time() + max(PUBLIC_CATALOG_CACHE_TTL_SECONDS, 0)
+
+
+def invalidate_public_catalog_cache() -> None:
+    _public_catalog_summary_cache["data"] = None
+    _public_catalog_summary_cache["expires_at"] = 0.0
+
+# --- POLITICAS DE SEGURIDAD CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
@@ -38,7 +58,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 1. GESTIÃ“N DE ARCHIVOS MULTIMEDIA ---
+# --- 1. GESTION DE ARCHIVOS MULTIMEDIA ---
 CARPETA_UPLOADS = "./uploads"
 if not os.path.exists(CARPETA_UPLOADS):
     os.makedirs(CARPETA_UPLOADS)
@@ -80,6 +100,7 @@ class InmuebleCreate(BaseModel):
     agente_id: Optional[int] = None
     imagenes: str = ""
     amenidades: str = ""
+    keywords: str = ""
     ofertas: Optional[List[OfertaSchema]] = None
 class AgenteSchema(BaseModel):
     nombre: str
@@ -173,6 +194,25 @@ def limpiar_amenidades_extraidas(data: dict) -> list[str]:
 
 
 
+
+def limpiar_keywords_extraidas(data: dict) -> list[str]:
+    keywords = data.get("keywords") if isinstance(data.get("keywords"), list) else []
+    resultado: list[str] = []
+    vistas: set[str] = set()
+    for keyword in keywords:
+        texto = str(keyword or "").strip()
+        clave = normalizar_texto_simple(texto)
+        if not clave or clave in vistas:
+            continue
+        if len(clave) < 3 or len(texto) > 60:
+            continue
+        if clave.startswith(("http", "www")):
+            continue
+        vistas.add(clave)
+        resultado.append(texto)
+    return resultado[:12]
+
+
 def inferir_bool_por_amenidad(amenidades: str, *terminos: str) -> bool:
     texto = normalizar_texto_simple(amenidades)
     return any(termino in texto for termino in terminos)
@@ -180,6 +220,7 @@ def inferir_bool_por_amenidad(amenidades: str, *terminos: str) -> bool:
 
 def aplicar_campos_busqueda_inmueble(inmueble_db: InmuebleDB, inmueble: InmuebleCreate) -> None:
     amenidades = inmueble.amenidades or ""
+    inmueble_db.keywords = (inmueble.keywords or "").strip()
     inmueble_db.superficie_m2 = inmueble.superficie_m2
     inmueble_db.zona = (inmueble.zona or inmueble.ciudad or "").strip() or None
     inmueble_db.direccion = (inmueble.direccion or "").strip() or None
@@ -222,7 +263,7 @@ def construir_faltantes_extraccion(data: dict) -> tuple[list[str], list[str]]:
 
     return faltantes, preguntas
 
-# --- INYECCIÃ“N DE DEPENDENCIAS ---
+# --- INYECCION DE DEPENDENCIAS ---
 def get_db():
     db = SessionLocal()
     try:
@@ -266,6 +307,13 @@ def obtener_lista_amenidades(inm: InmuebleDB) -> List[str]:
     return [am.strip() for am in texto_amenidades.split(",") if am.strip()]
 
 
+
+
+def obtener_lista_keywords(inm: InmuebleDB) -> List[str]:
+    texto_keywords = str(getattr(inm, "keywords", "") or "")
+    return [kw.strip() for kw in texto_keywords.split(",") if kw.strip()]
+
+
 def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
     inm_dict["banos"] = getattr(inm, "banos", 1) or 1
     inm_dict["agente_id"] = str(inm.agente_id) if inm.agente_id else "0"
@@ -303,12 +351,21 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
     return inm_dict
 
 
-def serializar_inmueble(inm: InmuebleDB) -> dict:
+def serializar_inmueble(inm: InmuebleDB, include_search_metadata: bool = False) -> dict:
     inm_dict = inm.__dict__.copy()
     inm_dict.pop("_sa_instance_state", None)
     inm_dict["images"] = obtener_lista_imagenes(inm)
     inm_dict["amenidades"] = obtener_lista_amenidades(inm)
+    inm_dict["keywords"] = obtener_lista_keywords(inm)
     inm_dict["detalle_completo"] = True
+
+    if include_search_metadata:
+        inm_dict["search_text"] = getattr(inm, "search_text", None) or build_property_search_text(inm)
+        inm_dict["embedding_ready"] = bool(getattr(inm, "embedding_json", None))
+    else:
+        for key in ("search_text", "embedding_json", "embedding_model", "embedding_updated_at", "amenidades_normalizadas"):
+            inm_dict.pop(key, None)
+
     return aplicar_oferta_principal(inm, inm_dict)
 
 
@@ -327,6 +384,7 @@ def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
         "operacion": inm.operacion,
         "tipo_inmueble": inm.tipo_inmueble,
         "amenidades": obtener_lista_amenidades(inm),
+        "keywords": obtener_lista_keywords(inm),
         "images": imagenes[:1],
         "detalle_completo": False,
     }
@@ -380,6 +438,8 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
             candidate_ids=peticion.candidate_ids,
             llm_client=cliente_ia,
             llm_model=MODELO_ACTIVO,
+            embedding_client=cliente_ia if EMBEDDINGS_ENABLED else None,
+            embedding_model=EMBEDDING_MODEL,
         )
         return {"status": "success", **resultado}
     except Exception as e:
@@ -428,6 +488,7 @@ async def extraer_datos_inmueble(
         "lng": number | null,
         "descripcion": string | null,
         "amenidades": string[],
+        "keywords": string[],
         "estado": "Borrador",
         "ofertas": [{{"operacion": string, "precio": number, "moneda": string}}]
       }},
@@ -439,13 +500,17 @@ async def extraer_datos_inmueble(
     - No inventes coordenadas. Si no estan en el texto, usa null.
     - Si dice dolares, USD o $, usa "$ (USD)". Si dice bolivianos o Bs, usa "Bs".
     - Si hay precio de alquiler y venta, usa operacion "Alquiler y Venta" y llena ofertas.
+    - El "titulo" debe ser comercial, breve y natural. No uses MAYUSCULAS sostenidas. Combina tipo de inmueble, edificio/zona o publico objetivo solo cuando el texto lo respalde, por ejemplo: "Pixel Loft para Streamer", "Departamento ejecutivo en Equipetrol" o "Casa familiar con jardin".
+    - Identifica el publico objetivo cuando el texto lo permita: ejecutivo, pareja, familia, estudiante, creador de contenido, inversionista, nomada digital, profesional remoto, mascotas, renta corta o alta demanda.
     - Redacta "descripcion" como texto comercial natural en 2 o 3 parrafos separados por una linea en blanco. En el string JSON usa \\n\\n para separar parrafos.
     - No uses bullets, emojis, listas, encabezados ni etiquetas dentro de "descripcion".
-    - Parrafo 1: tipo de inmueble, operacion, edificio o zona, y ubicacion si esta disponible.
-    - Parrafo 2: superficie, distribucion, dormitorios, banos y caracteristicas internas relevantes.
-    - Parrafo 3: areas comunes, experiencia del edificio o valor para vivir, invertir o generar renta solo si el texto lo respalda.
+    - Parrafo 1: tipo de inmueble, operacion, edificio o zona, ubicacion y propuesta principal para el publico objetivo.
+    - Parrafo 2: superficie, distribucion, dormitorios, banos, equipamiento y caracteristicas internas relevantes.
+    - Parrafo 3: areas comunes, experiencia del edificio o valor para vivir, trabajar, invertir o generar renta solo si el texto lo respalda.
     - Extrae superficie_m2, zona, direccion, piso, amoblado, acepta_mascotas, parqueos y baulera cuando el texto lo diga; si no aparece, usa null.
-    - En "amenidades" incluye solo beneficios concretos de la propiedad o edificio. No incluyas ciudad, zona, edificio, direccion, precio, superficie, habitaciones, banos, operacion ni datos generales.
+    - En "amenidades" incluye solo beneficios concretos y visibles de la propiedad o edificio: piscina, parqueo, fibra optica, home studio, gimnasio, churrasquera, seguridad 24 horas, baulera, lavanderia, terraza, aire acondicionado. No incluyas ciudad, zona, edificio, direccion, precio, superficie, habitaciones, banos, operacion ni datos generales.
+    - En "keywords" incluye etiquetas de intencion de busqueda, perfil comercial y sinonimos utiles para embeddings. Ejemplos: ideal pareja, ideal familia, inversion, alta demanda de alquiler, zona premium, zona universitaria, pet friendly, ejecutivo, creador de contenido, home office, nomada digital, renta corta, cerca de avenida. No repitas amenidades salvo que funcionen como intencion de busqueda.
+    - No devuelvas search_text. El sistema lo genera despues con titulo, ubicacion, amenidades y keywords.
     - Las imagenes no se extraen aqui: ya se suben por Cloudinary en el admin.
     - La propiedad siempre queda como Borrador.
     """
@@ -464,6 +529,7 @@ async def extraer_datos_inmueble(
 
     data["estado"] = "Borrador"
     data["amenidades"] = limpiar_amenidades_extraidas(data)
+    data["keywords"] = limpiar_keywords_extraidas(data)
     if not isinstance(data.get("ofertas"), list):
         data["ofertas"] = []
 
@@ -501,6 +567,8 @@ async def obtener_metricas_nia(db: Session = Depends(get_db), current_profile: d
     zero_results = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.result_count == 0).scalar() or 0
     contacted = db.query(func.count(SearchLogDB.id)).filter(SearchLogDB.contacted_agent == True).scalar() or 0  # noqa: E712
     active_cache_entries = db.query(func.count(SearchCacheDB.id)).filter(SearchCacheDB.expires_at > func.now()).scalar() or 0
+    total_properties = db.query(func.count(InmuebleDB.id)).scalar() or 0
+    embedded_properties = db.query(func.count(InmuebleDB.id)).filter(InmuebleDB.embedding_json.isnot(None), InmuebleDB.embedding_json != "").scalar() or 0
 
     latency_values = [row[0] or 0 for row in db.query(SearchLogDB.latency_ms).all()]
     token_input_total = db.query(func.coalesce(func.sum(SearchLogDB.tokens_input), 0)).scalar() or 0
@@ -554,6 +622,9 @@ async def obtener_metricas_nia(db: Session = Depends(get_db), current_profile: d
         "llm_percentage": pct(llm_count, total),
         "embedding_searches": embedding_count,
         "embedding_percentage": pct(embedding_count, total),
+        "total_properties": total_properties,
+        "embedded_properties": embedded_properties,
+        "embedding_coverage_percentage": pct(embedded_properties, total_properties),
         "cache_hits": cache_hits,
         "cache_hit_percentage": pct(cache_hits, total),
         "active_cache_entries": active_cache_entries,
@@ -591,6 +662,44 @@ async def obtener_metricas_nia(db: Session = Depends(get_db), current_profile: d
             for row in recent_rows
         ],
     }
+@app.post("/api/admin/nia/embeddings/backfill", status_code=200)
+async def regenerar_embeddings_nia(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
+    if not EMBEDDINGS_ENABLED:
+        raise HTTPException(status_code=400, detail="Activa NIA_EMBEDDINGS_ENABLED=true para generar embeddings.")
+    if cliente_ia is None:
+        raise HTTPException(status_code=500, detail="Falta GEMINI_API_KEY para generar embeddings.")
+
+    inmuebles = db.query(InmuebleDB).all()
+    updated = 0
+    skipped = 0
+    failed = 0
+
+    try:
+        for inmueble in inmuebles:
+            next_search_text = build_property_search_text(inmueble)
+            needs_embedding = (
+                not getattr(inmueble, "embedding_json", None)
+                or getattr(inmueble, "embedding_model", None) != EMBEDDING_MODEL
+                or getattr(inmueble, "search_text", None) != next_search_text
+            )
+            if not needs_embedding:
+                skipped += 1
+                continue
+
+            inmueble.search_text = next_search_text
+            if update_property_embedding(inmueble, cliente_ia, EMBEDDING_MODEL):
+                updated += 1
+            else:
+                failed += 1
+
+        invalidate_search_cache(db)
+        db.commit()
+        return {"status": "success", "updated": updated, "skipped": skipped, "failed": failed, "model": EMBEDDING_MODEL}
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"No se pudieron regenerar embeddings: {str(exc)}") from exc
+
+
 # --- 5. ENDPOINTS DE INMUEBLES CRUD (MODERNO JSON) ---
 @app.post("/api/cloudinary/upload")
 def subir_archivos_cloudinary(
@@ -651,10 +760,10 @@ def subir_archivos_cloudinary(
                 timeout=90,
             )
         except requests.RequestException as exc:
-            raise HTTPException(status_code=502, detail=f"Cloudinary no respondió: {str(exc)}")
+            raise HTTPException(status_code=502, detail=f"Cloudinary no respondio: {str(exc)}")
 
         if response.status_code >= 400:
-            raise HTTPException(status_code=502, detail=f"Cloudinary rechazó {file.filename}: {response.text}")
+            raise HTTPException(status_code=502, detail=f"Cloudinary rechazo {file.filename}: {response.text}")
 
         cloudinary_data = response.json()
         uploaded.append({
@@ -692,11 +801,13 @@ async def crear_inmueble(
             estado=estado_inmueble,
             descripcion=inmueble.descripcion,
             amenidades=inmueble.amenidades,
+            keywords=inmueble.keywords,
             imagenes=inmueble.imagenes,
             agente_id=agente_principal.id,
         )
 
         aplicar_campos_busqueda_inmueble(nuevo_inmueble, inmueble)
+        update_property_embedding(nuevo_inmueble, cliente_ia if EMBEDDINGS_ENABLED else None, EMBEDDING_MODEL)
         db.add(nuevo_inmueble)
         db.flush()
 
@@ -712,6 +823,7 @@ async def crear_inmueble(
 
         invalidate_search_cache(db)
         db.commit()
+        invalidate_public_catalog_cache()
         db.refresh(nuevo_inmueble)
 
         return {"status": "success", "message": "Inmueble guardado como borrador", "id": nuevo_inmueble.id, "estado": nuevo_inmueble.estado}
@@ -724,25 +836,50 @@ async def crear_inmueble(
 
 @app.get("/api/inmuebles/resumen")
 async def obtener_inmuebles_resumen(db: Session = Depends(get_db)):
-    inmuebles_db = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado").all()
-    return [serializar_inmueble_resumen(inm) for inm in inmuebles_db]
+    cached_summary = get_public_catalog_cache()
+    if cached_summary is not None:
+        return cached_summary
+
+    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.estado == "Publicado").all()
+    summary = [serializar_inmueble_resumen(inm) for inm in inmuebles_db]
+    set_public_catalog_cache(summary)
+    return summary
 
 
 @app.get("/api/inmuebles")
 async def obtener_inmuebles(db: Session = Depends(get_db)):
-    inmuebles_db = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado").all()
+    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.estado == "Publicado").all()
     return [serializar_inmueble(inm) for inm in inmuebles_db]
 
 
 @app.get("/api/inmuebles/admin")
 async def obtener_inmuebles_admin(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
-    inmuebles_db = db.query(InmuebleDB).all()
-    return [serializar_inmueble(inm) for inm in inmuebles_db]
+    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).all()
+    return [serializar_inmueble(inm, include_search_metadata=True) for inm in inmuebles_db]
+
+
+@app.post("/api/admin/inmuebles/{inmueble_id}/regenerar-search-text", status_code=200)
+async def regenerar_search_text_inmueble(
+    inmueble_id: int,
+    db: Session = Depends(get_db),
+    current_profile: dict = Depends(require_admin),
+):
+    inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id).first()
+    if not inmueble_db:
+        raise HTTPException(status_code=404, detail="Inmueble no encontrado")
+
+    inmueble_db.search_text = build_property_search_text(inmueble_db)
+    if EMBEDDINGS_ENABLED and cliente_ia is not None:
+        update_property_embedding(inmueble_db, cliente_ia, EMBEDDING_MODEL)
+    invalidate_search_cache(db)
+    db.commit()
+    db.refresh(inmueble_db)
+    return {"status": "success", "inmueble": serializar_inmueble(inmueble_db, include_search_metadata=True)}
 
 
 @app.get("/api/inmuebles/{inmueble_id}")
 async def obtener_inmueble_detalle(inmueble_id: int, db: Session = Depends(get_db)):
-    inmueble_db = db.query(InmuebleDB).filter(InmuebleDB.id == inmueble_id, InmuebleDB.estado == "Publicado").first()
+    inmueble_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.id == inmueble_id, InmuebleDB.estado == "Publicado").first()
     if not inmueble_db:
         raise HTTPException(status_code=404, detail="Inmueble no encontrado")
     return serializar_inmueble(inmueble_db)
@@ -778,9 +915,11 @@ async def actualizar_inmueble(
         inmueble_db.estado = estado_inmueble
         inmueble_db.descripcion = inmueble.descripcion
         inmueble_db.amenidades = inmueble.amenidades
+        inmueble_db.keywords = inmueble.keywords
         inmueble_db.imagenes = inmueble.imagenes
         inmueble_db.agente_id = agente_principal.id
         aplicar_campos_busqueda_inmueble(inmueble_db, inmueble)
+        update_property_embedding(inmueble_db, cliente_ia if EMBEDDINGS_ENABLED else None, EMBEDDING_MODEL)
 
         inmueble_db.ofertas.clear()
         db.flush()
@@ -795,6 +934,7 @@ async def actualizar_inmueble(
 
         invalidate_search_cache(db)
         db.commit()
+        invalidate_public_catalog_cache()
         db.refresh(inmueble_db)
         return {"status": "success", "id": inmueble_db.id}
     except HTTPException as http_err:
@@ -811,6 +951,7 @@ async def eliminar_inmueble(inmueble_id: int, db: Session = Depends(get_db), cur
         db.delete(inmueble)
         invalidate_search_cache(db)
         db.commit()
+        invalidate_public_catalog_cache()
         return {"status": "success"}
     except HTTPException as http_err:
         db.rollback()
@@ -850,6 +991,7 @@ async def crear_agente(agente: AgenteSchema, db: Session = Depends(get_db), curr
         if email_normalizado:
             upsert_authorized_user(db, email_normalizado, "advisor")
         db.commit()
+        invalidate_public_catalog_cache()
         db.refresh(nuevo_agente)
         return {"status": "success", "id": nuevo_agente.id, "nombre": nuevo_agente.nombre, "email": nuevo_agente.email}
     except HTTPException as http_err:
@@ -897,6 +1039,7 @@ async def actualizar_agente(agente_id: int, agente: AgenteSchema, db: Session = 
             upsert_authorized_user(db, email_normalizado, "advisor")
 
         db.commit()
+        invalidate_public_catalog_cache()
         db.refresh(agente_db)
         return {"status": "success", "id": agente_db.id, "nombre": agente_db.nombre, "email": agente_db.email}
     except HTTPException as http_err:
@@ -913,6 +1056,7 @@ async def eliminar_agente(agente_id: int, db: Session = Depends(get_db), current
             raise HTTPException(status_code=404, detail="No encontrado")
         db.delete(agente)
         db.commit()
+        invalidate_public_catalog_cache()
         return {"status": "success"}
     except HTTPException as http_err:
         db.rollback()

@@ -78,6 +78,10 @@ def ensure_sqlite_nia_search_columns() -> None:
         "baulera": "BOOLEAN DEFAULT 0",
         "amenidades_normalizadas": "TEXT",
         "search_text": "TEXT",
+        "embedding_json": "TEXT",
+        "embedding_model": "VARCHAR",
+        "embedding_updated_at": "DATETIME",
+        "keywords": "TEXT",
     }
 
     with engine.begin() as conn:

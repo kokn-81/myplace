@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, LogOut, Moon, Save, ShieldCheck, Sun, UploadCloud, UserCircle, X } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, authPersistenceReady } from "../firebase";
 import { CustomSelect } from "../components/CustomSelect";
-import { API_BASE, AppRole, authFetch, fetchAuthProfile, normalizeEmail } from "../roleAccess";
+import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, normalizeEmail } from "../roleAccess";
 
 interface LocalAgent {
   id: string;
@@ -85,29 +85,44 @@ export default function AdvisorDashboard() {
     const offers = Array.isArray(property?.ofertas) && property.ofertas.length > 0
       ? property.ofertas
       : [{ operacion: property.operacion, precio: property.precio_usd, moneda: property.moneda }];
-    return offers.map((offer: any) => `${offer.operacion}: ${offer.moneda || "$ (USD)"} ${Number(offer.precio || 0).toLocaleString("es-BO")}`).join(" · ");
+    return offers.map((offer: any) => `${offer.operacion}: ${offer.moneda || "$ (USD)"} ${Number(offer.precio || 0).toLocaleString("es-BO")}`).join(" Â· ");
   };
 
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
       setDisplayName(currentUser?.displayName || "");
-      setRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol asesor:", error);
-          setRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol asesor:", error);
+        if (!cachedProfile) setRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const fetchAgents = async () => {
@@ -131,7 +146,7 @@ export default function AdvisorDashboard() {
   const handleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
+      await authPersistenceReady;
       await signInWithPopup(auth, provider);
     } catch (error: any) {
       setErrorMsg(error.message || "No se pudo iniciar sesion.");
@@ -139,8 +154,10 @@ export default function AdvisorDashboard() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setRole("user");
   };
 
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -270,7 +287,7 @@ export default function AdvisorDashboard() {
     }
   };
 
-  if (authLoading || roleLoading) {
+  if (authLoading || (roleLoading && role === "user")) {
     return <div className="min-h-screen flex items-center justify-center bg-[var(--surface-page)]"><Loader2 className="animate-spin text-[var(--accent-main)] w-8 h-8" /></div>;
   }
 
@@ -373,7 +390,7 @@ export default function AdvisorDashboard() {
             <CustomSelect value={formOperation} onChange={setFormOperation} placeholder="Operacion" options={operationOptions} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <CustomSelect value={formType} onChange={setFormType} placeholder="Tipo" options={[{ value: "Departamento", label: "Departamento" }, { value: "Casa", label: "Casa" }, { value: "Terreno", label: "Terreno" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             <input name="rooms" type="number" required placeholder="Habitaciones" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="Baños" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+            <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="BaÃ±os" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
             {isCustomZone ? (
               <div className="flex relative">
                 <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Norte" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />

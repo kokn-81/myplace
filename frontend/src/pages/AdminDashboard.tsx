@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, Sparkles, BarChart3 } from "lucide-react";
+import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, Sparkles, BarChart3, Building2 } from "lucide-react";
 import { CustomSelect } from "../components/CustomSelect";
-import { API_BASE, AppRole, authFetch, fetchAuthProfile } from "../roleAccess";
+import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 
 // Seguridad Firebase
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, authPersistenceReady } from "../firebase";
 
 interface LocalAgent {
   id: string;
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       const res = await authFetch(`/inmuebles/${id}`, user, { method: "DELETE" });
       if (res.ok) {
         setCatalog(catalog.filter(p => p.id !== id));
-        alert("Inmueble eliminado con éxito.");
+        alert("Inmueble eliminado con Ã©xito.");
       }
     } catch (error) {
       console.error("Error al eliminar:", error);
@@ -91,6 +91,8 @@ export default function AdminDashboard() {
   const [imageLinks, setImageLinks] = useState<string>("");
   const [isCloudinaryUploading, setIsCloudinaryUploading] = useState<boolean>(false);
   const [amenityInput, setAmenityInput] = useState<string>("");
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywordInput, setKeywordInput] = useState<string>("");
   const [formStatus, setFormStatus] = useState<string>("Borrador");
   const [isAiPanelOpen, setIsAiPanelOpen] = useState<boolean>(false);
   const [aiText, setAiText] = useState<string>("");
@@ -159,33 +161,48 @@ export default function AdminDashboard() {
     const offers = Array.isArray(property?.ofertas) && property.ofertas.length > 0
       ? property.ofertas
       : [{ operacion: property.operacion, precio: property.precio_usd, moneda: property.moneda }];
-    return offers.map((offer: any) => `${offer.operacion}: ${formatOfferPrice(offer)}`).join(" · ");
+    return offers.map((offer: any) => `${offer.operacion}: ${formatOfferPrice(offer)}`).join(" Â· ");
   };
   useEffect(() => {
+    let cancelled = false;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (cancelled) return;
+
       setUser(currentUser);
-      setRole("user");
-      if (currentUser) {
-        setRoleLoading(true);
-        try {
-          const profile = await fetchAuthProfile(currentUser);
-          setRole(profile.role);
-        } catch (error) {
-          console.error("Error validando rol admin:", error);
-          setRole("user");
-        } finally {
-          setRoleLoading(false);
-        }
+      if (!currentUser) {
+        setRole("user");
+        setRoleLoading(false);
+        setAuthLoading(false);
+        return;
       }
+
+      const cachedProfile = getCachedAuthProfile(currentUser.email);
+      setRole(cachedProfile?.role || "user");
+      setRoleLoading(true);
       setAuthLoading(false);
+
+      try {
+        const profile = await fetchAuthProfile(currentUser);
+        if (cancelled) return;
+        cacheAuthProfile(profile);
+        setRole(profile.role);
+      } catch (error) {
+        console.error("Error validando rol admin:", error);
+        if (!cachedProfile) setRole("user");
+      } finally {
+        if (!cancelled) setRoleLoading(false);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
     try {
+      await authPersistenceReady;
       await signInWithPopup(auth, provider);
     } catch (error: any) {
       alert("Error en protocolos de seguridad: " + error.message);
@@ -193,8 +210,10 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
+    clearCachedAuthProfile(user?.email);
     await signOut(auth);
     setUser(null);
+    setRole("user");
   };
   const fetchAgentes = useCallback(async () => {
     try {
@@ -230,7 +249,7 @@ export default function AdminDashboard() {
       });
       if (!response.ok) throw new Error("Fallo en el motor Python");
 
-      setSuccessMsg("Asesor guardado con éxito.");
+      setSuccessMsg("Asesor guardado con Ã©xito.");
       (e.target as HTMLFormElement).reset();
       await fetchAgentes();
     } catch (err: any) {
@@ -239,11 +258,11 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteAgent = async (id: string) => {
-    if (!window.confirm("¿Confirmas la eliminación de este asesor y todos sus inmuebles vinculados?")) return;
+    if (!window.confirm("Â¿Confirmas la eliminaciÃ³n de este asesor y todos sus inmuebles vinculados?")) return;
     try {
       const response = await authFetch(`/agentes/${id}`, user, { method: "DELETE" });
       if (!response.ok) throw new Error("Error al eliminar el asesor");
-      setSuccessMsg("Registro eliminado con éxito.");
+      setSuccessMsg("Registro eliminado con Ã©xito.");
       await fetchAgentes();
     } catch (err: any) {
       setErrorMsg("Error al purgar: " + err.message);
@@ -251,6 +270,7 @@ export default function AdminDashboard() {
   };
   const getPropertyImageLinks = (inm: any) => Array.isArray(inm.images) ? inm.images.join(", ") : (inm.imagenes || "");
   const getPropertyAmenitiesText = (inm: any) => Array.isArray(inm.amenidades) ? inm.amenidades.join(", ") : (inm.amenidades || "");
+  const getPropertyKeywordsText = (inm: any) => Array.isArray(inm.keywords) ? inm.keywords.join(", ") : (inm.keywords || "");
   const setFormFieldValue = (name: string, value: unknown) => {
     const field = formRef.current?.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
     if (!field || value === null || value === undefined || value === "") return;
@@ -331,6 +351,11 @@ export default function AdminDashboard() {
         setAmenities(data.amenidades.map((item: unknown) => String(item).trim()).filter(Boolean));
       }
 
+
+      if (Array.isArray(data.keywords)) {
+        setKeywords(data.keywords.map((item: unknown) => String(item).trim()).filter(Boolean));
+      }
+
       setFormFieldValue("title", data.titulo);
       setFormFieldValue("rooms", data.habitaciones);
       setFormFieldValue("bathrooms", data.banos);
@@ -368,7 +393,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.detail || "No se pudo editar el asesor.");
-      setSuccessMsg("Asesor actualizado con éxito.");
+      setSuccessMsg("Asesor actualizado con Ã©xito.");
       setEditingAgent(null);
       await fetchAgentes();
     } catch (err: any) {
@@ -404,6 +429,7 @@ export default function AdminDashboard() {
       agente_id: agentId,
       imagenes: String(fd.get("imageLinks") || "").trim(),
       amenidades: String(fd.get("amenities") || "").trim(),
+      keywords: String(fd.get("keywords") || "").trim(),
       ofertas: offers,
     };
 
@@ -423,7 +449,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.detail || "No se pudo editar el inmueble.");
-      setSuccessMsg("Inmueble actualizado con éxito.");
+      setSuccessMsg("Inmueble actualizado con Ã©xito.");
       setEditingProperty(null);
       await fetchCatalog();
     } catch (err: any) {
@@ -477,6 +503,7 @@ export default function AdminDashboard() {
         agente_id: finalAgentId,
         imagenes: imageLinks || (fd.get("imageLinks") as string),
         amenidades: amenities.join(","),
+        keywords: keywords.join(","),
         ofertas: offers,
       };
 
@@ -487,9 +514,10 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
-        alert("Inmueble publicado con éxito!");
+        alert("Inmueble publicado con Ã©xito!");
         target.reset();
         setAmenities([]);
+        setKeywords([]);
         setImageLinks("");
 
         await fetchCatalog();
@@ -513,6 +541,17 @@ export default function AdminDashboard() {
   };
 
   const removeAmenity = (am: string) => setAmenities(amenities.filter(a => a !== am));
+
+  const handleKeyDownKeyword = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = keywordInput.trim().replace(/,/g, '');
+      if (val && !keywords.includes(val)) setKeywords([...keywords, val]);
+      setKeywordInput("");
+    }
+  };
+
+  const removeKeyword = (kw: string) => setKeywords(keywords.filter(k => k !== kw));
 
   const handleCloudinaryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -554,7 +593,7 @@ export default function AdminDashboard() {
   // Renderizado condicional
 
   // Carga de seguridad
-  if (authLoading || roleLoading) {
+  if (authLoading || (roleLoading && role === "user")) {
     return <div className="min-h-screen flex items-center justify-center bg-[var(--surface-page)] dark:bg-[var(--surface-panel)]"><Loader2 className="animate-spin text-[var(--accent-main)] w-8 h-8" /></div>;
   }
 
@@ -581,7 +620,7 @@ export default function AdminDashboard() {
           <ShieldCheck className="w-12 h-12 text-[var(--accent-main)] mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[var(--text-main)] mb-2">Acceso admin restringido</h2>
           <p className="text-sm text-[var(--text-muted)] mb-2">Tu correo no tiene permisos de administrador.</p>
-          {user?.email && <p className="text-xs text-[var(--accent-main)] mb-6">Sesión actual: {user.email}</p>}
+          {user?.email && <p className="text-xs text-[var(--accent-main)] mb-6">SesiÃ³n actual: {user.email}</p>}
           <div className="flex gap-2 justify-center">
             <Link to="/" className="bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold px-4 py-3 rounded transition-colors uppercase tracking-widest text-xs shadow-md">Volver al mapa</Link>
             <button onClick={handleLogout} className="border border-[var(--border-soft)] text-[var(--text-muted)] font-bold px-4 py-3 rounded uppercase tracking-widest text-xs">Salir</button>
@@ -607,6 +646,9 @@ export default function AdminDashboard() {
               </Link>
               <Link to="/admin/nia-metrics" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] dark:hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-muted)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
                 <BarChart3 size={12} /> Metricas NIA
+              </Link>
+              <Link to="/admin/catalogo" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] dark:hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-muted)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
+                <Building2 size={12} /> Catalogo
               </Link>
               <button onClick={handleLogout} className="text-[10px] bg-[var(--color-brick)] dark:bg-[var(--surface-panel)] hover:bg-[var(--accent-hover)] dark:hover:bg-[rgba(157,47,37,0.22)] border border-[var(--color-brick)]/60 dark:border-red-900/50 text-[var(--color-ivory)] dark:text-red-400 px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
                 <LogOut size={12} /> {isAdmin ? 'Cerrar Admin' : 'Cerrar Sesion'}
@@ -679,7 +721,7 @@ export default function AdminDashboard() {
 
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2 block">Título Comercial</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2 block">TÃ­tulo Comercial</label>
               <input name="title" required type="text" placeholder="Ej: Hermosa Casa en Urubo" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
             </div>
           </div>
@@ -694,12 +736,12 @@ export default function AdminDashboard() {
           <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
             <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operación</label>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">OperaciÃ³n</label>
               <CustomSelect
                 name="operation"
                 value={formOperation}
                 onChange={setFormOperation}
-                placeholder="Operación"
+                placeholder="OperaciÃ³n"
                 options={operationOptions}
                 wrapperClassName="relative w-full"
                 triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]"
@@ -722,7 +764,7 @@ export default function AdminDashboard() {
               <input name="rooms" type="number" required className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
             </div>
             <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Baños</label>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">BaÃ±os</label>
               <input name="bathrooms" type="number" min="0" defaultValue="1" required className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
             </div>
             <div>
@@ -798,7 +840,7 @@ export default function AdminDashboard() {
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">Descripción y Amenidades</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">DescripciÃ³n y Amenidades</label>
             <textarea name="description" rows={5} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-3 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] mb-4" placeholder={"Ej: Hermoso departamento de 1 dormitorio amoblado..."} />
 
             <div className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-2 focus-within:border-gold flex flex-wrap gap-2 items-center mb-4 min-h-[46px]">
@@ -813,7 +855,24 @@ export default function AdminDashboard() {
                 onChange={(e) => setAmenityInput(e.target.value)}
                 onKeyDown={handleKeyDownAmenity}
                 className="bg-transparent outline-none text-[var(--text-main)] dark:text-[var(--text-main)] text-sm flex-1 min-w-[150px] placeholder:text-stone-400 dark:placeholder:text-stone-500"
-                placeholder={amenities.length === 0 ? "Añadir amenidades (presiona Enter)" : "Añadir más..."}
+                placeholder={amenities.length === 0 ? "AÃ±adir amenidades (presiona Enter)" : "AÃ±adir mÃ¡s..."}
+              />
+            </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] dark:text-[var(--text-main)] font-bold mb-2 block">Keywords de busqueda</label>
+            <div className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-4 py-2 focus-within:border-gold flex flex-wrap gap-2 items-center mb-4 min-h-[46px]">
+              {keywords.map(kw => (
+                <span key={kw} className="bg-[var(--text-main)]/10 text-[var(--text-main)] text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                  {kw} <button type="button" onClick={() => removeKeyword(kw)} className="hover:text-red-500"><X size={12}/></button>
+                </span>
+              ))}
+              <input
+                type="text"
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={handleKeyDownKeyword}
+                className="bg-transparent outline-none text-[var(--text-main)] dark:text-[var(--text-main)] text-sm flex-1 min-w-[190px] placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                placeholder={keywords.length === 0 ? "Ej: ideal pareja, inversion, zona premium" : "Anadir keyword..."}
               />
             </div>
 
@@ -821,7 +880,7 @@ export default function AdminDashboard() {
               Multimedia de la Propiedad
             </label>
             <p className="text-[10px] text-stone-500 mb-3 italic">
-              Sube imágenes o videos desde tu ordenador, o pega URLs directas de Cloudinary separadas por coma.
+              Sube imÃ¡genes o videos desde tu ordenador, o pega URLs directas de Cloudinary separadas por coma.
             </p>
 
             <div className="mb-4 flex flex-col md:flex-row md:items-center gap-3 rounded border border-dashed border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 p-4">
@@ -838,7 +897,7 @@ export default function AdminDashboard() {
                 />
               </label>
               <span className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-                Puedes seleccionar varias fotos o videos a la vez. Las URLs aparecerán abajo automáticamente.
+                Puedes seleccionar varias fotos o videos a la vez. Las URLs aparecerÃ¡n abajo automÃ¡ticamente.
               </span>
             </div>
 
@@ -871,7 +930,7 @@ export default function AdminDashboard() {
             <form onSubmit={handleUpdateProperty} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Título Comercial</label>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">TÃ­tulo Comercial</label>
                   <input name="title" required defaultValue={editingProperty.titulo || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                 </div>
                 <div>
@@ -882,7 +941,7 @@ export default function AdminDashboard() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operación</label>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">OperaciÃ³n</label>
                   <select name="operation" value={editOperation} onChange={(e) => setEditOperation(e.target.value)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
                     <option>Venta</option>
                     <option>Alquiler</option>
@@ -944,7 +1003,7 @@ export default function AdminDashboard() {
                   <input name="rooms" type="number" min="0" defaultValue={editingProperty.habitaciones || 0} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Baños</label>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">BaÃ±os</label>
                   <input name="bathrooms" type="number" min="0" defaultValue={editingProperty.banos || 1} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                 </div>
                 <div>
@@ -958,7 +1017,7 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Descripción</label>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">DescripciÃ³n</label>
                 <textarea name="description" rows={5} defaultValue={editingProperty.descripcion || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" />
               </div>
               <div>
@@ -966,7 +1025,11 @@ export default function AdminDashboard() {
                 <textarea name="amenities" rows={3} defaultValue={getPropertyAmenitiesText(editingProperty)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" placeholder="Piscina, Parqueo, Sauna" />
               </div>
               <div>
-                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Imágenes / videos</label>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Keywords de busqueda</label>
+                <textarea name="keywords" rows={2} defaultValue={getPropertyKeywordsText(editingProperty)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" placeholder="ideal pareja, inversion, zona premium" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">ImÃ¡genes / videos</label>
                 <textarea name="imageLinks" rows={3} defaultValue={getPropertyImageLinks(editingProperty)} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y" placeholder="URLs separadas por coma" />
               </div>
 
@@ -1004,17 +1067,17 @@ export default function AdminDashboard() {
                 </div>
                 <button type="submit" className="w-full bg-[var(--accent-secondary)] dark:bg-[var(--accent-main)] text-white dark:text-[#1B1411] shadow-md font-bold text-xs py-2 rounded hover:bg-[var(--color-teal-deep)] dark:hover:bg-[var(--accent-main)] transition-colors">{editingAgent ? "Guardar Cambios" : "Crear Asesor"}</button>
                 {editingAgent && (
-                  <button type="button" onClick={() => setEditingAgent(null)} className="w-full border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-main)] font-bold text-xs py-2 rounded transition-colors">Cancelar edición</button>
+                  <button type="button" onClick={() => setEditingAgent(null)} className="w-full border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-main)] font-bold text-xs py-2 rounded transition-colors">Cancelar ediciÃ³n</button>
                 )}
               </form>
 
               <hr className="border-[var(--border-soft)] dark:border-[var(--border-soft)]" />
 
               <div>
-                <h4 className="text-[10px] uppercase tracking-wider font-bold text-red-500 mb-4">Módulo de Gestión</h4>
+                <h4 className="text-[10px] uppercase tracking-wider font-bold text-red-500 mb-4">MÃ³dulo de GestiÃ³n</h4>
                 <div className="space-y-2">
                   {agents.length === 0 ? (
-                    <p className="text-xs text-stone-500 italic">Base de datos vacía.</p>
+                    <p className="text-xs text-stone-500 italic">Base de datos vacÃ­a.</p>
                   ) : (
                     agents.map(a => (
                       <div key={a.id} className="flex justify-between items-center bg-[var(--surface-panel-muted)] dark:bg-[rgba(38,28,23,0.68)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] p-2 rounded">
@@ -1041,57 +1104,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* SECCION DE GESTION DE INMUEBLES */}
-      <div className="mt-12 bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] p-8">
-        <h3 className="text-lg font-bold text-[var(--text-main)] dark:text-[var(--text-main)] mb-6 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-4">
-          Gestión de Inmuebles Publicados
-        </h3>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-            <thead className="bg-[var(--surface-control)] dark:bg-[var(--surface-control)] text-xs uppercase font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-              <tr>
-                <th className="px-4 py-3 rounded-l-lg">ID</th>
-                <th className="px-4 py-3">Titulo</th>
-                <th className="px-4 py-3">Operación</th>
-                <th className="px-4 py-3">Precio</th>
-                <th className="px-4 py-3 rounded-r-lg text-right">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {catalog.map(inm => (
-                <tr key={inm.id} className="border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] last:border-0 hover:bg-[#F0E6D4] dark:hover:bg-[rgba(38,28,23,0.72)] transition">
-                  <td className="px-4 py-3 font-mono font-bold text-[var(--color-chocolate)] dark:text-[var(--accent-main)]">#{inm.id}</td>
-                  <td className="px-4 py-3 font-medium text-[var(--text-main)] dark:text-[var(--text-main)]">{inm.titulo}</td>
-                  <td className="px-4 py-3">{getOfferMode(inm)}</td>
-                  <td className="px-4 py-3">{formatOffersSummary(inm)}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => { setEditingProperty(inm); setEditOperation(getOfferMode(inm)); }}
-                        className="text-[var(--color-teal-deep)] dark:text-[var(--accent-main)] hover:bg-[rgba(42,95,96,0.1)] dark:hover:bg-[rgba(201,159,112,0.12)] px-3 py-1.5 rounded transition font-bold"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProperty(inm.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 px-3 py-1.5 rounded transition font-bold"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {catalog.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="text-center py-6 italic text-stone-400">No hay inmuebles publicados.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
     </div>
   );

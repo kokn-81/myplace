@@ -1,17 +1,37 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo, useRef } from "react";
 // @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
-import Map, { Marker } from "react-map-gl/mapbox";
+import Map, { Marker, MapRef } from "react-map-gl/mapbox";
 import { Property } from "../types";
 
+
+export type MapFocus = {
+  longitude: number;
+  latitude: number;
+  zoom?: number;
+  key?: number;
+};
 type MapCanvasProps = {
   mapboxToken: string;
   properties: Property[];
   isDarkMode: boolean;
   onSelectProperty: (property: Property) => void;
+  focusLocation?: MapFocus | null;
 };
 
-function MapCanvas({ mapboxToken, properties, isDarkMode, onSelectProperty }: MapCanvasProps) {
+function MapCanvas({ mapboxToken, properties, isDarkMode, onSelectProperty, focusLocation }: MapCanvasProps) {
+  const mapRef = useRef<MapRef | null>(null);
+
+  useEffect(() => {
+    if (!focusLocation || !mapRef.current) return;
+    mapRef.current.flyTo({
+      center: [focusLocation.longitude, focusLocation.latitude],
+      zoom: focusLocation.zoom ?? 12.5,
+      duration: 1400,
+      essential: true,
+    });
+  }, [focusLocation?.longitude, focusLocation?.latitude, focusLocation?.zoom, focusLocation?.key]);
+
   const markers = useMemo(
     () => properties.map((property) => (
       <Marker
@@ -33,6 +53,7 @@ function MapCanvas({ mapboxToken, properties, isDarkMode, onSelectProperty }: Ma
 
   return (
     <Map
+      ref={mapRef}
       mapboxAccessToken={mapboxToken}
       initialViewState={{ longitude: -63.18, latitude: -17.784, zoom: 13 }}
       style={{ width: "100%", height: "100%" }}

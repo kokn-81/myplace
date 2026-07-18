@@ -1,5 +1,6 @@
 import hashlib
 import json
+import math
 import os
 import re
 import time
@@ -10,7 +11,7 @@ from typing import Iterable, Optional
 
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from models import InmuebleDB, SearchCacheDB, SearchLogDB
 
@@ -18,6 +19,7 @@ USD_TO_BS = 6.96
 CACHE_TTL_GENERAL_MINUTES = 24 * 60
 CACHE_TTL_REFINED_MINUTES = 5
 MAX_RESULTS = 40
+SEARCH_ALGORITHM_VERSION = "nia-hybrid-v2"
 
 
 def read_float_env(name: str, default: float = 0.0) -> float:
@@ -29,6 +31,9 @@ def read_float_env(name: str, default: float = 0.0) -> float:
 
 LLM_INPUT_COST_PER_1M = read_float_env("NIA_LLM_INPUT_COST_PER_1M")
 LLM_OUTPUT_COST_PER_1M = read_float_env("NIA_LLM_OUTPUT_COST_PER_1M")
+EMBEDDING_MODEL = os.getenv("NIA_EMBEDDING_MODEL", "gemini-embedding-001").strip() or "gemini-embedding-001"
+EMBEDDING_MIN_SCORE = read_float_env("NIA_EMBEDDING_MIN_SCORE", 0.35)
+EMBEDDINGS_ENABLED = os.getenv("NIA_EMBEDDINGS_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def estimate_llm_cost(input_tokens: int, output_tokens: int) -> float:
@@ -38,12 +43,82 @@ def estimate_llm_cost(input_tokens: int, output_tokens: int) -> float:
         8,
     )
 
+
+def extract_embedding_values(response) -> list[float]:
+    embeddings = getattr(response, "embeddings", None) or []
+    if embeddings:
+        first = embeddings[0]
+        values = getattr(first, "values", None)
+        if values is None and isinstance(first, dict):
+            values = first.get("values")
+        return [float(value) for value in values or []]
+
+    embedding = getattr(response, "embedding", None)
+    values = getattr(embedding, "values", None) if embedding is not None else None
+    return [float(value) for value in values or []]
+
+
+def expand_embedding_query(text: str) -> str:
+    normalized = normalize_query(text)
+    expansions: list[str] = []
+    if re.search(r"\b(stream|streamer|streaming|streamear|stremear|podcast|contenido|youtuber|twitch)\b", normalized):
+        expansions.extend([
+            "streamer streaming crear contenido creador de contenido",
+            "home studio estudio en casa podcast grabacion video",
+            "setup gamer escritorio iluminacion fibra optica wifi rapido ambiente silencioso",
+        ])
+    if re.search(r"\b(luz|iluminacion|luminoso|claro|natural)\b", normalized):
+        expansions.append("buena iluminacion luz natural ventanales ambiente luminoso")
+    if re.search(r"\b(trabajar|teletrabajo|oficina|remoto|nomada|digital)\b", normalized):
+        expansions.append("home office teletrabajo escritorio internet fibra optica ambiente tranquilo")
+    if not expansions:
+        return text
+    return f"{text} {' '.join(expansions)}"
+
+
+def generate_text_embedding(text: str, embedding_client, embedding_model: str = EMBEDDING_MODEL) -> list[float]:
+    content = (text or "").strip()
+    if embedding_client is None or not content:
+        return []
+    response = embedding_client.models.embed_content(model=embedding_model, contents=content[:8000])
+    return extract_embedding_values(response)
+
+
+def parse_embedding_vector(raw: object) -> list[float]:
+    if not raw:
+        return []
+    try:
+        values = json.loads(str(raw))
+        if not isinstance(values, list):
+            return []
+        return [float(value) for value in values]
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return []
+
+
+def cosine_similarity(left: list[float], right: list[float]) -> float:
+    if not left or not right or len(left) != len(right):
+        return 0.0
+    dot = sum(a * b for a, b in zip(left, right))
+    norm_left = math.sqrt(sum(a * a for a in left))
+    norm_right = math.sqrt(sum(b * b for b in right))
+    if not norm_left or not norm_right:
+        return 0.0
+    return dot / (norm_left * norm_right)
+
+
 STOPWORDS = {
     "a", "al", "algo", "con", "de", "del", "el", "en", "la", "las", "los", "me",
     "para", "por", "que", "quiero", "un", "una", "unos", "unas", "y", "o", "hasta",
     "menos", "mas", "maso", "cerca", "busco", "necesito", "opcion", "opciones",
 }
 
+SPECIFIC_SEARCH_STOPWORDS = STOPWORDS | {
+    "alquiler", "alquilar", "venta", "comprar", "compra", "inmueble", "inmuebles",
+    "propiedad", "propiedades", "departamento", "departamentos", "depa", "casa",
+    "hogar", "vivir", "espacio", "lugar", "zona", "ubicacion", "santa", "cruz",
+    "sierra", "bolivia", "bs", "usd", "dolares",
+}
 TYPE_SYNONYMS = {
     "Departamento": ("departamento", "depa", "monoambiente", "garzonier"),
     "Casa": ("casa", "quinta"),
@@ -55,13 +130,13 @@ TYPE_SYNONYMS = {
 AMENITY_SYNONYMS = {
     "amoblado": ("amoblado", "amoblada", "muebles", "equipado", "equipada"),
     "parqueo": ("parqueo", "garaje", "garage", "estacionamiento"),
-    "baulera": ("baulera", "deposito", "depósito"),
+    "baulera": ("baulera", "deposito"),
     "piscina": ("piscina",),
     "churrasquera": ("churrasquera", "churrasco", "parrillero"),
     "gimnasio": ("gimnasio", "gym"),
-    "seguridad 24 horas": ("seguridad 24", "porteria", "portería", "vigilancia"),
+    "seguridad 24 horas": ("seguridad 24", "porteria", "vigilancia"),
     "mascotas": ("mascota", "mascotas", "pet friendly", "perro", "gato"),
-    "lavanderia": ("lavanderia", "lavandería", "area de lavanderia", "área de lavandería"),
+    "lavanderia": ("lavanderia", "area de lavanderia"),
     "sauna": ("sauna",),
 }
 
@@ -71,8 +146,8 @@ KNOWN_ZONES = (
 )
 
 COMPLEX_TERMS = (
-    "compar", "conviene", "recomienda", "recomend", "mejor", "por que", "por qué",
-    "explica", "invertir", "inversion", "inversión", "renta", "rentabilidad",
+    "compar", "conviene", "recomienda", "recomend", "mejor", "por que",
+    "explica", "invertir", "inversion", "renta", "rentabilidad",
 )
 
 
@@ -133,9 +208,9 @@ def parse_number(raw: str) -> Optional[float]:
 
 
 def parse_currency(text: str) -> Optional[str]:
-    if re.search(r"\b(bs|boliviano|bolivianos)\b", text):
+    if re.search(r"(?<![a-z])(bs|boliviano|bolivianos)\b", text):
         return "Bs"
-    if "$" in text or re.search(r"\b(usd|dolar|dolares)\b", text):
+    if "$" in text or re.search(r"(?<![a-z])(usd|dolar|dolares)\b", text):
         return "$ (USD)"
     return None
 
@@ -168,7 +243,7 @@ def parse_search_filters(message: str) -> SearchFilters:
         filters.operation = "Alquiler"
     elif re.search(r"\b(venta|comprar|compra)\b", text):
         filters.operation = "Venta"
-    elif re.search(r"\b(inversion|inversión)\b", text):
+    elif re.search(r"\b(inversion)\b", text):
         filters.operation = "Inversion"
 
     for canonical, synonyms in TYPE_SYNONYMS.items():
@@ -177,12 +252,17 @@ def parse_search_filters(message: str) -> SearchFilters:
             break
 
     filters.max_price, filters.currency = parse_budget(text)
+    if filters.max_price is not None and filters.currency is None:
+        if filters.operation == "Alquiler":
+            filters.currency = "Bs"
+        elif filters.operation == "Venta":
+            filters.currency = "$ (USD)"
 
     rooms = re.search(r"(\d+)\s*(?:dormitorio|dormitorios|habitacion|habitaciones|hab)\b", text)
     if rooms:
         filters.rooms_min = int(rooms.group(1))
 
-    baths = re.search(r"(\d+)\s*(?:bano|banos|baño|baños)\b", text)
+    baths = re.search(r"(\d+)\s*(?:bano|banos)\b", text)
     if baths:
         filters.bathrooms_min = int(baths.group(1))
 
@@ -233,9 +313,36 @@ def build_property_search_text(inm: InmuebleDB) -> str:
         "parqueo" if getattr(inm, "parqueos", 0) else None,
         "baulera" if getattr(inm, "baulera", False) else None,
         inm.amenidades,
+        getattr(inm, "keywords", None),
     ]
     return normalize_text(" ".join(str(part) for part in parts if part))
 
+
+
+
+def get_property_search_text(inm: InmuebleDB) -> str:
+    cached = getattr(inm, "_nia_search_text_cache", None)
+    if cached is not None:
+        return cached
+    cached = getattr(inm, "search_text", None) or build_property_search_text(inm)
+    setattr(inm, "_nia_search_text_cache", cached)
+    return cached
+
+def update_property_embedding(inm: InmuebleDB, embedding_client, embedding_model: str = EMBEDDING_MODEL) -> bool:
+    inm.search_text = build_property_search_text(inm)
+    if embedding_client is None or not EMBEDDINGS_ENABLED:
+        return False
+    try:
+        vector = generate_text_embedding(inm.search_text or "", embedding_client, embedding_model)
+        if not vector:
+            return False
+        inm.embedding_json = json.dumps(vector)
+        inm.embedding_model = embedding_model
+        inm.embedding_updated_at = datetime.utcnow()
+        return True
+    except Exception as exc:
+        print(f"NIA embedding generation failed for property {getattr(inm, 'id', 'new')}: {exc}")
+        return False
 
 def to_usd(price: float, currency: Optional[str]) -> float:
     if (currency or "").lower().startswith("bs"):
@@ -254,7 +361,7 @@ def price_matches(price: float, currency: Optional[str], filters: SearchFilters)
 
 
 def offer_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
-    offers = [offer for offer in inm.ofertas if (offer.estado or "Publicado") == "Publicado"]
+    offers = [offer for offer in inm.ofertas if normalize_text(offer.estado or "Publicado") in {"publicado", "activo"}]
     if not offers:
         offers = []
 
@@ -272,7 +379,7 @@ def offer_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
     return False
 
 
-def property_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
+def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional[str] = None) -> bool:
     if filters.reference_id and inm.id != filters.reference_id:
         return False
     if filters.property_type and filters.property_type != inm.tipo_inmueble:
@@ -290,7 +397,7 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
     if filters.baulera is True and not getattr(inm, "baulera", False):
         return False
 
-    haystack = build_property_search_text(inm)
+    haystack = haystack or get_property_search_text(inm)
     if filters.zone and filters.zone not in haystack:
         return False
     if any(amenity not in haystack for amenity in filters.amenities):
@@ -298,9 +405,9 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
     return offer_matches(inm, filters)
 
 
-def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Optional[set[str]] = None) -> float:
+def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Optional[set[str]] = None, haystack: Optional[str] = None) -> float:
     score = 0.0
-    haystack = build_property_search_text(inm)
+    haystack = haystack or get_property_search_text(inm)
     if filters.reference_id and inm.id == filters.reference_id:
         score += 1000
     if filters.operation and normalize_text(filters.operation) in haystack:
@@ -322,7 +429,7 @@ def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Option
 
 
 def base_property_query(db: Session, candidate_ids: Optional[list[int]]):
-    query = db.query(InmuebleDB).filter(InmuebleDB.estado == "Publicado")
+    query = db.query(InmuebleDB).options(selectinload(InmuebleDB.ofertas)).filter(InmuebleDB.estado == "Publicado")
     if candidate_ids:
         query = query.filter(InmuebleDB.id.in_(candidate_ids))
     return query
@@ -355,13 +462,21 @@ def semantic_tokens(message: str) -> set[str]:
     return {token for token in normalize_query(message).split() if len(token) > 2 and token not in STOPWORDS}
 
 
+def has_specific_semantic_terms(message: str) -> bool:
+    return bool(semantic_tokens(expand_embedding_query(message)).difference(SPECIFIC_SEARCH_STOPWORDS))
+
+
 def run_sql_layer(db: Session, message: str, candidate_ids: Optional[list[int]], filters: SearchFilters) -> list[int]:
     query = apply_broad_sql_filters(base_property_query(db, candidate_ids), filters)
     candidates = query.all()
-    matches = [inm for inm in candidates if property_matches(inm, filters)]
     tokens = semantic_tokens(message)
-    matches.sort(key=lambda inm: score_property(inm, filters, tokens), reverse=True)
-    return [inm.id for inm in matches[:MAX_RESULTS]]
+    scored_matches: list[tuple[float, InmuebleDB]] = []
+    for inm in candidates:
+        haystack = get_property_search_text(inm)
+        if property_matches(inm, filters, haystack):
+            scored_matches.append((score_property(inm, filters, tokens, haystack), inm))
+    scored_matches.sort(key=lambda item: item[0], reverse=True)
+    return [inm.id for _, inm in scored_matches[:MAX_RESULTS]]
 
 
 def run_semantic_lite_layer(db: Session, message: str, candidate_ids: Optional[list[int]], filters: SearchFilters) -> list[int]:
@@ -371,13 +486,58 @@ def run_semantic_lite_layer(db: Session, message: str, candidate_ids: Optional[l
     candidates = base_property_query(db, candidate_ids).all()
     scored = []
     for inm in candidates:
-        haystack = set(build_property_search_text(inm).split())
+        haystack_text = get_property_search_text(inm)
+        haystack = set(haystack_text.split())
         overlap = tokens.intersection(haystack)
         if overlap:
-            scored.append((len(overlap) * 10 + score_property(inm, filters, tokens), inm.id))
+            scored.append((len(overlap) * 10 + score_property(inm, filters, tokens, haystack_text), inm.id))
     scored.sort(reverse=True)
     return [inm_id for _, inm_id in scored[:MAX_RESULTS]]
 
+
+def run_embedding_layer(
+    db: Session,
+    message: str,
+    candidate_ids: Optional[list[int]],
+    filters: SearchFilters,
+    embedding_client,
+    embedding_model: str = EMBEDDING_MODEL,
+) -> tuple[list[int], bool]:
+    try:
+        embedding_query = expand_embedding_query(message)
+        query_vector = generate_text_embedding(embedding_query, embedding_client, embedding_model)
+    except Exception as exc:
+        print(f"NIA query embedding failed: {exc}")
+        return [], False
+
+    if not query_vector:
+        return [], False
+
+    candidates = base_property_query(db, candidate_ids).all()
+    scored: list[tuple[float, int, int, float]] = []
+    tokens = semantic_tokens(message)
+    specific_tokens = tokens.difference(SPECIFIC_SEARCH_STOPWORDS)
+    for inm in candidates:
+        vector = parse_embedding_vector(getattr(inm, "embedding_json", None))
+        if not vector:
+            continue
+        similarity = cosine_similarity(query_vector, vector)
+        if similarity < EMBEDDING_MIN_SCORE:
+            continue
+        haystack_text = get_property_search_text(inm)
+        haystack = set(haystack_text.split())
+        specific_overlap = len(specific_tokens.intersection(haystack))
+        internal_score = similarity * 100 + score_property(inm, filters, tokens, haystack_text) * 0.1 + specific_overlap * 8
+        scored.append((internal_score, inm.id, specific_overlap, similarity))
+
+    scored.sort(key=lambda item: item[0], reverse=True)
+    best_specific_overlap = max((item[2] for item in scored), default=0)
+    if best_specific_overlap >= 2:
+        scored = [item for item in scored if item[2] == best_specific_overlap]
+        if len(scored) > 1:
+            top_score = scored[0][0]
+            scored = [item for item in scored if top_score - item[0] <= 3]
+    return [inm_id for _, inm_id, _, _ in scored[:MAX_RESULTS]], True
 
 def compact_catalog_for_llm(db: Session, candidate_ids: Optional[list[int]]) -> str:
     candidates = base_property_query(db, candidate_ids).limit(25).all()
@@ -390,7 +550,9 @@ def compact_catalog_for_llm(db: Session, candidate_ids: Optional[list[int]]) -> 
         )
         rows.append(
             f"ID:{inm.id} | {inm.tipo_inmueble} | {inm.ciudad} | {getattr(inm, 'zona', '') or ''} | "
-            f"{inm.habitaciones} dorm | {getattr(inm, 'banos', 1) or 1} banos | {offers} | {getattr(inm, 'amenidades_normalizadas', '') or normalize_amenities_text(inm.amenidades)}"
+            f"{inm.habitaciones} dorm | {getattr(inm, 'banos', 1) or 1} banos | {offers} | "
+            f"{getattr(inm, 'amenidades_normalizadas', '') or normalize_amenities_text(inm.amenidades)} | "
+            f"keywords: {getattr(inm, 'keywords', '') or ''}"
         )
     return "\n".join(rows)
 
@@ -530,12 +692,45 @@ def efficient_property_search(
     candidate_ids: Optional[list[int]],
     llm_client=None,
     llm_model: str = "",
+    embedding_client=None,
+    embedding_model: str = EMBEDDING_MODEL,
 ) -> dict:
     started = time.perf_counter()
     query_normalized = normalize_query(message)
-    candidates_hash = candidate_hash(candidate_ids)
+    candidates_hash = f"{SEARCH_ALGORITHM_VERSION}:{candidate_hash(candidate_ids)}"
     filters = parse_search_filters(message)
     filters_dict = asdict(filters)
+
+    if filters.max_price is not None and filters.currency is None:
+        latency_ms = int((time.perf_counter() - started) * 1000)
+        clarification = "Para filtrar bien el presupuesto, dime si ese monto esta en Bs o en USD."
+        log_search(
+            db,
+            query_text=message,
+            query_normalized=query_normalized,
+            filters_json=json.dumps(filters_dict),
+            layer_used="ASK_CLARIFICATION",
+            llm_used=False,
+            embedding_used=False,
+            cache_hit=False,
+            result_count=0,
+            latency_ms=latency_ms,
+            tokens_input=0,
+            tokens_output=0,
+            estimated_cost=0,
+        )
+        return {
+            "ids": [],
+            "layer": "ASK_CLARIFICATION",
+            "filters": filters_dict,
+            "cache_hit": False,
+            "latency_ms": latency_ms,
+            "llm_used": False,
+            "explanation": "",
+            "needs_clarification": True,
+            "clarification": clarification,
+            "clarification_options": ["Bs", "$ (USD)"],
+        }
 
     cached = get_cached_result(db, query_normalized, candidates_hash)
     if cached:
@@ -565,10 +760,21 @@ def efficient_property_search(
 
     if filters.has_structured_filters():
         ids = run_sql_layer(db, message, candidate_ids, filters)
+        if ids and has_specific_semantic_terms(message):
+            ranked_ids, embedding_attempted = run_embedding_layer(db, message, ids, filters, embedding_client, embedding_model)
+            embedding_used = embedding_attempted
+            if ranked_ids:
+                remaining_ids = [inm_id for inm_id in ids if inm_id not in ranked_ids]
+                ids = ranked_ids + remaining_ids
+                layer = "A_SQL_B_EMBEDDING"
     else:
-        ids = run_semantic_lite_layer(db, message, candidate_ids, filters)
-        layer = "B_SEMANTIC_LITE"
-
+        ids, embedding_attempted = run_embedding_layer(db, message, candidate_ids, filters, embedding_client, embedding_model)
+        embedding_used = embedding_attempted
+        if ids:
+            layer = "B_EMBEDDING"
+        else:
+            ids = run_semantic_lite_layer(db, message, candidate_ids, filters)
+            layer = "B_SEMANTIC_LITE"
     explanation = ""
     if filters.complex_reasoning and ids:
         explanation, tokens_input, tokens_output = call_llm_for_explanation(db, message, ids, llm_client, llm_model)
