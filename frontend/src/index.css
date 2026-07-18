@@ -82,3 +82,187 @@
     font: inherit;
   }
 }
+
+@layer components {
+  @media (max-width: 640px) and (orientation: portrait) {
+    .nia-mobile-hud {
+      top: calc(env(safe-area-inset-top, 0px) + 1rem);
+      left: 0.85rem;
+      right: 0.85rem;
+      gap: 0.45rem;
+    }
+
+    .nia-mobile-hud > button,
+    .nia-mobile-hud > a {
+      width: 3.1rem;
+      height: 3.1rem;
+      border-radius: 0.9rem;
+    }
+
+    .nia-mobile-search-form {
+      min-height: 3.1rem;
+    }
+
+    .nia-mobile-search-form input {
+      font-size: 0.88rem;
+    }
+
+    .nia-mobile-guide-toggle {
+      top: calc(env(safe-area-inset-top, 0px) + 4.8rem);
+    }
+
+    .nia-mobile-guide-panel {
+      top: calc(env(safe-area-inset-top, 0px) + 7.5rem);
+      max-height: min(42vh, 23rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .nia-property-carousel {
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
+      height: 12.4rem;
+      padding-inline: 1rem;
+    }
+
+    .nia-carousel-track {
+      padding-inline: 3.25rem;
+    }
+
+    .nia-property-card {
+      width: min(28rem, calc(100vw - 6.25rem)) !important;
+      max-width: none !important;
+      height: 11.35rem !important;
+      border-radius: 0.95rem;
+    }
+
+    .nia-property-card-media {
+      width: 46% !important;
+    }
+
+    .nia-property-card-body {
+      padding: 1rem 0.95rem !important;
+    }
+
+    .nia-property-card-title {
+      font-size: 0.86rem !important;
+      line-height: 1.18 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .nia-property-card-meta {
+      padding-top: 0.65rem !important;
+      gap: 0.42rem 0.5rem !important;
+      font-size: 0.62rem !important;
+    }
+  }
+
+  @media (max-width: 920px) and (orientation: landscape) {
+    .nia-mobile-hud {
+      top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
+      left: max(0.9rem, env(safe-area-inset-left, 0px));
+      right: max(0.9rem, env(safe-area-inset-right, 0px));
+      max-width: 61rem;
+      margin-inline: auto;
+    }
+
+    .nia-mobile-hud > button,
+    .nia-mobile-hud > a {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.85rem;
+    }
+
+    .nia-mobile-guide-toggle {
+      top: calc(env(safe-area-inset-top, 0px) + 4.15rem);
+    }
+
+    .nia-mobile-guide-panel {
+      top: calc(env(safe-area-inset-top, 0px) + 5.9rem);
+      left: 50%;
+      right: auto;
+      width: min(38rem, calc(100vw - 10rem));
+      max-height: calc(100vh - 14.25rem);
+      transform: translateX(-50%);
+      overflow-y: auto;
+    }
+
+    .nia-property-carousel {
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 1.05rem);
+      height: 9.65rem;
+      padding-inline: 5.75rem;
+    }
+
+    .nia-carousel-track {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    .nia-carousel-track .nia-property-card:not(:first-child) {
+      display: none;
+    }
+
+    .nia-property-card {
+      width: min(35rem, calc(100vw - 12rem)) !important;
+      max-width: none !important;
+      height: 8.95rem !important;
+    }
+
+    .nia-property-card-media {
+      width: 42% !important;
+    }
+
+    .nia-property-card-body {
+      padding: 0.85rem 1rem !important;
+    }
+
+    .nia-property-card-title {
+      font-size: 0.86rem !important;
+      line-height: 1.12 !important;
+      margin-bottom: 0.35rem !important;
+    }
+
+    .nia-property-card-meta {
+      padding-top: 0.55rem !important;
+      row-gap: 0.32rem !important;
+    }
+  }
+
+  @media (max-width: 420px) and (orientation: portrait) {
+    .nia-mobile-hud {
+      left: 0.65rem;
+      right: 0.65rem;
+    }
+
+    .nia-mobile-hud > button,
+    .nia-mobile-hud > a {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .nia-mobile-search-form input {
+      font-size: 0.8rem;
+    }
+
+    .nia-property-carousel {
+      height: 11.5rem;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    }
+
+    .nia-carousel-track {
+      padding-inline: 2.8rem;
+    }
+
+    .nia-property-card {
+      width: calc(100vw - 5.7rem) !important;
+      height: 10.7rem !important;
+    }
+
+    .nia-property-card-media {
+      width: 44% !important;
+    }
+
+    .nia-property-card-body {
+      padding: 0.85rem !important;
+    }
+  }
+}

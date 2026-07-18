@@ -852,7 +852,7 @@ export default function MapPage() {
       )}
 
       {/* HUD MOVIL: controles compactos en una sola fila */}
-      <div className="absolute left-4 right-4 top-5 z-10 flex items-center gap-2 md:hidden">
+      <div className="nia-mobile-hud absolute left-4 right-4 top-5 z-40 flex items-center gap-2 md:hidden">
         <button
           onClick={() => applyTheme(!isDarkMode)}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]"
@@ -863,7 +863,7 @@ export default function MapPage() {
 
         <form
           onSubmit={handleAskGemini}
-          className="min-w-0 flex-1 rounded-full border border-[var(--border-soft)] bg-[rgba(255,253,246,0.9)] p-1 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(16,12,10,0.62)]"
+          className="nia-mobile-search-form min-w-0 flex-1 rounded-full border border-[var(--border-soft)] bg-[rgba(255,253,246,0.9)] p-1 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(16,12,10,0.62)]"
         >
           <div className="flex items-center">
             <div className="flex items-center pl-3 pr-1">
@@ -914,6 +914,163 @@ export default function MapPage() {
           </button>
         )}
       </div>
+      <div className="nia-mobile-guide-toggle absolute left-1/2 top-[4.75rem] z-30 flex -translate-x-1/2 md:hidden">
+        <button
+          type="button"
+          onClick={() => setIsGuidedSearchOpen((open) => !open)}
+          className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--accent-main)] shadow-[var(--shadow-warm)] backdrop-blur transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
+        >
+          {isGuidedSearchOpen ? "Ocultar guia" : "Afinar con NIA"}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {isGuidedSearchOpen && (
+          <motion.div
+            key="mobile-guided-search"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="nia-mobile-guide-panel absolute left-4 right-4 top-[7.25rem] z-30 rounded-2xl border border-[var(--accent-main)]/60 bg-[var(--surface-panel)]/95 p-3 shadow-[var(--shadow-warm)] backdrop-blur-xl md:hidden dark:bg-[rgba(27,20,17,0.94)]"
+          >
+            <form onSubmit={handleGuidedFormSubmit} className="space-y-3">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--accent-main)]">
+                <Sparkles size={14} />
+                <span>
+                  {guidedStep === 1 && "Que buscas?"}
+                  {guidedStep === 2 && "Presupuesto"}
+                  {guidedStep === 3 && "Ciudad"}
+                  {guidedStep === 4 && "Zona"}
+                  {guidedStep === 5 && "Ideal para ti"}
+                </span>
+                <span className="ml-auto rounded-full border border-[var(--accent-main)]/35 px-2 py-1 text-[9px]">{guidedStepLabel}</span>
+                <button type="button" onClick={() => setIsGuidedSearchOpen(false)} className="text-[var(--text-muted)] hover:text-red-500" aria-label="Cerrar guia">
+                  <X size={15} />
+                </button>
+              </div>
+
+              {guidedStep === 1 && (
+                <input value={guidedOperation} readOnly placeholder="Elige: alquilar, comprar o ambos" className="w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-3 text-sm text-[var(--text-main)] outline-none" />
+              )}
+              {guidedStep === 2 && (
+                <input value={guidedBudget} onChange={(event) => setGuidedBudget(event.target.value)} placeholder="Ej. 6000 Bs" className="w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-3 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]" />
+              )}
+              {guidedStep === 3 && (
+                <div className="relative">
+                  <input
+                    value={guidedCity}
+                    onChange={(event) => {
+                      setGuidedCity(event.target.value);
+                      setGuidedCityChoice(null);
+                      setIsCitySuggestionsOpen(true);
+                      setGuidedError("");
+                    }}
+                    onFocus={() => setIsCitySuggestionsOpen(true)}
+                    onBlur={() => window.setTimeout(() => setIsCitySuggestionsOpen(false), 140)}
+                    placeholder="Ciudad obligatoria"
+                    className="w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-3 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]"
+                  />
+                  {isCitySuggestionsOpen && citySuggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-40 overflow-hidden rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)] text-left shadow-[0_14px_32px_rgba(58,33,25,0.18)] dark:bg-[rgba(27,20,17,0.98)]">
+                      {citySuggestions.map((choice) => (
+                        <button key={choice.id} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleGuidedCitySelect(choice, true)} className="block w-full px-3 py-2.5 text-left text-xs font-semibold text-[var(--text-main)] transition-colors hover:bg-[var(--accent-main)]/15">
+                          {choice.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {guidedStep === 4 && (
+                <input value={guidedZone} onChange={(event) => setGuidedZone(event.target.value)} placeholder="Zona opcional, ej. Equipetrol" className="w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-3 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]" />
+              )}
+              {guidedStep === 5 && (
+                <input value={guidedPriority} onChange={(event) => setGuidedPriority(event.target.value)} placeholder="Ej. pueda trabajar en remoto" className="w-full rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-3 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]" />
+              )}
+
+              <div className="nia-mobile-guide-options flex flex-wrap gap-2">
+                {guidedStep === 1 && (["Alquilar", "Comprar", "Ambos"] as GuidedOperation[]).map((option) => (
+                  <button key={option} type="button" onClick={() => { setGuidedOperation(option); window.setTimeout(() => setGuidedStep(2), 80); }} className={`rounded-full border px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] shadow-sm transition-colors ${guidedOperation === option ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-muted)] hover:border-[var(--accent-main)]"}`}>
+                    {option}
+                  </button>
+                ))}
+                {guidedStep === 2 && ["Hasta 5000 Bs", "Entre 7000 y 8000 Bs", "Entre 8000 y 10000 Bs"].map((option) => (
+                  <button key={option} type="button" onClick={() => { setGuidedBudget(option); window.setTimeout(() => setGuidedStep(3), 80); }} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]">
+                    {option}
+                  </button>
+                ))}
+                {guidedStep === 3 && citySuggestions.slice(0, 2).map((choice) => (
+                  <button key={`mobile-quick-${choice.id}`} type="button" onClick={() => handleGuidedCitySelect(choice, true)} className="rounded-full border border-[var(--accent-main)]/45 bg-[var(--accent-main)]/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--accent-main)] shadow-sm transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]">
+                    {choice.name.split(",")[0]}
+                  </button>
+                ))}
+                {guidedStep === 4 && ["Equipetrol", "Norte", "Urubo", "Centro"].map((option) => (
+                  <button key={option} type="button" onClick={() => { setGuidedZone(option); window.setTimeout(() => setGuidedStep(5), 80); }} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]">
+                    {option}
+                  </button>
+                ))}
+                {guidedStep === 4 && (
+                  <button type="button" onClick={() => { setGuidedZone("No estoy seguro"); window.setTimeout(() => setGuidedStep(5), 80); }} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]">
+                    No estoy seguro
+                  </button>
+                )}
+                {guidedStep === 5 && ["pueda trabajar en remoto", "restaurantes y cafes cerca", "cerca del 4to anillo"].map((option) => (
+                  <button key={option} type="button" onClick={() => setGuidedPriority(option)} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-bold text-[var(--text-muted)] shadow-sm transition-colors hover:border-[var(--accent-main)] hover:text-[var(--accent-main)]">
+                    {option}
+                  </button>
+                ))}
+                {guidedError && <span className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-bold text-red-600">{guidedError}</span>}
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <button type="button" onClick={() => setGuidedStep((step) => Math.max(1, step - 1))} disabled={guidedStep === 1} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] text-[var(--text-muted)] disabled:opacity-40">
+                  Anterior
+                </button>
+                {guidedStep < 5 ? (
+                  <button type="button" onClick={goNextGuidedStep} className="rounded-full bg-[var(--accent-main)] px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#2F241D] shadow-md">
+                    Siguiente
+                  </button>
+                ) : (
+                  <button type="submit" disabled={isAsking} className="rounded-full bg-[var(--accent-main)] px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#2F241D] shadow-md disabled:opacity-70">
+                    Buscar
+                  </button>
+                )}
+              </div>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {locationQuestion && !isGuidedSearchOpen && (
+        <div className="nia-mobile-location-question absolute left-4 right-4 top-[7.25rem] z-30 rounded-2xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/96 p-3 text-left shadow-[var(--shadow-warm)] backdrop-blur-xl md:hidden dark:bg-[rgba(27,20,17,0.94)]">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--accent-main)]">
+            <Sparkles size={14} />
+            <span>Pregunta de NIA</span>
+            <button type="button" onClick={() => setLocationQuestion("")} className="ml-auto text-[var(--text-muted)] hover:text-red-500" aria-label="Cerrar pregunta">
+              <X size={15} />
+            </button>
+          </div>
+          <p className="mb-3 text-sm font-semibold normal-case tracking-normal text-[var(--text-main)]">{locationQuestion}</p>
+          <div className="flex flex-wrap gap-2">
+            {locationChoices.map((choice) => (
+              <button key={`mobile-location-${choice.id}`} type="button" onClick={() => handleLocationChoice(choice)} className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--accent-main)] transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]">
+                {choice.name}
+              </button>
+            ))}
+            <button type="button" onClick={() => setIsCustomLocationOpen((open) => !open)} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-main)] transition-colors hover:border-[var(--accent-main)]">
+              Otro
+            </button>
+          </div>
+          {isCustomLocationOpen && (
+            <form onSubmit={handleCustomLocationSubmit} className="mt-3 flex gap-2">
+              <input value={customLocationText} onChange={(event) => setCustomLocationText(event.target.value)} placeholder="Ej. Santa Cruz de la Sierra, Bolivia" className="min-w-0 flex-1 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2.5 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]" />
+              <button type="submit" className="rounded-xl bg-[var(--accent-main)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white">
+                Usar
+              </button>
+            </form>
+          )}
+        </div>
+      )}
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
       <div className="absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
         {!isGuidedSearchOpen ? (
@@ -1160,7 +1317,7 @@ export default function MapPage() {
             </div>
           </motion.div>
         )}
-        {locationQuestion && (
+        {locationQuestion && !isGuidedSearchOpen && (
           <div className="mt-3 rounded-xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/95 p-3 text-left shadow-[0_18px_42px_rgba(58,33,25,0.18)] backdrop-blur-xl dark:bg-[rgba(27,20,17,0.94)]">
             <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--accent-main)]">
               <Sparkles size={14} />
@@ -1233,7 +1390,7 @@ export default function MapPage() {
       </div>
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
-<div className="absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
+<div className="nia-property-carousel absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
 
   <button
     onClick={() => setCurrentIndex(prev => Math.max(0, prev - carouselStep))}
@@ -1246,7 +1403,7 @@ export default function MapPage() {
   {/* Contenedor central expandido */}
   <motion.div
     layout
-    className="flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
+    className="nia-carousel-track flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
   >
     <AnimatePresence mode="popLayout" initial={false}>
       {visibleProperties.map((p, index) => {
@@ -1268,7 +1425,7 @@ export default function MapPage() {
           transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9, delay: index * 0.035 }}
           onClick={() => selectProperty(p)}
           // Tarjetas compactas para que el borde respire completo
-          className={`group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-0.5 hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
+          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-0.5 hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
         >
         {isRankedSearchResult && (
           <span className={`absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-black shadow-md ${isBestSearchMatch ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 text-[var(--accent-main)]"}`} title={isBestSearchMatch ? "Mejor opcion" : `Opcion ${globalResultRank + 1}`}>
@@ -1276,7 +1433,7 @@ export default function MapPage() {
           </span>
         )}
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
-        <div className="relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
+        <div className="nia-property-card-media relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
           {coverUrl && !isCollection ? (
             isVideoUrl(coverUrl) ? (
               <video
@@ -1305,10 +1462,10 @@ export default function MapPage() {
         </div>
 
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
-        <div className="relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
+        <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
 
           <span className="text-[10px] text-[var(--accent-main)] font-bold tracking-[0.18em] uppercase mb-2">Ref. #{p.id}</span>
-          <h3 className="mb-2 line-clamp-2 text-[13px] font-bold leading-snug tracking-wide md:text-sm">
+          <h3 className="nia-property-card-title mb-2 line-clamp-2 text-[13px] font-bold leading-snug tracking-wide md:text-sm">
             {p.title}
           </h3>
 
@@ -1323,7 +1480,7 @@ export default function MapPage() {
             )}
           </div>
 
-          <div className="mt-auto grid grid-cols-2 gap-x-2 gap-y-2 border-t border-[var(--border-soft)] pt-3 text-[9px] font-medium uppercase tracking-wider text-[var(--text-muted)] dark:border-[var(--border-soft)] dark:text-[var(--text-muted)] md:gap-x-4 md:text-[10px]">
+          <div className="nia-property-card-meta mt-auto grid grid-cols-2 gap-x-2 gap-y-2 border-t border-[var(--border-soft)] pt-3 text-[9px] font-medium uppercase tracking-wider text-[var(--text-muted)] dark:border-[var(--border-soft)] dark:text-[var(--text-muted)] md:gap-x-4 md:text-[10px]">
              <div className="flex min-w-0 items-center gap-2">
                 <Bed size={14} className="shrink-0 text-[var(--accent-secondary)] dark:text-[var(--text-muted)]" />
                 <span className="truncate">{p.rooms} dorm</span>
