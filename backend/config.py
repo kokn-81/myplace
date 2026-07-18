@@ -41,9 +41,20 @@ IS_SQLITE = DATABASE_URL.startswith("sqlite")
 AUTO_CREATE_TABLES = os.getenv("AUTO_CREATE_TABLES", "true").strip().lower() not in {"0", "false", "no"}
 
 
+DEFAULT_CORS_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "https://nia-web.com",
+    "https://www.nia-web.com",
+]
+
+
 def get_cors_origins() -> list[str]:
-    raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173,https://nia-web.com,https://www.nia-web.com")
-    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+    raw = os.getenv("CORS_ORIGINS", "")
+    configured = [origin.strip().rstrip("/") for origin in raw.split(",") if origin.strip()]
+    merged = [*configured, *DEFAULT_CORS_ORIGINS]
+    return list(dict.fromkeys(merged))
 
 
 CORS_ORIGINS = get_cors_origins()

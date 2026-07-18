@@ -123,14 +123,13 @@ export const clearCachedAuthProfile = (email?: string | null): void => {
 };
 
 const buildHeaders = (headers?: HeadersInit): Headers => {
-  const result = new Headers(headers || {});
-  return result;
+  return new Headers(headers || {});
 };
 
 export const authFetch = async (path: string, user: User | null, init: RequestInit = {}) => {
   if (!user) throw new Error("Sesion requerida.");
 
-  const request = async (forceRefresh: boolean) => {
+  const request = async (forceRefresh = false) => {
     const token = await user.getIdToken(forceRefresh);
     const headers = buildHeaders(init.headers);
     headers.set("Authorization", `Bearer ${token}`);
@@ -142,10 +141,8 @@ export const authFetch = async (path: string, user: User | null, init: RequestIn
   };
 
   const response = await request(false);
-  if (response.status === 401) {
-    return request(true);
-  }
-  return response;
+  if (response.status !== 401) return response;
+  return request(true);
 };
 
 export const fetchAuthProfile = async (user: User, options: { forceRefresh?: boolean } = {}): Promise<AuthProfile> => {
