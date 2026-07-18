@@ -81,9 +81,21 @@
   input, textarea, select, button {
     font: inherit;
   }
-}
 
+  @media (max-height: 560px) and (orientation: landscape) and (max-width: 760px) {
+    .nia-carousel-track .nia-property-card:not(:first-child) {
+      display: none !important;
+    }
+
+    .nia-property-card {
+      width: min(34rem, calc(100vw - 12rem)) !important;
+    }
+  }}
 @layer components {
+  .nia-mobile-filter-chips {
+    display: none;
+  }
+
   @media (max-width: 640px) and (orientation: portrait) {
     .nia-mobile-hud {
       top: calc(env(safe-area-inset-top, 0px) + 1rem);
@@ -111,15 +123,32 @@
       top: calc(env(safe-area-inset-top, 0px) + 4.8rem);
     }
 
-    .nia-mobile-guide-panel {
+    .nia-mobile-guide-panel,
+    .nia-mobile-location-question {
       top: calc(env(safe-area-inset-top, 0px) + 7.5rem);
       max-height: min(42vh, 23rem);
       overflow-y: auto;
       overscroll-behavior: contain;
     }
 
+    .nia-mobile-filter-chips {
+      display: flex;
+      left: 0;
+      right: 0;
+      top: calc(env(safe-area-inset-top, 0px) + 7.45rem);
+      overflow-x: auto;
+      overflow-y: hidden;
+      justify-content: flex-start;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .nia-mobile-filter-chips::-webkit-scrollbar {
+      display: none;
+    }
+
     .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.2rem);
       height: 12.4rem;
       padding-inline: 1rem;
     }
@@ -153,77 +182,6 @@
       padding-top: 0.65rem !important;
       gap: 0.42rem 0.5rem !important;
       font-size: 0.62rem !important;
-    }
-  }
-
-  @media (max-width: 920px) and (orientation: landscape) {
-    .nia-mobile-hud {
-      top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
-      left: max(0.9rem, env(safe-area-inset-left, 0px));
-      right: max(0.9rem, env(safe-area-inset-right, 0px));
-      max-width: 61rem;
-      margin-inline: auto;
-    }
-
-    .nia-mobile-hud > button,
-    .nia-mobile-hud > a {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 0.85rem;
-    }
-
-    .nia-mobile-guide-toggle {
-      top: calc(env(safe-area-inset-top, 0px) + 4.15rem);
-    }
-
-    .nia-mobile-guide-panel {
-      top: calc(env(safe-area-inset-top, 0px) + 5.9rem);
-      left: 50%;
-      right: auto;
-      width: min(38rem, calc(100vw - 10rem));
-      max-height: calc(100vh - 14.25rem);
-      transform: translateX(-50%);
-      overflow-y: auto;
-    }
-
-    .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 1.05rem);
-      height: 9.65rem;
-      padding-inline: 5.75rem;
-    }
-
-    .nia-carousel-track {
-      justify-content: center;
-      padding-inline: 0;
-    }
-
-    .nia-carousel-track .nia-property-card:not(:first-child) {
-      display: none;
-    }
-
-    .nia-property-card {
-      width: min(35rem, calc(100vw - 12rem)) !important;
-      max-width: none !important;
-      height: 8.95rem !important;
-    }
-
-    .nia-property-card-media {
-      width: 42% !important;
-    }
-
-    .nia-property-card-body {
-      padding: 0.85rem 1rem !important;
-    }
-
-    .nia-property-card-title {
-      font-size: 0.86rem !important;
-      line-height: 1.12 !important;
-      margin-bottom: 0.35rem !important;
-    }
-
-    .nia-property-card-meta {
-      padding-top: 0.55rem !important;
-      row-gap: 0.32rem !important;
     }
   }
 
@@ -265,32 +223,36 @@
       padding: 0.85rem !important;
     }
   }
-}
 
-@layer components {
-  .nia-mobile-filter-chips {
-    display: none;
-  }
-
-  @media (max-width: 640px) and (orientation: portrait) {
-    .nia-mobile-filter-chips {
-      display: flex;
-      left: 0;
-      right: 0;
-      top: calc(env(safe-area-inset-top, 0px) + 7.45rem);
-      overflow-x: auto;
-      overflow-y: hidden;
-      justify-content: flex-start;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
+  @media (max-width: 920px) and (orientation: landscape) {
+    .nia-mobile-hud {
+      top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
+      left: max(0.9rem, env(safe-area-inset-left, 0px));
+      right: max(0.9rem, env(safe-area-inset-right, 0px));
+      max-width: 61rem;
+      margin-inline: auto;
     }
 
-    .nia-mobile-filter-chips::-webkit-scrollbar {
-      display: none;
+    .nia-mobile-hud > button,
+    .nia-mobile-hud > a {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.85rem;
     }
 
-    .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.2rem);
+    .nia-mobile-guide-toggle {
+      top: calc(env(safe-area-inset-top, 0px) + 4.15rem);
+    }
+
+    .nia-mobile-guide-panel,
+    .nia-mobile-location-question {
+      top: calc(env(safe-area-inset-top, 0px) + 5.9rem);
+      left: 50%;
+      right: auto;
+      width: min(38rem, calc(100vw - 10rem));
+      max-height: calc(100vh - 14.25rem);
+      transform: translateX(-50%);
+      overflow-y: auto;
     }
   }
 
@@ -316,13 +278,17 @@
       transform: translateX(-50%);
       overflow-x: auto;
       overflow-y: hidden;
-      justify-content: flex-start;
+      justify-content: center;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
     }
 
     .nia-mobile-filter-chips::-webkit-scrollbar {
       display: none;
+    }
+
+    .nia-mobile-filter-chip {
+      display: none !important;
     }
 
     .nia-property-carousel {
@@ -340,17 +306,18 @@
     .nia-carousel-track {
       justify-content: center !important;
       padding-inline: 0 !important;
-      gap: 0 !important;
+      gap: 1.05rem !important;
     }
 
     .nia-carousel-track .nia-property-card:not(:first-child) {
-      display: none !important;
+      display: flex !important;
     }
 
     .nia-property-card {
-      width: min(34.5rem, calc(100vw - 12rem)) !important;
+      width: min(23.5rem, calc((100vw - 12rem) / 2)) !important;
       max-width: none !important;
-      height: 8.75rem !important;
+      height: 9rem !important;
+      border-radius: 0.9rem;
     }
 
     .nia-property-card-media {
@@ -358,18 +325,29 @@
     }
 
     .nia-property-card-body {
-      padding: 0.85rem 1rem !important;
+      padding: 0.8rem 0.9rem !important;
     }
 
     .nia-property-card-title {
-      font-size: 0.86rem !important;
-      line-height: 1.12 !important;
-      margin-bottom: 0.35rem !important;
+      font-size: 0.82rem !important;
+      line-height: 1.1 !important;
+      margin-bottom: 0.3rem !important;
     }
 
     .nia-property-card-meta {
-      padding-top: 0.55rem !important;
-      row-gap: 0.32rem !important;
+      padding-top: 0.5rem !important;
+      row-gap: 0.28rem !important;
+      font-size: 0.58rem !important;
+    }
+  }
+
+  @media (max-height: 560px) and (orientation: landscape) and (max-width: 760px) {
+    .nia-carousel-track .nia-property-card:not(:first-child) {
+      display: none !important;
+    }
+
+    .nia-property-card {
+      width: min(34rem, calc(100vw - 12rem)) !important;
     }
   }
 }

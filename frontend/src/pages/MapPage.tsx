@@ -772,10 +772,15 @@ export default function MapPage() {
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobileCarousel, setIsMobileCarousel] = useState(() => window.innerWidth < 768);
+    const isCompactCarouselViewport = () => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768 || (window.innerHeight <= 560 && window.innerWidth < 760);
+  };
+
+  const [isMobileCarousel, setIsMobileCarousel] = useState(isCompactCarouselViewport);
 
   useEffect(() => {
-    const handleResize = () => setIsMobileCarousel(window.innerWidth < 768);
+    const handleResize = () => setIsMobileCarousel(isCompactCarouselViewport());
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -1074,7 +1079,7 @@ export default function MapPage() {
       {(aiFilteredIds !== null || aiClarification) && !isGuidedSearchOpen && !locationQuestion && (
         <div className="nia-mobile-filter-chips absolute z-30 items-center justify-center gap-2 px-3 text-[10px] uppercase tracking-[0.1em]">
           {aiFilterHistory.map((filter, index) => (
-            <span key={`mobile-${filter}-${index}`} className="inline-flex max-w-[78vw] shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/94 py-2 pl-3 pr-1.5 font-bold text-[var(--text-muted)] shadow-sm backdrop-blur dark:bg-[rgba(27,20,17,0.9)]">
+            <span key={`mobile-${filter}-${index}`} className="nia-mobile-filter-chip inline-flex max-w-[78vw] shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/94 py-2 pl-3 pr-1.5 font-bold text-[var(--text-muted)] shadow-sm backdrop-blur dark:bg-[rgba(27,20,17,0.9)]">
               <span className="truncate">{filter}</span>
               <button type="button" onClick={() => handleRemoveAiFilter(index)} className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500" title="Quitar filtro">
                 <X size={12} />
@@ -1082,15 +1087,15 @@ export default function MapPage() {
             </span>
           ))}
           {aiClarification ? (
-            <span className="shrink-0 rounded-full border border-amber-300/60 bg-amber-50 px-3 py-2 font-black text-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+            <span className="nia-mobile-result-chip shrink-0 rounded-full border border-amber-300/60 bg-amber-50 px-3 py-2 font-black text-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
               {aiClarification}
             </span>
           ) : aiFilteredIds !== null ? (
-            <span className="shrink-0 rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-2 font-black text-[var(--accent-main)]">
+            <span className="nia-mobile-result-chip shrink-0 rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-2 font-black text-[var(--accent-main)]">
               {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
             </span>
           ) : null}
-          <button type="button" onClick={clearAiFilters} className="shrink-0 rounded-full bg-[var(--color-chocolate)] px-3 py-2 font-black text-[var(--color-ivory)] shadow-sm transition-colors hover:bg-[var(--accent-hover)]">
+          <button type="button" onClick={clearAiFilters} className="nia-mobile-clear-filters shrink-0 rounded-full bg-[var(--color-chocolate)] px-3 py-2 font-black text-[var(--color-ivory)] shadow-sm transition-colors hover:bg-[var(--accent-hover)]">
             Limpiar
           </button>
         </div>
