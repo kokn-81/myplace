@@ -1071,8 +1071,32 @@ export default function MapPage() {
           )}
         </div>
       )}
+      {(aiFilteredIds !== null || aiClarification) && !isGuidedSearchOpen && !locationQuestion && (
+        <div className="nia-mobile-filter-chips absolute z-30 items-center justify-center gap-2 px-3 text-[10px] uppercase tracking-[0.1em]">
+          {aiFilterHistory.map((filter, index) => (
+            <span key={`mobile-${filter}-${index}`} className="inline-flex max-w-[78vw] shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/94 py-2 pl-3 pr-1.5 font-bold text-[var(--text-muted)] shadow-sm backdrop-blur dark:bg-[rgba(27,20,17,0.9)]">
+              <span className="truncate">{filter}</span>
+              <button type="button" onClick={() => handleRemoveAiFilter(index)} className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500" title="Quitar filtro">
+                <X size={12} />
+              </button>
+            </span>
+          ))}
+          {aiClarification ? (
+            <span className="shrink-0 rounded-full border border-amber-300/60 bg-amber-50 px-3 py-2 font-black text-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+              {aiClarification}
+            </span>
+          ) : aiFilteredIds !== null ? (
+            <span className="shrink-0 rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-2 font-black text-[var(--accent-main)]">
+              {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
+            </span>
+          ) : null}
+          <button type="button" onClick={clearAiFilters} className="shrink-0 rounded-full bg-[var(--color-chocolate)] px-3 py-2 font-black text-[var(--color-ivory)] shadow-sm transition-colors hover:bg-[var(--accent-hover)]">
+            Limpiar
+          </button>
+        </div>
+      )}
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
-      <div className="absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
+      <div className="nia-desktop-hud absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
         {!isGuidedSearchOpen ? (
           <>
             <form
@@ -1359,7 +1383,7 @@ export default function MapPage() {
           </div>
         )}
         {(aiFilteredIds !== null || aiClarification) && (
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] uppercase tracking-[0.12em]">
+          <div className="nia-desktop-filter-chips mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] uppercase tracking-[0.12em]">
             {aiFilterHistory.map((filter, index) => (
               <span key={`${filter}-${index}`} className="inline-flex max-w-[560px] items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 py-1 pl-3 pr-1.5 text-[var(--text-muted)] shadow-sm dark:bg-[rgba(27,20,17,0.88)]">
                 <span className="truncate">{filter}</span>
