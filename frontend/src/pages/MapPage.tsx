@@ -248,6 +248,35 @@ const mapApiProperty = (inm: any): Property => {
   };
 };
 
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v1";
+
+const readCachedCatalog = (): Property[] => {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(CATALOG_CACHE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    const items = Array.isArray(parsed?.items) ? parsed.items : [];
+    return items
+      .map(mapApiProperty)
+      .filter((property) => property.id && Number.isFinite(property.lat) && Number.isFinite(property.lng));
+  } catch (error) {
+    console.warn("No se pudo leer el cache del catalogo:", error);
+    return [];
+  }
+};
+
+const writeCachedCatalog = (items: unknown[]) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), items }));
+  } catch (error) {
+    console.warn("No se pudo guardar el cache del catalogo:", error);
+  }
+};
 const renderMedia = (url: string, className: string, alt: string, controls = false) => (
   isVideoUrl(url) ? (
     <video
@@ -352,7 +381,7 @@ export default function MapPage() {
   const [roleLoading, setRoleLoading] = useState(false);
   const [userRole, setUserRole] = useState<AppRole>(() => getLastCachedAuthProfile()?.role || "user");
   const [loginError, setLoginError] = useState("");
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   const selectProperty = useCallback(async (property: Property) => {
@@ -496,22 +525,29 @@ export default function MapPage() {
     );
   }, []);
 
-  // [OPALO-BRIDGE] Lectura Consolidada
+  // [OPALO-BRIDGE] Lectura Consolidada con cache local para primera pintura inmediata.
   useEffect(() => {
+    let cancelled = false;
+
     const fetchDatos = async () => {
       try {
-
         const resInmuebles = await fetch(`${API_BASE}/inmuebles/resumen`);
         if (!resInmuebles.ok) throw new Error("Fallo en la conexion al motor Python");
 
         const datosPython = await resInmuebles.json();
-        setProperties(datosPython.map(mapApiProperty));
+        if (!Array.isArray(datosPython)) throw new Error("Catalogo invalido");
+
+        writeCachedCatalog(datosPython);
+        if (!cancelled) setProperties(datosPython.map(mapApiProperty));
       } catch (error) {
         console.error("Error cargando el catalogo:", error);
       }
     };
 
     fetchDatos();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleLocationChoice = (choice: MapLocationChoice) => {
