@@ -1418,6 +1418,9 @@ export default function MapPage() {
         )}
       </div>
 
+      <div className="nia-landscape-use-portrait absolute left-1/2 z-30 -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--accent-main)]/45 bg-[var(--surface-panel)]/95 px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] text-[var(--accent-main)] shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.92)]">
+        Gira el celular a vertical para ver los inmuebles
+      </div>
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
 <div className="nia-property-carousel absolute bottom-24 left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
 

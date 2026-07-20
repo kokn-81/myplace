@@ -73,26 +73,19 @@
     font-family: var(--font-serif) !important;
   }
 
-
   .theme-switching :not(.theme-transition-veil):not(.theme-transition-veil *) {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
   }
+
   input, textarea, select, button {
     font: inherit;
   }
+}
 
-  @media (max-height: 560px) and (orientation: landscape) and (max-width: 760px) {
-    .nia-carousel-track .nia-property-card:not(:first-child) {
-      display: none !important;
-    }
-
-    .nia-property-card {
-      width: min(34rem, calc(100vw - 12rem)) !important;
-    }
-  }}
 @layer components {
-  .nia-mobile-filter-chips {
+  .nia-mobile-filter-chips,
+  .nia-landscape-use-portrait {
     display: none;
   }
 
@@ -256,7 +249,7 @@
     }
   }
 
-  @media (max-height: 560px) and (orientation: landscape) {
+  @media (max-height: 560px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
     .nia-desktop-hud {
       top: calc(env(safe-area-inset-top, 0px) + 0.55rem) !important;
       width: min(52rem, calc(100vw - 13rem)) !important;
@@ -264,90 +257,16 @@
       z-index: 40 !important;
     }
 
-    .nia-desktop-filter-chips {
-      display: none !important;
-    }
-
-    .nia-mobile-filter-chips {
-      display: flex;
-      left: 50%;
-      right: auto;
-      top: calc(env(safe-area-inset-top, 0px) + 4.35rem);
-      width: min(52rem, calc(100vw - 13rem));
-      max-width: none;
-      transform: translateX(-50%);
-      overflow-x: auto;
-      overflow-y: hidden;
-      justify-content: center;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .nia-mobile-filter-chips::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nia-mobile-filter-chip {
-      display: none !important;
-    }
-
+    .nia-desktop-filter-chips,
+    .nia-mobile-filter-chips,
     .nia-property-carousel {
-      left: 0 !important;
-      right: 0 !important;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 0.8rem) !important;
-      width: 100% !important;
-      max-width: none !important;
-      height: 9.25rem !important;
-      padding-inline: 5.6rem !important;
-      transform: none !important;
-      justify-content: center !important;
-    }
-
-    .nia-carousel-track {
-      justify-content: center !important;
-      padding-inline: 0 !important;
-      gap: 1.05rem !important;
-    }
-
-    .nia-carousel-track .nia-property-card:not(:first-child) {
-      display: flex !important;
-    }
-
-    .nia-property-card {
-      width: min(23.5rem, calc((100vw - 12rem) / 2)) !important;
-      max-width: none !important;
-      height: 9rem !important;
-      border-radius: 0.9rem;
-    }
-
-    .nia-property-card-media {
-      width: 42% !important;
-    }
-
-    .nia-property-card-body {
-      padding: 0.8rem 0.9rem !important;
-    }
-
-    .nia-property-card-title {
-      font-size: 0.82rem !important;
-      line-height: 1.1 !important;
-      margin-bottom: 0.3rem !important;
-    }
-
-    .nia-property-card-meta {
-      padding-top: 0.5rem !important;
-      row-gap: 0.28rem !important;
-      font-size: 0.58rem !important;
-    }
-  }
-
-  @media (max-height: 560px) and (orientation: landscape) and (max-width: 760px) {
-    .nia-carousel-track .nia-property-card:not(:first-child) {
       display: none !important;
     }
 
-    .nia-property-card {
-      width: min(34rem, calc(100vw - 12rem)) !important;
+    .nia-landscape-use-portrait {
+      display: flex;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
+      max-width: min(38rem, calc(100vw - 3rem));
     }
   }
 }
