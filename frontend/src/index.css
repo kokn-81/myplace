@@ -128,7 +128,7 @@
       display: flex;
       left: 0;
       right: 0;
-      top: calc(env(safe-area-inset-top, 0px) + 7.45rem);
+      top: calc(env(safe-area-inset-top, 0px) + 7.9rem);
       overflow-x: auto;
       overflow-y: hidden;
       justify-content: flex-start;
@@ -249,10 +249,10 @@
     }
   }
 
-  @media (max-height: 560px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  @media (max-height: 720px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
     .nia-desktop-hud {
       top: calc(env(safe-area-inset-top, 0px) + 0.55rem) !important;
-      width: min(42rem, calc(100vw - 19rem)) !important;
+      width: min(38rem, calc(100vw - 20rem)) !important;
       max-width: none !important;
       z-index: 40 !important;
     }
@@ -265,8 +265,8 @@
 
     .nia-landscape-use-portrait {
       display: flex;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
-      max-width: min(34rem, calc(100vw - 3rem));
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+      max-width: min(34rem, calc(100vw - 4rem));
     }
   }
 }
