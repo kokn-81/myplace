@@ -10,6 +10,7 @@ export type MapFocus = {
   latitude: number;
   zoom?: number;
   key?: number;
+  source?: "user" | "search";
 };
 type MapCanvasProps = {
   mapboxToken: string;
@@ -24,13 +25,17 @@ function MapCanvas({ mapboxToken, properties, isDarkMode, onSelectProperty, focu
 
   useEffect(() => {
     if (!focusLocation || !mapRef.current) return;
-    mapRef.current.flyTo({
+
+    const targetZoom = focusLocation.zoom ?? (focusLocation.source === "user" ? 12 : 11.8);
+    const duration = focusLocation.source === "user" ? 650 : 900;
+
+    mapRef.current.easeTo({
       center: [focusLocation.longitude, focusLocation.latitude],
-      zoom: focusLocation.zoom ?? 12.5,
-      duration: 1400,
+      zoom: targetZoom,
+      duration,
       essential: true,
     });
-  }, [focusLocation?.longitude, focusLocation?.latitude, focusLocation?.zoom, focusLocation?.key]);
+  }, [focusLocation?.longitude, focusLocation?.latitude, focusLocation?.zoom, focusLocation?.key, focusLocation?.source]);
 
   const markers = useMemo(
     () => properties.map((property) => (

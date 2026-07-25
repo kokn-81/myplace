@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useCallback, useEffect, useState, useMemo } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer } from "../types";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -163,6 +163,21 @@ const geocodeRequestedLocation = async (query: string): Promise<MapLocationResol
     return { choices: knownChoices, requestedLocation: location };
   }
 
+  if (knownChoices.length === 1) {
+    const choice = knownChoices[0];
+    return {
+      focus: {
+        longitude: choice.longitude,
+        latitude: choice.latitude,
+        zoom: choice.zoom ?? 12.2,
+        key: Date.now(),
+        label: choice.name,
+        source: "search",
+      },
+      requestedLocation: location,
+    };
+  }
+
   if (!MAPBOX_TOKEN) return null;
 
   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${encodeURIComponent(MAPBOX_TOKEN)}&limit=1&language=es`;
@@ -249,6 +264,7 @@ const mapApiProperty = (inm: any): Property => {
 };
 
 const CATALOG_CACHE_KEY = "nia.catalog.summary.v1";
+const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
   if (typeof window === "undefined") return [];
@@ -383,6 +399,7 @@ export default function MapPage() {
   const [loginError, setLoginError] = useState("");
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const hasSearchInteractionRef = useRef(false);
 
   const selectProperty = useCallback(async (property: Property) => {
     setSelectedProperty(property);
@@ -510,10 +527,11 @@ export default function MapPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (hasSearchInteractionRef.current) return;
         setMapFocus({
           longitude: position.coords.longitude,
           latitude: position.coords.latitude,
-          zoom: 13,
+          zoom: 12,
           key: Date.now(),
           source: "user",
         });
@@ -525,32 +543,48 @@ export default function MapPage() {
     );
   }, []);
 
-  // [OPALO-BRIDGE] Lectura Consolidada con cache local para primera pintura inmediata.
+  // [OPALO-BRIDGE] Lectura Consolidada con snapshot estatico + refresh en segundo plano.
   useEffect(() => {
     let cancelled = false;
+    const hasCatalogAtMount = properties.length > 0;
 
-    const fetchDatos = async () => {
+    const applyCatalog = (items: unknown[], shouldCache = true) => {
+      if (!Array.isArray(items)) throw new Error("Catalogo invalido");
+      if (shouldCache) writeCachedCatalog(items);
+      if (!cancelled) setProperties(items.map(mapApiProperty));
+    };
+
+    const loadSnapshotIfNeeded = async () => {
+      if (hasCatalogAtMount) return;
+      try {
+        const snapshotResponse = await fetch(CATALOG_SNAPSHOT_URL, { cache: "force-cache" });
+        if (!snapshotResponse.ok) return;
+        applyCatalog(await snapshotResponse.json());
+      } catch (error) {
+        console.warn("No se pudo cargar el snapshot del catalogo:", error);
+      }
+    };
+
+    const refreshFromBackend = async () => {
       try {
         const resInmuebles = await fetch(`${API_BASE}/inmuebles/resumen`);
         if (!resInmuebles.ok) throw new Error("Fallo en la conexion al motor Python");
-
-        const datosPython = await resInmuebles.json();
-        if (!Array.isArray(datosPython)) throw new Error("Catalogo invalido");
-
-        writeCachedCatalog(datosPython);
-        if (!cancelled) setProperties(datosPython.map(mapApiProperty));
+        applyCatalog(await resInmuebles.json());
       } catch (error) {
         console.error("Error cargando el catalogo:", error);
       }
     };
 
-    fetchDatos();
+    loadSnapshotIfNeeded();
+    refreshFromBackend();
+
     return () => {
       cancelled = true;
     };
   }, []);
 
   const handleLocationChoice = (choice: MapLocationChoice) => {
+    hasSearchInteractionRef.current = true;
     setMapFocus({
       longitude: choice.longitude,
       latitude: choice.latitude,
@@ -614,6 +648,8 @@ export default function MapPage() {
     }
 
     const queryIntent = detectSearchIntent([trimmedQuery]);
+    const previousFilteredIds = aiFilteredIds;
+    hasSearchInteractionRef.current = true;
     setIsAsking(true);
     setAiClarification("");
     setLocationChoices([]);
@@ -659,21 +695,28 @@ export default function MapPage() {
 
       if (data.ids && Array.isArray(data.ids)) {
         const stringIds = data.ids.map((id: number | string) => id.toString());
+        if (stringIds.length === 0 && previousFilteredIds && previousFilteredIds.length > 0) {
+          setAiClarification("Ese filtro dejo 0 resultados. Mantengo las opciones anteriores; prueba quitar presupuesto, zona o dormitorio.");
+          setGeminiQuery(trimmedQuery);
+          return;
+        }
+
         setAiFilteredIds(stringIds);
         setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
         if (queryIntent) setActiveSearchIntent(queryIntent);
-        setAiClarification("");
-        setGeminiQuery("");
+        setAiClarification(stringIds.length === 0 ? "No encontre inmuebles con esos filtros. Prueba ampliar zona o presupuesto." : "");
+        setGeminiQuery(stringIds.length === 0 ? trimmedQuery : "");
         setCurrentIndex(0);
       } else {
         setAiFilteredIds([]);
         setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
         if (queryIntent) setActiveSearchIntent(queryIntent);
-        setAiClarification("");
+        setAiClarification("No encontre inmuebles con esos filtros. Prueba ampliar zona o presupuesto.");
       }
     } catch (err) {
       console.error("Fallo critico en motor semantico:", err);
-      setAiFilteredIds([]);
+      setAiClarification(previousFilteredIds?.length ? "No pude aplicar ese filtro ahora. Mantengo tus resultados anteriores." : "No pude conectar con NIA ahora. Te muestro el catalogo disponible.");
+      if (!previousFilteredIds?.length) setAiFilteredIds(null);
     } finally {
       setIsAsking(false);
     }
@@ -718,6 +761,7 @@ export default function MapPage() {
   };
 
   const handleGuidedCitySelect = (choice: MapLocationChoice, advance = false) => {
+    hasSearchInteractionRef.current = true;
     setGuidedCity(choice.name);
     setGuidedCityChoice(choice);
     setIsCitySuggestionsOpen(false);
@@ -808,7 +852,7 @@ export default function MapPage() {
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
-    const isCompactCarouselViewport = () => {
+  const isCompactCarouselViewport = () => {
     if (typeof window === "undefined") return false;
     return window.innerWidth < 768 || (window.innerHeight <= 560 && window.innerWidth < 760);
   };
