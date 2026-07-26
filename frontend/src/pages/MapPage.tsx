@@ -1535,7 +1535,7 @@ export default function MapPage() {
   <button
     onClick={() => setCurrentIndex(prev => Math.max(0, prev - carouselStep))}
     disabled={currentIndex === 0}
-    className="absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
+    className="nia-carousel-arrow nia-carousel-arrow-left absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
   >
     <ChevronLeft size={28} />
   </button>
@@ -1544,7 +1544,15 @@ export default function MapPage() {
   <div
     className="nia-carousel-track flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
   >
-    <AnimatePresence initial={false}>
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        key={`carousel-${currentIndex}-${filteredProperties.length}`}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="flex h-full w-full items-center justify-center gap-4 md:gap-7"
+      >
       {visibleProperties.map((p, index) => {
         const coverUrl = p.images[0];
         const isCollection = isCloudinaryCollectionUrl(coverUrl);
@@ -1555,12 +1563,8 @@ export default function MapPage() {
         const isBestSearchMatch = isRankedSearchResult && globalResultRank === 0;
 
         return (
-        <motion.div
+        <div
           key={p.id}
-          initial={{ opacity: 0, x: 42, y: 10, scale: 0.96 }}
-          animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-          exit={{ opacity: 0, x: -34, y: 8, scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9, delay: index * 0.035 }}
           onClick={() => selectProperty(p)}
           // Tarjetas compactas para que el borde respire completo
           className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-0.5 hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
@@ -1633,15 +1637,16 @@ export default function MapPage() {
              </div>
           </div>
         </div>
-        </motion.div>
+        </div>
       )})}
+      </motion.div>
     </AnimatePresence>
   </div>
 
   <button
     onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep))}
     disabled={currentIndex + carouselStep >= filteredProperties.length}
-    className="absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
+    className="nia-carousel-arrow nia-carousel-arrow-right absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
   >
     <ChevronRight size={28} />
   </button>

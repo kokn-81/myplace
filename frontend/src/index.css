@@ -172,17 +172,17 @@
       transform: translateX(-50%);
     }
     .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 4.15rem);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 2.35rem);
       height: 12.4rem;
-      padding-inline: 1rem;
+      padding-inline: 0.45rem;
     }
 
     .nia-carousel-track {
-      padding-inline: 3.25rem;
+      padding-inline: 4.35rem;
     }
 
     .nia-property-card {
-      width: min(28rem, calc(100vw - 6.25rem)) !important;
+      width: min(28rem, calc(100vw - 8.7rem)) !important;
       max-width: none !important;
       height: 11.35rem !important;
       border-radius: 0.95rem;
@@ -207,6 +207,19 @@
       gap: 0.42rem 0.5rem !important;
       font-size: 0.62rem !important;
     }
+
+    .nia-carousel-arrow {
+      padding: 0.72rem !important;
+      box-shadow: 0 16px 34px rgba(58, 33, 25, 0.18);
+    }
+
+    .nia-carousel-arrow-left {
+      left: 0.65rem !important;
+    }
+
+    .nia-carousel-arrow-right {
+      right: 0.65rem !important;
+    }
   }
 
   @media (max-width: 420px) and (orientation: portrait) {
@@ -227,15 +240,15 @@
 
     .nia-property-carousel {
       height: 11.5rem;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 4.2rem);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 2.15rem);
     }
 
     .nia-carousel-track {
-      padding-inline: 2.8rem;
+      padding-inline: 4.15rem;
     }
 
     .nia-property-card {
-      width: calc(100vw - 5.7rem) !important;
+      width: calc(100vw - 8.45rem) !important;
       height: 10.7rem !important;
     }
 
