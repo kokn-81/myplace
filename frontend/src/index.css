@@ -108,6 +108,7 @@
     }
   }
   .nia-mobile-filter-chips,
+  .nia-mobile-filter-dock,
   .nia-landscape-use-portrait {
     display: none;
   }
@@ -163,8 +164,15 @@
       display: none;
     }
 
+    .nia-mobile-filter-dock {
+      display: block;
+      left: 50%;
+      top: calc(env(safe-area-inset-top, 0px) + 7.9rem);
+      width: min(25rem, calc(100vw - 1.5rem));
+      transform: translateX(-50%);
+    }
     .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.2rem);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 4.15rem);
       height: 12.4rem;
       padding-inline: 1rem;
     }
@@ -219,7 +227,7 @@
 
     .nia-property-carousel {
       height: 11.5rem;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 4.2rem);
     }
 
     .nia-carousel-track {
@@ -282,6 +290,7 @@
 
     .nia-desktop-filter-chips,
     .nia-mobile-filter-chips,
+    .nia-mobile-filter-dock,
     .nia-property-carousel {
       display: none !important;
     }

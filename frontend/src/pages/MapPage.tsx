@@ -3,7 +3,7 @@ import { Property, PropertyOffer } from "../types";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
-import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck } from "lucide-react";
+import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
@@ -501,6 +501,7 @@ export default function MapPage() {
   const [aiFilteredIds, setAiFilteredIds] = useState<string[] | null>(null);
   const [aiFilterHistory, setAiFilterHistory] = useState<string[]>([]);
   const [aiClarification, setAiClarification] = useState<string>("");
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [activeSearchIntent, setActiveSearchIntent] = useState<SearchIntent>(null);
   const [mapFocus, setMapFocus] = useState<MapFocusTarget | null>(null);
   const [locationChoices, setLocationChoices] = useState<MapLocationChoice[]>([]);
@@ -631,6 +632,7 @@ export default function MapPage() {
     setAiFilteredIds(null);
     setAiFilterHistory([]);
     setAiClarification("");
+    setIsMobileFiltersOpen(false);
     setLocationChoices([]);
     setLocationQuestion("");
     setCustomLocationText("");
@@ -652,6 +654,7 @@ export default function MapPage() {
     hasSearchInteractionRef.current = true;
     setIsAsking(true);
     setAiClarification("");
+    setIsMobileFiltersOpen(false);
     setLocationChoices([]);
     setLocationQuestion("");
     setCustomLocationText("");
@@ -1157,27 +1160,52 @@ export default function MapPage() {
         </div>
       )}
       {(aiFilteredIds !== null || aiClarification) && !isGuidedSearchOpen && !locationQuestion && (
-        <div className="nia-mobile-filter-chips absolute z-30 items-center justify-center gap-2 px-3 text-[10px] uppercase tracking-[0.1em]">
-          {aiFilterHistory.map((filter, index) => (
-            <span key={`mobile-${filter}-${index}`} className="nia-mobile-filter-chip inline-flex max-w-[78vw] shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/94 py-2 pl-3 pr-1.5 font-bold text-[var(--text-muted)] shadow-sm backdrop-blur dark:bg-[rgba(27,20,17,0.9)]">
-              <span className="truncate">{filter}</span>
-              <button type="button" onClick={() => handleRemoveAiFilter(index)} className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500" title="Quitar filtro">
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-          {aiClarification ? (
-            <span className="nia-mobile-result-chip shrink-0 rounded-full border border-amber-300/60 bg-amber-50 px-3 py-2 font-black text-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
-              {aiClarification}
-            </span>
-          ) : aiFilteredIds !== null ? (
-            <span className="nia-mobile-result-chip shrink-0 rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-2 font-black text-[var(--accent-main)]">
-              {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
-            </span>
-          ) : null}
-          <button type="button" onClick={clearAiFilters} className="nia-mobile-clear-filters shrink-0 rounded-full bg-[var(--color-chocolate)] px-3 py-2 font-black text-[var(--color-ivory)] shadow-sm transition-colors hover:bg-[var(--accent-hover)]">
-            Limpiar
-          </button>
+        <div className="nia-mobile-filter-dock absolute z-30 md:hidden">
+          <div className="flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsMobileFiltersOpen((open) => !open)}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-main)]/45 bg-[var(--surface-panel)]/95 px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-[var(--accent-main)] shadow-[var(--shadow-warm)] backdrop-blur transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
+            >
+              <SlidersHorizontal size={14} />
+              Filtros {aiFilterHistory.length > 0 ? aiFilterHistory.length : ""}
+            </button>
+            {aiClarification ? (
+              <span className="max-w-[52vw] truncate rounded-full border border-amber-300/60 bg-amber-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-amber-700 shadow-sm dark:bg-amber-950/30 dark:text-amber-200">
+                {aiClarification}
+              </span>
+            ) : aiFilteredIds !== null ? (
+              <span className="rounded-full border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/15 px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-[var(--accent-main)] shadow-sm">
+                {filteredProperties.length} resultado{filteredProperties.length === 1 ? "" : "s"}
+              </span>
+            ) : null}
+          </div>
+          <AnimatePresence>
+            {isMobileFiltersOpen && (
+              <motion.div
+                key="mobile-filter-panel"
+                initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.16, ease: "easeOut" }}
+                className="nia-mobile-filter-panel mt-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/96 p-3 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(27,20,17,0.94)]"
+              >
+                <div className="flex max-h-[34vh] flex-col gap-2 overflow-y-auto pr-1 text-[10px] uppercase tracking-[0.1em]">
+                  {aiFilterHistory.map((filter, index) => (
+                    <span key={`mobile-panel-${filter}-${index}`} className="inline-flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 font-bold text-[var(--text-muted)]">
+                      <span className="min-w-0 flex-1 truncate">{filter}</span>
+                      <button type="button" onClick={() => handleRemoveAiFilter(index)} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500" title="Quitar filtro">
+                        <X size={13} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <button type="button" onClick={clearAiFilters} className="mt-3 w-full rounded-xl bg-[var(--color-chocolate)] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-[var(--color-ivory)] shadow-sm transition-colors hover:bg-[var(--accent-hover)]">
+                  Limpiar filtros
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
       {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
@@ -1513,11 +1541,10 @@ export default function MapPage() {
   </button>
 
   {/* Contenedor central expandido */}
-  <motion.div
-    layout
+  <div
     className="nia-carousel-track flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
   >
-    <AnimatePresence mode="popLayout" initial={false}>
+    <AnimatePresence initial={false}>
       {visibleProperties.map((p, index) => {
         const coverUrl = p.images[0];
         const isCollection = isCloudinaryCollectionUrl(coverUrl);
@@ -1529,7 +1556,6 @@ export default function MapPage() {
 
         return (
         <motion.div
-          layout
           key={p.id}
           initial={{ opacity: 0, x: 42, y: 10, scale: 0.96 }}
           animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
@@ -1610,7 +1636,7 @@ export default function MapPage() {
         </motion.div>
       )})}
     </AnimatePresence>
-  </motion.div>
+  </div>
 
   <button
     onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep))}

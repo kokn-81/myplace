@@ -19,7 +19,7 @@ USD_TO_BS = 6.96
 CACHE_TTL_GENERAL_MINUTES = 24 * 60
 CACHE_TTL_REFINED_MINUTES = 5
 MAX_RESULTS = 40
-SEARCH_ALGORITHM_VERSION = "nia-hybrid-v2"
+SEARCH_ALGORITHM_VERSION = "nia-hybrid-v3"
 
 
 def read_float_env(name: str, default: float = 0.0) -> float:
@@ -159,6 +159,7 @@ class SearchFilters:
     max_price: Optional[float] = None
     currency: Optional[str] = None
     rooms_min: Optional[int] = None
+    rooms_exact: Optional[int] = None
     bathrooms_min: Optional[int] = None
     zone: Optional[str] = None
     amenities: list[str] = field(default_factory=list)
@@ -175,6 +176,7 @@ class SearchFilters:
             self.property_type,
             self.max_price is not None,
             self.rooms_min is not None,
+            self.rooms_exact is not None,
             self.bathrooms_min is not None,
             self.zone,
             self.amenities,
@@ -206,6 +208,25 @@ def parse_number(raw: str) -> Optional[float]:
     except ValueError:
         return None
 
+
+
+COUNT_WORDS = {
+    "un": 1,
+    "una": 1,
+    "uno": 1,
+    "dos": 2,
+    "tres": 3,
+    "cuatro": 4,
+    "cinco": 5,
+    "seis": 6,
+}
+
+
+def parse_count_token(raw: str) -> Optional[int]:
+    token = normalize_text(raw)
+    if token.isdigit():
+        return int(token)
+    return COUNT_WORDS.get(token)
 
 def parse_currency(text: str) -> Optional[str]:
     if re.search(r"(?<![a-z])(bs|boliviano|bolivianos)\b", text):
@@ -258,9 +279,13 @@ def parse_search_filters(message: str) -> SearchFilters:
         elif filters.operation == "Venta":
             filters.currency = "$ (USD)"
 
-    rooms = re.search(r"(\d+)\s*(?:dormitorio|dormitorios|habitacion|habitaciones|hab)\b", text)
+    rooms = re.search(r"\b(\d+|un|una|uno|dos|tres|cuatro|cinco|seis)\s*(?:dormitorio|dormitorios|habitacion|habitaciones|hab)\b", text)
     if rooms:
-        filters.rooms_min = int(rooms.group(1))
+        room_count = parse_count_token(rooms.group(1))
+        if room_count is not None:
+            filters.rooms_min = room_count
+            if room_count == 1 or re.search(r"\b(?:exactamente|solo|solamente|con)\s+(?:\d+|un|una|uno)\s*(?:dormitorio|dormitorios|habitacion|habitaciones|hab)\b", text):
+                filters.rooms_exact = room_count
 
     baths = re.search(r"(\d+)\s*(?:bano|banos)\b", text)
     if baths:
@@ -384,6 +409,8 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional
         return False
     if filters.property_type and filters.property_type != inm.tipo_inmueble:
         return False
+    if filters.rooms_exact is not None and (inm.habitaciones or 0) != filters.rooms_exact:
+        return False
     if filters.rooms_min is not None and (inm.habitaciones or 0) < filters.rooms_min:
         return False
     if filters.bathrooms_min is not None and (getattr(inm, "banos", 0) or 0) < filters.bathrooms_min:
@@ -416,7 +443,9 @@ def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Option
         score += 35
     if filters.zone and filters.zone in haystack:
         score += 30
-    if filters.rooms_min is not None:
+    if filters.rooms_exact is not None and (inm.habitaciones or 0) == filters.rooms_exact:
+        score += 22
+    elif filters.rooms_min is not None:
         score += min((inm.habitaciones or 0) - filters.rooms_min + 1, 3) * 5
     if filters.bathrooms_min is not None:
         score += min((getattr(inm, "banos", 0) or 0) - filters.bathrooms_min + 1, 3) * 4
@@ -440,7 +469,9 @@ def apply_broad_sql_filters(query, filters: SearchFilters):
         query = query.filter(InmuebleDB.id == filters.reference_id)
     if filters.property_type:
         query = query.filter(InmuebleDB.tipo_inmueble == filters.property_type)
-    if filters.rooms_min is not None:
+    if filters.rooms_exact is not None:
+        query = query.filter(InmuebleDB.habitaciones == filters.rooms_exact)
+    elif filters.rooms_min is not None:
         query = query.filter(InmuebleDB.habitaciones >= filters.rooms_min)
     if filters.bathrooms_min is not None:
         query = query.filter(InmuebleDB.banos >= filters.bathrooms_min)
@@ -760,6 +791,11 @@ def efficient_property_search(
 
     if filters.has_structured_filters():
         ids = run_sql_layer(db, message, candidate_ids, filters)
+        if not ids and candidate_ids:
+            recovered_ids = run_sql_layer(db, message, None, filters)
+            if recovered_ids:
+                ids = recovered_ids
+                layer = "A_SQL_GLOBAL_RECOVERY"
         if ids and has_specific_semantic_terms(message):
             ranked_ids, embedding_attempted = run_embedding_layer(db, message, ids, filters, embedding_client, embedding_model)
             embedding_used = embedding_attempted
