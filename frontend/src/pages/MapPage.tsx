@@ -66,6 +66,20 @@ const normalizePlainText = (value: string) =>
     .toLowerCase()
     .trim();
 
+const LOCAL_ZONE_TERMS = new Set([
+  "centro",
+  "el centro",
+  "zona centro",
+  "equipetrol",
+  "norte",
+  "sur",
+  "este",
+  "oeste",
+  "urubo",
+  "sirari",
+  "las palmas",
+]);
+
 const KNOWN_CITY_CHOICES: MapLocationChoice[] = [
   {
     id: "santa-cruz-bo",
@@ -137,7 +151,24 @@ const normalizeLocationCandidate = (value: string) => {
   return cleaned
     .split(/\s+(?:con|hasta|por menos|por mas|menor a|mayor a|que tenga|y que|para)\s+/i)[0]
     .replace(/[,:;]+$/g, "")
+    .replace(/^(?:el|la|los|las)\s+/i, "")
+    .replace(/[,:;]+$/g, "")
     .trim();
+};
+
+const getDefaultSantaCruzChoice = () =>
+  KNOWN_CITY_CHOICES.find((choice) => choice.id === "santa-cruz-bo") || null;
+
+const findKnownCityInQueries = (queries: string[]): MapLocationChoice | null => {
+  for (let i = queries.length - 1; i >= 0; i -= 1) {
+    const location = extractRequestedLocation(queries[i] || "");
+    if (!location) continue;
+    const normalized = normalizePlainText(location);
+    if (normalized === "santa cruz") return getDefaultSantaCruzChoice();
+    const matches = getKnownLocationChoices(location);
+    if (matches.length === 1) return matches[0];
+  }
+  return null;
 };
 
 const extractRequestedLocation = (query: string) => {
@@ -154,9 +185,27 @@ const extractRequestedLocation = (query: string) => {
   return "";
 };
 
-const geocodeRequestedLocation = async (query: string): Promise<MapLocationResolution | null> => {
+const geocodeRequestedLocation = async (query: string, contextQueries: string[] = []): Promise<MapLocationResolution | null> => {
   const location = extractRequestedLocation(query);
   if (!location) return null;
+
+  const normalizedLocation = normalizePlainText(location);
+  const contextualCity = LOCAL_ZONE_TERMS.has(normalizedLocation) ? findKnownCityInQueries(contextQueries) : null;
+  if (contextualCity) {
+    return {
+      focus: {
+        longitude: contextualCity.longitude,
+        latitude: contextualCity.latitude,
+        zoom: Math.max(contextualCity.zoom ?? 12.2, 13),
+        key: Date.now(),
+        label: `${location}, ${contextualCity.name}`,
+        source: "search",
+      },
+      requestedLocation: location,
+    };
+  }
+
+  if (LOCAL_ZONE_TERMS.has(normalizedLocation)) return null;
 
   const knownChoices = getKnownLocationChoices(location);
   if (knownChoices.length > 1) {
@@ -660,7 +709,7 @@ export default function MapPage() {
     setCustomLocationText("");
     setIsCustomLocationOpen(false);
 
-    geocodeRequestedLocation(trimmedQuery)
+    geocodeRequestedLocation(trimmedQuery, aiFilterHistory)
       .then((resolution) => {
         if (!resolution) return;
         if (resolution.choices && resolution.choices.length > 1) {
