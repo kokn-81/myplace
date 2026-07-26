@@ -172,7 +172,7 @@
       transform: translateX(-50%);
     }
     .nia-property-carousel {
-      bottom: max(0.7rem, env(safe-area-inset-bottom, 0px));
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 0.25rem);
       height: 12.4rem;
       padding-inline: 0.95rem;
     }
@@ -243,7 +243,7 @@
 
     .nia-property-carousel {
       height: 11.9rem;
-      bottom: max(0.55rem, env(safe-area-inset-bottom, 0px));
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 0.15rem);
     }
 
     .nia-carousel-track {
