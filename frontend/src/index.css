@@ -172,24 +172,26 @@
       transform: translateX(-50%);
     }
     .nia-property-carousel {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 2.35rem);
+      bottom: max(0.7rem, env(safe-area-inset-bottom, 0px));
       height: 12.4rem;
-      padding-inline: 0.45rem;
+      padding-inline: 0.95rem;
     }
 
     .nia-carousel-track {
-      padding-inline: 4.35rem;
+      padding-inline: 1rem;
+      touch-action: pan-y;
+      user-select: none;
     }
 
     .nia-property-card {
-      width: min(28rem, calc(100vw - 8.7rem)) !important;
+      width: min(28.5rem, calc(100vw - 2.2rem)) !important;
       max-width: none !important;
-      height: 11.35rem !important;
+      height: 11.9rem !important;
       border-radius: 0.95rem;
     }
 
     .nia-property-card-media {
-      width: 46% !important;
+      width: 47% !important;
     }
 
     .nia-property-card-body {
@@ -209,6 +211,7 @@
     }
 
     .nia-carousel-arrow {
+      display: none !important;
       padding: 0.72rem !important;
       box-shadow: 0 16px 34px rgba(58, 33, 25, 0.18);
     }
@@ -239,25 +242,25 @@
     }
 
     .nia-property-carousel {
-      height: 11.5rem;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 2.15rem);
+      height: 11.9rem;
+      bottom: max(0.55rem, env(safe-area-inset-bottom, 0px));
     }
 
     .nia-carousel-track {
-      padding-inline: 4.15rem;
+      padding-inline: 0.9rem;
     }
 
     .nia-property-card {
-      width: calc(100vw - 8.45rem) !important;
-      height: 10.7rem !important;
+      width: calc(100vw - 2.1rem) !important;
+      height: 11.35rem !important;
     }
 
     .nia-property-card-media {
-      width: 44% !important;
+      width: 45% !important;
     }
 
     .nia-property-card-body {
-      padding: 0.85rem !important;
+      padding: 0.95rem 0.9rem !important;
     }
   }
 

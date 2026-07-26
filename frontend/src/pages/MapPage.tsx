@@ -855,6 +855,7 @@ export default function MapPage() {
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselSwipeStartX = useRef<number | null>(null);
   const isCompactCarouselViewport = () => {
     if (typeof window === "undefined") return false;
     return window.innerWidth < 768 || (window.innerHeight <= 560 && window.innerWidth < 760);
@@ -880,6 +881,25 @@ export default function MapPage() {
     }
   }, [carouselStep, currentIndex, filteredProperties.length]);
 
+  const handleCarouselTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    carouselSwipeStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleCarouselTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const startX = carouselSwipeStartX.current;
+    carouselSwipeStartX.current = null;
+    const endX = event.changedTouches[0]?.clientX;
+    if (startX === null || endX === undefined) return;
+
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 44) return;
+
+    if (deltaX < 0) {
+      setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep));
+    } else {
+      setCurrentIndex(prev => Math.max(0, prev - carouselStep));
+    }
+  };
 
   return (
     // CONTENEDOR MAESTRO: 100% Pantalla
@@ -1543,6 +1563,8 @@ export default function MapPage() {
   {/* Contenedor central expandido */}
   <div
     className="nia-carousel-track flex h-full w-full items-center justify-center overflow-hidden px-12 md:flex-1 md:gap-7 md:px-0"
+    onTouchStart={handleCarouselTouchStart}
+    onTouchEnd={handleCarouselTouchEnd}
   >
     <AnimatePresence initial={false} mode="wait">
       <motion.div
