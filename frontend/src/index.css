@@ -84,6 +84,29 @@
 }
 
 @layer components {
+
+  .nia-map-shell {
+    height: 100vh;
+    height: 100dvh !important;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .nia-mobile-search-form input,
+    .nia-mobile-guide-panel input,
+    .nia-mobile-guide-panel textarea,
+    .nia-mobile-location-question input {
+      font-size: 16px !important;
+      line-height: 1.25 !important;
+    }
+
+    .nia-mobile-search-form input::placeholder,
+    .nia-mobile-guide-panel input::placeholder,
+    .nia-mobile-location-question input::placeholder {
+      font-size: 16px !important;
+    }
+  }
   .nia-mobile-filter-chips,
   .nia-landscape-use-portrait {
     display: none;

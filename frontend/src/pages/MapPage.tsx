@@ -880,7 +880,7 @@ export default function MapPage() {
 
   return (
     // CONTENEDOR MAESTRO: 100% Pantalla
-    <div className="relative h-screen w-full overflow-hidden bg-[var(--surface-page)] dark:bg-[var(--surface-panel)] font-sans">
+    <div className="nia-map-shell relative h-screen w-full overflow-hidden bg-[var(--surface-page)] dark:bg-[var(--surface-panel)] font-sans">
 
       {/* CAPA 0: EL MAPA DE FONDO */}
       <main className="absolute inset-0 z-0">
