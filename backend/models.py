@@ -48,7 +48,7 @@ class InmuebleDB(Base):
     amenidades = Column(String)
     keywords = Column(Text, nullable=True)
     imagenes = Column(String)
-    agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=False)
+    agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=True)
     agente = relationship("AgenteDB", back_populates="inmuebles")
     ofertas = relationship("OfertaDB", back_populates="inmueble", cascade="all, delete-orphan")
 
@@ -62,7 +62,7 @@ class OfertaDB(Base):
     precio = Column(Float, nullable=False, default=0)
     moneda = Column(String, default="$ (USD)")
     estado = Column(String, default="Publicado", index=True)
-    agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=False, index=True)
+    agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=True, index=True)
 
     inmueble = relationship("InmuebleDB", back_populates="ofertas")
     agente = relationship("AgenteDB", back_populates="ofertas")

@@ -335,6 +335,10 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
             }
             inm_dict["agente_nombre"] = oferta_principal.agente.nombre
             inm_dict["agente_whatsapp"] = oferta_principal.agente.whatsapp
+        else:
+            inm_dict["agente"] = None
+            inm_dict["agente_nombre"] = ""
+            inm_dict["agente_whatsapp"] = ""
     elif inm.agente:
         inm_dict["agente"] = {
             "id": str(inm.agente.id),
@@ -393,27 +397,33 @@ def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
 
 
 def normalizar_ofertas(inmueble: InmuebleCreate) -> List[OfertaSchema]:
+    estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
     if inmueble.ofertas:
         ofertas = [oferta for oferta in inmueble.ofertas if oferta.operacion and oferta.precio is not None]
         if ofertas:
             return ofertas
-
-    if not inmueble.agente_id:
-        raise HTTPException(status_code=400, detail="Selecciona un asesor para la oferta.")
 
     return [OfertaSchema(
         operacion=inmueble.operacion or "Venta",
         precio=float(inmueble.precio_usd or 0),
         moneda=inmueble.moneda or "$ (USD)",
         agente_id=inmueble.agente_id,
-        estado="Publicado",
+        estado=estado_inmueble,
     )]
 
 
-def validar_agentes_de_ofertas(ofertas: List[OfertaSchema], db: Session, current_profile: dict) -> List[tuple[OfertaSchema, AgenteDB]]:
+def validar_agentes_de_ofertas(
+    ofertas: List[OfertaSchema],
+    db: Session,
+    current_profile: dict,
+    allow_unassigned: bool = False,
+) -> List[tuple[OfertaSchema, Optional[AgenteDB]]]:
     validadas = []
     for oferta in ofertas:
         if not oferta.agente_id:
+            if allow_unassigned:
+                validadas.append((oferta, None))
+                continue
             raise HTTPException(status_code=400, detail="Cada oferta debe tener un asesor asignado.")
         agente = db.query(AgenteDB).filter(AgenteDB.id == oferta.agente_id).first()
         if not agente:
@@ -422,7 +432,6 @@ def validar_agentes_de_ofertas(ofertas: List[OfertaSchema], db: Session, current
             raise HTTPException(status_code=403, detail="Solo puedes publicar ofertas bajo tu propio perfil de asesor.")
         validadas.append((oferta, agente))
     return validadas
-
 
 @app.get("/api/auth/me")
 async def obtener_perfil_actual(profile: dict = Depends(get_current_profile)):
@@ -782,10 +791,15 @@ async def crear_inmueble(
     current_profile: dict = Depends(require_advisor_or_admin),
 ):
     try:
-        ofertas = normalizar_ofertas(inmueble)
-        ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
-        oferta_principal, agente_principal = ofertas_validadas[0]
         estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
+        ofertas = normalizar_ofertas(inmueble)
+        ofertas_validadas = validar_agentes_de_ofertas(
+            ofertas,
+            db,
+            current_profile,
+            allow_unassigned=estado_inmueble == "Borrador",
+        )
+        oferta_principal, agente_principal = ofertas_validadas[0]
 
         nuevo_inmueble = InmuebleDB(
             titulo=inmueble.titulo,
@@ -803,7 +817,7 @@ async def crear_inmueble(
             amenidades=inmueble.amenidades,
             keywords=inmueble.keywords,
             imagenes=inmueble.imagenes,
-            agente_id=agente_principal.id,
+            agente_id=agente_principal.id if agente_principal else None,
         )
 
         aplicar_campos_busqueda_inmueble(nuevo_inmueble, inmueble)
@@ -817,8 +831,8 @@ async def crear_inmueble(
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
-                estado=oferta.estado or "Publicado",
-                agente_id=agente.id,
+                estado=oferta.estado or estado_inmueble,
+                agente_id=agente.id if agente else None,
             ))
 
         invalidate_search_cache(db)
@@ -897,10 +911,15 @@ async def actualizar_inmueble(
         if not inmueble_db:
             raise HTTPException(status_code=404, detail="Inmueble no encontrado")
 
-        ofertas = normalizar_ofertas(inmueble)
-        ofertas_validadas = validar_agentes_de_ofertas(ofertas, db, current_profile)
-        oferta_principal, agente_principal = ofertas_validadas[0]
         estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
+        ofertas = normalizar_ofertas(inmueble)
+        ofertas_validadas = validar_agentes_de_ofertas(
+            ofertas,
+            db,
+            current_profile,
+            allow_unassigned=estado_inmueble == "Borrador",
+        )
+        oferta_principal, agente_principal = ofertas_validadas[0]
 
         inmueble_db.titulo = inmueble.titulo
         inmueble_db.precio_usd = oferta_principal.precio
@@ -917,7 +936,7 @@ async def actualizar_inmueble(
         inmueble_db.amenidades = inmueble.amenidades
         inmueble_db.keywords = inmueble.keywords
         inmueble_db.imagenes = inmueble.imagenes
-        inmueble_db.agente_id = agente_principal.id
+        inmueble_db.agente_id = agente_principal.id if agente_principal else None
         aplicar_campos_busqueda_inmueble(inmueble_db, inmueble)
         update_property_embedding(inmueble_db, cliente_ia if EMBEDDINGS_ENABLED else None, EMBEDDING_MODEL)
 
@@ -928,8 +947,8 @@ async def actualizar_inmueble(
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
-                estado=oferta.estado or "Publicado",
-                agente_id=agente.id,
+                estado=oferta.estado or estado_inmueble,
+                agente_id=agente.id if agente else None,
             ))
 
         invalidate_search_cache(db)

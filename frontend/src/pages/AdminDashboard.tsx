@@ -15,6 +15,16 @@ interface LocalAgent {
   email?: string;
 }
 
+interface BulkDraftResult {
+  index: number;
+  title: string;
+  status: "ready" | "error";
+  data?: any;
+  missing?: string[];
+  questions?: string[];
+  error?: string;
+  sourceText?: string;
+}
 
 export default function AdminDashboard() {
   // Estados de seguridad y roles
@@ -98,6 +108,10 @@ export default function AdminDashboard() {
   const [aiText, setAiText] = useState<string>("");
   const [isAiExtracting, setIsAiExtracting] = useState<boolean>(false);
   const [aiQuestions, setAiQuestions] = useState<string[]>([]);
+  const [isBulkPanelOpen, setIsBulkPanelOpen] = useState<boolean>(false);
+  const [bulkText, setBulkText] = useState<string>("");
+  const [isBulkExtracting, setIsBulkExtracting] = useState<boolean>(false);
+  const [bulkResults, setBulkResults] = useState<BulkDraftResult[]>([]);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const defaultZones = ["Norte", "Sur", "Este", "Oeste", "Equipetrol", "Urubo", "Centro"];
@@ -127,7 +141,7 @@ export default function AdminDashboard() {
     return offers.find((offer: any) => String(offer.operacion).toLowerCase().includes(operation.toLowerCase()));
   };
 
-  const buildOffersPayload = (fd: FormData, operation: string, agentId: number, fallbackCurrency: string, offerStatus = formStatus) => {
+  const buildOffersPayload = (fd: FormData, operation: string, agentId: number | null, fallbackCurrency: string, offerStatus = formStatus) => {
     if (operation === "Alquiler y Venta") {
       return [
         {
@@ -374,6 +388,122 @@ export default function AdminDashboard() {
     }
   };
 
+
+  const loadAiDataIntoForm = (
+    data: any,
+    questions: string[] = [],
+    options: { clearAgent?: boolean; clearImages?: boolean; message?: string } = {},
+  ) => {
+    formRef.current?.reset();
+    const operation = normalizeAiOperation(data.operacion);
+    const type = normalizeAiType(data.tipo_inmueble);
+    const currency = data.moneda === "Bs" ? "Bs" : "$ (USD)";
+
+    if (options.clearAgent) setFormAgentId("");
+    if (options.clearImages) setImageLinks("");
+    setFormOperation(operation);
+    setFormType(type);
+    setFormCurrency(currency);
+    setFormStatus("Borrador");
+
+    const zone = String(data.ciudad || "").trim();
+    if (zone) {
+      setIsCustomZone(!allZones.includes(zone));
+      setFormZone(zone);
+    } else {
+      setFormZone("");
+      setIsCustomZone(false);
+    }
+
+    setAmenities(Array.isArray(data.amenidades) ? data.amenidades.map((item: unknown) => String(item).trim()).filter(Boolean) : []);
+    setKeywords(Array.isArray(data.keywords) ? data.keywords.map((item: unknown) => String(item).trim()).filter(Boolean) : []);
+
+    setFormFieldValue("title", data.titulo);
+    setFormFieldValue("rooms", data.habitaciones);
+    setFormFieldValue("bathrooms", data.banos);
+    setFormFieldValue("description", data.descripcion);
+    if (data.lat !== null && data.lat !== undefined && data.lng !== null && data.lng !== undefined) {
+      setFormFieldValue("coords", `${data.lat}, ${data.lng}`);
+    }
+
+    window.setTimeout(() => applyAiOfferFields(data, operation), 0);
+    setAiQuestions(questions);
+    setSuccessMsg(options.message || "La IA completo el borrador. Revisa los campos antes de guardar.");
+  };
+  const splitBulkPropertyTexts = (raw: string) =>
+    raw
+      .split(/(?:^|\n)\s*---+\s*(?:\n|$)/g)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const handleBulkDraftImport = async () => {
+    const items = splitBulkPropertyTexts(bulkText);
+    if (items.length === 0) {
+      setErrorMsg("Pega uno o mas textos separados por --- para preparar borradores.");
+      return;
+    }
+    if (items.length > 20 && !window.confirm(`Vas a procesar ${items.length} inmuebles. Puede tardar varios minutos. Continuar?`)) return;
+
+    setIsBulkExtracting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    setBulkResults([]);
+
+    const results: BulkDraftResult[] = [];
+
+    for (let index = 0; index < items.length; index += 1) {
+      const sourceText = items[index];
+      try {
+        const extractionResponse = await authFetch("/inmuebles/extraer-datos", user, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ texto: sourceText }),
+        });
+        const extraction = await extractionResponse.json().catch(() => ({}));
+        if (!extractionResponse.ok) throw new Error(extraction.detail || "No se pudo extraer este texto.");
+
+        const data = extraction.data || {};
+        results.push({
+          index: index + 1,
+          title: String(data.titulo || `Texto ${index + 1}`).trim(),
+          status: "ready",
+          data,
+          missing: Array.isArray(extraction.missing_fields) ? extraction.missing_fields : [],
+          questions: Array.isArray(extraction.questions) ? extraction.questions : [],
+          sourceText,
+        });
+      } catch (err: any) {
+        results.push({
+          index: index + 1,
+          title: `Texto ${index + 1}`,
+          status: "error",
+          error: err.message || "Error desconocido",
+          sourceText,
+        });
+      }
+      setBulkResults([...results]);
+    }
+
+    const readyCount = results.filter((item) => item.status === "ready").length;
+    setSuccessMsg(`NIA preparo ${readyCount}/${items.length} borradores. Carga cada uno al formulario; el asesor queda en blanco para que lo asignes manualmente.`);
+    setIsBulkExtracting(false);
+  };
+
+  const loadBulkDraftToForm = (draft: BulkDraftResult) => {
+    if (!draft.data) return;
+    loadAiDataIntoForm(draft.data, draft.questions || [], {
+      clearAgent: true,
+      clearImages: true,
+      message: "Borrador cargado al formulario con asesor en blanco. Revisa datos, agrega imagenes y asigna asesor cuando corresponda.",
+    });
+    setIsBulkPanelOpen(false);
+    window.setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  };
+
+  const removeBulkDraft = (index: number) => {
+    setBulkResults((items) => items.filter((item) => item.index !== index));
+  };
+
   const handleUpdateAgent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingAgent) return;
@@ -433,8 +563,12 @@ export default function AdminDashboard() {
       ofertas: offers,
     };
 
-    if (!payload.agente_id || offers.length === 0) {
-      setErrorMsg("Selecciona un asesor y al menos una oferta con precio.");
+    if (offers.length === 0) {
+      setErrorMsg("Agrega al menos una oferta con precio.");
+      return;
+    }
+    if (propertyStatus !== "Borrador" && !payload.agente_id) {
+      setErrorMsg("Selecciona un asesor antes de publicar o pausar el inmueble.");
       return;
     }
 
@@ -474,12 +608,12 @@ export default function AdminDashboard() {
       }
 
       const parsedAgentId = Number(formAgentId);
-      if (isNaN(parsedAgentId) || parsedAgentId === 0) {
-        setErrorMsg("Selecciona un asesor antes de publicar el inmueble.");
+      const finalAgentId = Number.isFinite(parsedAgentId) && parsedAgentId > 0 ? parsedAgentId : null;
+      if (formStatus !== "Borrador" && !finalAgentId) {
+        setErrorMsg("Selecciona un asesor antes de publicar o pausar el inmueble.");
         setIsUploading(false);
         return;
       }
-      const finalAgentId = parsedAgentId;
       const offers = buildOffersPayload(fd, formOperation, finalAgentId, formCurrency || "$ (USD)");
       const primaryOffer = offers[0];
       if (offers.length === 0) {
@@ -691,6 +825,47 @@ export default function AdminDashboard() {
             )}
           </div>
 
+          <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/70 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Carga masiva de borradores</h3>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">Pega varios inmuebles separados por <strong>---</strong>. NIA prepara una bandeja de borradores. El asesor queda en blanco para que lo asignes manualmente al cargar cada inmueble.</p>
+              </div>
+              <button type="button" onClick={() => setIsBulkPanelOpen((open) => !open)} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--surface-panel)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-main)] border border-[var(--border-soft)] hover:border-[var(--accent-main)] transition-colors">
+                <Building2 size={16} /> Carga masiva
+              </button>
+            </div>
+            {isBulkPanelOpen && (
+              <div className="mt-4 space-y-4">
+                <textarea value={bulkText} onChange={(e) => setBulkText(e.target.value)} rows={9} className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" placeholder={"Departamento en alquiler...\n---\nCasa en venta...\n---\nOficina en Equipetrol..."} />
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <button type="button" disabled={isBulkExtracting} onClick={handleBulkDraftImport} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--accent-main)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#2F241D] shadow-md hover:bg-[var(--accent-hover)] hover:text-white transition-colors disabled:opacity-60">
+                    {isBulkExtracting ? <><Loader2 size={16} className="animate-spin" /> Preparando...</> : <><Sparkles size={16} /> Preparar borradores</>}
+                  </button>
+                  <span className="text-[11px] text-[var(--text-muted)]">No crea inmuebles automaticamente. Primero revisas, luego cargas al formulario con asesor vacio.</span>
+                </div>
+                {bulkResults.length > 0 && (
+                  <div className="max-h-72 overflow-y-auto rounded border border-[var(--border-soft)] bg-[var(--surface-panel)] p-3 text-xs">
+                    <div className="mb-2 font-bold uppercase tracking-widest text-[var(--text-muted)]">Bandeja de revision</div>
+                    <div className="space-y-2">
+                      {bulkResults.map((item) => (
+                        <div key={`${item.index}-${item.title}`} className={`rounded border p-3 ${item.status === "ready" ? "border-green-200 bg-green-50 text-green-800" : "border-red-200 bg-red-50 text-red-700"}`}>
+                          <div className="font-bold">#{item.index} {item.status === "ready" ? "Listo para revisar" : "Error"}: {item.title}</div>
+                          {item.error && <div className="mt-1">{item.error}</div>}
+                          {item.missing && item.missing.length > 0 && <div className="mt-1">Faltan: {item.missing.join(", ")}</div>}
+                          {item.questions && item.questions.length > 0 && <div className="mt-1">Preguntas: {item.questions.join(" | ")}</div>}
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {item.status === "ready" && <button type="button" onClick={() => loadBulkDraftToForm(item)} className="rounded bg-[var(--accent-main)] px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white transition-colors">Cargar al formulario</button>}
+                            <button type="button" onClick={() => removeBulkDraft(item.index)} className="rounded border border-[var(--border-soft)] bg-white/70 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-[var(--text-main)] hover:border-red-300 hover:text-red-600 transition-colors">Quitar</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -935,7 +1110,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Asesor</label>
-                  <select name="agentId" required defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                  <select name="agentId" defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
                     <option value="">Selecciona un asesor...</option>
                     {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
                   </select>
@@ -1109,13 +1284,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
