@@ -37,7 +37,7 @@ service cloud.firestore {
         incoming().keys().hasAll(['userId', 'email', 'role']) &&
         incoming().userId == request.auth.uid &&
         (incoming().role == 'user' || isAdmin()); // users can only create 'user' roles initially unless they are admin
-      allow update: if isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'favorites', 'role']);
+      allow update: if isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'favorites']);
       allow delete: if isAdmin();
     }
 

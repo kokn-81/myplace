@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session, selectinload
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
+from api_schemas import PeticionChat
 from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB
 from nia_search import EMBEDDINGS_ENABLED, EMBEDDING_MODEL, build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text, update_property_embedding
 from pydantic import BaseModel
@@ -106,11 +107,6 @@ class AgenteSchema(BaseModel):
     nombre: str
     whatsapp: str
     email: Optional[str] = None
-
-class PeticionChat(BaseModel):
-    mensaje: str
-    candidate_ids: Optional[List[int]] = None
-
 
 class PeticionExtraccionInmueble(BaseModel):
     texto: str

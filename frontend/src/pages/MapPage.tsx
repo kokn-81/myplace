@@ -7,6 +7,7 @@ import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, Ch
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
+import { detectSearchIntent, SearchIntent } from "../searchIntent";
 
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
 
@@ -375,15 +376,7 @@ const normalizeWhatsappNumber = (value?: string) => {
   return digits;
 };
 
-type SearchIntent = "rent" | "buy" | null;
 type GuidedOperation = "" | "Alquilar" | "Comprar" | "Ambos";
-
-const detectSearchIntent = (queries: string[]): SearchIntent => {
-  const text = queries.join(" ").toLowerCase();
-  if (/(^|\s)(alquilar|alquiler|rentar|renta|arriendo|arrendar)(\s|$)/.test(text)) return "rent";
-  if (/(^|\s)(comprar|compra|venta|vender|adquirir)(\s|$)/.test(text)) return "buy";
-  return null;
-};
 
 const normalizeOfferOperation = (operation?: string) => {
   const value = String(operation || "").toLowerCase();
@@ -394,7 +387,9 @@ const normalizeOfferOperation = (operation?: string) => {
 
 const selectPropertyOffer = (property: Property, intent: SearchIntent): PropertyOffer => {
   const offers = property.offers?.filter((offer) => (offer.status || "Publicado") === "Publicado") ?? [];
-  const matchingOffer = intent ? offers.find((offer) => normalizeOfferOperation(offer.operation) === intent) : undefined;
+  const matchingOffer = intent && intent !== "both"
+    ? offers.find((offer) => normalizeOfferOperation(offer.operation) === intent)
+    : undefined;
   return matchingOffer || offers[0] || {
     operation: property.operation,
     price: property.price,
@@ -424,12 +419,12 @@ const hasRentAndSaleOffers = (property: Property) => {
 };
 
 const getCarouselOfferLabel = (property: Property, offer: PropertyOffer, intent: SearchIntent) => {
-  if (!intent && hasRentAndSaleOffers(property)) return "Alquiler / Venta";
+  if ((!intent || intent === "both") && hasRentAndSaleOffers(property)) return "Alquiler / Venta";
   return offer.operation;
 };
 
 const shouldShowCarouselPrice = (property: Property, intent: SearchIntent) => {
-  return Boolean(intent) || getPropertyOffers(property).length === 1;
+  return (Boolean(intent) && intent !== "both") || getPropertyOffers(property).length === 1;
 };
 
 const getWhatsappContactUrl = (property: Property, offer?: PropertyOffer) => {

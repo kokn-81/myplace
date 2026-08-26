@@ -19,7 +19,10 @@ USD_TO_BS = 6.96
 CACHE_TTL_GENERAL_MINUTES = 24 * 60
 CACHE_TTL_REFINED_MINUTES = 5
 MAX_RESULTS = 40
-SEARCH_ALGORITHM_VERSION = "nia-hybrid-v3"
+SEARCH_ALGORITHM_VERSION = "nia-hybrid-v4"
+
+RENT_INTENT_TERMS = frozenset({"alquiler", "alquilar", "renta", "rentar", "arriendo", "arrendar"})
+SALE_INTENT_TERMS = frozenset({"compra", "comprar", "venta", "vender", "adquirir"})
 
 
 def read_float_env(name: str, default: float = 0.0) -> float:
@@ -198,6 +201,25 @@ def normalize_query(value: str) -> str:
     return normalize_text(value)
 
 
+def normalize_intent_text(value: object) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(char for char in text if not unicodedata.combining(char)).lower()
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", text).split())
+
+
+def detect_operation_intent(value: object) -> Optional[str]:
+    tokens = set(normalize_intent_text(value).split())
+    wants_rent = bool(tokens & RENT_INTENT_TERMS)
+    wants_sale = bool(tokens & SALE_INTENT_TERMS)
+    if wants_rent and wants_sale:
+        return "Alquiler y Venta"
+    if wants_rent:
+        return "Alquiler"
+    if wants_sale:
+        return "Venta"
+    return None
+
+
 def parse_number(raw: str) -> Optional[float]:
     cleaned = re.sub(r"[^0-9.,]", "", raw or "")
     if not cleaned:
@@ -260,11 +282,8 @@ def parse_search_filters(message: str) -> SearchFilters:
     if ref:
         filters.reference_id = int(ref.group(1))
 
-    if re.search(r"\b(alquiler|alquilar|renta|rentar)\b", text):
-        filters.operation = "Alquiler"
-    elif re.search(r"\b(venta|comprar|compra)\b", text):
-        filters.operation = "Venta"
-    elif re.search(r"\b(inversion)\b", text):
+    filters.operation = detect_operation_intent(message)
+    if not filters.operation and re.search(r"\b(inversion)\b", text):
         filters.operation = "Inversion"
 
     for canonical, synonyms in TYPE_SYNONYMS.items():
@@ -385,18 +404,29 @@ def price_matches(price: float, currency: Optional[str], filters: SearchFilters)
     return offer_price <= float(filters.max_price)
 
 
+def operation_matches(requested_operation: Optional[str], actual_operation: object) -> bool:
+    if not requested_operation:
+        return True
+    requested = normalize_text(requested_operation)
+    actual = normalize_text(actual_operation)
+    requested_terms = [term for term in ("alquiler", "venta") if term in requested]
+    if not requested_terms:
+        requested_terms = [requested]
+    return any(term in actual for term in requested_terms)
+
+
 def offer_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
     offers = [offer for offer in inm.ofertas if normalize_text(offer.estado or "Publicado") in {"publicado", "activo"}]
     if not offers:
         offers = []
 
     if not offers:
-        if filters.operation and normalize_text(filters.operation) not in normalize_text(inm.operacion):
+        if not operation_matches(filters.operation, inm.operacion):
             return False
         return price_matches(inm.precio_usd or 0, inm.moneda, filters)
 
     for offer in offers:
-        if filters.operation and normalize_text(filters.operation) not in normalize_text(offer.operacion):
+        if not operation_matches(filters.operation, offer.operacion):
             continue
         if not price_matches(offer.precio, offer.moneda, filters):
             continue
@@ -437,7 +467,7 @@ def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Option
     haystack = haystack or get_property_search_text(inm)
     if filters.reference_id and inm.id == filters.reference_id:
         score += 1000
-    if filters.operation and normalize_text(filters.operation) in haystack:
+    if filters.operation and operation_matches(filters.operation, haystack):
         score += 40
     if filters.property_type and normalize_text(filters.property_type) in haystack:
         score += 35
@@ -587,37 +617,6 @@ def compact_catalog_for_llm(db: Session, candidate_ids: Optional[list[int]]) -> 
         )
     return "\n".join(rows)
 
-
-def call_llm_for_explanation(db: Session, message: str, ids: list[int], llm_client, llm_model: str) -> tuple[str, int, int]:
-    if llm_client is None or not ids:
-        return "", 0, 0
-    catalog = compact_catalog_for_llm(db, ids[:10])
-    if not catalog:
-        return "", 0, 0
-    prompt = f"""
-Explica brevemente por que estos inmuebles fueron seleccionados para la busqueda del usuario.
-No agregues propiedades nuevas, no cambies IDs y no inventes datos.
-Maximo 3 frases, tono claro y comercial.
-
-RESULTADOS SELECCIONADOS POR EL MOTOR:
-{catalog}
-
-BUSQUEDA: {message}
-"""
-    last_exc = None
-    for attempt in range(3):
-        try:
-            response = llm_client.models.generate_content(model=llm_model, contents=prompt)
-            usage = getattr(response, "usage_metadata", None)
-            input_tokens = int(getattr(usage, "prompt_token_count", 0) or 0)
-            output_tokens = int(getattr(usage, "candidates_token_count", 0) or 0)
-            return (response.text or "").strip(), input_tokens, output_tokens
-        except Exception as exc:
-            last_exc = exc
-            if attempt < 2:
-                time.sleep(1 + attempt * 2)
-    print(f"NIA LLM explanation failed: {last_exc}")
-    return "", 0, 0
 
 def call_llm_for_ids(db: Session, message: str, candidate_ids: Optional[list[int]], llm_client, llm_model: str) -> tuple[list[int], int, int]:
     if llm_client is None:
@@ -812,12 +811,7 @@ def efficient_property_search(
             ids = run_semantic_lite_layer(db, message, candidate_ids, filters)
             layer = "B_SEMANTIC_LITE"
     explanation = ""
-    if filters.complex_reasoning and ids:
-        explanation, tokens_input, tokens_output = call_llm_for_explanation(db, message, ids, llm_client, llm_model)
-        if explanation:
-            layer = "C_LLM_EXPLAIN"
-            llm_used = True
-    elif not ids and filters.complex_reasoning:
+    if not ids and filters.complex_reasoning:
         ids, tokens_input, tokens_output = call_llm_for_ids(db, message, candidate_ids, llm_client, llm_model)
         if ids:
             layer = "C_LLM_MINIMAL"
