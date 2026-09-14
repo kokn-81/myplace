@@ -128,6 +128,7 @@ export const normalizePlainText = (value: string) =>
     .trim();
 
 export type MarkerTone = "muted" | "match" | "active" | "selected";
+export type MarkerKind = "rent" | "buy" | "both";
 
 export const getMarkerTone = (
   id: string,
@@ -139,6 +140,29 @@ export const getMarkerTone = (
   if (highlightedIds.includes(id)) return "active";
   if (matchedIds !== null && matchedIds.includes(id)) return "match";
   return "muted";
+};
+
+const classifyOperation = (operation?: string): MarkerKind | null => {
+  const value = String(operation || "").toLowerCase();
+  if (value.includes("alquiler") || value.includes("renta") || value.includes("arrendar")) return "rent";
+  if (value.includes("venta") || value.includes("compra") || value.includes("comprar")) return "buy";
+  return null;
+};
+
+export const getMarkerKind = (property: {
+  operation?: string;
+  offers?: Array<{ operation?: string; status?: string }>;
+}): MarkerKind => {
+  const published = (property.offers || []).filter((offer) => (offer.status || "Publicado") === "Publicado");
+  const kinds = new Set(
+    (published.length ? published : [{ operation: property.operation }])
+      .map((offer) => classifyOperation(offer.operation))
+      .filter((kind): kind is MarkerKind => Boolean(kind)),
+  );
+  if (kinds.has("rent") && kinds.has("buy")) return "both";
+  if (kinds.has("rent")) return "rent";
+  if (kinds.has("buy")) return "buy";
+  return classifyOperation(property.operation) || "buy";
 };
 
 export const isInBolivia = (longitude: number, latitude: number) =>

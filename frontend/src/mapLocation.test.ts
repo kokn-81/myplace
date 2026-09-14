@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   extractRequestedLocation,
   focusFromProperties,
+  getMarkerKind,
   getMarkerTone,
   isInBolivia,
   resolveLocalMapFocus,
@@ -57,6 +58,21 @@ test("los pines del carrusel se destacan del resto del catalogo", () => {
   assert.equal(getMarkerTone("1", ["1"], ["1", "2"], "1"), "selected");
   assert.equal(getMarkerTone("3", ["3"], null, null), "active");
   assert.equal(getMarkerTone("4", ["3"], null, null), "muted");
+});
+
+test("alquiler y venta usan colores distintos en el mapa", () => {
+  assert.equal(getMarkerKind({ operation: "Alquiler" }), "rent");
+  assert.equal(getMarkerKind({ operation: "Venta" }), "buy");
+  assert.equal(
+    getMarkerKind({
+      operation: "Venta",
+      offers: [
+        { operation: "Alquiler", status: "Publicado" },
+        { operation: "Venta", status: "Publicado" },
+      ],
+    }),
+    "both",
+  );
 });
 
 test("el mapa usa los pines bolivianos y ignora coordenadas fuera del pais", () => {
