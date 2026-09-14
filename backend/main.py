@@ -6,6 +6,7 @@ import hashlib
 import requests
 import unicodedata
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import func
@@ -13,9 +14,17 @@ from sqlalchemy.orm import Session, selectinload
 from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
-from api_schemas import PeticionChat
+from api_schemas import PeticionChat, PeticionLeadEvent, PeticionMarcarContacto
 from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB
-from nia_search import EMBEDDINGS_ENABLED, EMBEDDING_MODEL, build_property_search_text, efficient_property_search, invalidate_search_cache, normalize_amenities_text, update_property_embedding
+from nia_leads import (
+    create_lead_event,
+    get_lead_event_by_slug,
+    load_published_property,
+    public_lead_payload,
+    render_context_html,
+    serialize_lead_created,
+)
+from nia_search import EMBEDDINGS_ENABLED, EMBEDDING_MODEL, build_property_search_text, efficient_property_search, invalidate_search_cache, mark_search_contacted, normalize_amenities_text, update_property_embedding
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -445,11 +454,74 @@ async def chat_inteligente(peticion: PeticionChat, db: Session = Depends(get_db)
             llm_model=MODELO_ACTIVO,
             embedding_client=cliente_ia if EMBEDDINGS_ENABLED else None,
             embedding_model=EMBEDDING_MODEL,
+            user_id=peticion.user_id,
         )
         return {"status": "success", **resultado}
     except Exception as e:
         print(f"NIA search error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Fallo en el motor de busqueda: {str(e)}")
+
+
+@app.post("/api/leads/events", status_code=201)
+async def crear_evento_lead(peticion: PeticionLeadEvent, db: Session = Depends(get_db)):
+    try:
+        event = create_lead_event(
+            db,
+            action=peticion.action,
+            property_ref=peticion.property_ref,
+            operacion=peticion.operacion,
+            zona=peticion.zona,
+            presupuesto=peticion.presupuesto,
+            extra_filters=peticion.extra_filters,
+            plazo=peticion.plazo,
+            session_id=peticion.session_id,
+            user_id=peticion.user_id,
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Accion de lead invalida.")
+    except RuntimeError:
+        raise HTTPException(status_code=500, detail="No pude crear el enlace de la consulta.")
+    return {"status": "success", **serialize_lead_created(event)}
+
+
+@app.get("/api/leads/c/{slug}", status_code=200)
+async def obtener_contexto_lead(slug: str, db: Session = Depends(get_db)):
+    event = get_lead_event_by_slug(db, slug.strip())
+    if event is None:
+        raise HTTPException(status_code=404, detail="No encontre esa consulta.")
+    property_row = load_published_property(db, event.property_ref)
+    return {"status": "success", **public_lead_payload(event, property_row)}
+
+
+@app.get("/c/{slug}", response_class=HTMLResponse)
+async def pagina_contexto_lead(slug: str, db: Session = Depends(get_db)):
+    event = get_lead_event_by_slug(db, slug.strip())
+    if event is None:
+        raise HTTPException(status_code=404, detail="No encontre esa consulta.")
+    property_row = load_published_property(db, event.property_ref)
+    return render_context_html(public_lead_payload(event, property_row))
+
+
+@app.post("/api/search-logs/contact", status_code=200)
+async def marcar_contacto_agente(peticion: PeticionMarcarContacto, db: Session = Depends(get_db)):
+    if not peticion.search_log_id and not peticion.user_id:
+        raise HTTPException(status_code=400, detail="Falta search_log_id o user_id.")
+    try:
+        log = mark_search_contacted(
+            db,
+            search_log_id=peticion.search_log_id,
+            user_id=peticion.user_id,
+        )
+    except ValueError:
+        raise HTTPException(status_code=404, detail="No encontre esa busqueda.")
+    except PermissionError:
+        raise HTTPException(status_code=403, detail="Esa busqueda no corresponde a este visitante.")
+    return {
+        "status": "success",
+        "search_log_id": log.id,
+        "contacted_agent": True,
+        "user_id": log.user_id,
+    }
 
 
 @app.post("/api/inmuebles/extraer-datos", status_code=200)

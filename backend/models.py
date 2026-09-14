@@ -106,3 +106,21 @@ class SearchLogDB(Base):
     user_id = Column(String, nullable=True, index=True)
     contacted_agent = Column(Boolean, default=False, index=True)
     created_at = Column(DateTime, server_default=func.now(), index=True)
+
+
+class LeadEventDB(Base):
+    __tablename__ = "lead_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(16), unique=True, nullable=False, index=True)
+    action = Column(String(32), nullable=False, index=True)
+    property_ref = Column(Integer, nullable=True, index=True)
+    operacion = Column(String, nullable=True)
+    zona = Column(String, nullable=True)
+    presupuesto = Column(String, nullable=True)
+    extra_filters_json = Column(Text, nullable=True)
+    plazo = Column(String, nullable=True)
+    session_id = Column(String, nullable=True, index=True)
+    user_id = Column(String, nullable=True, index=True)
+    contacted_agent = Column(Boolean, default=False, index=True)
+    created_at = Column(DateTime, server_default=func.now(), index=True)

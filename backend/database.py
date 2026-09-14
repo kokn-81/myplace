@@ -16,7 +16,7 @@ Base = declarative_base()
 def init_db() -> None:
     # Local-first convenience. In production, set AUTO_CREATE_TABLES=false and run Alembic.
     if AUTO_CREATE_TABLES:
-        from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB, UsuarioAutorizadoDB  # noqa: F401
+        from models import AgenteDB, InmuebleDB, LeadEventDB, OfertaDB, SearchCacheDB, SearchLogDB, UsuarioAutorizadoDB  # noqa: F401
 
         Base.metadata.create_all(bind=engine)
         ensure_sqlite_agent_email_column()

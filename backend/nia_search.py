@@ -160,6 +160,7 @@ class SearchFilters:
     operation: Optional[str] = None
     property_type: Optional[str] = None
     max_price: Optional[float] = None
+    min_price: Optional[float] = None
     currency: Optional[str] = None
     rooms_min: Optional[int] = None
     rooms_exact: Optional[int] = None
@@ -178,6 +179,7 @@ class SearchFilters:
             self.operation,
             self.property_type,
             self.max_price is not None,
+            self.min_price is not None,
             self.rooms_min is not None,
             self.rooms_exact is not None,
             self.bathrooms_min is not None,
@@ -258,20 +260,30 @@ def parse_currency(text: str) -> Optional[str]:
     return None
 
 
-def parse_budget(text: str) -> tuple[Optional[float], Optional[str]]:
+def parse_budget(text: str) -> tuple[Optional[float], Optional[float], Optional[str]]:
     currency = parse_currency(text)
-    patterns = [
+    min_match = re.search(
+        r"(?:mas de|desde|minimo|mayor a|a partir de)\s*(?:bs|usd|\$)?\s*([0-9][0-9., ]+)",
+        text,
+    )
+    max_match = re.search(
         r"(?:hasta|menos de|maximo|max|tope|presupuesto de|presupuesto)\s*(?:bs|usd|\$)?\s*([0-9][0-9., ]+)",
-        r"(?:bs|usd|\$)\s*([0-9][0-9., ]+)",
-        r"([0-9][0-9., ]+)\s*(?:bs|bolivianos|usd|dolares|dolar)",
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            value = parse_number(match.group(1))
-            if value is not None:
-                return value, currency
-    return None, currency
+        text,
+    )
+    min_price = parse_number(min_match.group(1)) if min_match else None
+    max_price = parse_number(max_match.group(1)) if max_match else None
+    if max_price is None and min_price is None:
+        for pattern in (
+            r"(?:bs|usd|\$)\s*([0-9][0-9., ]+)",
+            r"([0-9][0-9., ]+)\s*(?:bs|bolivianos|usd|dolares|dolar|\$)",
+        ):
+            match = re.search(pattern, text)
+            if match:
+                value = parse_number(match.group(1))
+                if value is not None:
+                    max_price = value
+                    break
+    return max_price, min_price, currency
 
 
 def parse_search_filters(message: str) -> SearchFilters:
@@ -291,8 +303,8 @@ def parse_search_filters(message: str) -> SearchFilters:
             filters.property_type = canonical
             break
 
-    filters.max_price, filters.currency = parse_budget(text)
-    if filters.max_price is not None and filters.currency is None:
+    filters.max_price, filters.min_price, filters.currency = parse_budget(text)
+    if (filters.max_price is not None or filters.min_price is not None) and filters.currency is None:
         if filters.operation == "Alquiler":
             filters.currency = "Bs"
         elif filters.operation == "Venta":
@@ -395,13 +407,17 @@ def to_usd(price: float, currency: Optional[str]) -> float:
 
 
 def price_matches(price: float, currency: Optional[str], filters: SearchFilters) -> bool:
-    if filters.max_price is None:
+    if filters.max_price is None and filters.min_price is None:
         return True
     if filters.currency == "Bs":
         offer_price = float(price or 0) * USD_TO_BS if not (currency or "").lower().startswith("bs") else float(price or 0)
     else:
         offer_price = to_usd(price, currency)
-    return offer_price <= float(filters.max_price)
+    if filters.min_price is not None and offer_price < float(filters.min_price):
+        return False
+    if filters.max_price is not None and offer_price > float(filters.max_price):
+        return False
+    return True
 
 
 def operation_matches(requested_operation: Optional[str], actual_operation: object) -> bool:
@@ -480,7 +496,7 @@ def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Option
     if filters.bathrooms_min is not None:
         score += min((getattr(inm, "banos", 0) or 0) - filters.bathrooms_min + 1, 3) * 4
     score += len([amenity for amenity in filters.amenities if amenity in haystack]) * 8
-    if filters.max_price is not None:
+    if filters.max_price is not None or filters.min_price is not None:
         score += 20
     if query_tokens:
         score += len(query_tokens.intersection(set(haystack.split()))) * 3
@@ -700,12 +716,63 @@ def save_cache(db: Session, query_normalized: str, candidates_hash: str, ids: li
         db.rollback()
 
 
-def log_search(db: Session, **kwargs) -> None:
+def log_search(db: Session, **kwargs) -> Optional[int]:
     try:
-        db.add(SearchLogDB(**kwargs))
+        row = SearchLogDB(**kwargs)
+        db.add(row)
         db.commit()
+        db.refresh(row)
+        return int(row.id)
     except SQLAlchemyError:
         db.rollback()
+        return None
+
+
+def mark_search_contacted(
+    db: Session,
+    search_log_id: Optional[int] = None,
+    user_id: Optional[str] = None,
+) -> SearchLogDB:
+    log = None
+    if search_log_id:
+        log = db.query(SearchLogDB).filter(SearchLogDB.id == search_log_id).first()
+        if log is None:
+            raise ValueError("search_log_not_found")
+        if user_id and log.user_id and log.user_id != user_id:
+            raise PermissionError("search_log_user_mismatch")
+    elif user_id:
+        log = (
+            db.query(SearchLogDB)
+            .filter(SearchLogDB.user_id == user_id)
+            .order_by(SearchLogDB.created_at.desc(), SearchLogDB.id.desc())
+            .first()
+        )
+
+    if log is None:
+        log = SearchLogDB(
+            query_text="contact",
+            query_normalized="contact",
+            layer_used="CONTACT",
+            llm_used=False,
+            embedding_used=False,
+            cache_hit=False,
+            result_count=0,
+            latency_ms=0,
+            tokens_input=0,
+            tokens_output=0,
+            estimated_cost=0,
+            user_id=user_id,
+            contacted_agent=True,
+        )
+        db.add(log)
+    else:
+        log.contacted_agent = True
+        if user_id and not log.user_id:
+            log.user_id = user_id
+
+    db.commit()
+    db.refresh(log)
+    return log
 
 
 def invalidate_search_cache(db: Session) -> None:
@@ -724,6 +791,7 @@ def efficient_property_search(
     llm_model: str = "",
     embedding_client=None,
     embedding_model: str = EMBEDDING_MODEL,
+    user_id: Optional[str] = None,
 ) -> dict:
     started = time.perf_counter()
     query_normalized = normalize_query(message)
@@ -731,10 +799,10 @@ def efficient_property_search(
     filters = parse_search_filters(message)
     filters_dict = asdict(filters)
 
-    if filters.max_price is not None and filters.currency is None:
+    if (filters.max_price is not None or filters.min_price is not None) and filters.currency is None:
         latency_ms = int((time.perf_counter() - started) * 1000)
         clarification = "Para filtrar bien el presupuesto, dime si ese monto esta en Bs o en USD."
-        log_search(
+        log_id = log_search(
             db,
             query_text=message,
             query_normalized=query_normalized,
@@ -748,6 +816,7 @@ def efficient_property_search(
             tokens_input=0,
             tokens_output=0,
             estimated_cost=0,
+            user_id=user_id,
         )
         return {
             "ids": [],
@@ -760,12 +829,13 @@ def efficient_property_search(
             "needs_clarification": True,
             "clarification": clarification,
             "clarification_options": ["Bs", "$ (USD)"],
+            "search_log_id": log_id,
         }
 
     cached = get_cached_result(db, query_normalized, candidates_hash)
     if cached:
         latency_ms = int((time.perf_counter() - started) * 1000)
-        log_search(
+        log_id = log_search(
             db,
             query_text=message,
             query_normalized=query_normalized,
@@ -779,8 +849,9 @@ def efficient_property_search(
             tokens_input=0,
             tokens_output=0,
             estimated_cost=0,
+            user_id=user_id,
         )
-        return {"ids": cached["ids"], "layer": cached["layer"], "filters": cached["filters"], "cache_hit": True, "latency_ms": latency_ms, "llm_used": False, "explanation": ""}
+        return {"ids": cached["ids"], "layer": cached["layer"], "filters": cached["filters"], "cache_hit": True, "latency_ms": latency_ms, "llm_used": False, "explanation": "", "search_log_id": log_id}
 
     layer = "A_SQL"
     llm_used = False
@@ -820,7 +891,7 @@ def efficient_property_search(
     latency_ms = int((time.perf_counter() - started) * 1000)
     estimated_cost = estimate_llm_cost(tokens_input, tokens_output)
     save_cache(db, query_normalized, candidates_hash, ids, layer, filters_dict, refined=bool(candidate_ids))
-    log_search(
+    log_id = log_search(
         db,
         query_text=message,
         query_normalized=query_normalized,
@@ -834,6 +905,7 @@ def efficient_property_search(
         tokens_input=tokens_input,
         tokens_output=tokens_output,
         estimated_cost=estimated_cost,
+        user_id=user_id,
     )
 
-    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used, "explanation": explanation, "estimated_cost": estimated_cost}
+    return {"ids": ids, "layer": layer, "filters": filters_dict, "cache_hit": False, "latency_ms": latency_ms, "llm_used": llm_used, "explanation": explanation, "estimated_cost": estimated_cost, "search_log_id": log_id}

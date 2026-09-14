@@ -12,13 +12,15 @@ PROJECT_ROOT = BACKEND_ROOT.parent
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from api_schemas import MAX_CHAT_CANDIDATES, MAX_CHAT_MESSAGE_LENGTH, PeticionChat
+from api_schemas import MAX_CHAT_CANDIDATES, MAX_CHAT_MESSAGE_LENGTH, MAX_USER_ID_LENGTH, PeticionChat, PeticionLeadEvent, PeticionMarcarContacto
+from nia_leads import build_whatsapp_message, render_context_html
 from nia_search import (
     SEARCH_ALGORITHM_VERSION,
     SearchFilters,
     efficient_property_search,
     offer_matches,
     parse_search_filters,
+    price_matches,
 )
 
 
@@ -48,6 +50,80 @@ class ChatRequestLimitsTests(unittest.TestCase):
             with self.subTest(candidate_id=invalid_id):
                 with self.assertRaises(ValidationError):
                     PeticionChat(mensaje="departamento", candidate_ids=[invalid_id])
+
+    def test_accepts_and_strips_optional_user_id(self):
+        request = PeticionChat(mensaje="quiero alquilar", user_id="  visitor-123  ")
+        self.assertEqual(request.user_id, "visitor-123")
+        self.assertIsNone(PeticionChat(mensaje="quiero alquilar", user_id="   ").user_id)
+
+    def test_rejects_oversized_user_id(self):
+        with self.assertRaises(ValidationError):
+            PeticionChat(mensaje="quiero alquilar", user_id="x" * (MAX_USER_ID_LENGTH + 1))
+
+    def test_contact_payload_requires_an_identifier(self):
+        payload = PeticionMarcarContacto(search_log_id=12, user_id="  abc  ", property_id=3)
+        self.assertEqual(payload.search_log_id, 12)
+        self.assertEqual(payload.user_id, "abc")
+        self.assertEqual(payload.property_id, 3)
+
+    def test_lead_event_payload_accepts_contact_tap_and_share(self):
+        tap = PeticionLeadEvent(
+            action="contact_tap",
+            property_ref=3,
+            operacion="Alquiler",
+            zona="Equipetrol",
+            presupuesto="menos de 5.000 Bs",
+            session_id="sess-1",
+            user_id="visitor-1",
+        )
+        self.assertEqual(tap.action, "contact_tap")
+        self.assertEqual(tap.property_ref, 3)
+        share = PeticionLeadEvent(action="SHARE", zona="Norte")
+        self.assertEqual(share.action, "share")
+        with self.assertRaises(ValidationError):
+            PeticionLeadEvent(action="whatsapp")
+
+
+class WhatsappLeadMessageTests(unittest.TestCase):
+    def test_human_message_with_and_without_ref(self):
+        with_ref = build_whatsapp_message(
+            property_ref="3",
+            zona="Equipetrol",
+            operacion="Alquiler",
+            presupuesto="menos de 5.000 Bs",
+            slug="k7m2npq4",
+        )
+        self.assertIn("Me interesa la REF 3 en Equipetrol (Alquiler, menos de 5.000 Bs):", with_ref)
+        self.assertIn("https://nia-web.com/c/k7m2npq4", with_ref)
+        self.assertNotIn("NIA-A4K2", with_ref)
+
+        filters_only = build_whatsapp_message(
+            operacion="Alquiler",
+            zona="Equipetrol",
+            presupuesto="menos de 5.000 Bs",
+            slug="ab12cd34",
+        )
+        self.assertIn("Busco Alquiler en Equipetrol, presupuesto menos de 5.000 Bs:", filters_only)
+        self.assertTrue(filters_only.startswith("Hola, vengo de NIA."))
+
+    def test_context_html_is_noindex_and_has_no_personal_data(self):
+        html_page = render_context_html({
+            "property_ref": 3,
+            "operacion": "Alquiler",
+            "zona": "Equipetrol",
+            "presupuesto": "menos de 5.000 Bs",
+            "property": {
+                "ref": 3,
+                "title": "Depto Equipetrol",
+                "zona": "Equipetrol",
+                "image": "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+            },
+        })
+        self.assertIn("noindex, nofollow", html_page)
+        self.assertIn("Depto Equipetrol", html_page)
+        self.assertIn("og:image", html_page)
+        self.assertNotIn("whatsapp", html_page.lower())
+        self.assertNotIn("57015854", html_page)
 
 
 class OperationCharacterizationTests(unittest.TestCase):
@@ -86,6 +162,31 @@ class OperationCharacterizationTests(unittest.TestCase):
                     moneda="$ (USD)",
                 )
                 self.assertTrue(offer_matches(property_with_offer, filters))
+
+
+class GuidedBudgetTests(unittest.TestCase):
+    def test_buy_less_than_150k_usd_is_a_ceiling(self):
+        filters = parse_search_filters("quiero comprar para vivir en Equipetrol menos de 150.000$")
+        self.assertEqual(filters.operation, "Venta")
+        self.assertEqual(filters.max_price, 150000.0)
+        self.assertIsNone(filters.min_price)
+        self.assertEqual(filters.currency, "$ (USD)")
+        self.assertTrue(price_matches(149000, "$ (USD)", filters))
+        self.assertFalse(price_matches(151000, "$ (USD)", filters))
+
+    def test_buy_more_than_150k_usd_is_a_floor(self):
+        filters = parse_search_filters("quiero comprar para invertir en Norte más de 150.000$")
+        self.assertEqual(filters.operation, "Venta")
+        self.assertEqual(filters.min_price, 150000.0)
+        self.assertIsNone(filters.max_price)
+        self.assertEqual(filters.currency, "$ (USD)")
+        self.assertTrue(price_matches(180000, "$ (USD)", filters))
+        self.assertFalse(price_matches(120000, "$ (USD)", filters))
+
+    def test_typed_buy_amount_is_usd_ceiling(self):
+        filters = parse_search_filters("quiero comprar para vivir en Centro 180000$")
+        self.assertEqual(filters.max_price, 180000.0)
+        self.assertEqual(filters.currency, "$ (USD)")
 
 
 class LlmCostCharacterizationTests(unittest.TestCase):

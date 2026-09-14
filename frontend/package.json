@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "myplace",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "test": "tsx --test src/searchIntent.test.ts",
+    "test": "tsx --test src/searchIntent.test.ts src/guidedSearch.test.ts src/mapLocation.test.ts src/visitorId.test.ts src/whatsappMessage.test.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

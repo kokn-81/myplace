@@ -6,6 +6,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NiaMetricsDashboard = lazy(() => import("./pages/NiaMetricsDashboard"));
 const AdminCatalogDashboard = lazy(() => import("./pages/AdminCatalogDashboard"));
 const AdvisorDashboard = lazy(() => import("./pages/AdvisorDashboard"));
+const ContextPage = lazy(() => import("./pages/ContextPage"));
 
 const MAPBOX_TOKEN =
   process.env.VITE_MAPBOX_TOKEN ||
@@ -58,6 +59,7 @@ export default function App() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<MapPage />} />
+          <Route path="/c/:slug" element={<ContextPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/nia-metrics" element={<NiaMetricsDashboard />} />
           <Route path="/admin/catalogo" element={<AdminCatalogDashboard />} />
