@@ -19,7 +19,7 @@ USD_TO_BS = 6.96
 CACHE_TTL_GENERAL_MINUTES = 24 * 60
 CACHE_TTL_REFINED_MINUTES = 5
 MAX_RESULTS = 40
-SEARCH_ALGORITHM_VERSION = "nia-hybrid-v4"
+SEARCH_ALGORITHM_VERSION = "nia-hybrid-v5"
 
 RENT_INTENT_TERMS = frozenset({"alquiler", "alquilar", "renta", "rentar", "arriendo", "arrendar"})
 SALE_INTENT_TERMS = frozenset({"compra", "comprar", "venta", "vender", "adquirir"})
@@ -370,6 +370,8 @@ def build_property_search_text(inm: InmuebleDB) -> str:
         "baulera" if getattr(inm, "baulera", False) else None,
         inm.amenidades,
         getattr(inm, "keywords", None),
+        getattr(getattr(inm, "complejo", None), "nombre", None),
+        getattr(inm, "ocupacion", None),
     ]
     return normalize_text(" ".join(str(part) for part in parts if part))
 
@@ -451,6 +453,9 @@ def offer_matches(inm: InmuebleDB, filters: SearchFilters) -> bool:
 
 
 def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional[str] = None) -> bool:
+    ocupacion = normalize_text(getattr(inm, "ocupacion", None) or "disponible")
+    if ocupacion in {"alquilado", "vendido", "pausado"}:
+        return False
     if filters.reference_id and inm.id != filters.reference_id:
         return False
     if filters.property_type and filters.property_type != inm.tipo_inmueble:

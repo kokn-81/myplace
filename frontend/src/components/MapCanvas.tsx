@@ -86,32 +86,51 @@ function MapCanvas({
         property,
         tone: getMarkerTone(property.id, highlightedIds, matchedIds, selectedId),
         kind: getMarkerKind(property),
-      }))
-      .sort((left, right) => TONE_RANK[left.tone] - TONE_RANK[right.tone]);
+      }));
 
-    return plotted.map(({ property, tone, kind }) => (
+    const groups: Record<string, typeof plotted> = {};
+    for (const item of plotted) {
+      const key = item.property.complejoId || `unit-${item.property.id}`;
+      groups[key] = groups[key] || [];
+      groups[key].push(item);
+    }
+
+    return Object.entries(groups).map(([key, items]) => {
+      const ranked = [...items].sort((left, right) => TONE_RANK[left.tone] - TONE_RANK[right.tone]);
+      const top = ranked[ranked.length - 1];
+      const kinds = new Set(items.map((item) => item.kind));
+      const kind = kinds.has("rent") && kinds.has("buy") ? "both" : top.kind;
+      const highlight = items.find((item) => item.tone === "selected") || items.find((item) => item.tone === "active") || top;
+      const count = items.length;
+      const label = top.property.complejoNombre || top.property.title;
+      return (
       <Marker
-        key={property.id}
-        longitude={property.lng}
-        latitude={property.lat}
+        key={key}
+        longitude={top.property.lng}
+        latitude={top.property.lat}
         onClick={(event) => {
           event.originalEvent.stopPropagation();
-          onSelectProperty(property);
+          onSelectProperty(highlight.property);
         }}
       >
         <div className="relative flex items-center justify-center">
-          {tone === "active" || tone === "selected" ? (
+          {top.tone === "active" || top.tone === "selected" ? (
             <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
           ) : null}
           <div
-            className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[tone]}`}
-            title={`${property.title} · ${kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
+            className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[top.tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[top.tone]}`}
+            title={`${label}${count > 1 ? ` · ${count} unidades` : ""} · ${kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
           >
-            <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
+            {count > 1 ? (
+              <span className="text-[9px] font-black text-[var(--color-ivory)]">{count}</span>
+            ) : (
+              <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
+            )}
           </div>
         </div>
       </Marker>
-    ));
+      );
+    });
   }, [highlightedIds, matchedIds, onSelectProperty, properties, selectedId]);
 
   return (

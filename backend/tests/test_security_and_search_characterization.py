@@ -207,8 +207,8 @@ class LlmCostCharacterizationTests(unittest.TestCase):
 
         efficient_property_search(db=db, message="quiero comprar", candidate_ids=None)
 
-        self.assertEqual(SEARCH_ALGORITHM_VERSION, "nia-hybrid-v4")
-        cached_result.assert_called_once_with(db, "quiero comprar", "nia-hybrid-v4:all")
+        self.assertEqual(SEARCH_ALGORITHM_VERSION, "nia-hybrid-v5")
+        cached_result.assert_called_once_with(db, "quiero comprar", "nia-hybrid-v5:all")
 
     @patch("nia_search.log_search")
     @patch("nia_search.save_cache")

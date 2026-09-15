@@ -50,6 +50,16 @@ Tratar N.I.A. como filtro de gente que realmente quiere comprar, alquilar o vend
 - [ ] CTA "Agendar visita" ademas de WhatsApp.
 - [ ] "Avisame si entra algo" para quien no encontro y igual es lead.
 
+## Catalogo y modelo (proxima etapa)
+
+Vaciar catalogo local hecho (5 inmuebles de prueba). Re-subir despues del nuevo modelo.
+
+- [x] Complejo / edificio con varias unidades y ofertas (un pin, muchas fichas).
+- [x] Unidad fisica distinta de la oferta comercial (m2, amoblado, expensas, ocupacion).
+- [x] Estados: disponible, reservado, alquilado, vendido (no borrar historial).
+- [x] Dos agentes por oferta: captador (visitas) y colocador (busca comprador, oficina p.ej. REMAX Patrimonio).
+- [x] Dashboard de agente: pipeline de leads, inventario, visitas a coordinar.
+
 ### P3 — mas adelante
 
 - [ ] Pasar leads a planilla o CRM con fuente N.I.A.

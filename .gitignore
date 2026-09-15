@@ -11,6 +11,7 @@ backend/*serviceAccount*.json
 *.db
 *.sqlite
 *.sqlite3
+backups/
 
 # Dependencies
 node_modules/

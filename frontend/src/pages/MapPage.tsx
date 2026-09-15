@@ -70,8 +70,12 @@ const mapApiProperty = (inm: any): Property => {
         currency: offer.moneda || "$ (USD)",
         status: offer.estado || "Publicado",
         agentId: offer.agente_id?.toString(),
-        agentName: offer.agente?.name ?? "",
-        agentWhatsapp: offer.agente?.whatsapp ?? "",
+        agentName: offer.agente?.name ?? offer.captador?.name ?? "",
+        agentWhatsapp: offer.agente?.whatsapp ?? offer.captador?.whatsapp ?? "",
+        captador: offer.captador || null,
+        colocador: offer.colocador || null,
+        incluyeExpensas: Boolean(offer.incluye_expensas),
+        montoExpensas: offer.monto_expensas ?? null,
       }))
     : [];
   const primaryOffer = offers[0];
@@ -82,7 +86,7 @@ const mapApiProperty = (inm: any): Property => {
     price: Number(primaryOffer?.price ?? inm.precio_usd ?? 0),
     rooms: inm.habitaciones,
     bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
-    area: inm.zona || inm.ciudad,
+    area: inm.zona || inm.complejo_nombre || inm.ciudad,
     lat: inm.lat,
     lng: inm.lng,
     operation: primaryOffer?.operation ?? inm.operacion,
@@ -97,10 +101,15 @@ const mapApiProperty = (inm: any): Property => {
     agentWhatsapp: primaryOffer?.agentWhatsapp ?? inm.agente?.whatsapp ?? inm.agente_whatsapp ?? "",
     offers,
     detailsLoaded: Boolean(inm.detalle_completo),
+    complejoId: inm.complejo_id ? String(inm.complejo_id) : null,
+    complejoNombre: inm.complejo_nombre || null,
+    ocupacion: inm.ocupacion || "Disponible",
+    superficieM2: inm.superficie_m2 ?? null,
+    amoblado: Boolean(inm.amoblado),
   };
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v1";
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v2";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -1567,6 +1576,34 @@ export default function MapPage() {
                            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Building size={16}/> Tipo</span>
                            <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.type || "Departamento"}</span>
                         </div>
+                        {selectedProperty.superficieM2 ? (
+                          <div className="flex justify-between items-center border-t border-[var(--border-soft)] pt-4">
+                            <span className="text-[var(--text-muted)] text-sm">Superficie</span>
+                            <span className="text-sm font-semibold">{selectedProperty.superficieM2} m²</span>
+                          </div>
+                        ) : null}
+                        <div className="flex justify-between items-center">
+                          <span className="text-[var(--text-muted)] text-sm">Amoblado</span>
+                          <span className="text-sm font-semibold">{selectedProperty.amoblado ? "Si" : "No"}</span>
+                        </div>
+                        {selectedDisplayOffer?.incluyeExpensas ? (
+                          <div className="flex justify-between items-center">
+                            <span className="text-[var(--text-muted)] text-sm">Expensas</span>
+                            <span className="text-sm font-semibold">Incluidas{selectedDisplayOffer.montoExpensas ? ` (${selectedDisplayOffer.montoExpensas})` : ""}</span>
+                          </div>
+                        ) : null}
+                        {selectedProperty.complejoNombre ? (
+                          <div className="flex justify-between items-center">
+                            <span className="text-[var(--text-muted)] text-sm">Complejo</span>
+                            <span className="text-sm font-semibold">{selectedProperty.complejoNombre}</span>
+                          </div>
+                        ) : null}
+                        {selectedDisplayOffer?.captador?.name ? (
+                          <div className="flex justify-between items-center">
+                            <span className="text-[var(--text-muted)] text-sm">Captador (visitas)</span>
+                            <span className="text-sm font-semibold">{selectedDisplayOffer.captador.name}</span>
+                          </div>
+                        ) : null}
                      </div>
 
                      <div className="mt-8 flex flex-col gap-3">

@@ -5,6 +5,32 @@ from sqlalchemy.sql import func
 from database import Base
 
 
+class OficinaDB(Base):
+    __tablename__ = "oficinas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String, nullable=False, index=True)
+    ciudad = Column(String, nullable=True)
+    telefono = Column(String, nullable=True)
+    whatsapp = Column(String, nullable=True)
+    agentes = relationship("AgenteDB", back_populates="oficina")
+
+
+class ComplejoDB(Base):
+    __tablename__ = "complejos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String, nullable=False, index=True)
+    ciudad = Column(String, nullable=True, index=True)
+    zona = Column(String, nullable=True, index=True)
+    direccion = Column(String, nullable=True)
+    lat = Column(Float, nullable=True)
+    lng = Column(Float, nullable=True)
+    amenidades = Column(String, nullable=True)
+    imagenes = Column(String, nullable=True)
+    inmuebles = relationship("InmuebleDB", back_populates="complejo")
+
+
 class AgenteDB(Base):
     __tablename__ = "agentes"
 
@@ -12,8 +38,10 @@ class AgenteDB(Base):
     nombre = Column(String)
     whatsapp = Column(String)
     email = Column(String, index=True, nullable=True, unique=True)
+    oficina_id = Column(Integer, ForeignKey("oficinas.id", ondelete="SET NULL"), nullable=True, index=True)
+    oficina = relationship("OficinaDB", back_populates="agentes")
     inmuebles = relationship("InmuebleDB", back_populates="agente", cascade="all, delete-orphan")
-    ofertas = relationship("OfertaDB", back_populates="agente", cascade="all, delete-orphan")
+    ofertas = relationship("OfertaDB", back_populates="agente", cascade="all, delete-orphan", foreign_keys="OfertaDB.agente_id")
 
 
 class InmuebleDB(Base):
@@ -31,6 +59,7 @@ class InmuebleDB(Base):
     operacion = Column(String)
     tipo_inmueble = Column(String)
     estado = Column(String, default="Borrador", index=True)
+    ocupacion = Column(String, default="Disponible", index=True)
     superficie_m2 = Column(Float, nullable=True, index=True)
     zona = Column(String, nullable=True, index=True)
     direccion = Column(String, nullable=True)
@@ -49,7 +78,9 @@ class InmuebleDB(Base):
     keywords = Column(Text, nullable=True)
     imagenes = Column(String)
     agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=True)
+    complejo_id = Column(Integer, ForeignKey("complejos.id", ondelete="SET NULL"), nullable=True, index=True)
     agente = relationship("AgenteDB", back_populates="inmuebles")
+    complejo = relationship("ComplejoDB", back_populates="inmuebles")
     ofertas = relationship("OfertaDB", back_populates="inmueble", cascade="all, delete-orphan")
 
 
@@ -63,9 +94,16 @@ class OfertaDB(Base):
     moneda = Column(String, default="$ (USD)")
     estado = Column(String, default="Publicado", index=True)
     agente_id = Column(Integer, ForeignKey("agentes.id", ondelete="CASCADE"), nullable=True, index=True)
+    captador_id = Column(Integer, ForeignKey("agentes.id", ondelete="SET NULL"), nullable=True, index=True)
+    colocador_id = Column(Integer, ForeignKey("agentes.id", ondelete="SET NULL"), nullable=True, index=True)
+    incluye_expensas = Column(Boolean, default=False)
+    monto_expensas = Column(Float, nullable=True)
+    expensas_moneda = Column(String, nullable=True)
 
     inmueble = relationship("InmuebleDB", back_populates="ofertas")
-    agente = relationship("AgenteDB", back_populates="ofertas")
+    agente = relationship("AgenteDB", back_populates="ofertas", foreign_keys=[agente_id])
+    captador = relationship("AgenteDB", foreign_keys=[captador_id])
+    colocador = relationship("AgenteDB", foreign_keys=[colocador_id])
 
 
 class UsuarioAutorizadoDB(Base):

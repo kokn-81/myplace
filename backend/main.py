@@ -15,7 +15,15 @@ from config import CORS_ORIGINS
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
 from api_schemas import PeticionChat, PeticionLeadEvent, PeticionMarcarContacto
-from models import AgenteDB, InmuebleDB, OfertaDB, SearchCacheDB, SearchLogDB
+from models import AgenteDB, ComplejoDB, InmuebleDB, LeadEventDB, OfertaDB, OficinaDB, SearchCacheDB, SearchLogDB
+from catalog import (
+    es_publicable,
+    find_or_create_captador,
+    find_or_create_complejo,
+    find_or_create_oficina,
+    normalizar_ocupacion,
+    serializar_agente_min,
+)
 from nia_leads import (
     create_lead_event,
     get_lead_event_by_slug,
@@ -83,7 +91,12 @@ class OfertaSchema(BaseModel):
     precio: float
     moneda: Optional[str] = "$ (USD)"
     agente_id: Optional[int] = None
+    captador_id: Optional[int] = None
+    colocador_id: Optional[int] = None
     estado: Optional[str] = "Publicado"
+    incluye_expensas: Optional[bool] = False
+    monto_expensas: Optional[float] = None
+    expensas_moneda: Optional[str] = None
 
 
 class InmuebleCreate(BaseModel):
@@ -98,6 +111,7 @@ class InmuebleCreate(BaseModel):
     operacion: Optional[str] = "Venta"
     tipo_inmueble: str
     estado: Optional[str] = "Borrador"
+    ocupacion: Optional[str] = "Disponible"
     superficie_m2: Optional[float] = None
     zona: Optional[str] = None
     direccion: Optional[str] = None
@@ -108,6 +122,11 @@ class InmuebleCreate(BaseModel):
     baulera: Optional[bool] = None
     descripcion: str
     agente_id: Optional[int] = None
+    complejo_id: Optional[int] = None
+    complejo_nombre: Optional[str] = None
+    captador_nombre: Optional[str] = None
+    captador_whatsapp: Optional[str] = None
+    colocador_id: Optional[int] = None
     imagenes: str = ""
     amenidades: str = ""
     keywords: str = ""
@@ -116,6 +135,7 @@ class AgenteSchema(BaseModel):
     nombre: str
     whatsapp: str
     email: Optional[str] = None
+    oficina_nombre: Optional[str] = None
 
 class PeticionExtraccionInmueble(BaseModel):
     texto: str
@@ -279,19 +299,21 @@ def get_db():
 
 
 def serializar_oferta(oferta: OfertaDB) -> dict:
-    agente = oferta.agente
+    captador = getattr(oferta, "captador", None) or oferta.agente
+    colocador = getattr(oferta, "colocador", None)
     return {
         "id": str(oferta.id),
         "operacion": oferta.operacion,
         "precio": oferta.precio,
         "moneda": oferta.moneda or "$ (USD)",
         "estado": oferta.estado or "Publicado",
-        "agente_id": str(oferta.agente_id) if oferta.agente_id else "0",
-        "agente": {
-            "id": str(agente.id),
-            "name": agente.nombre,
-            "whatsapp": agente.whatsapp,
-        } if agente else None,
+        "agente_id": str(oferta.agente_id or getattr(oferta, "captador_id", None) or "") or "0",
+        "agente": serializar_agente_min(captador),
+        "captador": serializar_agente_min(captador),
+        "colocador": serializar_agente_min(colocador),
+        "incluye_expensas": bool(getattr(oferta, "incluye_expensas", False)),
+        "monto_expensas": getattr(oferta, "monto_expensas", None),
+        "expensas_moneda": getattr(oferta, "expensas_moneda", None),
     }
 
 
@@ -357,6 +379,15 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
         inm_dict["agente_nombre"] = ""
         inm_dict["agente_whatsapp"] = ""
 
+    complejo = getattr(inm, "complejo", None)
+    inm_dict["ocupacion"] = getattr(inm, "ocupacion", None) or "Disponible"
+    inm_dict["complejo_id"] = complejo.id if complejo else getattr(inm, "complejo_id", None)
+    inm_dict["complejo_nombre"] = complejo.nombre if complejo else None
+    if complejo:
+        if complejo.lat is not None and complejo.lng is not None:
+            inm_dict["lat"] = complejo.lat
+            inm_dict["lng"] = complejo.lng
+        inm_dict["ciudad"] = complejo.zona or complejo.ciudad or inm_dict.get("ciudad") or inm.ciudad
     return inm_dict
 
 
@@ -396,6 +427,11 @@ def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
         "keywords": obtener_lista_keywords(inm),
         "images": imagenes[:1],
         "detalle_completo": False,
+        "ocupacion": getattr(inm, "ocupacion", None) or "Disponible",
+        "superficie_m2": getattr(inm, "superficie_m2", None),
+        "amoblado": bool(getattr(inm, "amoblado", False)),
+        "complejo_id": getattr(inm, "complejo_id", None),
+        "complejo_nombre": inm.complejo.nombre if getattr(inm, "complejo", None) else None,
     }
     return aplicar_oferta_principal(inm, inm_dict)
 
@@ -869,6 +905,19 @@ async def crear_inmueble(
         )
         oferta_principal, agente_principal = ofertas_validadas[0]
 
+        captador = find_or_create_captador(db, inmueble.captador_nombre, inmueble.captador_whatsapp)
+        colocador_id = inmueble.colocador_id or (agente_principal.id if agente_principal else None)
+        complejo = find_or_create_complejo(
+            db,
+            complejo_id=inmueble.complejo_id,
+            nombre=inmueble.complejo_nombre,
+            ciudad=inmueble.ciudad,
+            zona=inmueble.zona or inmueble.ciudad,
+            direccion=inmueble.direccion,
+            lat=inmueble.lat,
+            lng=inmueble.lng,
+        )
+
         nuevo_inmueble = InmuebleDB(
             titulo=inmueble.titulo,
             precio_usd=oferta_principal.precio,
@@ -881,11 +930,13 @@ async def crear_inmueble(
             operacion=oferta_principal.operacion,
             tipo_inmueble=inmueble.tipo_inmueble,
             estado=estado_inmueble,
+            ocupacion=normalizar_ocupacion(inmueble.ocupacion),
             descripcion=inmueble.descripcion,
             amenidades=inmueble.amenidades,
             keywords=inmueble.keywords,
             imagenes=inmueble.imagenes,
             agente_id=agente_principal.id if agente_principal else None,
+            complejo_id=complejo.id if complejo else None,
         )
 
         aplicar_campos_busqueda_inmueble(nuevo_inmueble, inmueble)
@@ -894,13 +945,19 @@ async def crear_inmueble(
         db.flush()
 
         for oferta, agente in ofertas_validadas:
+            listing_agent = captador or agente
             db.add(OfertaDB(
                 inmueble_id=nuevo_inmueble.id,
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
                 estado=oferta.estado or estado_inmueble,
-                agente_id=agente.id if agente else None,
+                agente_id=listing_agent.id if listing_agent else None,
+                captador_id=listing_agent.id if listing_agent else None,
+                colocador_id=oferta.colocador_id or colocador_id,
+                incluye_expensas=bool(oferta.incluye_expensas),
+                monto_expensas=oferta.monto_expensas,
+                expensas_moneda=oferta.expensas_moneda,
             ))
 
         invalidate_search_cache(db)
@@ -922,16 +979,28 @@ async def obtener_inmuebles_resumen(db: Session = Depends(get_db)):
     if cached_summary is not None:
         return cached_summary
 
-    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.estado == "Publicado").all()
-    summary = [serializar_inmueble_resumen(inm) for inm in inmuebles_db]
+    inmuebles_db = db.query(InmuebleDB).options(
+        selectinload(InmuebleDB.agente),
+        selectinload(InmuebleDB.complejo),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
+    ).filter(InmuebleDB.estado == "Publicado").all()
+    summary = [serializar_inmueble_resumen(inm) for inm in inmuebles_db if es_publicable(inm.ocupacion, inm.estado)]
     set_public_catalog_cache(summary)
     return summary
 
 
 @app.get("/api/inmuebles")
 async def obtener_inmuebles(db: Session = Depends(get_db)):
-    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.estado == "Publicado").all()
-    return [serializar_inmueble(inm) for inm in inmuebles_db]
+    inmuebles_db = db.query(InmuebleDB).options(
+        selectinload(InmuebleDB.agente),
+        selectinload(InmuebleDB.complejo),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
+    ).filter(InmuebleDB.estado == "Publicado").all()
+    return [serializar_inmueble(inm) for inm in inmuebles_db if es_publicable(inm.ocupacion, inm.estado)]
 
 
 @app.get("/api/inmuebles/admin")
@@ -1073,7 +1142,13 @@ async def crear_agente(agente: AgenteSchema, db: Session = Depends(get_db), curr
                 "email": agente_existente.email,
             }
 
-        nuevo_agente = AgenteDB(nombre=agente.nombre, whatsapp=agente.whatsapp, email=email_normalizado)
+        oficina = find_or_create_oficina(db, agente.oficina_nombre) if (agente.oficina_nombre or email_normalizado) else None
+        nuevo_agente = AgenteDB(
+            nombre=agente.nombre,
+            whatsapp=agente.whatsapp,
+            email=email_normalizado,
+            oficina_id=oficina.id if oficina else None,
+        )
         db.add(nuevo_agente)
         if email_normalizado:
             upsert_authorized_user(db, email_normalizado, "advisor")
@@ -1088,13 +1163,91 @@ async def crear_agente(agente: AgenteSchema, db: Session = Depends(get_db), curr
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
+@app.get("/api/complejos")
+async def obtener_complejos(db: Session = Depends(get_db), current_profile: dict = Depends(require_advisor_or_admin)):
+    complejos = db.query(ComplejoDB).order_by(ComplejoDB.nombre.asc()).all()
+    return [{
+        "id": c.id,
+        "nombre": c.nombre,
+        "ciudad": c.ciudad,
+        "zona": c.zona,
+        "direccion": c.direccion,
+        "lat": c.lat,
+        "lng": c.lng,
+    } for c in complejos]
+
+
+@app.get("/api/agentes/captadores")
+async def obtener_captadores(db: Session = Depends(get_db), current_profile: dict = Depends(require_advisor_or_admin)):
+    agentes_db = db.query(AgenteDB).options(selectinload(AgenteDB.oficina)).order_by(AgenteDB.nombre.asc()).all()
+    return [{"id": str(a.id), "name": a.nombre, "whatsapp": a.whatsapp, "oficina": a.oficina.nombre if a.oficina else None} for a in agentes_db]
+
+
+@app.get("/api/asesor/dashboard")
+async def dashboard_asesor(db: Session = Depends(get_db), current_profile: dict = Depends(require_advisor_or_admin)):
+    email = current_profile["email"]
+    agente = db.query(AgenteDB).options(selectinload(AgenteDB.oficina)).filter(AgenteDB.email == email).first()
+    inventario = db.query(InmuebleDB).options(
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+    ).all()
+    if current_profile["role"] != "admin" and agente:
+        inventario = [
+            inm for inm in inventario
+            if inm.agente_id == agente.id or any((oferta.colocador_id == agente.id or oferta.agente_id == agente.id) for oferta in inm.ofertas)
+        ]
+    counts = {"Disponible": 0, "Reservado": 0, "Alquilado": 0, "Vendido": 0, "Pausado": 0}
+    visitas = []
+    for inm in inventario:
+        ocupacion = normalizar_ocupacion(inm.ocupacion)
+        counts[ocupacion] = counts.get(ocupacion, 0) + 1
+        for oferta in inm.ofertas:
+            captador = getattr(oferta, "captador", None) or oferta.agente
+            colocador_id = getattr(oferta, "colocador_id", None)
+            if captador and (not agente or colocador_id == agente.id or inm.agente_id == (agente.id if agente else None)):
+                visitas.append({
+                    "inmueble_id": inm.id,
+                    "titulo": inm.titulo,
+                    "operacion": oferta.operacion,
+                    "captador": serializar_agente_min(captador),
+                    "ocupacion": ocupacion,
+                })
+    leads = db.query(LeadEventDB).order_by(LeadEventDB.created_at.desc()).limit(20).all()
+    contactos = db.query(LeadEventDB).filter(LeadEventDB.action == "contact_tap").count()
+    shares = db.query(LeadEventDB).filter(LeadEventDB.action == "share").count()
+    return {
+        "agente": serializar_agente_min(agente) if agente else {"name": email, "whatsapp": "", "id": "0"},
+        "oficina": agente.oficina.nombre if agente and agente.oficina else "REMAX Patrimonio",
+        "inventario": counts,
+        "visitas": visitas[:12],
+        "leads": {
+            "contactos": contactos,
+            "shares": shares,
+            "recientes": [{
+                "action": lead.action,
+                "property_ref": lead.property_ref,
+                "zona": lead.zona,
+                "operacion": lead.operacion,
+                "created_at": lead.created_at.isoformat() if lead.created_at else None,
+            } for lead in leads],
+        },
+    }
+
+
 @app.get("/api/agentes")
 async def obtener_agentes(db: Session = Depends(get_db), current_profile: dict = Depends(require_advisor_or_admin)):
-    query = db.query(AgenteDB)
+    query = db.query(AgenteDB).options(selectinload(AgenteDB.oficina))
     if current_profile["role"] == "advisor":
         query = query.filter(AgenteDB.email == current_profile["email"])
     agentes_db = query.all()
-    return [{"id": str(a.id), "name": a.nombre, "whatsapp": a.whatsapp, "email": a.email} for a in agentes_db]
+    return [{
+        "id": str(a.id),
+        "name": a.nombre,
+        "whatsapp": a.whatsapp,
+        "email": a.email,
+        "oficina": a.oficina.nombre if a.oficina else None,
+        "oficina_id": a.oficina_id,
+    } for a in agentes_db]
 
 @app.get("/api/agentes/by-email/{email}")
 async def obtener_agente_por_email(email: str, db: Session = Depends(get_db), current_profile: dict = Depends(require_advisor_or_admin)):

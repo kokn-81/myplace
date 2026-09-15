@@ -26,6 +26,12 @@ export default function AdvisorDashboard() {
   const [roleLoading, setRoleLoading] = useState(false);
   const [agents, setAgents] = useState<LocalAgent[]>([]);
   const [catalog, setCatalog] = useState<any[]>([]);
+  const [dashboard, setDashboard] = useState<any>(null);
+  const [formComplejo, setFormComplejo] = useState("");
+  const [formOcupacion, setFormOcupacion] = useState("Disponible");
+  const [formAmoblado, setFormAmoblado] = useState(false);
+  const [formExpensas, setFormExpensas] = useState(false);
+  const [officeName, setOfficeName] = useState("REMAX Patrimonio");
   const [isUploading, setIsUploading] = useState(false);
   const [isCloudinaryUploading, setIsCloudinaryUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -136,10 +142,17 @@ export default function AdvisorDashboard() {
     if (res.ok) setCatalog(await res.json());
   };
 
+  const fetchDashboard = async () => {
+    if (!user) return;
+    const res = await authFetch("/asesor/dashboard", user);
+    if (res.ok) setDashboard(await res.json());
+  };
+
   useEffect(() => {
     if (user) {
       fetchAgents().catch(console.error);
       fetchCatalog().catch(console.error);
+      fetchDashboard().catch(console.error);
     }
   }, [user]);
 
@@ -173,7 +186,7 @@ export default function AdvisorDashboard() {
     const response = await authFetch("/agentes", user, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: displayName.trim(), whatsapp, email }),
+      body: JSON.stringify({ nombre: displayName.trim(), whatsapp, email, oficina_nombre: officeName.trim() || "REMAX Patrimonio" }),
     });
 
     if (!response.ok) {
@@ -239,7 +252,13 @@ export default function AdvisorDashboard() {
     setSuccessMsg("");
 
     const agentId = Number(currentAgent.id);
-    const offers = buildOffersPayload(fd, formOperation, agentId, formCurrency);
+    const offers = buildOffersPayload(fd, formOperation, agentId, formCurrency).map((offer) => ({
+      ...offer,
+      colocador_id: agentId,
+      incluye_expensas: formExpensas,
+      monto_expensas: formExpensas ? Number(fd.get("expensasAmount")) || null : null,
+      expensas_moneda: formExpensas ? String(fd.get("expensasCurrency") || (offer.operacion === "Alquiler" ? "Bs" : formCurrency)) : null,
+    }));
     const primaryOffer = offers[0];
     if (offers.length === 0) {
       setErrorMsg("Agrega al menos una oferta con precio.");
@@ -263,6 +282,14 @@ export default function AdvisorDashboard() {
       imagenes: imageLinks || (fd.get("imageLinks") as string),
       amenidades: amenities.join(","),
       ofertas: offers,
+      superficie_m2: Number(fd.get("meters")) || null,
+      amoblado: formAmoblado,
+      ocupacion: formOcupacion,
+      complejo_nombre: formComplejo.trim() || null,
+      piso: String(fd.get("floor") || "").trim() || null,
+      captador_nombre: String(fd.get("captadorName") || "").trim() || null,
+      captador_whatsapp: String(fd.get("captadorWhatsapp") || "").trim() || null,
+      colocador_id: agentId,
     };
 
     try {
@@ -280,6 +307,7 @@ export default function AdvisorDashboard() {
       setImageLinks("");
       setSuccessMsg("Inmueble publicado con exito.");
       await fetchCatalog();
+      await fetchDashboard();
     } catch (err: any) {
       setErrorMsg(err.message || "Hubo un error al publicar.");
     } finally {
@@ -336,6 +364,10 @@ export default function AdvisorDashboard() {
               <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} required className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" />
             </div>
             <div>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Oficina</label>
+              <input value={officeName} onChange={(e) => setOfficeName(e.target.value)} placeholder="REMAX Patrimonio" className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" />
+            </div>
+            <div>
               <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">WhatsApp</label>
               <div className="flex rounded border border-[var(--border-soft)] bg-[var(--surface-control)] overflow-hidden">
                 <span className="px-4 py-3 bg-[var(--surface-panel-muted)] text-[var(--text-muted)] text-sm font-bold">+591</span>
@@ -366,6 +398,46 @@ export default function AdvisorDashboard() {
             </div>
           </div>
         </header>
+
+        {dashboard && (
+          <div className="mb-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">Oficina</p>
+              <p className="mt-2 text-lg font-bold">{dashboard.oficina || "REMAX Patrimonio"}</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">Disponibles</p>
+              <p className="mt-2 text-3xl font-bold text-[var(--accent-main)]">{dashboard.inventario?.Disponible || 0}</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">Leads NIA</p>
+              <p className="mt-2 text-3xl font-bold">{(dashboard.leads?.contactos || 0) + (dashboard.leads?.shares || 0)}</p>
+              <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">{dashboard.leads?.contactos || 0} contactos · {dashboard.leads?.shares || 0} shares</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-muted)]">Ocupados / vendidos</p>
+              <p className="mt-2 text-lg font-bold">{(dashboard.inventario?.Alquilado || 0) + (dashboard.inventario?.Vendido || 0)}</p>
+            </div>
+          </div>
+        )}
+        {dashboard?.visitas?.length > 0 && (
+          <div className="mb-10 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6">
+            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-[var(--accent-main)] mb-4">Visitas a coordinar con captador</h3>
+            <div className="space-y-3">
+              {dashboard.visitas.map((visita: any) => (
+                <div key={`${visita.inmueble_id}-${visita.operacion}`} className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-soft)] pb-3 last:border-0">
+                  <div>
+                    <p className="font-semibold">{visita.titulo}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{visita.operacion} · {visita.ocupacion} · captador {visita.captador?.name || "s/d"}</p>
+                  </div>
+                  {visita.captador?.whatsapp ? (
+                    <a href={`https://wa.me/${String(visita.captador.whatsapp).replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-main)]">WhatsApp captador</a>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 rounded font-bold">{errorMsg}</div>}
@@ -399,6 +471,24 @@ export default function AdvisorDashboard() {
             ) : (
               <CustomSelect name="area" value={formZone} onChange={(val) => { if (val === "___NEW___") { setIsCustomZone(true); setFormZone(""); } else { setFormZone(val); } }} placeholder="Zona" options={[...defaultZones.map((z) => ({ value: z, label: z })), { value: "___NEW___", label: "+ Nueva Zona..." }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
             )}
+            <input name="meters" type="number" min="0" step="0.1" placeholder="m²" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+            <input name="floor" type="text" placeholder="Piso / nro" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+          </div>
+
+          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Edificio / condominio y ocupacion</h3>
+            <input value={formComplejo} onChange={(e) => setFormComplejo(e.target.value)} placeholder="Ej: Sky Eclipse (un pin para varias unidades)" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+            <CustomSelect value={formOcupacion} onChange={setFormOcupacion} placeholder="Ocupacion" options={[{ value: "Disponible", label: "Disponible" }, { value: "Reservado", label: "Reservado" }, { value: "Alquilado", label: "Alquilado / ocupado" }, { value: "Vendido", label: "Vendido" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+            <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={formAmoblado} onChange={(e) => setFormAmoblado(e.target.checked)} /> Amoblado</label>
+            <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={formExpensas} onChange={(e) => setFormExpensas(e.target.checked)} /> Precio incluye expensas</label>
+            {formExpensas && (
+              <>
+                <input name="expensasAmount" type="number" min="0" placeholder="Monto expensas" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                <select name="expensasCurrency" defaultValue="Bs" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"><option>Bs</option><option>$ (USD)</option></select>
+              </>
+            )}
+            <input name="captadorName" placeholder="Captador (visitas)" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+            <input name="captadorWhatsapp" placeholder="WhatsApp captador" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
           </div>
 
           <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--accent-main)]/50 grid grid-cols-1 md:grid-cols-5 gap-4">
