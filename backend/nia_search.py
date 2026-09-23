@@ -123,11 +123,12 @@ SPECIFIC_SEARCH_STOPWORDS = STOPWORDS | {
     "sierra", "bolivia", "bs", "usd", "dolares",
 }
 TYPE_SYNONYMS = {
-    "Departamento": ("departamento", "depa", "monoambiente", "garzonier"),
-    "Casa": ("casa", "quinta"),
-    "Terreno": ("terreno", "lote"),
-    "Oficina": ("oficina",),
-    "Local Comercial": ("local", "comercial", "tienda"),
+    "Proyecto (preventa)": ("preventa", "proyecto", "en pozo", "en construccion", "en planos", "preventas"),
+    "Proyecto": ("preventa", "proyecto", "en pozo", "en construccion", "en planos", "preventas"),
+    "Departamento": ("departamento", "depa", "monoambiente", "garzonier", "loft", "penthouse"),
+    "Casa": ("casa", "quinta", "chalet", "villa", "duplex"),
+    "Comercial": ("comercial", "oficina", "local", "tienda", "galpon", "deposito", "tinglado"),
+    "Terreno": ("terreno", "lote", "parcela"),
 }
 
 AMENITY_SYNONYMS = {
@@ -166,6 +167,7 @@ class SearchFilters:
     rooms_exact: Optional[int] = None
     bathrooms_min: Optional[int] = None
     zone: Optional[str] = None
+    zones: list[str] = field(default_factory=list)
     amenities: list[str] = field(default_factory=list)
     amoblado: Optional[bool] = None
     acepta_mascotas: Optional[bool] = None
@@ -184,6 +186,7 @@ class SearchFilters:
             self.rooms_exact is not None,
             self.bathrooms_min is not None,
             self.zone,
+            self.zones,
             self.amenities,
             self.amoblado is not None,
             self.acepta_mascotas is not None,
@@ -322,10 +325,13 @@ def parse_search_filters(message: str) -> SearchFilters:
     if baths:
         filters.bathrooms_min = int(baths.group(1))
 
+    detected_zones = []
     for zone in KNOWN_ZONES:
-        if zone in text:
-            filters.zone = zone
-            break
+        if re.search(r"\b" + re.escape(zone) + r"\b", text):
+            detected_zones.append(zone)
+    filters.zones = [z for z in detected_zones if not any(other != z and z in other for other in detected_zones)]
+    if filters.zones:
+        filters.zone = filters.zones[0]
 
     for canonical, synonyms in AMENITY_SYNONYMS.items():
         if any(term in text for term in synonyms):
@@ -372,7 +378,33 @@ def build_property_search_text(inm: InmuebleDB) -> str:
         getattr(inm, "keywords", None),
         getattr(getattr(inm, "complejo", None), "nombre", None),
         getattr(inm, "ocupacion", None),
+        getattr(inm, "subtipo_comercial", None),
+        getattr(inm, "dimensiones", None),
+        getattr(inm, "servicios_basicos", None),
+        f"entrega {getattr(inm, 'fecha_entrega', '')}" if getattr(inm, "fecha_entrega", None) else None,
+        f"avance {getattr(inm, 'avance_obra', '')}%" if getattr(inm, "avance_obra", None) is not None else None,
+        getattr(inm, "fase_obra", None),
     ]
+
+    raw_datos = getattr(inm, "datos_especificos_json", None)
+    if raw_datos:
+        try:
+            data = json.loads(raw_datos) if isinstance(raw_datos, str) else raw_datos
+            if isinstance(data, dict):
+                if data.get("mensaje_urgencia"):
+                    parts.append(str(data["mensaje_urgencia"]))
+                if data.get("planes_pago"):
+                    parts.append(str(data["planes_pago"]))
+            units = data.get("unidades", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+            for u in units:
+                if isinstance(u, dict):
+                    tip = u.get("tipologia") or u.get("nombre") or ""
+                    sup = f"{u.get('superficie_m2') or u.get('superficieM2') or ''} m2"
+                    prc = f"{u.get('precio') or ''} {u.get('moneda') or ''}"
+                    parts.append(f"{tip} {sup} {prc}".strip())
+        except Exception:
+            pass
+
     return normalize_text(" ".join(str(part) for part in parts if part))
 
 
@@ -476,7 +508,10 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional
         return False
 
     haystack = haystack or get_property_search_text(inm)
-    if filters.zone and filters.zone not in haystack:
+    if getattr(filters, "zones", None) and len(filters.zones) > 0:
+        if not any(z in haystack for z in filters.zones):
+            return False
+    elif filters.zone and filters.zone not in haystack:
         return False
     if any(amenity not in haystack for amenity in filters.amenities):
         return False
@@ -492,7 +527,10 @@ def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Option
         score += 40
     if filters.property_type and normalize_text(filters.property_type) in haystack:
         score += 35
-    if filters.zone and filters.zone in haystack:
+    if getattr(filters, "zones", None) and len(filters.zones) > 0:
+        if any(z in haystack for z in filters.zones):
+            score += 30
+    elif filters.zone and filters.zone in haystack:
         score += 30
     if filters.rooms_exact is not None and (inm.habitaciones or 0) == filters.rooms_exact:
         score += 22
@@ -534,9 +572,25 @@ def apply_broad_sql_filters(query, filters: SearchFilters):
         query = query.filter(InmuebleDB.parqueos >= filters.parqueos_min)
     if filters.baulera is True:
         query = query.filter(InmuebleDB.baulera == True)  # noqa: E712
-    if filters.zone:
+    if getattr(filters, "zones", None) and len(filters.zones) > 0:
+        zone_conditions = []
+        for z in filters.zones:
+            like = f"%{z}%"
+            zone_conditions.extend([
+                InmuebleDB.ciudad.ilike(like),
+                InmuebleDB.zona.ilike(like),
+                InmuebleDB.direccion.ilike(like),
+                InmuebleDB.search_text.ilike(like),
+            ])
+        query = query.filter(or_(*zone_conditions))
+    elif filters.zone:
         like = f"%{filters.zone}%"
-        query = query.filter(or_(InmuebleDB.ciudad.ilike(like), InmuebleDB.zona.ilike(like), InmuebleDB.direccion.ilike(like)))
+        query = query.filter(or_(
+            InmuebleDB.ciudad.ilike(like),
+            InmuebleDB.zona.ilike(like),
+            InmuebleDB.direccion.ilike(like),
+            InmuebleDB.search_text.ilike(like),
+        ))
     return query
 
 

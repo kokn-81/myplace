@@ -24,6 +24,7 @@ def init_db() -> None:
         ensure_sqlite_inmueble_estado_column()
         ensure_sqlite_nia_search_columns()
         ensure_sqlite_catalog_columns()
+        ensure_sqlite_property_type_columns()
     seed_authorized_users()
     seed_default_office()
 
@@ -169,4 +170,22 @@ def upsert_role(db, email: str, role: str) -> None:
     db.add(UsuarioAutorizadoDB(email=normalized, role=role))
 
 
+def ensure_sqlite_property_type_columns() -> None:
+    if not IS_SQLITE:
+        return
 
+    with engine.begin() as conn:
+        inm_cols = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(inmuebles)").fetchall()]
+        if inm_cols:
+            desired = {
+                "fecha_entrega": "VARCHAR",
+                "avance_obra": "INTEGER",
+                "fase_obra": "VARCHAR",
+                "subtipo_comercial": "VARCHAR",
+                "dimensiones": "VARCHAR",
+                "servicios_basicos": "VARCHAR",
+                "datos_especificos_json": "TEXT",
+            }
+            for column, ddl in desired.items():
+                if column not in inm_cols:
+                    conn.exec_driver_sql(f"ALTER TABLE inmuebles ADD COLUMN {column} {ddl}")

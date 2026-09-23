@@ -103,14 +103,14 @@ class InmuebleCreate(BaseModel):
     titulo: str
     precio_usd: Optional[float] = 0
     moneda: Optional[str] = "$ (USD)"
-    habitaciones: int
+    habitaciones: Optional[int] = 0
     banos: Optional[int] = 1
     ciudad: str
     lat: float
     lng: float
     operacion: Optional[str] = "Venta"
     tipo_inmueble: str
-    estado: Optional[str] = "Borrador"
+    estado: Optional[str] = None
     ocupacion: Optional[str] = "Disponible"
     superficie_m2: Optional[float] = None
     zona: Optional[str] = None
@@ -120,6 +120,13 @@ class InmuebleCreate(BaseModel):
     acepta_mascotas: Optional[bool] = None
     parqueos: Optional[int] = None
     baulera: Optional[bool] = None
+    fecha_entrega: Optional[str] = None
+    avance_obra: Optional[int] = None
+    fase_obra: Optional[str] = None
+    subtipo_comercial: Optional[str] = None
+    dimensiones: Optional[str] = None
+    servicios_basicos: Optional[str] = None
+    datos_especificos_json: Optional[str] = None
     descripcion: str
     agente_id: Optional[int] = None
     complejo_id: Optional[int] = None
@@ -142,9 +149,32 @@ class PeticionExtraccionInmueble(BaseModel):
 ESTADOS_INMUEBLE = {"Borrador", "Publicado", "Pausado"}
 
 
-def normalizar_estado_inmueble(estado: Optional[str]) -> str:
-    estado_limpio = (estado or "Borrador").strip().capitalize()
-    return estado_limpio if estado_limpio in ESTADOS_INMUEBLE else "Borrador"
+def normalizar_estado_inmueble(estado: Optional[str], default: str = "Borrador") -> str:
+    raw = (estado or "").strip().lower()
+    if not raw:
+        return default if default in ESTADOS_INMUEBLE else "Borrador"
+    mapping = {
+        "borrador": "Borrador",
+        "publicado": "Publicado",
+        "pausado": "Pausado",
+        "draft": "Borrador",
+        "published": "Publicado",
+        "paused": "Pausado",
+    }
+    return mapping.get(raw, default if default in ESTADOS_INMUEBLE else "Borrador")
+
+
+def resolver_estado_publicacion(inmueble: "InmuebleCreate", ofertas: List["OfertaSchema"]) -> str:
+    if inmueble.estado is not None and str(inmueble.estado).strip():
+        return normalizar_estado_inmueble(inmueble.estado)
+    for oferta in ofertas:
+        if oferta.estado:
+            estado_oferta = normalizar_estado_inmueble(oferta.estado)
+            if estado_oferta == "Publicado":
+                return "Publicado"
+    if ofertas and ofertas[0].estado:
+        return normalizar_estado_inmueble(ofertas[0].estado)
+    return "Borrador"
 
 
 def limpiar_respuesta_json(texto: str):
@@ -254,6 +284,13 @@ def aplicar_campos_busqueda_inmueble(inmueble_db: InmuebleDB, inmueble: Inmueble
     inmueble_db.acepta_mascotas = bool(inmueble.acepta_mascotas) if inmueble.acepta_mascotas is not None else inferir_bool_por_amenidad(amenidades, "mascota", "pet friendly")
     inmueble_db.parqueos = max(int(inmueble.parqueos or 0), 1 if inferir_bool_por_amenidad(amenidades, "parqueo", "garaje", "garage", "estacionamiento") else 0)
     inmueble_db.baulera = bool(inmueble.baulera) if inmueble.baulera is not None else inferir_bool_por_amenidad(amenidades, "baulera", "deposito")
+    inmueble_db.fecha_entrega = (inmueble.fecha_entrega or "").strip() or None
+    inmueble_db.avance_obra = inmueble.avance_obra
+    inmueble_db.fase_obra = (inmueble.fase_obra or "").strip() or None
+    inmueble_db.subtipo_comercial = (inmueble.subtipo_comercial or "").strip() or None
+    inmueble_db.dimensiones = (inmueble.dimensiones or "").strip() or None
+    inmueble_db.servicios_basicos = (inmueble.servicios_basicos or "").strip() or None
+    inmueble_db.datos_especificos_json = inmueble.datos_especificos_json
     inmueble_db.amenidades_normalizadas = normalize_amenities_text(amenidades)
     inmueble_db.search_text = build_property_search_text(inmueble_db)
 
@@ -261,16 +298,27 @@ def construir_faltantes_extraccion(data: dict) -> tuple[list[str], list[str]]:
     faltantes: list[str] = []
     preguntas: list[str] = []
 
+    tipo = str(obtener_valor(data, "tipo_inmueble") or "").strip().lower()
+    is_terreno = "terreno" in tipo
+    is_comercial = "comercial" in tipo or "oficina" in tipo or "local" in tipo
+    is_proyecto = "proyecto" in tipo or "preventa" in tipo
+
     campos = [
         ("titulo", "titulo comercial"),
         ("operacion", "operacion: venta, alquiler o alquiler y venta"),
         ("tipo_inmueble", "tipo de inmueble"),
         ("moneda", "moneda"),
-        ("habitaciones", "cantidad de habitaciones"),
-        ("banos", "cantidad de banos"),
         ("ciudad", "zona o ciudad"),
         ("descripcion", "descripcion"),
     ]
+    if not is_terreno and not is_comercial and not is_proyecto:
+        campos.extend([
+            ("habitaciones", "cantidad de habitaciones"),
+            ("banos", "cantidad de banos"),
+        ])
+    elif is_comercial or is_terreno:
+        campos.append(("superficie_m2", "superficie en m2"))
+
     for clave, etiqueta in campos:
         if obtener_valor(data, clave) in {None, ""}:
             faltantes.append(clave)
@@ -308,9 +356,9 @@ def serializar_oferta(oferta: OfertaDB) -> dict:
         "moneda": oferta.moneda or "$ (USD)",
         "estado": oferta.estado or "Publicado",
         "agente_id": str(oferta.agente_id or getattr(oferta, "captador_id", None) or "") or "0",
-        "agente": serializar_agente_min(captador),
+        "agente": serializar_agente_min(colocador or captador),
         "captador": serializar_agente_min(captador),
-        "colocador": serializar_agente_min(colocador),
+        "colocador": serializar_agente_min(colocador or captador),
         "incluye_expensas": bool(getattr(oferta, "incluye_expensas", False)),
         "monto_expensas": getattr(oferta, "monto_expensas", None),
         "expensas_moneda": getattr(oferta, "expensas_moneda", None),
@@ -350,7 +398,12 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
     oferta_principal = obtener_oferta_principal(inm)
 
     if oferta_principal:
-        inm_dict["operacion"] = oferta_principal.operacion
+        has_rent = any("alquiler" in str(o.get("operacion", "")).lower() for o in ofertas)
+        has_buy = any("venta" in str(o.get("operacion", "")).lower() for o in ofertas)
+        if has_rent and has_buy:
+            inm_dict["operacion"] = "Alquiler y Venta"
+        else:
+            inm_dict["operacion"] = oferta_principal.operacion
         inm_dict["precio_usd"] = oferta_principal.precio
         inm_dict["moneda"] = oferta_principal.moneda or "$ (USD)"
         inm_dict["agente_id"] = str(oferta_principal.agente_id) if oferta_principal.agente_id else inm_dict["agente_id"]
@@ -391,12 +444,53 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
     return inm_dict
 
 
+def obtener_datos_proyecto(inm: InmuebleDB) -> dict:
+    raw = getattr(inm, "datos_especificos_json", None)
+    if not raw:
+        return {"unidades": []}
+    try:
+        data = json.loads(raw) if isinstance(raw, str) else raw
+        if isinstance(data, dict):
+            unidades = data.get("unidades") if isinstance(data.get("unidades"), list) else []
+            return {
+                "unidades": unidades,
+                "mensaje_urgencia": data.get("mensaje_urgencia"),
+                "total_unidades": data.get("total_unidades"),
+                "unidades_disponibles": data.get("unidades_disponibles"),
+                "pisos": data.get("pisos"),
+                "reserva_usd": data.get("reserva_usd"),
+                "precio_m2_desde": data.get("precio_m2_desde"),
+                "brochure_url": data.get("brochure_url"),
+                "planes_pago": data.get("planes_pago"),
+            }
+        if isinstance(data, list):
+            return {"unidades": data}
+    except Exception:
+        pass
+    return {"unidades": []}
+
+
+def obtener_unidades_proyecto(inm: InmuebleDB) -> list[dict]:
+    return obtener_datos_proyecto(inm).get("unidades", [])
+
+
 def serializar_inmueble(inm: InmuebleDB, include_search_metadata: bool = False) -> dict:
     inm_dict = inm.__dict__.copy()
     inm_dict.pop("_sa_instance_state", None)
     inm_dict["images"] = obtener_lista_imagenes(inm)
     inm_dict["amenidades"] = obtener_lista_amenidades(inm)
     inm_dict["keywords"] = obtener_lista_keywords(inm)
+    
+    datos_proyecto = obtener_datos_proyecto(inm)
+    inm_dict["unidades_proyecto"] = datos_proyecto.get("unidades", [])
+    inm_dict["mensaje_urgencia"] = datos_proyecto.get("mensaje_urgencia")
+    inm_dict["total_unidades"] = datos_proyecto.get("total_unidades")
+    inm_dict["unidades_disponibles"] = datos_proyecto.get("unidades_disponibles")
+    inm_dict["pisos"] = datos_proyecto.get("pisos")
+    inm_dict["reserva_usd"] = datos_proyecto.get("reserva_usd")
+    inm_dict["precio_m2_desde"] = datos_proyecto.get("precio_m2_desde")
+    inm_dict["brochure_url"] = datos_proyecto.get("brochure_url")
+    inm_dict["planes_pago"] = datos_proyecto.get("planes_pago")
     inm_dict["detalle_completo"] = True
 
     if include_search_metadata:
@@ -411,6 +505,7 @@ def serializar_inmueble(inm: InmuebleDB, include_search_metadata: bool = False) 
 
 def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
     imagenes = obtener_lista_imagenes(inm)
+    datos_proyecto = obtener_datos_proyecto(inm)
     inm_dict = {
         "id": inm.id,
         "titulo": inm.titulo,
@@ -419,6 +514,8 @@ def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
         "habitaciones": inm.habitaciones,
         "banos": getattr(inm, "banos", 1) or 1,
         "ciudad": inm.ciudad,
+        "zona": getattr(inm, "zona", None) or inm.ciudad,
+        "descripcion": getattr(inm, "descripcion", "") or "",
         "lat": inm.lat,
         "lng": inm.lng,
         "operacion": inm.operacion,
@@ -432,13 +529,28 @@ def serializar_inmueble_resumen(inm: InmuebleDB) -> dict:
         "amoblado": bool(getattr(inm, "amoblado", False)),
         "complejo_id": getattr(inm, "complejo_id", None),
         "complejo_nombre": inm.complejo.nombre if getattr(inm, "complejo", None) else None,
+        "fecha_entrega": getattr(inm, "fecha_entrega", None),
+        "avance_obra": getattr(inm, "avance_obra", None),
+        "fase_obra": getattr(inm, "fase_obra", None),
+        "subtipo_comercial": getattr(inm, "subtipo_comercial", None),
+        "dimensiones": getattr(inm, "dimensiones", None),
+        "servicios_basicos": getattr(inm, "servicios_basicos", None),
+        "datos_especificos_json": getattr(inm, "datos_especificos_json", None),
+        "unidades_proyecto": datos_proyecto.get("unidades", []),
+        "mensaje_urgencia": datos_proyecto.get("mensaje_urgencia"),
+        "total_unidades": datos_proyecto.get("total_unidades"),
+        "unidades_disponibles": datos_proyecto.get("unidades_disponibles"),
+        "pisos": datos_proyecto.get("pisos"),
+        "reserva_usd": datos_proyecto.get("reserva_usd"),
+        "precio_m2_desde": datos_proyecto.get("precio_m2_desde"),
+        "brochure_url": datos_proyecto.get("brochure_url"),
+        "planes_pago": datos_proyecto.get("planes_pago"),
     }
     return aplicar_oferta_principal(inm, inm_dict)
 
 
 
 def normalizar_ofertas(inmueble: InmuebleCreate) -> List[OfertaSchema]:
-    estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
     if inmueble.ofertas:
         ofertas = [oferta for oferta in inmueble.ofertas if oferta.operacion and oferta.precio is not None]
         if ofertas:
@@ -449,7 +561,7 @@ def normalizar_ofertas(inmueble: InmuebleCreate) -> List[OfertaSchema]:
         precio=float(inmueble.precio_usd or 0),
         moneda=inmueble.moneda or "$ (USD)",
         agente_id=inmueble.agente_id,
-        estado=estado_inmueble,
+        estado=normalizar_estado_inmueble(inmueble.estado, default="Publicado"),
     )]
 
 
@@ -583,7 +695,7 @@ async def extraer_datos_inmueble(
       "data": {{
         "titulo": string | null,
         "operacion": "Venta" | "Alquiler" | "Alquiler y Venta" | "Inversion" | null,
-        "tipo_inmueble": "Departamento" | "Casa" | "Terreno" | "Oficina" | "Local Comercial" | null,
+        "tipo_inmueble": "Departamento" | "Casa" | "Comercial" | "Terreno" | "Proyecto (preventa)" | null,
         "precio": number | null,
         "moneda": "$ (USD)" | "Bs" | null,
         "habitaciones": number | null,
@@ -597,6 +709,12 @@ async def extraer_datos_inmueble(
         "acepta_mascotas": boolean | null,
         "parqueos": number | null,
         "baulera": boolean | null,
+        "fecha_entrega": string | null,
+        "avance_obra": number | null,
+        "fase_obra": string | null,
+        "subtipo_comercial": string | null,
+        "dimensiones": string | null,
+        "servicios_basicos": string | null,
         "lat": number | null,
         "lng": number | null,
         "descripcion": string | null,
@@ -895,8 +1013,8 @@ async def crear_inmueble(
     current_profile: dict = Depends(require_advisor_or_admin),
 ):
     try:
-        estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
         ofertas = normalizar_ofertas(inmueble)
+        estado_inmueble = resolver_estado_publicacion(inmueble, ofertas)
         ofertas_validadas = validar_agentes_de_ofertas(
             ofertas,
             db,
@@ -951,7 +1069,7 @@ async def crear_inmueble(
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
-                estado=oferta.estado or estado_inmueble,
+                estado=estado_inmueble,
                 agente_id=listing_agent.id if listing_agent else None,
                 captador_id=listing_agent.id if listing_agent else None,
                 colocador_id=oferta.colocador_id or colocador_id,
@@ -1048,8 +1166,8 @@ async def actualizar_inmueble(
         if not inmueble_db:
             raise HTTPException(status_code=404, detail="Inmueble no encontrado")
 
-        estado_inmueble = normalizar_estado_inmueble(inmueble.estado)
         ofertas = normalizar_ofertas(inmueble)
+        estado_inmueble = resolver_estado_publicacion(inmueble, ofertas)
         ofertas_validadas = validar_agentes_de_ofertas(
             ofertas,
             db,
@@ -1084,8 +1202,13 @@ async def actualizar_inmueble(
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
-                estado=oferta.estado or estado_inmueble,
+                estado=estado_inmueble,
                 agente_id=agente.id if agente else None,
+                captador_id=getattr(oferta, "captador_id", None) or (agente.id if agente else None),
+                colocador_id=getattr(oferta, "colocador_id", None),
+                incluye_expensas=bool(getattr(oferta, "incluye_expensas", False)),
+                monto_expensas=getattr(oferta, "monto_expensas", None),
+                expensas_moneda=getattr(oferta, "expensas_moneda", None),
             ))
 
         invalidate_search_cache(db)

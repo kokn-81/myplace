@@ -146,16 +146,6 @@ function MapCanvas({
       >
         {markers}
       </Map>
-      <div className="pointer-events-none absolute left-6 top-[5.5rem] z-10 hidden rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[var(--text-muted)] shadow-sm backdrop-blur md:flex md:items-center md:gap-3 dark:bg-[rgba(27,20,17,0.88)]">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-teal-deep)]" />
-          Alquiler
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent-hover)]" />
-          Venta
-        </span>
-      </div>
     </div>
   );
 }

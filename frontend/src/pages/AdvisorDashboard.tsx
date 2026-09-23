@@ -1,10 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, LogOut, Moon, Save, ShieldCheck, Sun, UploadCloud, UserCircle, X } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { CustomSelect } from "../components/CustomSelect";
+import DriveMediaPicker from "../components/DriveMediaPicker";
 import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, normalizeEmail } from "../roleAccess";
+import { calculateDeliveryCountdown } from "../projectCountdown";
+import ProjectUnitsEditor from "../components/ProjectUnitsEditor";
+import { ProjectUnitOption, serializeProjectUnitsJson, serializeProjectDetailsJson, getProjectUnitsSummary } from "../projectUnits";
+import { PROPERTY_TYPES, PropertyType, isProjectType } from "../types";
 
 interface LocalAgent {
   id: string;
@@ -31,6 +36,12 @@ export default function AdvisorDashboard() {
   const [formOcupacion, setFormOcupacion] = useState("Disponible");
   const [formAmoblado, setFormAmoblado] = useState(false);
   const [formExpensas, setFormExpensas] = useState(false);
+  const [formFechaEntrega, setFormFechaEntrega] = useState("");
+  const [formAvanceObra, setFormAvanceObra] = useState<number | "">("");
+  const [formFaseObra, setFormFaseObra] = useState("Obra gruesa");
+  const [formSubtipoComercial, setFormSubtipoComercial] = useState("Oficina");
+  const [formDimensiones, setFormDimensiones] = useState("");
+  const [formServiciosBasicos, setFormServiciosBasicos] = useState("");
   const [officeName, setOfficeName] = useState("REMAX Patrimonio");
   const [isUploading, setIsUploading] = useState(false);
   const [isCloudinaryUploading, setIsCloudinaryUploading] = useState(false);
@@ -39,14 +50,26 @@ export default function AdvisorDashboard() {
   const [displayName, setDisplayName] = useState("");
   const [phoneLocal, setPhoneLocal] = useState("");
   const [formOperation, setFormOperation] = useState("Venta");
-  const [formType, setFormType] = useState("Departamento");
+  const [formType, setFormType] = useState<string>("Departamento");
   const [formCurrency, setFormCurrency] = useState("$ (USD)");
   const [formExchangeRate, setFormExchangeRate] = useState("Oficial");
   const [formZone, setFormZone] = useState("");
   const [isCustomZone, setIsCustomZone] = useState(false);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywordInput, setKeywordInput] = useState("");
   const [imageLinks, setImageLinks] = useState("");
+  const [projectUnits, setProjectUnits] = useState<ProjectUnitOption[]>([]);
+  const [projectUrgencyMessage, setProjectUrgencyMessage] = useState("");
+  const [projectTotalUnits, setProjectTotalUnits] = useState<number | "">("");
+  const [projectAvailableUnits, setProjectAvailableUnits] = useState<number | "">("");
+  const [projectFloors, setProjectFloors] = useState<number | "">("");
+  const [projectReserveUsd, setProjectReserveUsd] = useState<number | "">("");
+  const [projectPriceM2From, setProjectPriceM2From] = useState<number | "">("");
+  const [projectBrochureUrl, setProjectBrochureUrl] = useState("");
+  const [projectPaymentPlans, setProjectPaymentPlans] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem("theme");
     const dark = saved ? saved === "dark" : document.documentElement.classList.contains("dark");
@@ -69,6 +92,10 @@ export default function AdvisorDashboard() {
     () => catalog.filter((inm) => String(inm.agente_id) === String(currentAgent?.id)),
     [catalog, currentAgent?.id]
   );
+  const countdownPreview = useMemo(() => {
+    if (!isProjectType(formType) || !formFechaEntrega) return null;
+    return calculateDeliveryCountdown(formFechaEntrega);
+  }, [formType, formFechaEntrega]);
   const defaultZones = ["Norte", "Sur", "Este", "Oeste", "Equipetrol", "Urubo", "Centro"];
   const operationOptions = [
     { value: "Venta", label: "Venta" },
@@ -210,6 +237,17 @@ export default function AdvisorDashboard() {
 
   const removeAmenity = (am: string) => setAmenities(amenities.filter((a) => a !== am));
 
+  const handleKeyDownKeyword = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const val = keywordInput.trim().replace(/,/g, "");
+      if (val && !keywords.includes(val)) setKeywords([...keywords, val]);
+      setKeywordInput("");
+    }
+  };
+
+  const removeKeyword = (kw: string) => setKeywords(keywords.filter((item) => item !== kw));
+
   const handleCloudinaryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -266,30 +304,52 @@ export default function AdvisorDashboard() {
       return;
     }
 
+    const isTerreno = formType === "Terreno";
+    const isComercial = formType === "Comercial";
+    const isPreventa = isProjectType(formType);
+
     const payload = {
       titulo: (fd.get("title") as string) || "Propiedad sin titulo",
       precio_usd: primaryOffer.precio,
       moneda: primaryOffer.moneda,
-      habitaciones: Number(fd.get("rooms")) || 0,
-      banos: Number(fd.get("bathrooms")) || 1,
+      habitaciones: isTerreno ? 0 : Number(fd.get("rooms")) || 0,
+      banos: isTerreno ? 0 : Number(fd.get("bathrooms")) || 1,
       ciudad: (fd.get("area") as string) || formZone || "Santa Cruz",
       lat,
       lng,
       operacion: primaryOffer.operacion,
       tipo_inmueble: formType,
+      estado: "Publicado",
       descripcion: (fd.get("description") as string) || "Sin descripcion.",
       agente_id: agentId,
       imagenes: imageLinks || (fd.get("imageLinks") as string),
       amenidades: amenities.join(","),
+      keywords: keywords.join(","),
       ofertas: offers,
-      superficie_m2: Number(fd.get("meters")) || null,
-      amoblado: formAmoblado,
+      superficie_m2: Number(fd.get("meters")) || (isPreventa && projectUnits.length > 0 ? getProjectUnitsSummary(projectUnits).minSurface || null : null),
+      amoblado: isTerreno || isComercial ? false : formAmoblado,
       ocupacion: formOcupacion,
       complejo_nombre: formComplejo.trim() || null,
       piso: String(fd.get("floor") || "").trim() || null,
-      captador_nombre: String(fd.get("captadorName") || "").trim() || null,
-      captador_whatsapp: String(fd.get("captadorWhatsapp") || "").trim() || null,
       colocador_id: agentId,
+      fecha_entrega: isPreventa ? formFechaEntrega.trim() || null : null,
+      avance_obra: isPreventa && formAvanceObra !== "" ? Number(formAvanceObra) : null,
+      fase_obra: isPreventa ? formFaseObra.trim() || null : null,
+      subtipo_comercial: isComercial ? formSubtipoComercial.trim() || null : null,
+      dimensiones: isTerreno ? formDimensiones.trim() || null : null,
+      datos_especificos_json: isPreventa
+        ? serializeProjectDetailsJson({
+            unidades: projectUnits,
+            mensajeUrgencia: projectUrgencyMessage,
+            totalUnidades: Number(projectTotalUnits) || null,
+            unidadesDisponibles: Number(projectAvailableUnits) || null,
+            pisos: Number(projectFloors) || null,
+            reservaUsd: Number(projectReserveUsd) || null,
+            precioM2Desde: Number(projectPriceM2From) || null,
+            brochureUrl: projectBrochureUrl,
+            planesPago: projectPaymentPlans,
+          })
+        : null,
     };
 
     try {
@@ -305,6 +365,22 @@ export default function AdvisorDashboard() {
       target.reset();
       setAmenities([]);
       setImageLinks("");
+      setProjectUnits([]);
+      setProjectUrgencyMessage("");
+      setProjectTotalUnits("");
+      setProjectAvailableUnits("");
+      setProjectFloors("");
+      setProjectReserveUsd("");
+      setProjectPriceM2From("");
+      setProjectBrochureUrl("");
+      setProjectPaymentPlans("");
+      setFormFechaEntrega("");
+      setFormAvanceObra("");
+      setFormDimensiones("");
+      setFormServiciosBasicos("");
+      setFormComplejo("");
+      setFormAmoblado(false);
+      setFormExpensas(false);
       setSuccessMsg("Inmueble publicado con exito.");
       await fetchCatalog();
       await fetchDashboard();
@@ -393,6 +469,9 @@ export default function AdvisorDashboard() {
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <button onClick={() => applyTheme(!isDarkMode)} className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 text-[var(--color-ivory)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">{isDarkMode ? <Sun size={12} /> : <Moon size={12} />} {isDarkMode ? "Claro" : "Oscuro"}</button>
+              {role === "admin" ? (
+                <Link to="/admin" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 text-[var(--color-ivory)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1"><ShieldCheck size={12} /> Admin</Link>
+              ) : null}
               <Link to="/" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 text-[var(--color-ivory)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1"><ArrowLeft size={12} /> Mapa</Link>
               <button onClick={handleLogout} className="text-[10px] bg-[var(--color-brick)] dark:bg-[var(--surface-panel)] hover:bg-[var(--accent-hover)] border border-[var(--color-brick)]/60 text-[var(--color-ivory)] dark:text-red-400 px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1"><LogOut size={12} /> Salir</button>
             </div>
@@ -420,26 +499,7 @@ export default function AdvisorDashboard() {
             </div>
           </div>
         )}
-        {dashboard?.visitas?.length > 0 && (
-          <div className="mb-10 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6">
-            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-[var(--accent-main)] mb-4">Visitas a coordinar con captador</h3>
-            <div className="space-y-3">
-              {dashboard.visitas.map((visita: any) => (
-                <div key={`${visita.inmueble_id}-${visita.operacion}`} className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-soft)] pb-3 last:border-0">
-                  <div>
-                    <p className="font-semibold">{visita.titulo}</p>
-                    <p className="text-xs text-[var(--text-muted)]">{visita.operacion} · {visita.ocupacion} · captador {visita.captador?.name || "s/d"}</p>
-                  </div>
-                  {visita.captador?.whatsapp ? (
-                    <a href={`https://wa.me/${String(visita.captador.whatsapp).replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-main)]">WhatsApp captador</a>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
+        <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 rounded font-bold">{successMsg}</div>}
 
@@ -457,39 +517,263 @@ export default function AdvisorDashboard() {
             </div>
           </div>
 
-          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
-            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
-            <CustomSelect value={formOperation} onChange={setFormOperation} placeholder="Operacion" options={operationOptions} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
-            <CustomSelect value={formType} onChange={setFormType} placeholder="Tipo" options={[{ value: "Departamento", label: "Departamento" }, { value: "Casa", label: "Casa" }, { value: "Terreno", label: "Terreno" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
-            <input name="rooms" type="number" required placeholder="Habitaciones" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="BaÃ±os" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            {isCustomZone ? (
-              <div className="flex relative">
-                <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Norte" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-                <button type="button" onClick={() => { setIsCustomZone(false); setFormZone(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-red-500"><X size={14} /></button>
-              </div>
-            ) : (
-              <CustomSelect name="area" value={formZone} onChange={(val) => { if (val === "___NEW___") { setIsCustomZone(true); setFormZone(""); } else { setFormZone(val); } }} placeholder="Zona" options={[...defaultZones.map((z) => ({ value: z, label: z })), { value: "___NEW___", label: "+ Nueva Zona..." }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
-            )}
-            <input name="meters" type="number" min="0" step="0.1" placeholder="m²" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <input name="floor" type="text" placeholder="Piso / nro" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+          {/* CLASIFICACION DEL INMUEBLE */}
+          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-4 gap-4">
+            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Clasificacion del Inmueble</h3>
+            <div>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Tipo de Inmueble</label>
+              <CustomSelect
+                value={formType}
+                onChange={(val) => setFormType(val)}
+                placeholder="Tipo"
+                options={PROPERTY_TYPES.map((t) => ({ value: t, label: t }))}
+                triggerClassName="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)] font-semibold"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Operacion</label>
+              <CustomSelect
+                value={formOperation}
+                onChange={setFormOperation}
+                placeholder="Operacion"
+                options={operationOptions}
+                triggerClassName="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Zona</label>
+              {isCustomZone ? (
+                <div className="flex relative">
+                  <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Equipetrol, Urubo, Norte..." className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                  <button type="button" onClick={() => { setIsCustomZone(false); setFormZone(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-red-500"><X size={14} /></button>
+                </div>
+              ) : (
+                <CustomSelect name="area" value={formZone} onChange={(val) => { if (val === "___NEW___") { setIsCustomZone(true); setFormZone(""); } else { setFormZone(val); } }} placeholder="Zona" options={[...defaultZones.map((z) => ({ value: z, label: z })), { value: "___NEW___", label: "+ Nueva Zona..." }]} triggerClassName="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+              )}
+            </div>
           </div>
 
-          <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-2 gap-4">
-            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">Edificio / condominio y ocupacion</h3>
-            <input value={formComplejo} onChange={(e) => setFormComplejo(e.target.value)} placeholder="Ej: Sky Eclipse (un pin para varias unidades)" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <CustomSelect value={formOcupacion} onChange={setFormOcupacion} placeholder="Ocupacion" options={[{ value: "Disponible", label: "Disponible" }, { value: "Reservado", label: "Reservado" }, { value: "Alquilado", label: "Alquilado / ocupado" }, { value: "Vendido", label: "Vendido" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
-            <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={formAmoblado} onChange={(e) => setFormAmoblado(e.target.checked)} /> Amoblado</label>
-            <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={formExpensas} onChange={(e) => setFormExpensas(e.target.checked)} /> Precio incluye expensas</label>
-            {formExpensas && (
-              <>
-                <input name="expensasAmount" type="number" min="0" placeholder="Monto expensas" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-                <select name="expensasCurrency" defaultValue="Bs" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"><option>Bs</option><option>$ (USD)</option></select>
-              </>
-            )}
-            <input name="captadorName" placeholder="Captador (visitas)" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-            <input name="captadorWhatsapp" placeholder="WhatsApp captador" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
-          </div>
+          {/* CAMPOS ESPECIFICOS SEGUN EL TIPO DE INMUEBLE */}
+          {formType === "Terreno" ? (
+            <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-emerald-500/40 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="col-span-full flex items-center justify-between">
+                <h3 className="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">Caracteristicas del Terreno</h3>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">No requiere dormitorios ni baños</span>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Superficie Total (m²)</label>
+                <input name="meters" required type="number" min="0" step="0.1" placeholder="Ej: 450" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Dimensiones (Frente x Fondo)</label>
+                <input value={formDimensiones} onChange={(e) => setFormDimensiones(e.target.value)} placeholder="Ej: 15m x 30m" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Servicios Basicos</label>
+                <input value={formServiciosBasicos} onChange={(e) => setFormServiciosBasicos(e.target.value)} placeholder="Ej: Agua, Luz, Pavimento, Gas" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+            </div>
+          ) : formType === "Comercial" ? (
+            <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-blue-500/40 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="col-span-full flex items-center justify-between">
+                <h3 className="text-xs uppercase tracking-widest text-blue-600 dark:text-blue-400 font-bold">Inmueble Comercial</h3>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Oficina, local o galpon</span>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Subtipo Comercial</label>
+                <CustomSelect
+                  value={formSubtipoComercial}
+                  onChange={setFormSubtipoComercial}
+                  placeholder="Subtipo"
+                  options={[
+                    { value: "Oficina", label: "Oficina corporativa" },
+                    { value: "Local Comercial", label: "Local / Tienda" },
+                    { value: "Galpón / Depósito", label: "Galpon / Deposito" },
+                    { value: "Edificio Comercial", label: "Edificio completo" },
+                  ]}
+                  triggerClassName="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Superficie Util (m²)</label>
+                <input name="meters" required type="number" min="0" step="0.1" placeholder="Ej: 120" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Baños (opcional)</label>
+                <input name="bathrooms" type="number" min="0" defaultValue="1" placeholder="Ej: 2" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Piso / Nro (opcional)</label>
+                <input name="floor" type="text" placeholder="Ej: Piso 4, Of. 402" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+              </div>
+            </div>
+          ) : isProjectType(formType) ? (
+            <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <h3 className="text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold">Proyecto</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Configura la fecha de entrega y avance de obra para la cuenta regresiva pública.</p>
+                </div>
+                {countdownPreview && (
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-main)]/15 border border-[var(--accent-main)]/30 px-3 py-1.5 text-xs font-bold text-[var(--accent-main)]">
+                    <span>⏳ {countdownPreview.label}</span>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Fecha Estimada de Entrega</label>
+                  <input
+                    type="text"
+                    value={formFechaEntrega}
+                    onChange={(e) => setFormFechaEntrega(e.target.value)}
+                    placeholder="Ej: Diciembre 2026 o 2026-12"
+                    className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] font-semibold"
+                  />
+                  <span className="text-[10px] text-[var(--text-muted)]">Ej: 2026-12 o "Diciembre 2026"</span>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Avance de Obra (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formAvanceObra}
+                    onChange={(e) => setFormAvanceObra(e.target.value === "" ? "" : Number(e.target.value))}
+                    placeholder="Ej: 65"
+                    className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Fase de la Obra</label>
+                  <CustomSelect
+                    value={formFaseObra}
+                    onChange={setFormFaseObra}
+                    placeholder="Fase"
+                    options={[
+                      { value: "En planos / Pozo", label: "En planos / Pozo" },
+                      { value: "Excavacion y cimientos", label: "Excavacion y cimientos" },
+                      { value: "Obra gruesa", label: "Obra gruesa" },
+                      { value: "Obra fina y acabados", label: "Obra fina y acabados" },
+                      { value: "Entrega inmediata", label: "Entrega inmediata" },
+                    ]}
+                    triggerClassName="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Edificio / Nombre Proyecto</label>
+                  <input
+                    value={formComplejo}
+                    onChange={(e) => setFormComplejo(e.target.value)}
+                    placeholder="Ej: Sky Eclipse"
+                    className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] font-semibold"
+                  />
+                </div>
+              </div>
+              <ProjectUnitsEditor
+                units={projectUnits}
+                onChange={setProjectUnits}
+                defaultCurrency={formCurrency}
+                mensajeUrgencia={projectUrgencyMessage}
+                onMensajeUrgenciaChange={setProjectUrgencyMessage}
+                totalUnidades={projectTotalUnits}
+                onTotalUnidadesChange={setProjectTotalUnits}
+                unidadesDisponibles={projectAvailableUnits}
+                onUnidadesDisponiblesChange={setProjectAvailableUnits}
+                pisos={projectFloors}
+                onPisosChange={setProjectFloors}
+                reservaUsd={projectReserveUsd}
+                onReservaUsdChange={setProjectReserveUsd}
+                precioM2Desde={projectPriceM2From}
+                onPrecioM2DesdeChange={setProjectPriceM2From}
+                brochureUrl={projectBrochureUrl}
+                onBrochureUrlChange={setProjectBrochureUrl}
+                planesPago={projectPaymentPlans}
+                onPlanesPagoChange={setProjectPaymentPlans}
+                onSyncBaseValues={(minSurface, minPrice) => {
+                  const metersField = formRef.current?.elements.namedItem("meters") as HTMLInputElement | null;
+                  if (metersField && minSurface > 0) {
+                    metersField.value = String(minSurface);
+                  }
+                  const priceField = formRef.current?.elements.namedItem("price") as HTMLInputElement | null;
+                  if (priceField && minPrice > 0) {
+                    priceField.value = String(minPrice);
+                  }
+                }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[var(--border-soft)]">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">
+                    Superficie base o desde (m²)
+                  </label>
+                  <input name="meters" type="number" min="0" step="0.1" placeholder="Ej: 32 o calculado arriba" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                  <span className="text-[10px] text-[var(--text-muted)]">Si agregaste opciones arriba, se autocompleta con la mínima.</span>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">
+                    Dormitorios referenciales (opcional)
+                  </label>
+                  <input name="rooms" type="number" min="0" placeholder="Ej: 1" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* DEPARTAMENTO o CASA */
+            <div className="space-y-4">
+              <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-4 gap-4">
+                <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">
+                  {formType === "Casa" ? "Detalles de la Casa" : "Detalles del Departamento"}
+                </h3>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Habitaciones</label>
+                  <input name="rooms" type="number" required defaultValue="1" min="0" placeholder="Ej: 2" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Baños</label>
+                  <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="Ej: 1" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">Superficie (m²)</label>
+                  <input name="meters" type="number" min="0" step="0.1" placeholder="Ej: 65" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] block mb-1">
+                    {formType === "Casa" ? "Plantas / Niveles" : "Piso / Nro de Unidad"}
+                  </label>
+                  <input name="floor" type="text" placeholder={formType === "Casa" ? "Ej: 2 plantas" : "Ej: Piso 6, Dpto 6B"} className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                </div>
+              </div>
+
+              <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-2">
+                  {formType === "Casa" ? "Condominio y Ocupacion" : "Edificio y Expensas"}
+                </h3>
+                <input value={formComplejo} onChange={(e) => setFormComplejo(e.target.value)} placeholder={formType === "Casa" ? "Condominio / Complejo cerrado (opcional)" : "Ej: Torre Sky (un pin para varias unidades)"} className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                <CustomSelect value={formOcupacion} onChange={setFormOcupacion} placeholder="Ocupacion" options={[{ value: "Disponible", label: "Disponible" }, { value: "Reservado", label: "Reservado" }, { value: "Alquilado", label: "Alquilado / ocupado" }, { value: "Vendido", label: "Vendido" }]} triggerClassName="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]" />
+
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+                    <input type="checkbox" checked={formAmoblado} onChange={(e) => setFormAmoblado(e.target.checked)} className="rounded text-[var(--accent-main)]" />
+                    Amoblado
+                  </label>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+                    <input type="checkbox" checked={formExpensas} onChange={(e) => setFormExpensas(e.target.checked)} className="rounded text-[var(--accent-main)]" />
+                    {formType === "Casa" ? "Paga expensas de condominio" : "Precio incluye expensas"}
+                  </label>
+                  {formExpensas && (
+                    <div className="flex gap-2">
+                      <input name="expensasAmount" type="number" min="0" placeholder="Monto expensas" className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)]" />
+                      <select name="expensasCurrency" defaultValue="Bs" className="bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)]"><option>Bs</option><option>$ (USD)</option></select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-[var(--surface-panel-muted)] p-6 rounded-xl border border-[var(--accent-main)]/50 grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold mb-2">Ofertas Comerciales</h3>
@@ -537,6 +821,11 @@ export default function AdvisorDashboard() {
               {amenities.map((am) => <span key={am} className="bg-[var(--accent-main)]/15 text-[var(--accent-main)] text-xs font-bold px-2 py-1 rounded flex items-center gap-1">{am} <button type="button" onClick={() => removeAmenity(am)} className="hover:text-red-500"><X size={12} /></button></span>)}
               <input value={amenityInput} onChange={(e) => setAmenityInput(e.target.value)} onKeyDown={handleKeyDownAmenity} className="bg-transparent outline-none text-[var(--text-main)] text-sm flex-1 min-w-[150px]" placeholder={amenities.length === 0 ? "Anadir amenidades (presiona Enter)" : "Anadir mas..."} />
             </div>
+            <label className="text-xs uppercase tracking-widest text-[var(--text-main)] font-bold mb-2 block">Keywords</label>
+            <div className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-2 flex flex-wrap gap-2 items-center mb-4 min-h-[46px]">
+              {keywords.map((kw) => <span key={kw} className="bg-[var(--color-chocolate)]/10 text-[var(--text-main)] text-xs font-bold px-2 py-1 rounded flex items-center gap-1">{kw} <button type="button" onClick={() => removeKeyword(kw)} className="hover:text-red-500"><X size={12} /></button></span>)}
+              <input value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)} onKeyDown={handleKeyDownKeyword} className="bg-transparent outline-none text-[var(--text-main)] text-sm flex-1 min-w-[150px]" placeholder={keywords.length === 0 ? "Ej: ideal pareja, inversion, zona premium" : "Anadir keyword..."} />
+            </div>
             <label className="text-xs uppercase tracking-widest text-[var(--text-main)] font-bold mb-2 block">Multimedia de la Propiedad</label>
             <div className="mb-4 flex flex-col md:flex-row md:items-center gap-3 rounded border border-dashed border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 p-4">
               <label className={`inline-flex items-center justify-center gap-2 rounded bg-[var(--accent-main)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#2F241D] shadow-md transition-colors ${isCloudinaryUploading ? "opacity-60 cursor-wait" : "hover:bg-[var(--accent-hover)] hover:text-white cursor-pointer"}`}>
@@ -544,7 +833,19 @@ export default function AdvisorDashboard() {
                 {isCloudinaryUploading ? "Subiendo..." : "Seleccionar archivos"}
                 <input type="file" multiple accept="image/*,video/*" className="hidden" disabled={isCloudinaryUploading} onChange={handleCloudinaryUpload} />
               </label>
-              <span className="text-[11px] text-[var(--text-muted)]">Las URLs apareceran abajo automaticamente.</span>
+              <DriveMediaPicker
+                user={user}
+                disabled={isCloudinaryUploading}
+                onUploaded={(urls) => {
+                  setImageLinks((current) => {
+                    const existing = current.split(",").map((url) => url.trim()).filter(Boolean);
+                    return [...existing, ...urls].join(", ");
+                  });
+                }}
+                onError={setErrorMsg}
+                onStatus={setSuccessMsg}
+              />
+              <span className="text-[11px] text-[var(--text-muted)]">Computadora o Google Drive. Las URLs aparecen abajo.</span>
             </div>
             <textarea name="imageLinks" required rows={4} value={imageLinks} onChange={(e) => setImageLinks(e.target.value)} className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)] mb-4" placeholder="Ej: https://res.cloudinary.com/.../foto1.jpg" />
           </div>

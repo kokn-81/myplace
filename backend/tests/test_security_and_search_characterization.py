@@ -24,6 +24,24 @@ from nia_search import (
 )
 
 
+class PropertyStatusTests(unittest.TestCase):
+    def test_normalizes_status_without_losing_publicado(self):
+        from main import OfertaSchema, InmuebleCreate, normalizar_estado_inmueble, resolver_estado_publicacion
+        self.assertEqual(normalizar_estado_inmueble("publicado"), "Publicado")
+        self.assertEqual(normalizar_estado_inmueble("BORRADOR"), "Borrador")
+        payload = InmuebleCreate(
+            titulo="Depto",
+            habitaciones=1,
+            ciudad="Equipetrol",
+            lat=-17.7,
+            lng=-63.1,
+            tipo_inmueble="Departamento",
+            descripcion="x",
+            ofertas=[OfertaSchema(operacion="Venta", precio=90000, estado="Publicado")],
+        )
+        self.assertEqual(resolver_estado_publicacion(payload, payload.ofertas or []), "Publicado")
+
+
 class ChatRequestLimitsTests(unittest.TestCase):
     def test_accepts_boundary_values_and_strips_message(self):
         request = PeticionChat(
@@ -274,5 +292,64 @@ class FirestoreRulesRegressionTests(unittest.TestCase):
         self.assertNotIn("'role'", owner_update)
 
 
+class PropertyTypesAndCharacteristicsTests(unittest.TestCase):
+    def test_property_type_schemas_and_search_text(self):
+        from main import InmuebleCreate, aplicar_campos_busqueda_inmueble
+        from models import InmuebleDB
+        from nia_search import TYPE_SYNONYMS, parse_search_filters
+
+        # Terreno does not require rooms
+        terreno_payload = InmuebleCreate(
+            titulo="Terreno en Urubo",
+            ciudad="Urubo",
+            lat=-17.75,
+            lng=-63.20,
+            tipo_inmueble="Terreno",
+            superficie_m2=450.0,
+            dimensiones="15x30m",
+            servicios_basicos="Agua, Luz",
+            descripcion="Hermoso terreno plano",
+        )
+        self.assertEqual(terreno_payload.habitaciones, 0)
+        self.assertEqual(terreno_payload.dimensiones, "15x30m")
+
+        # Proyecto preventa with countdown data
+        preventa_payload = InmuebleCreate(
+            titulo="Torre Sky Loft",
+            ciudad="Equipetrol",
+            lat=-17.76,
+            lng=-63.19,
+            tipo_inmueble="Proyecto (preventa)",
+            fecha_entrega="2026-12",
+            avance_obra=65,
+            fase_obra="Obra fina",
+            descripcion="Preventa exclusiva con entrega fin de ano",
+        )
+        self.assertEqual(preventa_payload.fecha_entrega, "2026-12")
+        self.assertEqual(preventa_payload.avance_obra, 65)
+
+        # InmuebleDB search text contains preventa and progress
+        inm_db = InmuebleDB(
+            titulo="Torre Sky Loft",
+            ciudad="Equipetrol",
+            lat=-17.76,
+            lng=-63.19,
+            tipo_inmueble="Proyecto (preventa)",
+            descripcion="Preventa exclusiva",
+        )
+        aplicar_campos_busqueda_inmueble(inm_db, preventa_payload)
+        self.assertIn("entrega 2026 12", inm_db.search_text)
+        self.assertIn("avance 65", inm_db.search_text)
+        self.assertIn("obra fina", inm_db.search_text)
+
+        # Synonyms match
+        filters_preventa = parse_search_filters("busco departamentos en preventa en equipetrol")
+        self.assertEqual(filters_preventa.property_type, "Proyecto (preventa)")
+
+        filters_comercial = parse_search_filters("busco oficina en alquiler")
+        self.assertEqual(filters_comercial.property_type, "Comercial")
+
+
 if __name__ == "__main__":
     unittest.main()
+

@@ -1,9 +1,12 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Building2, Database, Loader2, LogOut, Moon, Pencil, RefreshCw, Save, Search, ShieldCheck, Sun, Trash2, X } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 import { auth, authPersistenceReady } from "../firebase";
+import ProjectUnitsEditor from "../components/ProjectUnitsEditor";
+import { ProjectUnitOption, parseProjectUnitsJson, parseProjectDetailsJson, serializeProjectUnitsJson, serializeProjectDetailsJson, getProjectUnitsSummary } from "../projectUnits";
+import { PROPERTY_TYPES, isProjectType } from "../types";
 
 interface LocalAgent {
   id: string;
@@ -16,7 +19,7 @@ const formatOffersSummary = (property: any) => {
   const offers = Array.isArray(property?.ofertas) && property.ofertas.length > 0
     ? property.ofertas
     : [{ operacion: property.operacion, precio: property.precio_usd, moneda: property.moneda }];
-  return offers.map((offer: any) => `${offer.operacion}: ${offer.moneda || "$ (USD)"} ${Number(offer.precio || 0).toLocaleString("es-BO")}`).join(" Â· ");
+  return offers.map((offer: any) => `${offer.operacion}: ${offer.moneda || "$ (USD)"} ${Number(offer.precio || 0).toLocaleString("es-BO")}`).join(" · ");
 };
 
 const getPropertyImageLinks = (inm: any) => Array.isArray(inm.images) ? inm.images.join(", ") : (inm.imagenes || "");
@@ -33,6 +36,17 @@ export default function AdminCatalogDashboard() {
   const [query, setQuery] = useState("");
   const [editingProperty, setEditingProperty] = useState<any | null>(null);
   const [editOperation, setEditOperation] = useState("Venta");
+  const [editStatus, setEditStatus] = useState("Borrador");
+  const [editPropertyType, setEditPropertyType] = useState("Departamento");
+  const [editProjectUnits, setEditProjectUnits] = useState<ProjectUnitOption[]>([]);
+  const [editMensajeUrgencia, setEditMensajeUrgencia] = useState("");
+  const [editTotalUnidades, setEditTotalUnidades] = useState<number | "">("");
+  const [editUnidadesDisponibles, setEditUnidadesDisponibles] = useState<number | "">("");
+  const [editPisos, setEditPisos] = useState<number | "">("");
+  const [editReservaUsd, setEditReservaUsd] = useState<number | "">("");
+  const [editPrecioM2Desde, setEditPrecioM2Desde] = useState<number | "">("");
+  const [editBrochureUrl, setEditBrochureUrl] = useState("");
+  const [editPlanesPago, setEditPlanesPago] = useState("");
   const [isSavingEdit, setIsSavingEdit] = useState(false);
   const [regeneratingId, setRegeneratingId] = useState<string | number | null>(null);
   const [isBackfillingEmbeddings, setIsBackfillingEmbeddings] = useState(false);
@@ -233,20 +247,25 @@ export default function AdminCatalogDashboard() {
     const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
     const agentId = Number(fd.get("agentId")) || 0;
     const operation = String(fd.get("operation") || editOperation || "Venta");
-    const propertyStatus = String(fd.get("status") || editingProperty.estado || "Borrador");
+    const propertyStatus = editStatus || String(fd.get("status") || editingProperty.estado || "Borrador");
     const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus);
     const primaryOffer = offers[0];
+    const propertyType = String(fd.get("type") || editingProperty.tipo_inmueble || "Departamento");
+    const isTerreno = propertyType === "Terreno";
+    const isComercial = propertyType === "Comercial";
+    const isPreventa = isProjectType(propertyType);
+
     const payload = {
       titulo: String(fd.get("title") || "").trim() || "Propiedad sin titulo",
       precio_usd: primaryOffer?.precio || 0,
       moneda: primaryOffer?.moneda || "$ (USD)",
-      habitaciones: Number(fd.get("rooms")) || 0,
-      banos: Number(fd.get("bathrooms")) || 1,
+      habitaciones: isTerreno ? 0 : Number(fd.get("rooms")) || 0,
+      banos: isTerreno ? 0 : Number(fd.get("bathrooms")) || 1,
       ciudad: String(fd.get("area") || "").trim() || "Santa Cruz",
       lat,
       lng,
       operacion: primaryOffer?.operacion || operation,
-      tipo_inmueble: String(fd.get("type") || "Departamento"),
+      tipo_inmueble: propertyType,
       estado: propertyStatus,
       descripcion: String(fd.get("description") || "").trim() || "Sin descripcion.",
       agente_id: agentId,
@@ -254,6 +273,26 @@ export default function AdminCatalogDashboard() {
       amenidades: String(fd.get("amenities") || "").trim(),
       keywords: String(fd.get("keywords") || "").trim(),
       ofertas: offers,
+      superficie_m2: fd.get("meters") ? Number(fd.get("meters")) : (isPreventa && editProjectUnits.length > 0 ? getProjectUnitsSummary(editProjectUnits).minSurface || null : editingProperty.superficie_m2 ?? null),
+      amoblado: isTerreno || isComercial ? false : (fd.get("amoblado") ? Boolean(fd.get("amoblado") === "on" || fd.get("amoblado") === "true") : Boolean(editingProperty.amoblado)),
+      fecha_entrega: isPreventa ? (fd.get("fechaEntrega") ? String(fd.get("fechaEntrega")).trim() : editingProperty.fecha_entrega || null) : null,
+      avance_obra: isPreventa ? (fd.get("avanceObra") ? Number(fd.get("avanceObra")) : editingProperty.avance_obra ?? null) : null,
+      fase_obra: isPreventa ? (fd.get("faseObra") ? String(fd.get("faseObra")).trim() : editingProperty.fase_obra || null) : null,
+      subtipo_comercial: isComercial ? (fd.get("subtipoComercial") ? String(fd.get("subtipoComercial")).trim() : editingProperty.subtipo_comercial || null) : null,
+      dimensiones: isTerreno ? (fd.get("dimensiones") ? String(fd.get("dimensiones")).trim() : editingProperty.dimensiones || null) : null,
+      datos_especificos_json: isPreventa
+        ? serializeProjectDetailsJson({
+            unidades: editProjectUnits,
+            mensajeUrgencia: editMensajeUrgencia,
+            totalUnidades: Number(editTotalUnidades) || null,
+            unidadesDisponibles: Number(editUnidadesDisponibles) || null,
+            pisos: Number(editPisos) || null,
+            reservaUsd: Number(editReservaUsd) || null,
+            precioM2Desde: Number(editPrecioM2Desde) || null,
+            brochureUrl: editBrochureUrl,
+            planesPago: editPlanesPago,
+          })
+        : null,
     };
 
     if (!payload.agente_id || offers.length === 0) {
@@ -398,7 +437,22 @@ export default function AdminCatalogDashboard() {
                     <span>Banos: <strong className="text-[var(--text-main)]">{inm.banos ?? 1}</strong></span>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <button onClick={() => { setEditingProperty(inm); setEditOperation(getOfferMode(inm)); }} className="rounded bg-[var(--accent-main)] px-3 py-2 text-xs font-bold uppercase tracking-widest text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2">
+                    <button onClick={() => {
+                      setEditingProperty(inm);
+                      setEditOperation(getOfferMode(inm));
+                      setEditStatus(inm.estado || "Borrador");
+                      setEditPropertyType(inm.tipo_inmueble || "Departamento");
+                      const proj = parseProjectDetailsJson(inm.datos_especificos_json || inm);
+                      setEditProjectUnits(proj.unidades);
+                      setEditMensajeUrgencia(proj.mensajeUrgencia || inm.mensaje_urgencia || "");
+                      setEditTotalUnidades(proj.totalUnidades ?? inm.total_unidades ?? "");
+                      setEditUnidadesDisponibles(proj.unidadesDisponibles ?? inm.unidades_disponibles ?? "");
+                      setEditPisos(proj.pisos ?? inm.pisos ?? "");
+                      setEditReservaUsd(proj.reservaUsd ?? inm.reserva_usd ?? "");
+                      setEditPrecioM2Desde(proj.precioM2Desde ?? inm.precio_m2_desde ?? "");
+                      setEditBrochureUrl(proj.brochureUrl || inm.brochure_url || "");
+                      setEditPlanesPago(proj.planesPago || inm.planes_pago || "");
+                    }} className="rounded bg-[var(--accent-main)] px-3 py-2 text-xs font-bold uppercase tracking-widest text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-2">
                       <Pencil size={13} /> Editar
                     </button>
                     <button onClick={() => handleRegenerateSearchText(inm.id)} disabled={regeneratingId === inm.id} className="rounded border border-[var(--border-soft)] px-3 py-2 text-xs font-bold uppercase tracking-widest text-[var(--text-main)] hover:border-[var(--accent-main)] disabled:opacity-60 flex items-center gap-2">
@@ -447,8 +501,8 @@ export default function AdminCatalogDashboard() {
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Titulo comercial</label><input name="title" required defaultValue={editingProperty.titulo || ""} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold" /></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Asesor</label><select name="agentId" required defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option value="">Selecciona un asesor...</option>{agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}</select></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Operacion</label><select name="operation" value={editOperation} onChange={(e) => setEditOperation(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Venta</option><option>Alquiler</option><option>Alquiler y Venta</option><option>Inversion</option></select></div>
-                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Tipo</label><select name="type" defaultValue={editingProperty.tipo_inmueble || "Departamento"} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Departamento</option><option>Casa</option><option>Oficina</option><option>Terreno</option><option>Local Comercial</option></select></div>
-                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Estado</label><select name="status" defaultValue={editingProperty.estado || "Borrador"} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Borrador</option><option>Publicado</option><option>Pausado</option></select></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Tipo</label><select name="type" value={editPropertyType} onChange={(e) => setEditPropertyType(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold">{PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}</select></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Estado</label><select name="status" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Borrador</option><option>Publicado</option><option>Pausado</option></select></div>
                 {editOperation === "Alquiler y Venta" ? <>
                   <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Moneda alquiler</label><select name="rentCurrency" defaultValue={findOffer(editingProperty, "Alquiler")?.moneda || "Bs"} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]"><option>Bs</option><option>$ (USD)</option></select></div>
                   <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Precio alquiler</label><input name="rentPrice" type="number" min="0" defaultValue={findOffer(editingProperty, "Alquiler")?.precio || 0} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
@@ -460,9 +514,45 @@ export default function AdminCatalogDashboard() {
                 </>}
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Habitaciones</label><input name="rooms" type="number" min="0" defaultValue={editingProperty.habitaciones || 0} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Banos</label><input name="bathrooms" type="number" min="0" defaultValue={editingProperty.banos || 1} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Superficie (m²)</label><input name="meters" type="number" min="0" step="0.1" defaultValue={editingProperty.superficie_m2 || ""} placeholder="Ej: 120" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div className="flex items-center pt-5">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider cursor-pointer text-[var(--text-main)]">
+                    <input name="amoblado" type="checkbox" defaultChecked={Boolean(editingProperty.amoblado)} className="rounded text-[var(--accent-main)]" />
+                    Amoblado
+                  </label>
+                </div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Zona</label><input name="area" defaultValue={editingProperty.ciudad || ""} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Coordenadas</label><input name="coords" defaultValue={`${editingProperty.lat || 0}, ${editingProperty.lng || 0}`} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Fecha Entrega (Preventa)</label><input name="fechaEntrega" defaultValue={editingProperty.fecha_entrega || ""} placeholder="Ej: 2026-12" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Avance Obra % (Preventa)</label><input name="avanceObra" type="number" min="0" max="100" defaultValue={editingProperty.avance_obra ?? ""} placeholder="Ej: 65" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Fase de Obra (Preventa)</label><input name="faseObra" defaultValue={editingProperty.fase_obra || ""} placeholder="Ej: Obra gruesa" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Subtipo Comercial</label><input name="subtipoComercial" defaultValue={editingProperty.subtipo_comercial || ""} placeholder="Ej: Oficina corporativa" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Dimensiones (Terreno)</label><input name="dimensiones" defaultValue={editingProperty.dimensiones || ""} placeholder="Ej: 15m x 30m" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Servicios Basicos (Terreno)</label><input name="serviciosBasicos" defaultValue={editingProperty.servicios_basicos || ""} placeholder="Ej: Agua, Luz, Gas" className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)]" /></div>
               </div>
+              {isProjectType(editPropertyType) && (
+                <ProjectUnitsEditor
+                  units={editProjectUnits}
+                  onChange={setEditProjectUnits}
+                  defaultCurrency="$ (USD)"
+                  mensajeUrgencia={editMensajeUrgencia}
+                  onMensajeUrgenciaChange={setEditMensajeUrgencia}
+                  totalUnidades={editTotalUnidades}
+                  onTotalUnidadesChange={setEditTotalUnidades}
+                  unidadesDisponibles={editUnidadesDisponibles}
+                  onUnidadesDisponiblesChange={setEditUnidadesDisponibles}
+                  pisos={editPisos}
+                  onPisosChange={setEditPisos}
+                  reservaUsd={editReservaUsd}
+                  onReservaUsdChange={setEditReservaUsd}
+                  precioM2Desde={editPrecioM2Desde}
+                  onPrecioM2DesdeChange={setEditPrecioM2Desde}
+                  brochureUrl={editBrochureUrl}
+                  onBrochureUrlChange={setEditBrochureUrl}
+                  planesPago={editPlanesPago}
+                  onPlanesPagoChange={setEditPlanesPago}
+                />
+              )}
               <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Descripcion publica</label><textarea name="description" rows={5} defaultValue={editingProperty.descripcion || ""} className="w-full resize-y rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold" /></div>
               <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Amenidades</label><textarea name="amenities" rows={3} defaultValue={getPropertyAmenitiesText(editingProperty)} className="w-full resize-y rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold" placeholder="Piscina, Parqueo, Sauna" /></div>
               <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Keywords de busqueda</label><textarea name="keywords" rows={2} defaultValue={getPropertyKeywordsText(editingProperty)} className="w-full resize-y rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold" placeholder="ideal pareja, inversion, zona premium" /></div>

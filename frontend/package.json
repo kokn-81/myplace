@@ -9,7 +9,7 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "test": "tsx --test src/searchIntent.test.ts src/guidedSearch.test.ts src/mapLocation.test.ts src/visitorId.test.ts src/whatsappMessage.test.ts",
+    "test": "tsx --test src/searchIntent.test.ts src/guidedSearch.test.ts src/mapLocation.test.ts src/visitorId.test.ts src/whatsappMessage.test.ts src/googleDrive.test.ts src/projectCountdown.test.ts src/projectUnits.test.ts src/propertyArchetypes.test.ts src/geographicLocations.test.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

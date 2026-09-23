@@ -1,3 +1,6 @@
+import type { ProjectUnitOption } from "./projectUnits";
+export type { ProjectUnitOption };
+
 export interface PropertyAgent {
   id?: string;
   name?: string;
@@ -32,6 +35,8 @@ export interface Property {
   rooms: number;
   bathrooms: number;
   area: string;
+  city?: string;
+  zone?: string;
   lat: number;
   lng: number;
   agentId?: string;
@@ -47,7 +52,45 @@ export interface Property {
   ocupacion?: string;
   superficieM2?: number | null;
   amoblado?: boolean;
+  fechaEntrega?: string | null;
+  avanceObra?: number | null;
+  faseObra?: string | null;
+  subtipoComercial?: string | null;
+  dimensiones?: string | null;
+  serviciosBasicos?: string | null;
+  unidadesProyecto?: ProjectUnitOption[] | null;
+  datosEspecificosJson?: string | null;
+  piso?: string | null;
+  mensajeUrgencia?: string | null;
+  totalUnidades?: number | null;
+  unidadesDisponibles?: number | null;
+  pisos?: number | null;
+  reservaUsd?: number | null;
+  precioM2Desde?: number | null;
+  brochureUrl?: string | null;
+  planesPago?: string | null;
 }
+
+export type PropertyType = "Departamento" | "Casa" | "Comercial" | "Terreno" | "Proyecto (preventa)" | "Proyecto";
+export const PROPERTY_TYPES: PropertyType[] = [
+  "Departamento",
+  "Casa",
+  "Comercial",
+  "Terreno",
+  "Proyecto",
+];
+
+export const formatPropertyTypeLabel = (type?: string | null): string => {
+  if (!type) return "Inmueble";
+  if (type === "Proyecto (preventa)" || type === "Proyecto") return "Proyecto";
+  return type;
+};
+
+export const isProjectType = (type?: string | null): boolean => {
+  if (!type) return false;
+  const t = type.toLowerCase();
+  return t.includes("proyecto") || t.includes("preventa");
+};
 
 export interface Agent {
   id: string;

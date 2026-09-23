@@ -1,8 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, Sparkles, BarChart3, Building2 } from "lucide-react";
+import { Save, X, UploadCloud, Loader2, LogOut, ArrowLeft, Sun, Moon, Trash2, ShieldCheck, UserCircle, Pencil, BarChart3, Building2 } from "lucide-react";
 import { CustomSelect } from "../components/CustomSelect";
+import DriveMediaPicker from "../components/DriveMediaPicker";
 import { API_BASE, AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
+import { calculateDeliveryCountdown } from "../projectCountdown";
+import ProjectUnitsEditor from "../components/ProjectUnitsEditor";
+import { ProjectUnitOption, serializeProjectUnitsJson, serializeProjectDetailsJson, getProjectUnitsSummary } from "../projectUnits";
+import { PROPERTY_TYPES, isProjectType, formatPropertyTypeLabel } from "../types";
 
 // Seguridad Firebase
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from "firebase/auth";
@@ -13,17 +18,6 @@ interface LocalAgent {
   name: string;
   whatsapp: string;
   email?: string;
-}
-
-interface BulkDraftResult {
-  index: number;
-  title: string;
-  status: "ready" | "error";
-  data?: any;
-  missing?: string[];
-  questions?: string[];
-  error?: string;
-  sourceText?: string;
 }
 
 export default function AdminDashboard() {
@@ -104,14 +98,22 @@ export default function AdminDashboard() {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState<string>("");
   const [formStatus, setFormStatus] = useState<string>("Borrador");
-  const [isAiPanelOpen, setIsAiPanelOpen] = useState<boolean>(false);
-  const [aiText, setAiText] = useState<string>("");
-  const [isAiExtracting, setIsAiExtracting] = useState<boolean>(false);
-  const [aiQuestions, setAiQuestions] = useState<string[]>([]);
-  const [isBulkPanelOpen, setIsBulkPanelOpen] = useState<boolean>(false);
-  const [bulkText, setBulkText] = useState<string>("");
-  const [isBulkExtracting, setIsBulkExtracting] = useState<boolean>(false);
-  const [bulkResults, setBulkResults] = useState<BulkDraftResult[]>([]);
+  const [formFechaEntrega, setFormFechaEntrega] = useState<string>("");
+  const [formAvanceObra, setFormAvanceObra] = useState<number | "">("");
+  const [formFaseObra, setFormFaseObra] = useState<string>("Obra gruesa");
+  const [formSubtipoComercial, setFormSubtipoComercial] = useState<string>("Oficina");
+  const [formDimensiones, setFormDimensiones] = useState<string>("");
+  const [formServiciosBasicos, setFormServiciosBasicos] = useState<string>("");
+  const [formAmoblado, setFormAmoblado] = useState<boolean>(false);
+  const [projectUnits, setProjectUnits] = useState<ProjectUnitOption[]>([]);
+  const [projectUrgencyMessage, setProjectUrgencyMessage] = useState("");
+  const [projectTotalUnits, setProjectTotalUnits] = useState<number | "">("");
+  const [projectAvailableUnits, setProjectAvailableUnits] = useState<number | "">("");
+  const [projectFloors, setProjectFloors] = useState<number | "">("");
+  const [projectReserveUsd, setProjectReserveUsd] = useState<number | "">("");
+  const [projectPriceM2From, setProjectPriceM2From] = useState<number | "">("");
+  const [projectBrochureUrl, setProjectBrochureUrl] = useState("");
+  const [projectPaymentPlans, setProjectPaymentPlans] = useState("");
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const defaultZones = ["Norte", "Sur", "Este", "Oeste", "Equipetrol", "Urubo", "Centro"];
@@ -127,6 +129,11 @@ export default function AdminDashboard() {
     { value: "Publicado", label: "Publicado" },
     { value: "Pausado", label: "Pausado" },
   ];
+
+  const countdownPreview = React.useMemo(() => {
+    if (!isProjectType(formType) || !formFechaEntrega) return null;
+    return calculateDeliveryCountdown(formFechaEntrega);
+  }, [formType, formFechaEntrega]);
 
   const getOfferMode = (property: any) => {
     const offers = Array.isArray(property?.ofertas) ? property.ofertas : [];
@@ -285,224 +292,6 @@ export default function AdminDashboard() {
   const getPropertyImageLinks = (inm: any) => Array.isArray(inm.images) ? inm.images.join(", ") : (inm.imagenes || "");
   const getPropertyAmenitiesText = (inm: any) => Array.isArray(inm.amenidades) ? inm.amenidades.join(", ") : (inm.amenidades || "");
   const getPropertyKeywordsText = (inm: any) => Array.isArray(inm.keywords) ? inm.keywords.join(", ") : (inm.keywords || "");
-  const setFormFieldValue = (name: string, value: unknown) => {
-    const field = formRef.current?.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
-    if (!field || value === null || value === undefined || value === "") return;
-    field.value = String(value);
-  };
-
-  const normalizeAiOperation = (value?: string) => {
-    const normalized = String(value || "").toLowerCase();
-    if (normalized.includes("alquiler") && normalized.includes("venta")) return "Alquiler y Venta";
-    if (normalized.includes("alquiler")) return "Alquiler";
-    if (normalized.includes("inversion")) return "Inversion";
-    return "Venta";
-  };
-
-  const normalizeAiType = (value?: string) => {
-    const normalized = String(value || "").toLowerCase();
-    if (normalized.includes("casa")) return "Casa";
-    if (normalized.includes("terreno") || normalized.includes("lote")) return "Terreno";
-    if (normalized.includes("oficina")) return "Oficina";
-    if (normalized.includes("local")) return "Local Comercial";
-    return "Departamento";
-  };
-
-  const applyAiOfferFields = (data: any, operation: string) => {
-    const offers = Array.isArray(data.ofertas) ? data.ofertas : [];
-    if (operation === "Alquiler y Venta") {
-      const rent = offers.find((offer: any) => String(offer.operacion || "").toLowerCase().includes("alquiler"));
-      const sale = offers.find((offer: any) => String(offer.operacion || "").toLowerCase().includes("venta"));
-      setFormFieldValue("rentPrice", rent?.precio || "");
-      setFormFieldValue("rentCurrency", rent?.moneda || "Bs");
-      setFormFieldValue("salePrice", sale?.precio || "");
-      setFormFieldValue("saleCurrency", sale?.moneda || "$ (USD)");
-      return;
-    }
-
-    const mainOffer = offers[0];
-    setFormFieldValue("price", mainOffer?.precio || data.precio || "");
-  };
-
-  const handleAiExtractProperty = async () => {
-    const text = aiText.trim();
-    if (!text) {
-      setErrorMsg("Pega el texto del asesor antes de usar IA.");
-      return;
-    }
-
-    setIsAiExtracting(true);
-    setErrorMsg("");
-    setSuccessMsg("");
-    setAiQuestions([]);
-
-    try {
-      const response = await authFetch("/inmuebles/extraer-datos", user, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto: text }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.detail || "No se pudo extraer la informacion.");
-
-      const data = result.data || {};
-      const operation = normalizeAiOperation(data.operacion);
-      const type = normalizeAiType(data.tipo_inmueble);
-      const currency = data.moneda === "Bs" ? "Bs" : "$ (USD)";
-
-      setFormOperation(operation);
-      setFormType(type);
-      setFormCurrency(currency);
-      setFormStatus("Borrador");
-
-      const zone = String(data.ciudad || "").trim();
-      if (zone) {
-        setIsCustomZone(!allZones.includes(zone));
-        setFormZone(zone);
-      }
-
-      if (Array.isArray(data.amenidades)) {
-        setAmenities(data.amenidades.map((item: unknown) => String(item).trim()).filter(Boolean));
-      }
-
-
-      if (Array.isArray(data.keywords)) {
-        setKeywords(data.keywords.map((item: unknown) => String(item).trim()).filter(Boolean));
-      }
-
-      setFormFieldValue("title", data.titulo);
-      setFormFieldValue("rooms", data.habitaciones);
-      setFormFieldValue("bathrooms", data.banos);
-      setFormFieldValue("description", data.descripcion);
-      if (data.lat !== null && data.lat !== undefined && data.lng !== null && data.lng !== undefined) {
-        setFormFieldValue("coords", `${data.lat}, ${data.lng}`);
-      }
-
-      window.setTimeout(() => applyAiOfferFields(data, operation), 0);
-      setAiQuestions(Array.isArray(result.questions) ? result.questions : []);
-      setSuccessMsg("La IA completo el borrador. Revisa los campos antes de guardar.");
-    } catch (err: any) {
-      setErrorMsg("Error con IA: " + err.message);
-    } finally {
-      setIsAiExtracting(false);
-    }
-  };
-
-
-  const loadAiDataIntoForm = (
-    data: any,
-    questions: string[] = [],
-    options: { clearAgent?: boolean; clearImages?: boolean; message?: string } = {},
-  ) => {
-    formRef.current?.reset();
-    const operation = normalizeAiOperation(data.operacion);
-    const type = normalizeAiType(data.tipo_inmueble);
-    const currency = data.moneda === "Bs" ? "Bs" : "$ (USD)";
-
-    if (options.clearAgent) setFormAgentId("");
-    if (options.clearImages) setImageLinks("");
-    setFormOperation(operation);
-    setFormType(type);
-    setFormCurrency(currency);
-    setFormStatus("Borrador");
-
-    const zone = String(data.ciudad || "").trim();
-    if (zone) {
-      setIsCustomZone(!allZones.includes(zone));
-      setFormZone(zone);
-    } else {
-      setFormZone("");
-      setIsCustomZone(false);
-    }
-
-    setAmenities(Array.isArray(data.amenidades) ? data.amenidades.map((item: unknown) => String(item).trim()).filter(Boolean) : []);
-    setKeywords(Array.isArray(data.keywords) ? data.keywords.map((item: unknown) => String(item).trim()).filter(Boolean) : []);
-
-    setFormFieldValue("title", data.titulo);
-    setFormFieldValue("rooms", data.habitaciones);
-    setFormFieldValue("bathrooms", data.banos);
-    setFormFieldValue("description", data.descripcion);
-    if (data.lat !== null && data.lat !== undefined && data.lng !== null && data.lng !== undefined) {
-      setFormFieldValue("coords", `${data.lat}, ${data.lng}`);
-    }
-
-    window.setTimeout(() => applyAiOfferFields(data, operation), 0);
-    setAiQuestions(questions);
-    setSuccessMsg(options.message || "La IA completo el borrador. Revisa los campos antes de guardar.");
-  };
-  const splitBulkPropertyTexts = (raw: string) =>
-    raw
-      .split(/(?:^|\n)\s*---+\s*(?:\n|$)/g)
-      .map((item) => item.trim())
-      .filter(Boolean);
-
-  const handleBulkDraftImport = async () => {
-    const items = splitBulkPropertyTexts(bulkText);
-    if (items.length === 0) {
-      setErrorMsg("Pega uno o mas textos separados por --- para preparar borradores.");
-      return;
-    }
-    if (items.length > 20 && !window.confirm(`Vas a procesar ${items.length} inmuebles. Puede tardar varios minutos. Continuar?`)) return;
-
-    setIsBulkExtracting(true);
-    setErrorMsg("");
-    setSuccessMsg("");
-    setBulkResults([]);
-
-    const results: BulkDraftResult[] = [];
-
-    for (let index = 0; index < items.length; index += 1) {
-      const sourceText = items[index];
-      try {
-        const extractionResponse = await authFetch("/inmuebles/extraer-datos", user, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ texto: sourceText }),
-        });
-        const extraction = await extractionResponse.json().catch(() => ({}));
-        if (!extractionResponse.ok) throw new Error(extraction.detail || "No se pudo extraer este texto.");
-
-        const data = extraction.data || {};
-        results.push({
-          index: index + 1,
-          title: String(data.titulo || `Texto ${index + 1}`).trim(),
-          status: "ready",
-          data,
-          missing: Array.isArray(extraction.missing_fields) ? extraction.missing_fields : [],
-          questions: Array.isArray(extraction.questions) ? extraction.questions : [],
-          sourceText,
-        });
-      } catch (err: any) {
-        results.push({
-          index: index + 1,
-          title: `Texto ${index + 1}`,
-          status: "error",
-          error: err.message || "Error desconocido",
-          sourceText,
-        });
-      }
-      setBulkResults([...results]);
-    }
-
-    const readyCount = results.filter((item) => item.status === "ready").length;
-    setSuccessMsg(`NIA preparo ${readyCount}/${items.length} borradores. Carga cada uno al formulario; el asesor queda en blanco para que lo asignes manualmente.`);
-    setIsBulkExtracting(false);
-  };
-
-  const loadBulkDraftToForm = (draft: BulkDraftResult) => {
-    if (!draft.data) return;
-    loadAiDataIntoForm(draft.data, draft.questions || [], {
-      clearAgent: true,
-      clearImages: true,
-      message: "Borrador cargado al formulario con asesor en blanco. Revisa datos, agrega imagenes y asigna asesor cuando corresponda.",
-    });
-    setIsBulkPanelOpen(false);
-    window.setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-  };
-
-  const removeBulkDraft = (index: number) => {
-    setBulkResults((items) => items.filter((item) => item.index !== index));
-  };
 
   const handleUpdateAgent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -540,27 +329,40 @@ export default function AdminDashboard() {
     const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
     const agentId = Number(fd.get("agentId")) || 0;
     const operation = String(fd.get("operation") || editOperation || "Venta");
-    const propertyStatus = String(fd.get("status") || editingProperty.estado || "Borrador");
+    const propertyType = String(fd.get("type") || editingProperty.tipo_inmueble || "Departamento");
+    const propertyStatus = String(editingProperty.estado || fd.get("status") || "Borrador").trim() || "Borrador";
     const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus);
     const primaryOffer = offers[0];
+    const isTerreno = propertyType === "Terreno";
+    const isComercial = propertyType === "Comercial";
+    const isPreventa = isProjectType(propertyType);
+
     const payload = {
       titulo: String(fd.get("title") || "").trim() || "Propiedad sin titulo",
       precio_usd: primaryOffer?.precio || 0,
       moneda: primaryOffer?.moneda || "$ (USD)",
-      habitaciones: Number(fd.get("rooms")) || 0,
-      banos: Number(fd.get("bathrooms")) || 1,
+      habitaciones: isTerreno ? 0 : Number(fd.get("rooms")) || 0,
+      banos: isTerreno ? 0 : Number(fd.get("bathrooms")) || 1,
       ciudad: String(fd.get("area") || "").trim() || "Santa Cruz",
       lat,
       lng,
       operacion: primaryOffer?.operacion || operation,
-      tipo_inmueble: String(fd.get("type") || "Departamento"),
+      tipo_inmueble: propertyType,
       estado: propertyStatus,
       descripcion: String(fd.get("description") || "").trim() || "Sin descripcion.",
-      agente_id: agentId,
-      imagenes: String(fd.get("imageLinks") || "").trim(),
-      amenidades: String(fd.get("amenities") || "").trim(),
-      keywords: String(fd.get("keywords") || "").trim(),
+      agente_id: agentId || null,
+      imagenes: fd.get("imageLinks") !== null ? String(fd.get("imageLinks")).trim() : (editingProperty.imagenes || ""),
+      amenidades: fd.get("amenities") !== null ? String(fd.get("amenities")).trim() : (editingProperty.amenidades || ""),
+      keywords: fd.get("keywords") !== null ? String(fd.get("keywords")).trim() : (editingProperty.keywords || ""),
       ofertas: offers,
+      superficie_m2: fd.get("meters") ? Number(fd.get("meters")) : editingProperty.superficie_m2 ?? null,
+      amoblado: isTerreno || isComercial ? false : (fd.get("amoblado") ? Boolean(fd.get("amoblado") === "on" || fd.get("amoblado") === "true") : Boolean(editingProperty.amoblado)),
+      fecha_entrega: isPreventa ? (fd.get("fechaEntrega") ? String(fd.get("fechaEntrega")).trim() : editingProperty.fecha_entrega || null) : null,
+      avance_obra: isPreventa ? (fd.get("avanceObra") ? Number(fd.get("avanceObra")) : editingProperty.avance_obra ?? null) : null,
+      fase_obra: isPreventa ? (fd.get("faseObra") ? String(fd.get("faseObra")).trim() : editingProperty.fase_obra || null) : null,
+      subtipo_comercial: isComercial ? (fd.get("subtipoComercial") ? String(fd.get("subtipoComercial")).trim() : editingProperty.subtipo_comercial || null) : null,
+      dimensiones: isTerreno ? (fd.get("dimensiones") ? String(fd.get("dimensiones")).trim() : editingProperty.dimensiones || null) : null,
+      servicios_basicos: isTerreno ? (fd.get("serviciosBasicos") ? String(fd.get("serviciosBasicos")).trim() : editingProperty.servicios_basicos || null) : null,
     };
 
     if (offers.length === 0) {
@@ -583,7 +385,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.detail || "No se pudo editar el inmueble.");
-      setSuccessMsg("Inmueble actualizado con Ã©xito.");
+      setSuccessMsg("Inmueble actualizado con exito.");
       setEditingProperty(null);
       await fetchCatalog();
     } catch (err: any) {
@@ -592,6 +394,7 @@ export default function AdminDashboard() {
       setIsSavingEdit(false);
     }
   };
+
   const handleAddProperty = async (e: React.FormEvent) => {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
@@ -621,12 +424,16 @@ export default function AdminDashboard() {
         setIsUploading(false);
         return;
       }
+      const isTerreno = formType === "Terreno";
+      const isComercial = formType === "Comercial";
+      const isPreventa = isProjectType(formType);
+
       const payloadJSON = {
         titulo: fd.get("title") as string || "Propiedad sin titulo",
         precio_usd: primaryOffer.precio,
         moneda: primaryOffer.moneda,
-        habitaciones: Number(fd.get("rooms")) || 0,
-        banos: Number(fd.get("bathrooms")) || 1,
+        habitaciones: isTerreno ? 0 : Number(fd.get("rooms")) || 0,
+        banos: isTerreno ? 0 : Number(fd.get("bathrooms")) || 1,
         ciudad: (fd.get("area") as string) || formZone || "Santa Cruz",
         lat: lat,
         lng: lng,
@@ -639,6 +446,26 @@ export default function AdminDashboard() {
         amenidades: amenities.join(","),
         keywords: keywords.join(","),
         ofertas: offers,
+        superficie_m2: Number(fd.get("meters")) || (isPreventa && projectUnits.length > 0 ? getProjectUnitsSummary(projectUnits).minSurface || null : null),
+        amoblado: isTerreno || isComercial ? false : formAmoblado,
+        fecha_entrega: isPreventa ? formFechaEntrega.trim() || null : null,
+        avance_obra: isPreventa && formAvanceObra !== "" ? Number(formAvanceObra) : null,
+        fase_obra: isPreventa ? formFaseObra.trim() || null : null,
+        subtipo_comercial: isComercial ? formSubtipoComercial.trim() || null : null,
+        dimensiones: isTerreno ? formDimensiones.trim() || null : null,
+        datos_especificos_json: isPreventa
+          ? serializeProjectDetailsJson({
+              unidades: projectUnits,
+              mensajeUrgencia: projectUrgencyMessage,
+              totalUnidades: Number(projectTotalUnits) || null,
+              unidadesDisponibles: Number(projectAvailableUnits) || null,
+              pisos: Number(projectFloors) || null,
+              reservaUsd: Number(projectReserveUsd) || null,
+              precioM2Desde: Number(projectPriceM2From) || null,
+              brochureUrl: projectBrochureUrl,
+              planesPago: projectPaymentPlans,
+            })
+          : null,
       };
 
       const res = await authFetch("/inmuebles", user, {
@@ -648,11 +475,27 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
-        alert("Inmueble publicado con Ã©xito!");
+        alert("Inmueble publicado con éxito!");
         target.reset();
         setAmenities([]);
         setKeywords([]);
         setImageLinks("");
+        setProjectUnits([]);
+        setProjectUrgencyMessage("");
+        setProjectTotalUnits("");
+        setProjectAvailableUnits("");
+        setProjectFloors("");
+        setProjectReserveUsd("");
+        setProjectPriceM2From("");
+        setProjectBrochureUrl("");
+        setProjectPaymentPlans("");
+        setFormFechaEntrega("");
+        setFormAvanceObra("");
+        setFormFaseObra("Obra gruesa");
+        setFormSubtipoComercial("Oficina");
+        setFormDimensiones("");
+        setFormServiciosBasicos("");
+        setFormAmoblado(false);
 
         await fetchCatalog();
       } else {
@@ -784,6 +627,9 @@ export default function AdminDashboard() {
               <Link to="/admin/catalogo" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] dark:hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-muted)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
                 <Building2 size={12} /> Catalogo
               </Link>
+              <Link to="/asesor" className="text-[10px] bg-[var(--color-chocolate)] dark:bg-[var(--surface-control)] hover:bg-[var(--accent-hover)] dark:hover:bg-[var(--accent-hover)] border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-muted)] px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
+                <UserCircle size={12} /> Panel asesor
+              </Link>
               <button onClick={handleLogout} className="text-[10px] bg-[var(--color-brick)] dark:bg-[var(--surface-panel)] hover:bg-[var(--accent-hover)] dark:hover:bg-[rgba(157,47,37,0.22)] border border-[var(--color-brick)]/60 dark:border-red-900/50 text-[var(--color-ivory)] dark:text-red-400 px-3 py-2 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1">
                 <LogOut size={12} /> {isAdmin ? 'Cerrar Admin' : 'Cerrar Sesion'}
               </button>
@@ -797,75 +643,7 @@ export default function AdminDashboard() {
         <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 dark:border-[var(--border-soft)] shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 dark:border-red-800 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 dark:border-green-800 rounded font-bold">{successMsg}</div>}
-          <div className="rounded-xl border border-[var(--accent-main)]/40 bg-[var(--accent-main)]/10 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Borrador asistido</h3>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">Pega el texto del asesor y la IA rellenara el formulario. Las imagenes se suben abajo con Cloudinary.</p>
-              </div>
-              <button type="button" onClick={() => setIsAiPanelOpen((open) => !open)} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--surface-control)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-main)] border border-[var(--border-soft)] hover:border-[var(--accent-main)] transition-colors">
-                <Sparkles size={16} /> Rellenar con IA
-              </button>
-            </div>
-            {isAiPanelOpen && (
-              <div className="mt-4 space-y-3">
-                <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={6} className="w-full bg-[var(--surface-control)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" placeholder="Ej: Casa en Urubo, venta, 4 dormitorios, 3 banos, piscina, churrasquera, precio 280000 dolares..." />
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-                  <button type="button" disabled={isAiExtracting} onClick={handleAiExtractProperty} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--accent-main)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#2F241D] shadow-md hover:bg-[var(--accent-hover)] hover:text-white transition-colors disabled:opacity-60">
-                    {isAiExtracting ? <><Loader2 size={16} className="animate-spin" /> Leyendo texto...</> : <><Sparkles size={16} /> Completar borrador</>}
-                  </button>
-                  <span className="text-[11px] text-[var(--text-muted)]">Queda como Borrador hasta que lo publiques.</span>
-                </div>
-                {aiQuestions.length > 0 && (
-                  <div className="rounded border border-amber-300 bg-amber-50 p-3 text-xs font-semibold text-amber-800">
-                    {aiQuestions.map((question) => <p key={question}>{question}</p>)}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
 
-          <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/70 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--accent-main)]">Carga masiva de borradores</h3>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">Pega varios inmuebles separados por <strong>---</strong>. NIA prepara una bandeja de borradores. El asesor queda en blanco para que lo asignes manualmente al cargar cada inmueble.</p>
-              </div>
-              <button type="button" onClick={() => setIsBulkPanelOpen((open) => !open)} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--surface-panel)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-main)] border border-[var(--border-soft)] hover:border-[var(--accent-main)] transition-colors">
-                <Building2 size={16} /> Carga masiva
-              </button>
-            </div>
-            {isBulkPanelOpen && (
-              <div className="mt-4 space-y-4">
-                <textarea value={bulkText} onChange={(e) => setBulkText(e.target.value)} rows={9} className="w-full bg-[var(--surface-panel)] border border-[var(--border-soft)] rounded px-4 py-3 text-sm outline-none text-[var(--text-main)]" placeholder={"Departamento en alquiler...\n---\nCasa en venta...\n---\nOficina en Equipetrol..."} />
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <button type="button" disabled={isBulkExtracting} onClick={handleBulkDraftImport} className="inline-flex items-center justify-center gap-2 rounded bg-[var(--accent-main)] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#2F241D] shadow-md hover:bg-[var(--accent-hover)] hover:text-white transition-colors disabled:opacity-60">
-                    {isBulkExtracting ? <><Loader2 size={16} className="animate-spin" /> Preparando...</> : <><Sparkles size={16} /> Preparar borradores</>}
-                  </button>
-                  <span className="text-[11px] text-[var(--text-muted)]">No crea inmuebles automaticamente. Primero revisas, luego cargas al formulario con asesor vacio.</span>
-                </div>
-                {bulkResults.length > 0 && (
-                  <div className="max-h-72 overflow-y-auto rounded border border-[var(--border-soft)] bg-[var(--surface-panel)] p-3 text-xs">
-                    <div className="mb-2 font-bold uppercase tracking-widest text-[var(--text-muted)]">Bandeja de revision</div>
-                    <div className="space-y-2">
-                      {bulkResults.map((item) => (
-                        <div key={`${item.index}-${item.title}`} className={`rounded border p-3 ${item.status === "ready" ? "border-green-200 bg-green-50 text-green-800" : "border-red-200 bg-red-50 text-red-700"}`}>
-                          <div className="font-bold">#{item.index} {item.status === "ready" ? "Listo para revisar" : "Error"}: {item.title}</div>
-                          {item.error && <div className="mt-1">{item.error}</div>}
-                          {item.missing && item.missing.length > 0 && <div className="mt-1">Faltan: {item.missing.join(", ")}</div>}
-                          {item.questions && item.questions.length > 0 && <div className="mt-1">Preguntas: {item.questions.join(" | ")}</div>}
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {item.status === "ready" && <button type="button" onClick={() => loadBulkDraftToForm(item)} className="rounded bg-[var(--accent-main)] px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white transition-colors">Cargar al formulario</button>}
-                            <button type="button" onClick={() => removeBulkDraft(item.index)} className="rounded border border-[var(--border-soft)] bg-white/70 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-[var(--text-main)] hover:border-red-300 hover:text-red-600 transition-colors">Quitar</button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -908,45 +686,37 @@ export default function AdminDashboard() {
               <CustomSelect name="status" value={formStatus} onChange={setFormStatus} placeholder="Estado" options={propertyStatusOptions} wrapperClassName="relative w-full" triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
             </div>
           </div>
-          <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
-            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Caracteristicas Fisicas</h3>
+          <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-3 gap-4">
+            <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">Clasificacion Principal</h3>
             <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">OperaciÃ³n</label>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Tipo de Inmueble</label>
+              <CustomSelect
+                name="type"
+                value={formType}
+                onChange={setFormType}
+                placeholder="Tipo"
+                options={PROPERTY_TYPES.map((t) => ({ value: t, label: t }))}
+                wrapperClassName="relative w-full"
+                triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] font-semibold"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Operacion</label>
               <CustomSelect
                 name="operation"
                 value={formOperation}
                 onChange={setFormOperation}
-                placeholder="OperaciÃ³n"
+                placeholder="Operacion"
                 options={operationOptions}
                 wrapperClassName="relative w-full"
                 triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]"
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Tipo</label>
-              <CustomSelect
-                name="type"
-                value={formType}
-                onChange={setFormType}
-                placeholder="Tipo"
-                options={[{ value: "Departamento", label: "Departamento" }, { value: "Casa", label: "Casa" }, { value: "Terreno", label: "Terreno" }]}
-                wrapperClassName="relative w-full"
-                triggerClassName="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus-within:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Habitaciones</label>
-              <input name="rooms" type="number" required className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
-            </div>
-            <div>
-              <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">BaÃ±os</label>
-              <input name="bathrooms" type="number" min="0" defaultValue="1" required className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
-            </div>
-            <div>
               <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Zona</label>
               {isCustomZone ? (
                 <div className="flex relative">
-                   <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Norte" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                   <input autoFocus name="area" value={formZone} onChange={(e) => setFormZone(e.target.value)} type="text" placeholder="Ej: Norte, Equipetrol, Urubo..." className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                    <button type="button" onClick={() => { setIsCustomZone(false); setFormZone(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-red-500"><X size={14}/></button>
                 </div>
               ) : (
@@ -964,6 +734,195 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+
+          {/* CAMPOS ESPECIFICOS SEGUN EL TIPO DE INMUEBLE */}
+          {formType === "Terreno" ? (
+            <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-emerald-500/40 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="col-span-full flex items-center justify-between">
+                <h3 className="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">Caracteristicas del Terreno</h3>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">No requiere dormitorios ni banos</span>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Superficie Total (m²)</label>
+                <input name="meters" required type="number" min="0" step="0.1" placeholder="Ej: 450" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Dimensiones (Frente x Fondo)</label>
+                <input value={formDimensiones} onChange={(e) => setFormDimensiones(e.target.value)} placeholder="Ej: 15m x 30m" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Servicios Basicos</label>
+                <input value={formServiciosBasicos} onChange={(e) => setFormServiciosBasicos(e.target.value)} placeholder="Ej: Agua, Luz, Pavimento, Gas" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+            </div>
+          ) : formType === "Comercial" ? (
+            <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-blue-500/40 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="col-span-full flex items-center justify-between">
+                <h3 className="text-xs uppercase tracking-widest text-blue-600 dark:text-blue-400 font-bold">Inmueble Comercial</h3>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Oficina, local o galpon</span>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Subtipo Comercial</label>
+                <CustomSelect
+                  value={formSubtipoComercial}
+                  onChange={setFormSubtipoComercial}
+                  placeholder="Subtipo"
+                  options={[
+                    { value: "Oficina", label: "Oficina corporativa" },
+                    { value: "Local Comercial", label: "Local / Tienda" },
+                    { value: "Galpón / Depósito", label: "Galpon / Deposito" },
+                    { value: "Edificio Comercial", label: "Edificio completo" },
+                  ]}
+                  triggerClassName="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)] dark:text-[var(--text-main)]"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Superficie Util (m²)</label>
+                <input name="meters" required type="number" min="0" step="0.1" placeholder="Ej: 120" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Banos (opcional)</label>
+                <input name="bathrooms" type="number" min="0" defaultValue="1" placeholder="Ej: 2" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Piso / Nro (opcional)</label>
+                <input name="floor" type="text" placeholder="Ej: Piso 4, Of. 402" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+            </div>
+          ) : isProjectType(formType) ? (
+            <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <h3 className="text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold">Proyecto</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Configura la fecha de entrega y avance de obra para la cuenta regresiva pública.</p>
+                </div>
+                {countdownPreview && (
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-main)]/15 border border-[var(--accent-main)]/30 px-3 py-1.5 text-xs font-bold text-[var(--accent-main)]">
+                    <span>⏳ {countdownPreview.label}</span>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Fecha Estimada de Entrega</label>
+                  <input
+                    type="text"
+                    value={formFechaEntrega}
+                    onChange={(e) => setFormFechaEntrega(e.target.value)}
+                    placeholder="Ej: Diciembre 2026 o 2026-12"
+                    className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] dark:text-[var(--text-main)] font-semibold"
+                  />
+                  <span className="text-[10px] text-[var(--text-muted)]">Ej: 2026-12 o &quot;Diciembre 2026&quot;</span>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Avance de Obra (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formAvanceObra}
+                    onChange={(e) => setFormAvanceObra(e.target.value === "" ? "" : Number(e.target.value))}
+                    placeholder="Ej: 65"
+                    className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] dark:text-[var(--text-main)] font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Fase de la Obra</label>
+                  <CustomSelect
+                    value={formFaseObra}
+                    onChange={setFormFaseObra}
+                    placeholder="Fase"
+                    options={[
+                      { value: "En planos / Pozo", label: "En planos / Pozo" },
+                      { value: "Excavacion y cimientos", label: "Excavacion y cimientos" },
+                      { value: "Obra gruesa", label: "Obra gruesa" },
+                      { value: "Obra fina y acabados", label: "Obra fina y acabados" },
+                      { value: "Entrega inmediata", label: "Entrega inmediata" },
+                    ]}
+                    triggerClassName="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm text-[var(--text-main)] dark:text-[var(--text-main)]"
+                  />
+                </div>
+              </div>
+              <ProjectUnitsEditor
+                units={projectUnits}
+                onChange={setProjectUnits}
+                defaultCurrency={formCurrency}
+                mensajeUrgencia={projectUrgencyMessage}
+                onMensajeUrgenciaChange={setProjectUrgencyMessage}
+                totalUnidades={projectTotalUnits}
+                onTotalUnidadesChange={setProjectTotalUnits}
+                unidadesDisponibles={projectAvailableUnits}
+                onUnidadesDisponiblesChange={setProjectAvailableUnits}
+                pisos={projectFloors}
+                onPisosChange={setProjectFloors}
+                reservaUsd={projectReserveUsd}
+                onReservaUsdChange={setProjectReserveUsd}
+                precioM2Desde={projectPriceM2From}
+                onPrecioM2DesdeChange={setProjectPriceM2From}
+                brochureUrl={projectBrochureUrl}
+                onBrochureUrlChange={setProjectBrochureUrl}
+                planesPago={projectPaymentPlans}
+                onPlanesPagoChange={setProjectPaymentPlans}
+                onSyncBaseValues={(minSurface, minPrice) => {
+                  const metersField = formRef.current?.elements.namedItem("meters") as HTMLInputElement | null;
+                  if (metersField && minSurface > 0) {
+                    metersField.value = String(minSurface);
+                  }
+                  const priceField = formRef.current?.elements.namedItem("price") as HTMLInputElement | null;
+                  if (priceField && minPrice > 0) {
+                    priceField.value = String(minPrice);
+                  }
+                }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[var(--border-soft)]">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">
+                    Superficie base o desde (m²)
+                  </label>
+                  <input name="meters" type="number" min="0" step="0.1" placeholder="Ej: 32 o calculado arriba" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                  <span className="text-[10px] text-[var(--text-muted)]">Si agregaste opciones arriba, se autocompleta con la mínima.</span>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">
+                    Dormitorios referenciales (opcional)
+                  </label>
+                  <input name="rooms" type="number" min="0" placeholder="Ej: 1" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* DEPARTAMENTO o CASA */
+            <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--border-soft)] dark:border-[var(--border-soft)] grid grid-cols-1 md:grid-cols-5 gap-4">
+              <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--text-muted)] dark:text-[var(--text-muted)] font-bold mb-2">
+                {formType === "Casa" ? "Detalles de la Casa" : "Detalles del Departamento"}
+              </h3>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Habitaciones</label>
+                <input name="rooms" type="number" required defaultValue="1" min="0" placeholder="Ej: 2" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Banos</label>
+                <input name="bathrooms" type="number" min="0" defaultValue="1" required placeholder="Ej: 1" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Superficie (m²)</label>
+                <input name="meters" type="number" min="0" step="0.1" placeholder="Ej: 65" className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">
+                  {formType === "Casa" ? "Plantas / Niveles" : "Piso / Unidad"}
+                </label>
+                <input name="floor" type="text" placeholder={formType === "Casa" ? "Ej: 2 plantas" : "Ej: Piso 6, Dpto 6B"} className="w-full bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+              </div>
+              <div className="flex items-center pt-5">
+                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider cursor-pointer text-[var(--text-main)] dark:text-[var(--text-main)]">
+                  <input type="checkbox" checked={formAmoblado} onChange={(e) => setFormAmoblado(e.target.checked)} className="rounded text-[var(--accent-main)]" />
+                  Amoblado
+                </label>
+              </div>
+            </div>
+          )}
 
           <div className="bg-[#F0E6D4] dark:bg-[rgba(38,28,23,0.68)] p-6 rounded-xl border border-[var(--accent-main)]/50 grid grid-cols-1 md:grid-cols-5 gap-4">
             <h3 className="col-span-full text-xs uppercase tracking-widest text-[var(--accent-main)] font-bold mb-2">Ofertas Comerciales</h3>
@@ -1071,8 +1030,20 @@ export default function AdminDashboard() {
                   onChange={handleCloudinaryUpload}
                 />
               </label>
+              <DriveMediaPicker
+                user={user}
+                disabled={isCloudinaryUploading}
+                onUploaded={(urls) => {
+                  setImageLinks((current) => {
+                    const existing = current.split(",").map((url) => url.trim()).filter(Boolean);
+                    return [...existing, ...urls].join(", ");
+                  });
+                }}
+                onError={setErrorMsg}
+                onStatus={setSuccessMsg}
+              />
               <span className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-                Puedes seleccionar varias fotos o videos a la vez. Las URLs aparecerÃ¡n abajo automÃ¡ticamente.
+                Computadora o Google Drive. Las URLs aparecen abajo.
               </span>
             </div>
 
@@ -1127,16 +1098,14 @@ export default function AdminDashboard() {
                 <div>
                   <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Tipo</label>
                   <select name="type" defaultValue={editingProperty.tipo_inmueble || "Departamento"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
-                    <option>Departamento</option>
-                    <option>Casa</option>
-                    <option>Oficina</option>
-                    <option>Terreno</option>
-                    <option>Local Comercial</option>
+                    {PROPERTY_TYPES.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Estado del inmueble</label>
-                  <select name="status" defaultValue={editingProperty.estado || "Borrador"} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                  <select name="status" value={editingProperty.estado || "Borrador"} onChange={(e) => setEditingProperty({ ...editingProperty, estado: e.target.value })} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
                     <option>Borrador</option>
                     <option>Publicado</option>
                     <option>Pausado</option>
@@ -1178,8 +1147,18 @@ export default function AdminDashboard() {
                   <input name="rooms" type="number" min="0" defaultValue={editingProperty.habitaciones || 0} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">BaÃ±os</label>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Banos</label>
                   <input name="bathrooms" type="number" min="0" defaultValue={editingProperty.banos || 1} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Superficie (m²)</label>
+                  <input name="meters" type="number" min="0" step="0.1" defaultValue={editingProperty.superficie_m2 || ""} placeholder="Ej: 120" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div className="flex items-center pt-5">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider cursor-pointer text-[var(--text-main)] dark:text-[var(--text-main)]">
+                    <input name="amoblado" type="checkbox" defaultChecked={Boolean(editingProperty.amoblado)} className="rounded text-[var(--accent-main)]" />
+                    Amoblado
+                  </label>
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Zona</label>
@@ -1188,6 +1167,31 @@ export default function AdminDashboard() {
                 <div>
                   <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Coordenadas</label>
                   <input name="coords" defaultValue={`${editingProperty.lat || 0}, ${editingProperty.lng || 0}`} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
+                </div>
+                {/* Campos especificos por tipo */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Fecha Entrega (Preventa)</label>
+                  <input name="fechaEntrega" defaultValue={editingProperty.fecha_entrega || ""} placeholder="Ej: 2026-12" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Avance de Obra % (Preventa)</label>
+                  <input name="avanceObra" type="number" min="0" max="100" defaultValue={editingProperty.avance_obra ?? ""} placeholder="Ej: 65" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Fase de Obra (Preventa)</label>
+                  <input name="faseObra" defaultValue={editingProperty.fase_obra || ""} placeholder="Ej: Obra gruesa" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Subtipo Comercial</label>
+                  <input name="subtipoComercial" defaultValue={editingProperty.subtipo_comercial || ""} placeholder="Ej: Oficina corporativa" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Dimensiones (Terreno)</label>
+                  <input name="dimensiones" defaultValue={editingProperty.dimensiones || ""} placeholder="Ej: 15m x 30m" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Servicios Basicos (Terreno)</label>
+                  <input name="serviciosBasicos" defaultValue={editingProperty.servicios_basicos || ""} placeholder="Ej: Agua, Luz, Gas" className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)]" />
                 </div>
               </div>
 

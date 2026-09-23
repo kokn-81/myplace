@@ -82,7 +82,7 @@ export default function ContextPage() {
     <main className="min-h-screen bg-[var(--surface-page)] px-4 py-10 text-[var(--text-main)]">
       <article className="mx-auto max-w-xl">
         {property?.image ? (
-          <img src={property.image} alt={title} className="mb-5 w-full rounded-2xl object-cover" />
+          <img src={property.image} alt={title} referrerPolicy="no-referrer" className="mb-5 w-full rounded-2xl object-cover" />
         ) : null}
         {property ? (
           <>
