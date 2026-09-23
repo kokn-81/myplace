@@ -35,3 +35,6 @@ frontend/dev-server.*.log
 frontend/myplace.zip
 uploads/
 backend/uploads/
+backend/_tmp*
+backend/.tmp*
+.tmp*

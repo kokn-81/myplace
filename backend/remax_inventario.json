@@ -1,0 +1,538 @@
+[
+  {
+    "titulo": "Casa 4 Dorm. · Av. San Aurelio",
+    "tipo_inmueble": "Casa",
+    "operacion": "Venta",
+    "precio_usd": 220000,
+    "habitaciones": 4,
+    "banos": 5,
+    "superficie_m2": 305,
+    "parqueos": 2,
+    "zona": "Sur / Av. San Aurelio",
+    "direccion": "Av. San Aurelio (entre 3er y 4to Anillo)",
+    "descripcion": "Casa familiar de dos niveles en Av. San Aurelio (entre 3er y 4to Anillo), con 305 m² de construcción sobre terreno de 200 m². Orientada a familia numerosa o multigeneracional que prioriza distribución clara, acabados diferenciados y garaje techado.\n\nDistribución & Dimensiones:\n• Construcción 305 m² | Terreno 200 m² | 2 niveles (planta baja y alta)\n• 4 dormitorios | 5 baños | 2 parqueos en garaje techado | 2 depósitos\n• Planta baja: sala amplia, cocina funcional/amplia, churrasquera, lavandería independiente y ventilada, dependencia de servicio con baño privado, baño de visitas\n• Planta alta: master suite con baño privado y walking closet; dormitorio con baño privado; 2 dormitorios adicionales; baño compartido\n\nServicios Básicos & Equipamiento:\n• Blindex doble laminado antisonido\n• Mesones de cuarzo en cocina y baños\n• Piso importado de Brasil\n• Garaje techado para 2 vehículos\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente\n• Residencia multigeneracional\n• Activo residencial en zona Sur / Av. San Aurelio\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (tipo de cambio paralelo según ficha de origen)\n• Estado de ocupación y títulos: a confirmar con documentación del propietario",
+    "amenidades": [
+      "sala amplia",
+      "cocina funcional/amplia",
+      "churrasquera",
+      "lavandería independiente y ventilada",
+      "dependencia de servicio con baño privado",
+      "baño de visitas",
+      "garaje techado para 2 vehículos",
+      "master suite con baño privado y walking closet",
+      "blindex doble laminado antisonido",
+      "mesones de cuarzo",
+      "piso importado de Brasil",
+      "2 depósitos"
+    ],
+    "keywords": [
+      "casa en venta",
+      "Av. San Aurelio",
+      "3er Anillo",
+      "4to Anillo",
+      "4 dormitorios",
+      "master suite",
+      "walking closet",
+      "churrasquera",
+      "garaje techado",
+      "Santa Cruz de la Sierra"
+    ],
+    "datos_especificos_json": {
+      "superficieConstruidaM2": 305,
+      "superficieTerrenoM2": 200,
+      "niveles": 2,
+      "parqueosTechados": 2,
+      "depositos": 2,
+      "usos_recomendados": [
+        "vivienda familiar",
+        "residencia multigeneracional"
+      ]
+    },
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 220000,
+        "moneda": "$ (USD)",
+        "estado": "Borrador"
+      }
+    ],
+    "estado": "Borrador",
+    "ocupacion": "Disponible",
+    "ciudad": "Santa Cruz de la Sierra",
+    "moneda": "$ (USD)",
+    "captador_nombre": "Mauricio Gil",
+    "captador_whatsapp": "59176009332",
+    "imagenes": [
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129303/inmuebles/zmml9bmxf0ys6qvueygl.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129305/inmuebles/wsv4kagrh95s2cvwaqeu.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129308/inmuebles/qxs9aatbxbfonnpvjrhq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129311/inmuebles/ioierxkxasdn4ace3zpj.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129313/inmuebles/wraexbgtmwfene2rcrkq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129316/inmuebles/rvzbxf8hm4cn358diwho.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129319/inmuebles/xvpxskn2ldkanozspqnj.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129321/inmuebles/vvusgptgyokfsraxmflo.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129323/inmuebles/qawr3qkxohsnnfcpg3w5.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129326/inmuebles/o2xxd1kb1vc4naswtffy.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129328/inmuebles/e3yolwobmc9kyqxi1kbe.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129331/inmuebles/bbjbksjc2t9yp6zqpmpv.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129333/inmuebles/j5iojdcktixacavctrss.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129336/inmuebles/qufzpa0u1tjly8bdhzl8.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129338/inmuebles/dyl92psxgsq4t1ggy6dm.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129341/inmuebles/kjl6wpj8lysx3ehcpgzs.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129343/inmuebles/wsszqqctqtkjnoezisq2.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129346/inmuebles/pan0oxctkqajpfu4xqii.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129349/inmuebles/dhx8tzymdxo28ohvy6mw.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129351/inmuebles/fp0uayrei3ffpqrub4ey.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129355/inmuebles/i0kk9vmwpfliduwv1bhc.jpg"
+    ]
+  },
+  {
+    "titulo": "Depto 3 Dorm. · Lares del Parque",
+    "tipo_inmueble": "Departamento",
+    "operacion": "Venta",
+    "precio_usd": 150000,
+    "habitaciones": 3,
+    "banos": 2,
+    "superficie_m2": 130.57,
+    "piso": 12,
+    "parqueos": 2,
+    "baulera": true,
+    "zona": "Parque Urbano / Teniente Cuéllar",
+    "direccion": "Calle Teniente Cuéllar frente Parque Urbano",
+    "complejo_nombre": "Lares del Parque",
+    "descripcion": "Departamento en Edificio Lares del Parque, piso 12, en primera línea frente al Parque Urbano (Calle Teniente Cuéllar). 130,57 m² con 3 dormitorios, suite con vestidor, 2 parqueos y baulera privada de 5,27 m².\n\nDistribución & Dimensiones:\n• Superficie 130,57 m² | Piso 12\n• 3 dormitorios (uno en suite con vestidor) | 2 baños (suite + visitas)\n• Living-comedor integrado con salida al balcón\n• 2 parqueos incluidos (12,65 m² cada uno) | Baulera privada 5,27 m²\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 725 Bs\n• Áreas comunes del complejo: piscina, churrasquera, salón de eventos, parque recreativo/infantil\n• Seguridad 24 horas\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar frente a parque\n• Residencia con balcón y vistas despejadas\n• Activo en zona Teniente Cuéllar / Parque Urbano\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "salón de eventos",
+      "parque recreativo/infantil",
+      "seguridad 24 horas",
+      "living-comedor con balcón",
+      "suite con vestidor",
+      "2 parqueos",
+      "baulera 5.27 m²",
+      "expensas 725 Bs"
+    ],
+    "keywords": [
+      "departamento en venta",
+      "Lares del Parque",
+      "Parque Urbano",
+      "Teniente Cuéllar",
+      "piso 12",
+      "3 dormitorios",
+      "suite con vestidor",
+      "2 parqueos",
+      "baulera",
+      "Santa Cruz"
+    ],
+    "datos_especificos_json": {
+      "piso": 12,
+      "precio_m2": 1148.81,
+      "baulera_m2": 5.27,
+      "parqueo_m2_cada_uno": 12.65,
+      "expensas_bs": 725,
+      "amenidades_condominio": [
+        "piscina",
+        "churrasquera",
+        "salón de eventos",
+        "parque infantil",
+        "seguridad 24 horas"
+      ],
+      "equipamiento_interior": [
+        "suite con vestidor",
+        "living-comedor con balcón"
+      ]
+    },
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 150000,
+        "moneda": "$ (USD)",
+        "estado": "Borrador"
+      }
+    ],
+    "estado": "Borrador",
+    "ocupacion": "Disponible",
+    "ciudad": "Santa Cruz de la Sierra",
+    "moneda": "$ (USD)",
+    "captador_nombre": "Mauricio Gil",
+    "captador_whatsapp": "59176009332",
+    "imagenes": [
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129357/inmuebles/lpbomokbppez2sxg06g2.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129360/inmuebles/stuth7uperxbsz3v3rlh.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129362/inmuebles/lnrzdpszi1szepggppqc.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129364/inmuebles/pnopb0wbm5cntcpbbxyc.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129367/inmuebles/numsowhsgcwnvtin6v5j.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129369/inmuebles/x1kmxoadkqdcnceikmed.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129372/inmuebles/eraf46bb4ymqciqnxp5r.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129374/inmuebles/lpgidnv2v45tziuf3atz.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129376/inmuebles/fmy5zaax1knyhwerbnng.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129378/inmuebles/ldadnm1wp4w2eovjbsf4.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129381/inmuebles/kzcrlzteeicadnwmbzsz.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129383/inmuebles/evy1honahf8xlub7vx0p.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129387/inmuebles/jzgyvouk94uvhkwvujtu.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129390/inmuebles/cocimgvzfo6qzp15w4au.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129392/inmuebles/ivfxyb3fon0zbx9dahu6.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129395/inmuebles/vbygjlgomtmv8azlslaq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129398/inmuebles/stwhdq5cicpck3tfrhq8.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129400/inmuebles/p1s3z0gkjuhm0pfgr2nb.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129402/inmuebles/vjutfhwah3fzxrajvozd.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129405/inmuebles/kx7zojexr21osfjr8prc.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129407/inmuebles/sctsrii8atlpekawa3ci.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129410/inmuebles/xthslymah9g5rfkp4578.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129412/inmuebles/nkrvz8emozzptucvdmh7.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129414/inmuebles/fvrdmdh8o9wefnvxqrav.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129417/inmuebles/jrhinwcrtjoxn7c0rcu0.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129420/inmuebles/wlpwtynhvyrqkmsvr0ct.jpg"
+    ]
+  },
+  {
+    "titulo": "Depto 1 Dorm. · Swissôtel Santa Cruz",
+    "tipo_inmueble": "Departamento",
+    "operacion": "Venta",
+    "precio_usd": 195000,
+    "habitaciones": 1,
+    "banos": 2,
+    "superficie_m2": 132.55,
+    "piso": 8,
+    "parqueos": 1,
+    "zona": "Equipetrol / Canal Isuto",
+    "direccion": "5to Anillo y Av. La Salle",
+    "complejo_nombre": "Swissôtel Santa Cruz",
+    "descripcion": "Departamento a estrenar de 1 dormitorio en Swissôtel Santa Cruz (5to Anillo y Av. La Salle, zona Equipetrol / Canal Isuto). 132,55 m² en piso 8, con master suite, baño de visitas, cocina equipada y 1 parqueo, dentro de complejo mixed-use.\n\nDistribución & Dimensiones:\n• Superficie 132,55 m² | Piso 8\n• 1 dormitorio (master suite) | 2 baños (master + visitas)\n• Living-comedor | Cocina equipada | 1 parqueo\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 924 (moneda no especificada en fuente)\n• Áreas del complejo: piscina, churrasquera, salas de reuniones/eventos, gimnasio equipado\n• Conectividad urbana; cercanía a Ventura Mall y Las Brisas según ficha\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / profesional\n• Producto a estrenar en marca hotelera mixed-use\n• Demanda en Equipetrol / Canal Isuto\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "amenidades": [
+      "Swissôtel mixed-use",
+      "piscina",
+      "churrasquera",
+      "salas de reuniones y eventos",
+      "gimnasio equipado",
+      "cocina equipada",
+      "a estrenar"
+    ],
+    "keywords": [
+      "departamento en venta",
+      "Swissôtel Santa Cruz",
+      "Canal Isuto",
+      "Equipetrol",
+      "5to Anillo",
+      "Av. La Salle",
+      "piso 8",
+      "1 dormitorio",
+      "a estrenar",
+      "gimnasio"
+    ],
+    "datos_especificos_json": {
+      "piso": 8,
+      "precio_m2": 1471.14,
+      "expensas": 924,
+      "expensas_moneda": null,
+      "amenidades_condominio": [
+        "piscina",
+        "churrasquera",
+        "salas de reuniones",
+        "gimnasio"
+      ],
+      "equipamiento_interior": [
+        "cocina equipada",
+        "master suite",
+        "baño de visitas"
+      ]
+    },
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 195000,
+        "moneda": "$ (USD)",
+        "estado": "Borrador"
+      }
+    ],
+    "estado": "Borrador",
+    "ocupacion": "Disponible",
+    "ciudad": "Santa Cruz de la Sierra",
+    "moneda": "$ (USD)",
+    "captador_nombre": "Mauricio Gil",
+    "captador_whatsapp": "59176009332",
+    "imagenes": [
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129422/inmuebles/hvj5qpv5ogtxknsmhjjs.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129425/inmuebles/jm6rqg1bxyjglsmqmdo3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129427/inmuebles/qvo5rejc3z7kkr4s681z.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129430/inmuebles/t9ab5ily54af8idoajiq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129433/inmuebles/eouhfmmzj2bvzjxgg02q.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129435/inmuebles/d3rxzgv7dt30ugfexpc3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129437/inmuebles/qu1k1burhfdy3lr4f1ks.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129439/inmuebles/urtbkr1wjfrlfkasxwpy.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129442/inmuebles/ijxpjq7kcg9onz6gggwy.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129444/inmuebles/eep1ptblby8vupudhjfj.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129447/inmuebles/fmf3mhb6bzucvh0j3il2.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129449/inmuebles/zgdug2dvhwztpsjipxyp.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129452/inmuebles/azgdqqrv0chyfuum5hpp.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129454/inmuebles/lkly8hjkkfnb5tkcxbm1.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129457/inmuebles/dol60k2pucpg3y6wj0nz.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129459/inmuebles/hgz8yy77h2cvrzg9xgd0.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129462/inmuebles/i8rykafg6boc1hbjwuhu.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129465/inmuebles/hhkrt8wksljus6wewrkx.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129468/inmuebles/xqhbpki1kafgim3aeorf.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129471/inmuebles/np7rdorhwtkede64ktmq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129474/inmuebles/pn7ejxjqqt57ycvqwwxi.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129476/inmuebles/bh5lcxolemepaab0r9ei.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129479/inmuebles/sszgjyjucbmqgvdryhh3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129481/inmuebles/v1jvco34i77utuzpowqs.jpg"
+    ]
+  },
+  {
+    "titulo": "Depto 3 Dorm. · La Riviera Equipetrol",
+    "tipo_inmueble": "Departamento",
+    "operacion": "Venta",
+    "precio_usd": 330000,
+    "habitaciones": 3,
+    "banos": 4,
+    "superficie_m2": 204.26,
+    "piso": 16,
+    "parqueos": 2,
+    "baulera": true,
+    "zona": "Equipetrol Norte",
+    "direccion": "Condominio La Riviera & Beauty Plaza, Dpto. 16-04",
+    "complejo_nombre": "La Riviera & Beauty Plaza",
+    "descripcion": "Departamento 16-04 en Condominio La Riviera & Beauty Plaza (Equipetrol Norte): 204,26 m² en piso 16, con 3 dormitorios más escritorio, cocina con balcón, lavandería, 2 parqueos y 1 baulera. Acceso a oferta gastronómica, comercial y empresarial del Beauty Plaza.\n\nDistribución & Dimensiones:\n• Superficie 204,26 m² | Piso 16 | Dpto. 16-04\n• 3 dormitorios + escritorio\n• Baños: master, compartido, visitas y servicio\n• Master suite con balcón privado\n• 2 habitaciones amplias con baño compartido\n• Living-comedor amplio y luminoso + baño de visitas\n• Cocina con balcón propio y alacena/depósito\n• Lavandería y baño de servicio\n• 2 parqueos | 1 baulera\n\nServicios Básicos & Equipamiento:\n• Expensas: Bs. 1.700\n• Áreas comunes de primer nivel y seguridad 24 horas (según copy)\n• Ubicación sobre Beauty Plaza / Equipetrol Norte\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de alto estándar\n• Home office (escritorio)\n• Activo en Equipetrol Norte con acceso comercial directo\n\nSeguridad Jurídica & Entrega:\n• Operación: venta | Precio USD 330.000 | Tipo de cambio flexible (según copy)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "amenidades": [
+      "master suite con balcón privado",
+      "escritorio",
+      "cocina con balcón",
+      "alacena/depósito",
+      "lavandería",
+      "baño de servicio",
+      "2 parqueos",
+      "1 baulera",
+      "seguridad 24 horas",
+      "Beauty Plaza"
+    ],
+    "keywords": [
+      "La Riviera",
+      "Beauty Plaza",
+      "Equipetrol Norte",
+      "departamento en venta",
+      "piso 16",
+      "3 dormitorios",
+      "escritorio",
+      "2 parqueos",
+      "baulera",
+      "Santa Cruz"
+    ],
+    "datos_especificos_json": {
+      "piso": 16,
+      "unidad": "16-04",
+      "precio_m2": 1615.59,
+      "escritorio": true,
+      "expensas_bs": 1700,
+      "amenidades_condominio": [
+        "seguridad 24 horas",
+        "áreas comunes",
+        "Beauty Plaza"
+      ],
+      "equipamiento_interior": [
+        "master suite con balcón",
+        "cocina con balcón",
+        "lavandería",
+        "escritorio"
+      ]
+    },
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 330000,
+        "moneda": "$ (USD)",
+        "estado": "Borrador"
+      }
+    ],
+    "estado": "Borrador",
+    "ocupacion": "Disponible",
+    "ciudad": "Santa Cruz de la Sierra",
+    "moneda": "$ (USD)",
+    "captador_nombre": "Mauricio Gil",
+    "captador_whatsapp": "59176009332",
+    "imagenes": [
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129484/inmuebles/cqbdbb2zn53qjywnrq13.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129486/inmuebles/fr0lkd7vmw3zdwibdkbn.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129488/inmuebles/r79k1rr4071uyqswx8j6.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129491/inmuebles/cmbfgukhcikplcsxr7vq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129494/inmuebles/xdzfdqebdb6wrr3vh84z.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129497/inmuebles/krakhsl25ywritf9zix3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129499/inmuebles/bvjndppyw4d121b8tnwa.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129501/inmuebles/mzgqzarw0lv3hzq49gyt.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129504/inmuebles/ycouxbwgqrrqqrevvntl.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129507/inmuebles/fmg4754i7mvtfrqbyxbg.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129509/inmuebles/w9der5g7x7ypfvwnofmw.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129512/inmuebles/uzqfc6rvbukzgbzaxp6s.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129515/inmuebles/qk915whzeqkog38zco3t.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129517/inmuebles/udaxgsqm8eyzdwixhw7v.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129520/inmuebles/xyxzyradtog48lxx8iut.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129523/inmuebles/p6u47dagxuiuyittlrej.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129526/inmuebles/s4xkaa35kdfoazc7rtir.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129529/inmuebles/sczh4hmce5sl7acmr0v2.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129532/inmuebles/azmxctng0gb4zldp1hd4.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129534/inmuebles/ga94cpuzn1xoxglljqrq.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129537/inmuebles/v5s9wfhnj4fwwp9arcc9.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129539/inmuebles/jhr6deq5wdoezpifttru.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129542/inmuebles/mfeyddk5o1v50xxgq7sk.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129544/inmuebles/qfytnywvjfh4id0ntk9c.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129547/inmuebles/nc7j3afif6vag4uxg2so.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129550/inmuebles/wbyykja4n6r3vgth9gln.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129552/inmuebles/wryeow3y221twrmcweaa.jpg"
+    ]
+  },
+  {
+    "titulo": "ONA Residences Preventa · Av. Los Cusis",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "operacion": "Venta",
+    "precio_usd": 40375,
+    "zona": "Av. Los Cusis / Banzer-Beni",
+    "direccion": "Av. Los Cusis entre Banzer y Beni",
+    "complejo_nombre": "ONA Residences",
+    "descripcion": "ONA Residences es un proyecto en preventa en Av. Los Cusis (entre Banzer y Beni), con tipologías de 1 y 2 dormitorios desde 32,3 m² hasta ~92 m² y precios desde USD 40.375. Pensado para primera vivienda o inversión con varias formas de pago.\n\nDistribución & Dimensiones:\n• Tipologías (fuente tabla/copy): Tipo 3/4 ≈ 32,3 m² (1 dorm.); Tipo 1 ≈ 54,14 m² (2 dorm.); Tipo 2 ≈ 92,00 m² (2 dorm.); Tipo 5 ≈ 92,05 m² (2 dorm.)\n• Rango comercial comunicado: 32 m², 54 m² y 92 m² | 1 y 2 dormitorios\n• Precio desde USD 40.375 (tabla 1° fase / copy)\n\nServicios Básicos & Equipamiento:\n• Amenidades de proyecto: piscina, áreas de relajación, gimnasio, sauna, churrasquera, espacios sociales, seguridad y control de acceso, parqueos cubiertos\n• Parqueos: precio unitario USD 15.000; A y B USD 22.000 (tabla parqueos 1° fase)\n\nPotencial de Uso & Rentabilidad:\n• Primera vivienda\n• Inversión para alquiler o revalorización\n• Entrada con reserva USD 1.000 (congela precio según Formas de Pago)\n\nSeguridad Jurídica & Entrega:\n• Modalidad: preventa / Proyecto\n• Formas de pago: reserva USD 1.000; contado (mayor descuento); inicial 40% o 60% y saldo contra entrega\n• Fecha de entrega y avance de obra: no constan en las fuentes revisadas (omitidas)",
+    "amenidades": [
+      "piscina",
+      "áreas de relajación",
+      "gimnasio",
+      "sauna",
+      "churrasquera",
+      "espacios sociales",
+      "seguridad y control de acceso",
+      "parqueos cubiertos"
+    ],
+    "keywords": [
+      "ONA Residences",
+      "preventa",
+      "Av. Los Cusis",
+      "Banzer",
+      "Beni",
+      "departamentos nuevos",
+      "inversión",
+      "1 dormitorio",
+      "2 dormitorios",
+      "piscina",
+      "gimnasio"
+    ],
+    "datos_especificos_json": {
+      "precio_desde_usd": 40375,
+      "reserva_usd": 1000,
+      "tipologias": [
+        {
+          "type": "Tipo 3/4",
+          "rooms": 1,
+          "m2": 32.3
+        },
+        {
+          "type": "Tipo 1",
+          "rooms": 2,
+          "m2": 54.14,
+          "view": "lateral"
+        },
+        {
+          "type": "Tipo 2",
+          "rooms": 2,
+          "m2": 92.0,
+          "view": "Av. Los Cusis",
+          "note": "86.45 + 5.55 balcony"
+        },
+        {
+          "type": "Tipo 5",
+          "rooms": 2,
+          "m2": 92.05,
+          "view": "posterior",
+          "note": "86.50 + 5.55 balcony"
+        }
+      ],
+      "planes_pago": [
+        "Reserva USD 1.000",
+        "Contado con mayor descuento",
+        "Inicial 40% y saldo contra entrega",
+        "Inicial 60% y saldo contra entrega"
+      ],
+      "disponibilidad_1a_fase": {
+        "filas_tabla": 54,
+        "disponibles": 38,
+        "vendidos": 16,
+        "por_tipologia": {
+          "Tipo 1": {
+            "available": 7,
+            "sold": 4
+          },
+          "Tipo 2": {
+            "available": 8,
+            "sold": 4
+          },
+          "Tipo 3": {
+            "available": 7,
+            "sold": 3
+          },
+          "Tipo 4": {
+            "available": 7,
+            "sold": 3
+          },
+          "Tipo 5": {
+            "available": 9,
+            "sold": 2
+          }
+        },
+        "parqueos": {
+          "listed": 26,
+          "available": 22,
+          "sold": 4,
+          "single_price_usd": 15000,
+          "A_y_B_price_usd": 22000
+        }
+      },
+      "amenidades_condominio": [
+        "piscina",
+        "áreas de relajación",
+        "gimnasio",
+        "sauna",
+        "churrasquera",
+        "espacios sociales",
+        "seguridad y control de acceso",
+        "parqueos cubiertos"
+      ]
+    },
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 40375,
+        "moneda": "$ (USD)",
+        "estado": "Borrador"
+      }
+    ],
+    "estado": "Borrador",
+    "ocupacion": "Disponible",
+    "ciudad": "Santa Cruz de la Sierra",
+    "moneda": "$ (USD)",
+    "captador_nombre": "Mauricio Gil",
+    "captador_whatsapp": "59176009332",
+    "imagenes": [
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129555/inmuebles/cbpb0oyzhtztnitsn9kj.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129557/inmuebles/aaxdcbw9vl2lhvkbghrp.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129560/inmuebles/c2wd2clfyuoktq27dizl.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129562/inmuebles/plmbt0gfhalfke8oicrh.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129565/inmuebles/ur2qaj8wk8pmnxzvdwm2.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129567/inmuebles/zxu7dp7hfclfdrhlkuj3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129569/inmuebles/pi8ynm4zqvaokzm6uk87.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129571/inmuebles/cewatifoxm8jwj3otopb.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129574/inmuebles/omffmjc8rotfptzbbi1f.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129576/inmuebles/dn7wonxgwrslz6pvh8bj.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129579/inmuebles/ukthc4l543pugycbdga3.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129581/inmuebles/tlu5h7imsjrl2hafp7mi.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129584/inmuebles/awwomocqn1iif5xagt0d.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129586/inmuebles/zhjsalwmbcxzo6xtkfg8.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129589/inmuebles/gb99h9ap3shovw6fgzbb.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129591/inmuebles/xenlri918urlj7hkxjao.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129594/inmuebles/s2i9zrymxlvuhanwjwvk.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129596/inmuebles/mdforki4dvrjn72pw7r1.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129598/inmuebles/ctmrxcobnh6y42zlm0lh.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129600/inmuebles/wefwrq3qr6ilwblb2qkx.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129603/inmuebles/ig6nggw2mftlcxrnvyo4.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129605/inmuebles/ibvsekqt8pfnsi9jvfzc.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129608/inmuebles/ih0oihaficmpwbqbtpur.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129610/inmuebles/nrdedx61pl64rw0z6ifk.jpg",
+      "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129613/inmuebles/rytqheeemdhtzr32qltb.jpg"
+    ]
+  }
+]

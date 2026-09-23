@@ -1,5 +1,5 @@
 """property types and exclusive characteristics
-Revision ID: 0012_property_types_and_characteristics
+Revision ID: 0012_property_types
 Revises: 0011_catalog_complejos
 Create Date: 2026-09-21
 """
@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = "0012_property_types_and_characteristics"
+revision: str = "0012_property_types"
 down_revision: Union[str, None] = "0011_catalog_complejos"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

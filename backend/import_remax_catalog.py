@@ -86,17 +86,38 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     zona = item.get("zona") or ciudad
     lat, lng = resolve_coordinates(zona, ciudad, item.get("lat"), item.get("lng"))
     
-    # Manejo de Agente / Captador
+    # Manejo de Captador (Drive agent) vs colocador/contacto (Alejandro Coca)
+    # Never invent WhatsApp: do NOT default phone when only a captador name is known
+    # (defaulting to Alejandro's number would merge distinct captadores into him).
     captador_nombre = item.get("captador_nombre") or item.get("agente_nombre")
-    captador_whatsapp = item.get("captador_whatsapp") or item.get("agente_whatsapp") or "59157015854"
-    
-    agente_obj = None
-    if captador_nombre or captador_whatsapp:
-        agente_obj = find_or_create_captador(db, captador_nombre, captador_whatsapp)
-        if agente_obj and not agente_obj.oficina_id:
-            agente_obj.oficina_id = default_office_id
+    captador_whatsapp = item.get("captador_whatsapp") or item.get("agente_whatsapp")
+    if not captador_nombre and not captador_whatsapp and not item.get("agente_id") and not item.get("captador_id"):
+        captador_whatsapp = "59157015854"  # fallback only when no captador identity at all
+
+    captador_obj = None
+    if item.get("captador_id"):
+        captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["captador_id"])).first()
+    elif captador_nombre or captador_whatsapp:
+        captador_obj = find_or_create_captador(db, captador_nombre, captador_whatsapp)
+        if captador_obj and not captador_obj.oficina_id:
+            captador_obj.oficina_id = default_office_id
     elif item.get("agente_id"):
-        agente_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["agente_id"])).first()
+        captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["agente_id"])).first()
+
+    # Public contact / colocador: Alejandro Coca (override via colocador_id / colocador_whatsapp)
+    colocador_id = item.get("colocador_id")
+    colocador_obj = None
+    if colocador_id:
+        colocador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(colocador_id)).first()
+    else:
+        colocador_wa = item.get("colocador_whatsapp") or "59157015854"
+        colocador_nombre = item.get("colocador_nombre") or "Alejandro Coca"
+        colocador_obj = find_or_create_captador(db, colocador_nombre, colocador_wa)
+        if colocador_obj and not colocador_obj.oficina_id:
+            colocador_obj.oficina_id = default_office_id
+
+    # Legacy alias used below for inmueble.agente_id / oferta fields
+    agente_obj = captador_obj
 
     # Complejo / Condominio
     complejo_nombre = item.get("complejo_nombre")
@@ -177,7 +198,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
         imagenes=imagenes_str,
         amenidades=amenidades_str,
         keywords=keywords_str,
-        agente_id=agente_obj.id if agente_obj else None,
+        agente_id=(colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None)),
         complejo_id=complejo_obj.id if complejo_obj else None,
     )
 
@@ -203,6 +224,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 estado=o.get("estado") or "Publicado",
                 agente_id=agente_obj.id if agente_obj else None,
                 captador_id=agente_obj.id if agente_obj else None,
+                colocador_id=colocador_obj.id if colocador_obj else None,
                 incluye_expensas=bool(o.get("incluye_expensas", False)),
                 monto_expensas=float(o["monto_expensas"]) if o.get("monto_expensas") else None,
                 expensas_moneda=o.get("expensas_moneda") or "Bs",
@@ -219,6 +241,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 estado="Publicado",
                 agente_id=agente_obj.id if agente_obj else None,
                 captador_id=agente_obj.id if agente_obj else None,
+                colocador_id=colocador_obj.id if colocador_obj else None,
             ))
             db.add(OfertaDB(
                 inmueble_id=inmueble.id,
@@ -241,6 +264,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 estado="Publicado",
                 agente_id=agente_obj.id if agente_obj else None,
                 captador_id=agente_obj.id if agente_obj else None,
+                colocador_id=colocador_obj.id if colocador_obj else None,
                 incluye_expensas=bool(item.get("incluye_expensas", False)),
                 monto_expensas=float(item["monto_expensas"]) if item.get("monto_expensas") else None,
                 expensas_moneda=item.get("expensas_moneda") or "Bs",
