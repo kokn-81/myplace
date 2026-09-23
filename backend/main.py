@@ -1121,6 +1121,23 @@ async def obtener_inmuebles(db: Session = Depends(get_db)):
     return [serializar_inmueble(inm) for inm in inmuebles_db if es_publicable(inm.ocupacion, inm.estado)]
 
 
+@app.post("/api/remax/sync-catalog")
+@app.get("/api/remax/sync-catalog")
+def sincronizar_catalogo_remax(db: Session = Depends(get_db)):
+    catalog_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "remax_inventario.json")
+    if not os.path.exists(catalog_path):
+        raise HTTPException(status_code=404, detail="remax_inventario.json no encontrado")
+    try:
+        from import_remax_catalog import run_batch_import
+        with open(catalog_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        imported_ids = run_batch_import(data)
+        invalidate_public_catalog_cache()
+        return {"status": "success", "imported_count": len(imported_ids), "ids": imported_ids}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/inmuebles/admin")
 async def obtener_inmuebles_admin(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
     inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).all()

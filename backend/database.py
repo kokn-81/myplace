@@ -27,6 +27,7 @@ def init_db() -> None:
         ensure_sqlite_property_type_columns()
     seed_authorized_users()
     seed_default_office()
+    seed_remax_catalog()
 
 
 def ensure_sqlite_agent_email_column() -> None:
@@ -189,3 +190,25 @@ def ensure_sqlite_property_type_columns() -> None:
             for column, ddl in desired.items():
                 if column not in inm_cols:
                     conn.exec_driver_sql(f"ALTER TABLE inmuebles ADD COLUMN {column} {ddl}")
+
+
+def seed_remax_catalog() -> None:
+    import json
+    import os
+    from models import InmuebleDB
+
+    catalog_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "remax_inventario.json")
+    if not os.path.exists(catalog_path):
+        return
+
+    with SessionLocal() as db:
+        count = db.query(InmuebleDB).count()
+        if count == 0:
+            try:
+                from import_remax_catalog import run_batch_import
+                with open(catalog_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, list) and len(data) > 0:
+                    run_batch_import(data)
+            except Exception as e:
+                print(f"[seed_remax_catalog] Error seeding catalog: {e}")

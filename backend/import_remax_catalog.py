@@ -166,47 +166,83 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     precio_usd = float(item.get("precio_usd") or item.get("precio") or 0.0)
     moneda = item.get("moneda") or ("Bs" if operacion == "Alquilar" and precio_usd < 20000 else "$ (USD)")
 
-    inmueble = InmuebleDB(
-        titulo=titulo,
-        precio_usd=precio_usd,
-        moneda=moneda,
-        habitaciones=int(item.get("habitaciones") or item.get("dormitorios") or 0),
-        banos=int(item.get("banos") or item.get("baños") or 1),
-        ciudad=ciudad,
-        zona=zona,
-        direccion=item.get("direccion"),
-        lat=lat,
-        lng=lng,
-        operacion=operacion,
-        tipo_inmueble=tipo,
-        estado=item.get("estado") or "Publicado",
-        ocupacion=item.get("ocupacion") or "Disponible",
-        superficie_m2=float(item.get("superficie_m2") or item.get("superficie") or 0.0) or None,
-        piso=str(item.get("piso")) if item.get("piso") is not None else None,
-        amoblado=bool(item.get("amoblado", False)),
-        acepta_mascotas=bool(item.get("acepta_mascotas", False)),
-        parqueos=int(item.get("parqueos") or 0),
-        baulera=bool(item.get("baulera", False)),
-        fecha_entrega=item.get("fecha_entrega"),
-        avance_obra=int(item.get("avance_obra")) if item.get("avance_obra") is not None else None,
-        fase_obra=item.get("fase_obra"),
-        subtipo_comercial=item.get("subtipo_comercial"),
-        dimensiones=item.get("dimensiones"),
-        servicios_basicos=item.get("servicios_basicos"),
-        datos_especificos_json=datos_especificos_str,
-        descripcion=item.get("descripcion") or "",
-        imagenes=imagenes_str,
-        amenidades=amenidades_str,
-        keywords=keywords_str,
-        agente_id=(colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None)),
-        complejo_id=complejo_obj.id if complejo_obj else None,
-    )
+    inmueble = db.query(InmuebleDB).filter(InmuebleDB.titulo == titulo).first()
+    if inmueble:
+        inmueble.precio_usd = precio_usd
+        inmueble.moneda = moneda
+        inmueble.habitaciones = int(item.get("habitaciones") or item.get("dormitorios") or 0)
+        inmueble.banos = int(item.get("banos") or item.get("baños") or 1)
+        inmueble.ciudad = ciudad
+        inmueble.zona = zona
+        inmueble.direccion = item.get("direccion")
+        inmueble.lat = lat
+        inmueble.lng = lng
+        inmueble.operacion = operacion
+        inmueble.tipo_inmueble = tipo
+        inmueble.estado = item.get("estado") or "Publicado"
+        inmueble.ocupacion = item.get("ocupacion") or "Disponible"
+        inmueble.superficie_m2 = float(item.get("superficie_m2") or item.get("superficie") or 0.0) or None
+        inmueble.piso = str(item.get("piso")) if item.get("piso") is not None else None
+        inmueble.amoblado = bool(item.get("amoblado", False))
+        inmueble.acepta_mascotas = bool(item.get("acepta_mascotas", False))
+        inmueble.parqueos = int(item.get("parqueos") or 0)
+        inmueble.baulera = bool(item.get("baulera", False))
+        inmueble.fecha_entrega = item.get("fecha_entrega")
+        inmueble.avance_obra = int(item.get("avance_obra")) if item.get("avance_obra") is not None else None
+        inmueble.fase_obra = item.get("fase_obra")
+        inmueble.subtipo_comercial = item.get("subtipo_comercial")
+        inmueble.dimensiones = item.get("dimensiones")
+        inmueble.servicios_basicos = item.get("servicios_basicos")
+        inmueble.datos_especificos_json = datos_especificos_str
+        inmueble.descripcion = item.get("descripcion") or ""
+        inmueble.imagenes = imagenes_str
+        inmueble.amenidades = amenidades_str
+        inmueble.keywords = keywords_str
+        inmueble.agente_id = (colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None))
+        inmueble.complejo_id = complejo_obj.id if complejo_obj else None
+        db.query(OfertaDB).filter(OfertaDB.inmueble_id == inmueble.id).delete()
+    else:
+        inmueble = InmuebleDB(
+            titulo=titulo,
+            precio_usd=precio_usd,
+            moneda=moneda,
+            habitaciones=int(item.get("habitaciones") or item.get("dormitorios") or 0),
+            banos=int(item.get("banos") or item.get("baños") or 1),
+            ciudad=ciudad,
+            zona=zona,
+            direccion=item.get("direccion"),
+            lat=lat,
+            lng=lng,
+            operacion=operacion,
+            tipo_inmueble=tipo,
+            estado=item.get("estado") or "Publicado",
+            ocupacion=item.get("ocupacion") or "Disponible",
+            superficie_m2=float(item.get("superficie_m2") or item.get("superficie") or 0.0) or None,
+            piso=str(item.get("piso")) if item.get("piso") is not None else None,
+            amoblado=bool(item.get("amoblado", False)),
+            acepta_mascotas=bool(item.get("acepta_mascotas", False)),
+            parqueos=int(item.get("parqueos") or 0),
+            baulera=bool(item.get("baulera", False)),
+            fecha_entrega=item.get("fecha_entrega"),
+            avance_obra=int(item.get("avance_obra")) if item.get("avance_obra") is not None else None,
+            fase_obra=item.get("fase_obra"),
+            subtipo_comercial=item.get("subtipo_comercial"),
+            dimensiones=item.get("dimensiones"),
+            servicios_basicos=item.get("servicios_basicos"),
+            datos_especificos_json=datos_especificos_str,
+            descripcion=item.get("descripcion") or "",
+            imagenes=imagenes_str,
+            amenidades=amenidades_str,
+            keywords=keywords_str,
+            agente_id=(colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None)),
+            complejo_id=complejo_obj.id if complejo_obj else None,
+        )
+        db.add(inmueble)
 
     inmueble.search_text = build_property_search_text(inmueble)
     if EMBEDDINGS_ENABLED and cliente_ia:
         update_property_embedding(inmueble, cliente_ia, EMBEDDING_MODEL)
 
-    db.add(inmueble)
     db.flush()
 
     # Manejo de Ofertas
