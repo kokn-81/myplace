@@ -2619,8 +2619,8 @@ export default function MapPage() {
                           </div>
                         ) : null}
 
-                        {/* 2. Tarjetas de Métricas de Habitabilidad & Inversión */}
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {/* 2. Tarjetas de Métricas de Habitabilidad */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Nivel</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
@@ -2647,17 +2647,7 @@ export default function MapPage() {
                               {selectedProperty.rooms} Dorms
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {selectedProperty.bathrooms} baño completo
-                            </span>
-                          </div>
-
-                          <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Renta / Airbnb</span>
-                            <div className="mt-1 text-xl font-bold text-[var(--accent-main)]">
-                              {depto.aptoAirbnb ? "Apto Airbnb" : "Alta Demanda"}
-                            </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">
-                              {depto.demandaZona ? "Zona estratégica" : "Renta proyectada"}
+                              {selectedProperty.bathrooms} {selectedProperty.bathrooms === 1 ? "baño completo" : "baños completos"}
                             </span>
                           </div>
                         </div>

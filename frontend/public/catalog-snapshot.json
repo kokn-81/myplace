@@ -1,27 +1,27 @@
 [
   {
-    "banos": 5,
+    "ciudad": "Santa Cruz de la Sierra",
     "superficie_m2": 305.0,
     "fecha_entrega": null,
-    "agente_id": "17",
-    "ciudad": "Santa Cruz de la Sierra",
+    "agente_id": "8",
+    "lat": -17.8135,
     "zona": "Sur / Av. San Aurelio",
     "avance_obra": null,
     "complejo_id": null,
-    "lat": -17.8135,
-    "direccion": "Av. San Aurelio (entre 3er y 4to Anillo)",
-    "fase_obra": null,
     "titulo": "Casa 4 Dorm. · Av. San Aurelio",
     "lng": -63.1565,
+    "direccion": "Av. San Aurelio (entre 3er y 4to Anillo)",
+    "fase_obra": null,
+    "id": 1,
+    "operacion": "Venta",
     "piso": null,
     "subtipo_comercial": null,
-    "id": 14,
     "precio_usd": 220000.0,
-    "operacion": "Venta",
+    "tipo_inmueble": "Casa",
     "amoblado": false,
     "descripcion": "Casa familiar de dos niveles en Av. San Aurelio (entre 3er y 4to Anillo), con 305 m² de construcción sobre terreno de 200 m². Orientada a familia numerosa o multigeneracional que prioriza distribución clara, acabados diferenciados y garaje techado.\n\nDistribución & Dimensiones:\n• Construcción 305 m² | Terreno 200 m² | 2 niveles (planta baja y alta)\n• 4 dormitorios | 5 baños | 2 parqueos en garaje techado | 2 depósitos\n• Planta baja: sala amplia, cocina funcional/amplia, churrasquera, lavandería independiente y ventilada, dependencia de servicio con baño privado, baño de visitas\n• Planta alta: master suite con baño privado y walking closet; dormitorio con baño privado; 2 dormitorios adicionales; baño compartido\n\nServicios Básicos & Equipamiento:\n• Blindex doble laminado antisonido\n• Mesones de cuarzo en cocina y baños\n• Piso importado de Brasil\n• Garaje techado para 2 vehículos\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente\n• Residencia multigeneracional\n• Activo residencial en zona Sur / Av. San Aurelio\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (tipo de cambio paralelo según ficha de origen)\n• Estado de ocupación y títulos: a confirmar con documentación del propietario",
     "moneda": "$ (USD)",
-    "tipo_inmueble": "Casa",
+    "estado": "Publicado",
     "acepta_mascotas": false,
     "dimensiones": null,
     "amenidades": [
@@ -39,7 +39,7 @@
       "2 depósitos"
     ],
     "habitaciones": 4,
-    "estado": "Publicado",
+    "ocupacion": "Disponible",
     "parqueos": 2,
     "servicios_basicos": null,
     "keywords": [
@@ -54,47 +54,10 @@
       "garaje techado",
       "Santa Cruz de la Sierra"
     ],
-    "ocupacion": "Disponible",
+    "banos": 5,
     "baulera": false,
     "datos_especificos_json": "{\"superficieConstruidaM2\": 305, \"superficieTerrenoM2\": 200, \"niveles\": 2, \"parqueosTechados\": 2, \"depositos\": 2, \"usos_recomendados\": [\"vivienda familiar\", \"residencia multigeneracional\"]}",
     "imagenes": "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129303/inmuebles/zmml9bmxf0ys6qvueygl.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129305/inmuebles/wsv4kagrh95s2cvwaqeu.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129308/inmuebles/qxs9aatbxbfonnpvjrhq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129311/inmuebles/ioierxkxasdn4ace3zpj.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129313/inmuebles/wraexbgtmwfene2rcrkq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129316/inmuebles/rvzbxf8hm4cn358diwho.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129319/inmuebles/xvpxskn2ldkanozspqnj.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129321/inmuebles/vvusgptgyokfsraxmflo.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129323/inmuebles/qawr3qkxohsnnfcpg3w5.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129326/inmuebles/o2xxd1kb1vc4naswtffy.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129328/inmuebles/e3yolwobmc9kyqxi1kbe.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129331/inmuebles/bbjbksjc2t9yp6zqpmpv.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129333/inmuebles/j5iojdcktixacavctrss.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129336/inmuebles/qufzpa0u1tjly8bdhzl8.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129338/inmuebles/dyl92psxgsq4t1ggy6dm.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129341/inmuebles/kjl6wpj8lysx3ehcpgzs.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129343/inmuebles/wsszqqctqtkjnoezisq2.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129346/inmuebles/pan0oxctkqajpfu4xqii.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129349/inmuebles/dhx8tzymdxo28ohvy6mw.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129351/inmuebles/fp0uayrei3ffpqrub4ey.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129355/inmuebles/i0kk9vmwpfliduwv1bhc.jpg",
-    "agente": {
-      "id": "17",
-      "name": "Mauricio Gil",
-      "whatsapp": "59176009332"
-    },
-    "complejo": null,
-    "ofertas": [
-      {
-        "id": "23",
-        "operacion": "Venta",
-        "precio": 220000.0,
-        "moneda": "$ (USD)",
-        "estado": "Publicado",
-        "agente_id": "17",
-        "agente": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "captador": {
-          "id": "17",
-          "name": "Mauricio Gil",
-          "whatsapp": "59176009332",
-          "oficina": "REMAX Patrimonio"
-        },
-        "colocador": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "incluye_expensas": false,
-        "monto_expensas": null,
-        "expensas_moneda": "Bs"
-      }
-    ],
     "images": [
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129303/inmuebles/zmml9bmxf0ys6qvueygl.jpg",
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129305/inmuebles/wsv4kagrh95s2cvwaqeu.jpg",
@@ -128,33 +91,69 @@
     "brochure_url": null,
     "planes_pago": null,
     "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "22",
+        "operacion": "Venta",
+        "precio": 220000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "8",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "8",
+          "name": "Mauricio Gil",
+          "whatsapp": "59176009332",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "8",
+      "name": "Mauricio Gil",
+      "whatsapp": "59176009332"
+    },
     "agente_nombre": "Mauricio Gil",
     "agente_whatsapp": "59176009332",
     "complejo_nombre": null
   },
   {
-    "banos": 2,
+    "ciudad": "Parque Urbano / Teniente Cuéllar",
     "superficie_m2": 130.57,
     "fecha_entrega": null,
-    "agente_id": "17",
-    "ciudad": "Parque Urbano / Teniente Cuéllar",
+    "agente_id": "8",
+    "lat": -17.79523,
     "zona": "Parque Urbano / Teniente Cuéllar",
     "avance_obra": null,
     "complejo_id": 1,
-    "lat": -17.79523,
-    "direccion": "Av. Teniente Mamerto Cuéllar #320, frente Parque Urbano",
-    "fase_obra": null,
     "titulo": "Depto 3 Dorm. · Lares del Parque",
     "lng": -63.17054,
+    "direccion": "Av. Teniente Mamerto Cuéllar #320, frente Parque Urbano",
+    "fase_obra": null,
+    "id": 2,
+    "operacion": "Venta",
     "piso": "12",
     "subtipo_comercial": null,
-    "id": 15,
     "precio_usd": 150000.0,
-    "operacion": "Venta",
+    "tipo_inmueble": "Departamento",
     "amoblado": false,
     "descripcion": "Departamento en Edificio Lares del Parque, piso 12, en primera línea frente al Parque Urbano (Calle Teniente Cuéllar). 130,57 m² con 3 dormitorios, suite con vestidor, 2 parqueos y baulera privada de 5,27 m².\n\nDistribución & Dimensiones:\n• Superficie 130,57 m² | Piso 12\n• 3 dormitorios (uno en suite con vestidor) | 2 baños (suite + visitas)\n• Living-comedor integrado con salida al balcón\n• 2 parqueos incluidos (12,65 m² cada uno) | Baulera privada 5,27 m²\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 725 Bs\n• Áreas comunes del complejo: piscina, churrasquera, salón de eventos, parque recreativo/infantil\n• Seguridad 24 horas\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar frente a parque\n• Residencia con balcón y vistas despejadas\n• Activo en zona Teniente Cuéllar / Parque Urbano\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "moneda": "$ (USD)",
-    "tipo_inmueble": "Departamento",
+    "estado": "Publicado",
     "acepta_mascotas": false,
     "dimensiones": null,
     "amenidades": [
@@ -170,7 +169,7 @@
       "expensas 725 Bs"
     ],
     "habitaciones": 3,
-    "estado": "Publicado",
+    "ocupacion": "Disponible",
     "parqueos": 2,
     "servicios_basicos": null,
     "keywords": [
@@ -185,57 +184,10 @@
       "baulera",
       "Santa Cruz"
     ],
-    "ocupacion": "Disponible",
+    "banos": 2,
     "baulera": true,
     "datos_especificos_json": "{\"piso\": 12, \"precio_m2\": 1148.81, \"baulera_m2\": 5.27, \"parqueo_m2_cada_uno\": 12.65, \"expensas_bs\": 725, \"amenidades_condominio\": [\"piscina\", \"churrasquera\", \"salón de eventos\", \"parque infantil\", \"seguridad 24 horas\"], \"equipamiento_interior\": [\"suite con vestidor\", \"living-comedor con balcón\"]}",
     "imagenes": "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129357/inmuebles/lpbomokbppez2sxg06g2.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129360/inmuebles/stuth7uperxbsz3v3rlh.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129362/inmuebles/lnrzdpszi1szepggppqc.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129364/inmuebles/pnopb0wbm5cntcpbbxyc.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129367/inmuebles/numsowhsgcwnvtin6v5j.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129369/inmuebles/x1kmxoadkqdcnceikmed.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129372/inmuebles/eraf46bb4ymqciqnxp5r.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129374/inmuebles/lpgidnv2v45tziuf3atz.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129376/inmuebles/fmy5zaax1knyhwerbnng.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129378/inmuebles/ldadnm1wp4w2eovjbsf4.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129381/inmuebles/kzcrlzteeicadnwmbzsz.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129383/inmuebles/evy1honahf8xlub7vx0p.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129387/inmuebles/jzgyvouk94uvhkwvujtu.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129390/inmuebles/cocimgvzfo6qzp15w4au.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129392/inmuebles/ivfxyb3fon0zbx9dahu6.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129395/inmuebles/vbygjlgomtmv8azlslaq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129398/inmuebles/stwhdq5cicpck3tfrhq8.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129400/inmuebles/p1s3z0gkjuhm0pfgr2nb.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129402/inmuebles/vjutfhwah3fzxrajvozd.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129405/inmuebles/kx7zojexr21osfjr8prc.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129407/inmuebles/sctsrii8atlpekawa3ci.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129410/inmuebles/xthslymah9g5rfkp4578.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129412/inmuebles/nkrvz8emozzptucvdmh7.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129414/inmuebles/fvrdmdh8o9wefnvxqrav.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129417/inmuebles/jrhinwcrtjoxn7c0rcu0.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129420/inmuebles/wlpwtynhvyrqkmsvr0ct.jpg",
-    "agente": {
-      "id": "17",
-      "name": "Mauricio Gil",
-      "whatsapp": "59176009332"
-    },
-    "complejo": {
-      "id": 1,
-      "ciudad": "Santa Cruz de la Sierra",
-      "direccion": "Av. Teniente Mamerto Cuéllar #320, frente Parque Urbano",
-      "lng": -63.17054,
-      "imagenes": null,
-      "zona": "Parque Urbano / Teniente Cuéllar",
-      "nombre": "Lares del Parque",
-      "lat": -17.79523,
-      "amenidades": null
-    },
-    "ofertas": [
-      {
-        "id": "24",
-        "operacion": "Venta",
-        "precio": 150000.0,
-        "moneda": "$ (USD)",
-        "estado": "Publicado",
-        "agente_id": "17",
-        "agente": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "captador": {
-          "id": "17",
-          "name": "Mauricio Gil",
-          "whatsapp": "59176009332",
-          "oficina": "REMAX Patrimonio"
-        },
-        "colocador": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "incluye_expensas": false,
-        "monto_expensas": null,
-        "expensas_moneda": "Bs"
-      }
-    ],
     "images": [
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129357/inmuebles/lpbomokbppez2sxg06g2.jpg",
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129360/inmuebles/stuth7uperxbsz3v3rlh.jpg",
@@ -274,33 +226,69 @@
     "brochure_url": null,
     "planes_pago": null,
     "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "23",
+        "operacion": "Venta",
+        "precio": 150000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "8",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "8",
+          "name": "Mauricio Gil",
+          "whatsapp": "59176009332",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "8",
+      "name": "Mauricio Gil",
+      "whatsapp": "59176009332"
+    },
     "agente_nombre": "Mauricio Gil",
     "agente_whatsapp": "59176009332",
     "complejo_nombre": "Lares del Parque"
   },
   {
-    "banos": 2,
+    "ciudad": "Canal Isuto / Equipetrol (Swissôtel)",
     "superficie_m2": 132.55,
     "fecha_entrega": null,
-    "agente_id": "17",
-    "ciudad": "Canal Isuto / Equipetrol (Swissôtel)",
+    "agente_id": "8",
+    "lat": -17.745744,
     "zona": "Canal Isuto / Equipetrol (Swissôtel)",
     "avance_obra": null,
-    "complejo_id": 2,
-    "lat": -17.745744,
-    "direccion": "Av. La Salle 4500 / 5to Anillo, Canal Isuto",
-    "fase_obra": null,
+    "complejo_id": 5,
     "titulo": "Depto 1 Dorm. · Swissôtel Santa Cruz",
     "lng": -63.195316,
+    "direccion": "Av. La Salle 4500 / 5to Anillo, Canal Isuto",
+    "fase_obra": null,
+    "id": 3,
+    "operacion": "Venta",
     "piso": "8",
     "subtipo_comercial": null,
-    "id": 16,
     "precio_usd": 195000.0,
-    "operacion": "Venta",
+    "tipo_inmueble": "Departamento",
     "amoblado": false,
     "descripcion": "Departamento a estrenar de 1 dormitorio en Swissôtel Santa Cruz (5to Anillo y Av. La Salle, zona Equipetrol / Canal Isuto). 132,55 m² en piso 8, con master suite, baño de visitas, cocina equipada y 1 parqueo, dentro de complejo mixed-use.\n\nDistribución & Dimensiones:\n• Superficie 132,55 m² | Piso 8\n• 1 dormitorio (master suite) | 2 baños (master + visitas)\n• Living-comedor | Cocina equipada | 1 parqueo\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 924 (moneda no especificada en fuente)\n• Áreas del complejo: piscina, churrasquera, salas de reuniones/eventos, gimnasio equipado\n• Conectividad urbana; cercanía a Ventura Mall y Las Brisas según ficha\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / profesional\n• Producto a estrenar en marca hotelera mixed-use\n• Demanda en Equipetrol / Canal Isuto\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "moneda": "$ (USD)",
-    "tipo_inmueble": "Departamento",
+    "estado": "Publicado",
     "acepta_mascotas": false,
     "dimensiones": null,
     "amenidades": [
@@ -313,7 +301,7 @@
       "a estrenar"
     ],
     "habitaciones": 1,
-    "estado": "Publicado",
+    "ocupacion": "Disponible",
     "parqueos": 1,
     "servicios_basicos": null,
     "keywords": [
@@ -328,57 +316,10 @@
       "a estrenar",
       "gimnasio"
     ],
-    "ocupacion": "Disponible",
+    "banos": 2,
     "baulera": false,
     "datos_especificos_json": "{\"piso\": 8, \"precio_m2\": 1471.14, \"expensas\": 924, \"expensas_moneda\": null, \"amenidades_condominio\": [\"piscina\", \"churrasquera\", \"salas de reuniones\", \"gimnasio\"], \"equipamiento_interior\": [\"cocina equipada\", \"master suite\", \"baño de visitas\"]}",
     "imagenes": "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129422/inmuebles/hvj5qpv5ogtxknsmhjjs.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129425/inmuebles/jm6rqg1bxyjglsmqmdo3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129427/inmuebles/qvo5rejc3z7kkr4s681z.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129430/inmuebles/t9ab5ily54af8idoajiq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129433/inmuebles/eouhfmmzj2bvzjxgg02q.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129435/inmuebles/d3rxzgv7dt30ugfexpc3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129437/inmuebles/qu1k1burhfdy3lr4f1ks.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129439/inmuebles/urtbkr1wjfrlfkasxwpy.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129442/inmuebles/ijxpjq7kcg9onz6gggwy.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129444/inmuebles/eep1ptblby8vupudhjfj.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129447/inmuebles/fmf3mhb6bzucvh0j3il2.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129449/inmuebles/zgdug2dvhwztpsjipxyp.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129452/inmuebles/azgdqqrv0chyfuum5hpp.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129454/inmuebles/lkly8hjkkfnb5tkcxbm1.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129457/inmuebles/dol60k2pucpg3y6wj0nz.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129459/inmuebles/hgz8yy77h2cvrzg9xgd0.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129462/inmuebles/i8rykafg6boc1hbjwuhu.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129465/inmuebles/hhkrt8wksljus6wewrkx.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129468/inmuebles/xqhbpki1kafgim3aeorf.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129471/inmuebles/np7rdorhwtkede64ktmq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129474/inmuebles/pn7ejxjqqt57ycvqwwxi.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129476/inmuebles/bh5lcxolemepaab0r9ei.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129479/inmuebles/sszgjyjucbmqgvdryhh3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129481/inmuebles/v1jvco34i77utuzpowqs.jpg",
-    "agente": {
-      "id": "17",
-      "name": "Mauricio Gil",
-      "whatsapp": "59176009332"
-    },
-    "complejo": {
-      "id": 2,
-      "ciudad": "Santa Cruz de la Sierra",
-      "direccion": "Av. La Salle 4500 / 5to Anillo, Canal Isuto",
-      "lng": -63.195316,
-      "imagenes": null,
-      "zona": "Canal Isuto / Equipetrol (Swissôtel)",
-      "nombre": "Swissôtel Santa Cruz",
-      "lat": -17.745744,
-      "amenidades": null
-    },
-    "ofertas": [
-      {
-        "id": "25",
-        "operacion": "Venta",
-        "precio": 195000.0,
-        "moneda": "$ (USD)",
-        "estado": "Publicado",
-        "agente_id": "17",
-        "agente": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "captador": {
-          "id": "17",
-          "name": "Mauricio Gil",
-          "whatsapp": "59176009332",
-          "oficina": "REMAX Patrimonio"
-        },
-        "colocador": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "incluye_expensas": false,
-        "monto_expensas": null,
-        "expensas_moneda": "Bs"
-      }
-    ],
     "images": [
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129422/inmuebles/hvj5qpv5ogtxknsmhjjs.jpg",
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129425/inmuebles/jm6rqg1bxyjglsmqmdo3.jpg",
@@ -415,33 +356,69 @@
     "brochure_url": null,
     "planes_pago": null,
     "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "24",
+        "operacion": "Venta",
+        "precio": 195000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "8",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "8",
+          "name": "Mauricio Gil",
+          "whatsapp": "59176009332",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "8",
+      "name": "Mauricio Gil",
+      "whatsapp": "59176009332"
+    },
     "agente_nombre": "Mauricio Gil",
     "agente_whatsapp": "59176009332",
     "complejo_nombre": "Swissôtel Santa Cruz"
   },
   {
-    "banos": 4,
+    "ciudad": "Equipetrol Norte",
     "superficie_m2": 204.26,
     "fecha_entrega": null,
-    "agente_id": "17",
-    "ciudad": "Equipetrol Norte",
+    "agente_id": "8",
+    "lat": -17.760107,
     "zona": "Equipetrol Norte",
     "avance_obra": null,
     "complejo_id": 3,
-    "lat": -17.760107,
-    "direccion": "4to Anillo y Av. Las Ramblas, Condominio La Riviera & Beauty Plaza",
-    "fase_obra": null,
     "titulo": "Depto 3 Dorm. · La Riviera Equipetrol",
     "lng": -63.201759,
+    "direccion": "4to Anillo y Av. Las Ramblas, Condominio La Riviera & Beauty Plaza",
+    "fase_obra": null,
+    "id": 4,
+    "operacion": "Venta",
     "piso": "16",
     "subtipo_comercial": null,
-    "id": 17,
     "precio_usd": 330000.0,
-    "operacion": "Venta",
+    "tipo_inmueble": "Departamento",
     "amoblado": false,
     "descripcion": "Departamento 16-04 en Condominio La Riviera & Beauty Plaza (Equipetrol Norte): 204,26 m² en piso 16, con 3 dormitorios más escritorio, cocina con balcón, lavandería, 2 parqueos y 1 baulera. Acceso a oferta gastronómica, comercial y empresarial del Beauty Plaza.\n\nDistribución & Dimensiones:\n• Superficie 204,26 m² | Piso 16 | Dpto. 16-04\n• 3 dormitorios + escritorio\n• Baños: master, compartido, visitas y servicio\n• Master suite con balcón privado\n• 2 habitaciones amplias con baño compartido\n• Living-comedor amplio y luminoso + baño de visitas\n• Cocina con balcón propio y alacena/depósito\n• Lavandería y baño de servicio\n• 2 parqueos | 1 baulera\n\nServicios Básicos & Equipamiento:\n• Expensas: Bs. 1.700\n• Áreas comunes de primer nivel y seguridad 24 horas (según copy)\n• Ubicación sobre Beauty Plaza / Equipetrol Norte\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de alto estándar\n• Home office (escritorio)\n• Activo en Equipetrol Norte con acceso comercial directo\n\nSeguridad Jurídica & Entrega:\n• Operación: venta | Precio USD 330.000 | Tipo de cambio flexible (según copy)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "moneda": "$ (USD)",
-    "tipo_inmueble": "Departamento",
+    "estado": "Publicado",
     "acepta_mascotas": false,
     "dimensiones": null,
     "amenidades": [
@@ -457,7 +434,7 @@
       "Beauty Plaza"
     ],
     "habitaciones": 3,
-    "estado": "Publicado",
+    "ocupacion": "Disponible",
     "parqueos": 2,
     "servicios_basicos": null,
     "keywords": [
@@ -472,57 +449,10 @@
       "baulera",
       "Santa Cruz"
     ],
-    "ocupacion": "Disponible",
+    "banos": 4,
     "baulera": true,
     "datos_especificos_json": "{\"piso\": 16, \"unidad\": \"16-04\", \"precio_m2\": 1615.59, \"escritorio\": true, \"expensas_bs\": 1700, \"amenidades_condominio\": [\"seguridad 24 horas\", \"áreas comunes\", \"Beauty Plaza\"], \"equipamiento_interior\": [\"master suite con balcón\", \"cocina con balcón\", \"lavandería\", \"escritorio\"]}",
     "imagenes": "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129484/inmuebles/cqbdbb2zn53qjywnrq13.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129486/inmuebles/fr0lkd7vmw3zdwibdkbn.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129488/inmuebles/r79k1rr4071uyqswx8j6.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129491/inmuebles/cmbfgukhcikplcsxr7vq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129494/inmuebles/xdzfdqebdb6wrr3vh84z.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129497/inmuebles/krakhsl25ywritf9zix3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129499/inmuebles/bvjndppyw4d121b8tnwa.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129501/inmuebles/mzgqzarw0lv3hzq49gyt.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129504/inmuebles/ycouxbwgqrrqqrevvntl.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129507/inmuebles/fmg4754i7mvtfrqbyxbg.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129509/inmuebles/w9der5g7x7ypfvwnofmw.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129512/inmuebles/uzqfc6rvbukzgbzaxp6s.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129515/inmuebles/qk915whzeqkog38zco3t.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129517/inmuebles/udaxgsqm8eyzdwixhw7v.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129520/inmuebles/xyxzyradtog48lxx8iut.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129523/inmuebles/p6u47dagxuiuyittlrej.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129526/inmuebles/s4xkaa35kdfoazc7rtir.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129529/inmuebles/sczh4hmce5sl7acmr0v2.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129532/inmuebles/azmxctng0gb4zldp1hd4.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129534/inmuebles/ga94cpuzn1xoxglljqrq.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129537/inmuebles/v5s9wfhnj4fwwp9arcc9.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129539/inmuebles/jhr6deq5wdoezpifttru.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129542/inmuebles/mfeyddk5o1v50xxgq7sk.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129544/inmuebles/qfytnywvjfh4id0ntk9c.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129547/inmuebles/nc7j3afif6vag4uxg2so.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129550/inmuebles/wbyykja4n6r3vgth9gln.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129552/inmuebles/wryeow3y221twrmcweaa.jpg",
-    "agente": {
-      "id": "17",
-      "name": "Mauricio Gil",
-      "whatsapp": "59176009332"
-    },
-    "complejo": {
-      "id": 3,
-      "ciudad": "Santa Cruz de la Sierra",
-      "direccion": "4to Anillo y Av. Las Ramblas, Condominio La Riviera & Beauty Plaza",
-      "lng": -63.201759,
-      "imagenes": null,
-      "zona": "Equipetrol Norte",
-      "nombre": "La Riviera & Beauty Plaza",
-      "lat": -17.760107,
-      "amenidades": null
-    },
-    "ofertas": [
-      {
-        "id": "26",
-        "operacion": "Venta",
-        "precio": 330000.0,
-        "moneda": "$ (USD)",
-        "estado": "Publicado",
-        "agente_id": "17",
-        "agente": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "captador": {
-          "id": "17",
-          "name": "Mauricio Gil",
-          "whatsapp": "59176009332",
-          "oficina": "REMAX Patrimonio"
-        },
-        "colocador": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "incluye_expensas": false,
-        "monto_expensas": null,
-        "expensas_moneda": "Bs"
-      }
-    ],
     "images": [
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129484/inmuebles/cqbdbb2zn53qjywnrq13.jpg",
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129486/inmuebles/fr0lkd7vmw3zdwibdkbn.jpg",
@@ -562,33 +492,69 @@
     "brochure_url": null,
     "planes_pago": null,
     "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "25",
+        "operacion": "Venta",
+        "precio": 330000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "8",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "8",
+          "name": "Mauricio Gil",
+          "whatsapp": "59176009332",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "8",
+      "name": "Mauricio Gil",
+      "whatsapp": "59176009332"
+    },
     "agente_nombre": "Mauricio Gil",
     "agente_whatsapp": "59176009332",
     "complejo_nombre": "La Riviera & Beauty Plaza"
   },
   {
-    "banos": 1,
+    "ciudad": "Av. Los Cusis / Banzer-Beni",
     "superficie_m2": 32.3,
     "fecha_entrega": null,
-    "agente_id": "17",
-    "ciudad": "Av. Los Cusis / Banzer-Beni",
+    "agente_id": "8",
+    "lat": -17.7645,
     "zona": "Av. Los Cusis / Banzer-Beni",
     "avance_obra": null,
     "complejo_id": 4,
-    "lat": -17.7645,
-    "direccion": "Av. Los Cusis entre Banzer y Beni",
-    "fase_obra": null,
     "titulo": "ONA Residences Preventa · Av. Los Cusis",
     "lng": -63.1745,
+    "direccion": "Av. Los Cusis entre Banzer y Beni",
+    "fase_obra": null,
+    "id": 5,
+    "operacion": "Venta",
     "piso": null,
     "subtipo_comercial": null,
-    "id": 18,
     "precio_usd": 40375.0,
-    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
     "amoblado": false,
     "descripcion": "ONA Residences es un proyecto en preventa en Av. Los Cusis (entre Banzer y Beni), con tipologías de 1 y 2 dormitorios desde 32,3 m² hasta ~92 m² y precios desde USD 40.375. Pensado para primera vivienda o inversión con varias formas de pago.\n\nDistribución & Dimensiones:\n• Tipologías (fuente tabla/copy): Tipo 3/4 ≈ 32,3 m² (1 dorm.); Tipo 1 ≈ 54,14 m² (2 dorm.); Tipo 2 ≈ 92,00 m² (2 dorm.); Tipo 5 ≈ 92,05 m² (2 dorm.)\n• Rango comercial comunicado: 32 m², 54 m² y 92 m² | 1 y 2 dormitorios\n• Precio desde USD 40.375 (tabla 1° fase / copy)\n\nServicios Básicos & Equipamiento:\n• Amenidades de proyecto: piscina, áreas de relajación, gimnasio, sauna, churrasquera, espacios sociales, seguridad y control de acceso, parqueos cubiertos\n• Parqueos: precio unitario USD 15.000; A y B USD 22.000 (tabla parqueos 1° fase)\n\nPotencial de Uso & Rentabilidad:\n• Primera vivienda\n• Inversión para alquiler o revalorización\n• Entrada con reserva USD 1.000 (congela precio según Formas de Pago)\n\nSeguridad Jurídica & Entrega:\n• Modalidad: preventa / Proyecto\n• Formas de pago: reserva USD 1.000; contado (mayor descuento); inicial 40% o 60% y saldo contra entrega\n• Fecha de entrega y avance de obra: no constan en las fuentes revisadas (omitidas)",
     "moneda": "$ (USD)",
-    "tipo_inmueble": "Proyecto (preventa)",
+    "estado": "Publicado",
     "acepta_mascotas": false,
     "dimensiones": null,
     "amenidades": [
@@ -602,7 +568,7 @@
       "parqueos cubiertos"
     ],
     "habitaciones": 1,
-    "estado": "Publicado",
+    "ocupacion": "Disponible",
     "parqueos": 0,
     "servicios_basicos": null,
     "keywords": [
@@ -618,57 +584,10 @@
       "piscina",
       "gimnasio"
     ],
-    "ocupacion": "Disponible",
+    "banos": 1,
     "baulera": false,
     "datos_especificos_json": "{\"precio_desde_usd\": 40375, \"reserva_usd\": 1000, \"tipologias\": [{\"type\": \"Tipo 3/4\", \"rooms\": 1, \"m2\": 32.3}, {\"type\": \"Tipo 1\", \"rooms\": 2, \"m2\": 54.14, \"view\": \"lateral\"}, {\"type\": \"Tipo 2\", \"rooms\": 2, \"m2\": 92.0, \"view\": \"Av. Los Cusis\", \"note\": \"86.45 + 5.55 balcony\"}, {\"type\": \"Tipo 5\", \"rooms\": 2, \"m2\": 92.05, \"view\": \"posterior\", \"note\": \"86.50 + 5.55 balcony\"}], \"planes_pago\": [\"Reserva USD 1.000\", \"Contado con mayor descuento\", \"Inicial 40% y saldo contra entrega\", \"Inicial 60% y saldo contra entrega\"], \"disponibilidad_1a_fase\": {\"filas_tabla\": 54, \"disponibles\": 38, \"vendidos\": 16, \"por_tipologia\": {\"Tipo 1\": {\"available\": 7, \"sold\": 4}, \"Tipo 2\": {\"available\": 8, \"sold\": 4}, \"Tipo 3\": {\"available\": 7, \"sold\": 3}, \"Tipo 4\": {\"available\": 7, \"sold\": 3}, \"Tipo 5\": {\"available\": 9, \"sold\": 2}}, \"parqueos\": {\"listed\": 26, \"available\": 22, \"sold\": 4, \"single_price_usd\": 15000, \"A_y_B_price_usd\": 22000}}, \"amenidades_condominio\": [\"piscina\", \"áreas de relajación\", \"gimnasio\", \"sauna\", \"churrasquera\", \"espacios sociales\", \"seguridad y control de acceso\", \"parqueos cubiertos\"]}",
     "imagenes": "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129555/inmuebles/cbpb0oyzhtztnitsn9kj.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129557/inmuebles/aaxdcbw9vl2lhvkbghrp.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129560/inmuebles/c2wd2clfyuoktq27dizl.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129562/inmuebles/plmbt0gfhalfke8oicrh.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129565/inmuebles/ur2qaj8wk8pmnxzvdwm2.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129567/inmuebles/zxu7dp7hfclfdrhlkuj3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129569/inmuebles/pi8ynm4zqvaokzm6uk87.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129571/inmuebles/cewatifoxm8jwj3otopb.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129574/inmuebles/omffmjc8rotfptzbbi1f.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129576/inmuebles/dn7wonxgwrslz6pvh8bj.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129579/inmuebles/ukthc4l543pugycbdga3.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129581/inmuebles/tlu5h7imsjrl2hafp7mi.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129584/inmuebles/awwomocqn1iif5xagt0d.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129586/inmuebles/zhjsalwmbcxzo6xtkfg8.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129589/inmuebles/gb99h9ap3shovw6fgzbb.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129591/inmuebles/xenlri918urlj7hkxjao.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129594/inmuebles/s2i9zrymxlvuhanwjwvk.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129596/inmuebles/mdforki4dvrjn72pw7r1.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129598/inmuebles/ctmrxcobnh6y42zlm0lh.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129600/inmuebles/wefwrq3qr6ilwblb2qkx.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129603/inmuebles/ig6nggw2mftlcxrnvyo4.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129605/inmuebles/ibvsekqt8pfnsi9jvfzc.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129608/inmuebles/ih0oihaficmpwbqbtpur.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129610/inmuebles/nrdedx61pl64rw0z6ifk.jpg, https://res.cloudinary.com/dposwsf5f/image/upload/v1790129613/inmuebles/rytqheeemdhtzr32qltb.jpg",
-    "agente": {
-      "id": "17",
-      "name": "Mauricio Gil",
-      "whatsapp": "59176009332"
-    },
-    "complejo": {
-      "id": 4,
-      "ciudad": "Santa Cruz de la Sierra",
-      "direccion": "Av. Los Cusis entre Banzer y Beni",
-      "lng": -63.1745,
-      "imagenes": null,
-      "zona": "Av. Los Cusis / Banzer-Beni",
-      "nombre": "ONA Residences",
-      "lat": -17.7645,
-      "amenidades": null
-    },
-    "ofertas": [
-      {
-        "id": "27",
-        "operacion": "Venta",
-        "precio": 40375.0,
-        "moneda": "$ (USD)",
-        "estado": "Publicado",
-        "agente_id": "17",
-        "agente": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "captador": {
-          "id": "17",
-          "name": "Mauricio Gil",
-          "whatsapp": "59176009332",
-          "oficina": "REMAX Patrimonio"
-        },
-        "colocador": {
-          "id": "16",
-          "name": "Alejandro Coca",
-          "whatsapp": "59157015854",
-          "oficina": "REMAX Patrimonio"
-        },
-        "incluye_expensas": false,
-        "monto_expensas": null,
-        "expensas_moneda": "Bs"
-      }
-    ],
     "images": [
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129555/inmuebles/cbpb0oyzhtztnitsn9kj.jpg",
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129557/inmuebles/aaxdcbw9vl2lhvkbghrp.jpg",
@@ -711,8 +630,800 @@
       "Inicial 60% y saldo contra entrega"
     ],
     "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "26",
+        "operacion": "Venta",
+        "precio": 40375.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "8",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "8",
+          "name": "Mauricio Gil",
+          "whatsapp": "59176009332",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "8",
+      "name": "Mauricio Gil",
+      "whatsapp": "59176009332"
+    },
     "agente_nombre": "Mauricio Gil",
     "agente_whatsapp": "59176009332",
     "complejo_nombre": "ONA Residences"
+  },
+  {
+    "ciudad": "Santa Cruz de la Sierra",
+    "superficie_m2": 68.0,
+    "fecha_entrega": null,
+    "agente_id": "16",
+    "lat": -17.772427,
+    "zona": "Equipetrol/NorOeste",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Depto 1 Dorm. Amoblado · Sky Eclipse Equipetrol",
+    "lng": -63.19185731,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 12,
+    "operacion": "Alquiler",
+    "piso": "9",
+    "subtipo_comercial": null,
+    "precio_usd": 630.0,
+    "tipo_inmueble": "Departamento",
+    "amoblado": true,
+    "descripcion": "Departamento de lujo completamente amoblado en Edificio Sky Eclipse (Equipetrol / NorOeste), piso 9, a pocos pasos de la Av. Busch y 2do Anillo. 68 m² diseñados con estándar ejecutivo para quien busca confort inmediato, ubicación estratégica y vistas panorámicas.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 9 | Vista abierta a la ciudad\n• 1 master suite matrimonial con vestidor y balcón privado\n• 2 baños (suite principal + baño de visitas)\n• Living-comedor integrado con salida directa al balcón\n• Cocina funcional totalmente equipada con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Totalmente amoblado con cama matrimonial, televisor, veladores y luminarias\n• Persianas blackout en puertas y ventanas | Aires acondicionados instalados\n• Cocina con cajonería alta/baja, refrigerador y microondas\n• Áreas comunes del edificio: piscina, sauna, sala de juegos y terraza social\n• Seguridad y control de acceso 24/7 | Conserjería | Ascensor de última generación\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / corporativa lista para habitar\n• Ubicación en Equipetrol con acceso caminando a centros gastronómicos y bancarios\n• Excelente estándar de habitabilidad y aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 630 USD)\n• Asesor asignado: Jorge Walter Ayala (+591 71640409) · RE/MAX Emprende",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Terraza",
+      "Balcon",
+      "Piscina",
+      "Acceso silla de ruedas",
+      "Edificio Nuevo",
+      "Aire Acondicionado Central",
+      "Cocina",
+      "Sauna",
+      "Amoblado",
+      "Cuarto de Juegos",
+      "Hall de Entrada",
+      "Sistema de Seguridad",
+      "Lavandería (en depto.)",
+      "Portero Eléctrico",
+      "Vestidor",
+      "Balcón Terraza"
+    ],
+    "habitaciones": 1,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "departamento",
+      "alquiler",
+      "santa cruz de la sierra",
+      "equipetrol/noroeste",
+      "re/max emprende",
+      "remax"
+    ],
+    "banos": 2,
+    "baulera": false,
+    "datos_especificos_json": "{\"piso\": 9, \"vista\": \"Vista panorámica a la ciudad\", \"precioM2\": 9.264705882352942, \"aptoAirbnb\": false, \"demandaZona\": true, \"equipamiento\": [\"Completamente amoblado y decorado\", \"Aires acondicionados split instalados\", \"Persianas blackout en dormitorio y sala\", \"Cocina equipada con barra desayunadora\", \"Cajonería alta y baja a medida\", \"Balcón privado con vista abierta\"], \"amenidadesEdificio\": [\"Piscina panorámica\", \"Sauna y sala de relajación\", \"Terraza social con churrasquera\", \"Seguridad y conserjería 24/7\", \"Sala de juegos y eventos\", \"Ascensores de alta velocidad\"], \"remax_id\": 63025, \"remax_mlsid\": \"120098019-8\", \"remax_slug\": \"alquiler-condominio-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-120098019-8\", \"oficina\": \"RE/MAX Emprende\"}",
+    "imagenes": "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/c5ceTVZaTRJewOdp5khe.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/0cFtQX0y7LGIxHsxADI4.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/nOBKe6i0wHL9FQ3hgffm.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/tYqgP3TSbRtSCs7YbGJV.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/pTy5xkjLvVUrnUxUeOxC.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/4OhtNgvFXYpzkWZDiPYo.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/LsyPn6raUZtWPorkkc6i.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/ZG7lNjQuHcL0aTIEcc7y.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/86ISmHnMvhrZaJoh96xZ.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/R0I4IvsCGYDtQ5V4TBZW.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/wfU39Zaikv2WVQ0aO7H2.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/fiOZJ10nB68r6thL7JEP.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/ljThtqIeAr7oXXI7D3mH.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/2VJdLKyOmOQR3Z9jNWBl.webp, https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/FXMdlHNZN33liD4uCIDX.webp",
+    "images": [
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/c5ceTVZaTRJewOdp5khe.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/0cFtQX0y7LGIxHsxADI4.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/nOBKe6i0wHL9FQ3hgffm.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/tYqgP3TSbRtSCs7YbGJV.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/pTy5xkjLvVUrnUxUeOxC.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/4OhtNgvFXYpzkWZDiPYo.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/LsyPn6raUZtWPorkkc6i.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/ZG7lNjQuHcL0aTIEcc7y.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/86ISmHnMvhrZaJoh96xZ.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/R0I4IvsCGYDtQ5V4TBZW.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/wfU39Zaikv2WVQ0aO7H2.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/fiOZJ10nB68r6thL7JEP.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/ljThtqIeAr7oXXI7D3mH.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/2VJdLKyOmOQR3Z9jNWBl.webp",
+      "https://intramax.bo/storage/listings/cda3dbf6-0427-46fe-a9df-71d5d6b09de5/LargeImageURL/FXMdlHNZN33liD4uCIDX.webp"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "27",
+        "operacion": "Alquiler",
+        "precio": 630.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "16",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "16",
+          "name": "Jorge Walter Hernan Ayala Antezana",
+          "whatsapp": "59171640409",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "16",
+      "name": "Jorge Walter Hernan Ayala Antezana",
+      "whatsapp": "59171640409"
+    },
+    "agente_nombre": "Jorge Walter Hernan Ayala Antezana",
+    "agente_whatsapp": "59171640409",
+    "complejo_nombre": null
+  },
+  {
+    "ciudad": "Santa Cruz de la Sierra",
+    "superficie_m2": 250.0,
+    "fecha_entrega": null,
+    "agente_id": "17",
+    "lat": -17.7376296,
+    "zona": "Norte",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Casa 4 Dorm. Amoblada · Condominio Zona Norte",
+    "lng": -63.1571768,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 13,
+    "operacion": "Alquiler",
+    "piso": null,
+    "subtipo_comercial": null,
+    "precio_usd": 3142.0,
+    "tipo_inmueble": "Casa",
+    "amoblado": true,
+    "descripcion": "Residencia familiar de dos niveles en Zona Norte (Santa Cruz de la Sierra), con 250 m² de construcción cubierta sobre amplio lote. Una propiedad completamente amoblada y acondicionada en un entorno residencial seguro y tranquilo, pensada para familias que priorizan amplitud, jardín y confort.\n\nDistribución & Dimensiones:\n• Construcción 250 m² | 2 plantas | Lote amplio con jardín\n• 4 dormitorios (2 en suite privada con vestidor) | 4 baños completos\n• Living y comedor principal independientes con cielos altos\n• Cocina cerrada amplia con isla central y comedor de diario\n• Galería techada posterior con churrasquera y jardín privado\n• Garaje cerrado para 2 vehículos | Área de servicio y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Completamente amoblada con mobiliario de alta calidad en sala, comedor y dormitorios\n• Aires acondicionados en todos los ambientes | Calefón a gas\n• Cocina equipada con electrodomésticos y despensa\n• Seguridad 24 horas y monitoreo perimetral\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente de alto estándar\n• Residencia para diplomáticos o ejecutivos reubicados\n• Cercanía a colegios internacionales y centros comerciales del eje norte\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 3.142 USD)\n• Asesor asignado: Maria Alejandra Calderón (+591 76761379) · RE/MAX Express",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Balcon",
+      "Parqueo",
+      "Casa",
+      "Jardin",
+      "Amoblado",
+      "Lavandería (en depto.)",
+      "Vestidor",
+      "Communal Pool",
+      "Cerca de Autopista",
+      "Zona Tranquila",
+      "Acceso a Internet de alta velocidad (fibra óptica)",
+      "Agua potable",
+      "Aire Acondicionado",
+      "Alcantarillado",
+      "Cable",
+      "Electricidad"
+    ],
+    "habitaciones": 4,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "casa",
+      "alquiler",
+      "santa cruz de la sierra",
+      "norte",
+      "re/max express",
+      "remax"
+    ],
+    "banos": 4,
+    "baulera": false,
+    "datos_especificos_json": "{\"superficieConstruidaM2\": 250, \"superficieTerrenoM2\": 350, \"ambientesTotales\": 8, \"banosTotales\": 4, \"vocacion\": \"Residencia Familiar de Alto Confort\", \"usosRecomendados\": [{\"titulo\": \"Vivienda Familiar Privada\", \"detalle\": \"Distribución espaciosa de 4 dormitorios con jardín privado y churrasquera en condominio cerrado.\"}, {\"titulo\": \"Residencia Ejecutiva / Diplomática\", \"detalle\": \"Completamente amoblada y lista para habitar con seguridad 24 horas en el eje norte residencial.\"}], \"ventajasComerciales\": [\"Seguridad privada 24 horas con control de acceso\", \"Galería exterior techada con churrasquera propia\", \"Jardín privado parquizado y patio posterior\", \"Garaje para 2 vehículos\", \"Aires acondicionados en todos los ambientes\", \"Área de servicio completa con dormitorio y baño\"], \"remax_id\": 58505, \"remax_mlsid\": \"1200164217-56\", \"remax_slug\": \"alquiler-casa-santa-cruz-de-la-sierra-norte-1200164217-56\", \"oficina\": \"RE/MAX Express\"}",
+    "imagenes": "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/qOanA5pZkOOGyWmn25EI.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/2BUqmZa674ygu62bl3xe.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/1ZCJvA9QrUzA0mPvygq8.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/lYyZUJ7Alk0IJ1Lbrbpg.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/IHI9dOC3QUqZ9Zg7Pt88.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/kQwzyT56SUdDEhVErvui.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/fpQigfTwgcKSiUKqKxq0.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/ELSuJI8B8kezdDNsu5B9.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/Kl2PpTrAm420GhBTUmn9.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/Eo0WUd9fV8UNZ8F5hg3O.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/WLxKr0S1b5pc4047gAPQ.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/cAg5hM8C01hw7Ho8H3MS.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/BXr3Pb49gNmwFHQIaMTN.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/w0lyQdOoI3MNgAcKv66B.webp, https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/xYHo6yzBqMKPhyjpDHeF.webp",
+    "images": [
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/qOanA5pZkOOGyWmn25EI.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/2BUqmZa674ygu62bl3xe.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/1ZCJvA9QrUzA0mPvygq8.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/lYyZUJ7Alk0IJ1Lbrbpg.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/IHI9dOC3QUqZ9Zg7Pt88.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/kQwzyT56SUdDEhVErvui.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/fpQigfTwgcKSiUKqKxq0.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/ELSuJI8B8kezdDNsu5B9.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/Kl2PpTrAm420GhBTUmn9.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/Eo0WUd9fV8UNZ8F5hg3O.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/WLxKr0S1b5pc4047gAPQ.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/cAg5hM8C01hw7Ho8H3MS.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/BXr3Pb49gNmwFHQIaMTN.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/w0lyQdOoI3MNgAcKv66B.webp",
+      "https://intramax.bo/storage/listings/9d67d87b-be25-4191-874c-66f48590d019/LargeImageURL/xYHo6yzBqMKPhyjpDHeF.webp"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "28",
+        "operacion": "Alquiler",
+        "precio": 3142.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "17",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "17",
+          "name": "Maria Alejandra Calderon Claure",
+          "whatsapp": "59176761379",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "17",
+      "name": "Maria Alejandra Calderon Claure",
+      "whatsapp": "59176761379"
+    },
+    "agente_nombre": "Maria Alejandra Calderon Claure",
+    "agente_whatsapp": "59176761379",
+    "complejo_nombre": null
+  },
+  {
+    "ciudad": "Santa Cruz de la Sierra",
+    "superficie_m2": 46.0,
+    "fecha_entrega": null,
+    "agente_id": "18",
+    "lat": -17.76352282,
+    "zona": "Norte",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
+    "lng": -63.17827463,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 14,
+    "operacion": "Alquiler",
+    "piso": "6",
+    "subtipo_comercial": null,
+    "precio_usd": 600.0,
+    "tipo_inmueble": "Departamento",
+    "amoblado": false,
+    "descripcion": "Departamento moderno a estrenar de 1 dormitorio en el Edificio Macororó 15 (Zona Norte, Santa Cruz de la Sierra). 46 m² optimizados con balcón exterior, cocina integrada y acceso al exclusivo Club House con piscina panorámica del complejo Macororó.\n\nDistribución & Dimensiones:\n• Superficie 46 m² | Piso intermedio con balcón exterior\n• 1 dormitorio con ropero empotrado a medida | 1 baño completo\n• Living-comedor integrado con ventanales de piso a techo\n• Cocina estilo americano con mesones de granito y cajonería\n• Conexión para lavadora y espacio funcional de guardado\n\nServicios Básicos & Equipamiento:\n• Aires acondicionados split instalados y luminarias LED\n• Cocina con cajonería alta y baja | Box de vidrio templado en baño\n• Áreas comunes del Edificio Macororó 15: piscina panorámica, churrasqueras techadas, salón de eventos y lobby moderno\n• Seguridad 24 horas con cámaras y control de ingreso\n\nPotencial de Uso & Rentabilidad:\n• Vivienda para profesional independiente o pareja joven\n• Excelente conectividad sobre el eje norte de la ciudad\n• Edificio nuevo con bajas expensas y alta plusvalía\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 600 USD)\n• Asesor asignado: Nahir Limón Peña (+591 78545296) · RE/MAX Infinity",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Balcon",
+      "Sistema de Alarma",
+      "Piscina",
+      "Acceso silla de ruedas",
+      "Edificio Nuevo",
+      "Garage con Puerta Automática",
+      "Aire Acondicionado Central",
+      "Cocina",
+      "Lavandería (en edificio)",
+      "Sauna",
+      "Hall de Entrada",
+      "Fumar está permitido",
+      "Sistema de Seguridad",
+      "Baño de Servicio",
+      "Lavandería (en depto.)",
+      "Portero Eléctrico"
+    ],
+    "habitaciones": 1,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "departamento",
+      "alquiler",
+      "santa cruz de la sierra",
+      "norte",
+      "re/max infinity",
+      "remax"
+    ],
+    "banos": 1,
+    "baulera": false,
+    "datos_especificos_json": "{\"piso\": 6, \"vista\": \"Vista exterior despejada\", \"precioM2\": 13.043478260869565, \"aptoAirbnb\": false, \"demandaZona\": true, \"equipamiento\": [\"Aires acondicionados instalados\", \"Ropero empotrado de piso a techo\", \"Cocina americana con mesón de granito\", \"Cajonería alta y baja a medida\", \"Box de baño con vidrio templado\", \"Balcón con baranda de blindex\"], \"amenidadesEdificio\": [\"Piscina panorámica con vista a la ciudad\", \"Churrasqueras techadas equipadas\", \"Salón social climatizado para eventos\", \"Lobby de recepción con seguridad 24/7\", \"Ascensores de última generación\"], \"remax_id\": 60767, \"remax_mlsid\": \"120079008-182\", \"remax_slug\": \"alquiler-departamento-santa-cruz-de-la-sierra-norte-120079008-182\", \"oficina\": \"RE/MAX Infinity\"}",
+    "imagenes": "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_616946fc-4ad2-4940-be2e-8b1c2b13fc88.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_25b129f7-09bf-4d90-8915-897aaf5cdbdf.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_fdb28fb4-5db3-4b96-8b4a-81d29b0bca57.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_48bd7b84-ff78-45d5-84e6-49b1c7c47ddf.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_da696612-9b73-43a4-8f56-218533f649ee.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_da240de6-425c-46e6-a4b9-337c4909991a.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_938639fc-87c2-4974-806c-fdcbe9cebdb2.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_07c67613-58d5-4282-9bd9-00ac75235df3.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_53d8146c-34d2-413c-bee2-26b05e6b0028.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_31077cd0-a6d6-47ab-b518-589b5fb50edf.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_637f1572-9e3a-4e0f-aec6-9ba06ba9969f.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_20aba8e8-9acb-400f-ab09-3e203e7873ee.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_d6d9a72a-fa3e-45ac-a284-a972a2babfd9.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_1e5f94b1-9fa3-41fe-b5d6-0adb3901bc58.jpg, https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_137b8fe5-e7cb-481f-9dea-2997b0e04b93.jpg",
+    "images": [
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_616946fc-4ad2-4940-be2e-8b1c2b13fc88.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_25b129f7-09bf-4d90-8915-897aaf5cdbdf.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_fdb28fb4-5db3-4b96-8b4a-81d29b0bca57.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_48bd7b84-ff78-45d5-84e6-49b1c7c47ddf.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_da696612-9b73-43a4-8f56-218533f649ee.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_da240de6-425c-46e6-a4b9-337c4909991a.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_938639fc-87c2-4974-806c-fdcbe9cebdb2.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_07c67613-58d5-4282-9bd9-00ac75235df3.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_53d8146c-34d2-413c-bee2-26b05e6b0028.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_31077cd0-a6d6-47ab-b518-589b5fb50edf.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_637f1572-9e3a-4e0f-aec6-9ba06ba9969f.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_20aba8e8-9acb-400f-ab09-3e203e7873ee.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_d6d9a72a-fa3e-45ac-a284-a972a2babfd9.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_1e5f94b1-9fa3-41fe-b5d6-0adb3901bc58.jpg",
+      "https://intramax.bo/storage/listings/c0a5d461-7d19-42e4-92ac-d27a9ca9d2bb/LargeImageURL/L_137b8fe5-e7cb-481f-9dea-2997b0e04b93.jpg"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "29",
+        "operacion": "Alquiler",
+        "precio": 600.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "18",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "18",
+          "name": "Nahir Limon Peña",
+          "whatsapp": "59178545296",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "18",
+      "name": "Nahir Limon Peña",
+      "whatsapp": "59178545296"
+    },
+    "agente_nombre": "Nahir Limon Peña",
+    "agente_whatsapp": "59178545296",
+    "complejo_nombre": null
+  },
+  {
+    "ciudad": "Santa Cruz de la Sierra",
+    "superficie_m2": 204.0,
+    "fecha_entrega": null,
+    "agente_id": "19",
+    "lat": -17.70192219,
+    "zona": "Norte",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Casa 3 Dorm. · Condominio La Pradera Zona Norte",
+    "lng": -63.1781218,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 15,
+    "operacion": "Venta",
+    "piso": null,
+    "subtipo_comercial": null,
+    "precio_usd": 135000.0,
+    "tipo_inmueble": "Casa",
+    "amoblado": false,
+    "descripcion": "Casa familiar de dos plantas en el exclusivo Condominio Cerrado La Pradera (Zona Norte, Santa Cruz de la Sierra). 204 m² de construcción sólida sobre terreno privado, con suite principal, galería con churrasquera y acceso al club house con piscinas y canchas del condominio.\n\nDistribución & Dimensiones:\n• Construcción 204 m² | Terreno 260 m² | 2 niveles\n• 3 dormitorios (master suite con vestidor y balcón) | 3 baños\n• Planta baja: living-comedor amplio, cocina funcional con isla, baño de visitas, galería techada y churrasquera\n• Planta alta: suite principal, 2 dormitorios amplios con baño compartido, sala de estar familiar\n• Parqueo techado para 2 vehículos | Jardín privado interior\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario conectado | Agua potable y alcantarillado\n• Mesones de granito en cocina y baños | Box de blindex en duchas\n• Áreas sociales de La Pradera: piscina para adultos y niños, salón de eventos, canchas polifuncionales y parques infantiles\n• Seguridad estricta 24/7 con guardia y cámaras perimetrales\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar segura en entorno verde y consolidado\n• Alta demanda residencial con constante revalorización patrimonial en Zona Norte\n• Cercanía inmediata a supermercados, farmacias y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 135.000 USD)\n• Papeles al día, lista para transferencia o crédito bancario\n• Asesor asignado: Lizette Nieme Ríos (+591 68215551) · RE/MAX Platinum",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Parqueo",
+      "Casa",
+      "Cocina",
+      "Baño de Servicio",
+      "Area Escolar",
+      "Cerca de Avenida",
+      "Comercios cercanos",
+      "Gimnasio cercano",
+      "Hospital cercano",
+      "Iglesia cerca",
+      "Plaza cerca",
+      "Residencial",
+      "Norte",
+      "Agua potable",
+      "Electricidad",
+      "Gas"
+    ],
+    "habitaciones": 3,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "casa",
+      "venta",
+      "santa cruz de la sierra",
+      "norte",
+      "re/max fortaleza",
+      "remax"
+    ],
+    "banos": 3,
+    "baulera": false,
+    "datos_especificos_json": "{\"superficieConstruidaM2\": 204, \"superficieTerrenoM2\": 260, \"ambientesTotales\": 7, \"banosTotales\": 3, \"vocacion\": \"Residencia Familiar en Condominio Cerrado\", \"usosRecomendados\": [{\"titulo\": \"Vivienda Familiar Permanente\", \"detalle\": \"Condominio consolidado con club house completo, seguridad y espacios para niños.\"}, {\"titulo\": \"Inversión Patrimonial Segura\", \"detalle\": \"Zona Norte en constante plusvalía con alta demanda de compra y alquiler.\"}], \"ventajasComerciales\": [\"Seguridad 24 horas y control de acceso vehicular\", \"Club house con piscinas, canchas y salones\", \"Churrasquera privada con galería techada\", \"Garaje para 2 vehículos\", \"Gas domiciliario y servicios básicos completos\", \"Suite con vestidor privado y balcón\"], \"remax_id\": 12024, \"remax_mlsid\": \"120034126-50\", \"remax_slug\": \"venta-casa-santa-cruz-de-la-sierra-norte-120034126-50\", \"oficina\": \"RE/MAX Platinum\"}",
+    "imagenes": "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/bDggtKQIlm6GAAByFYDQ.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/1gCGub9EJcR0q70No8LU.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/otSV8hDpYTeJWn2CjXC5.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/bKwzhsEdnAq7mW16MBJl.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/jwzNqGHX8K7FkD3DM6pK.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/LBqWPEjOBKrNayRs2b3g.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/9U5kD2vhPqpWtQPgI8Oa.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/Md5dVBVXwJhuJHkLUbQY.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/4b9aQ0ZTzQZkmiZvAGcV.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/0vNuoECTNqPPfhuykFRy.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/nS6U6eXefbSwX7mFTNzY.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/MeXl7fpTh6OuaMMPcAi5.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/t1EOIoamcjAO69i7uU9K.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/IyhqBVKWSd0tJvOEP84v.jpg, https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/CM5H5JQsrO2yccV4EbVM.jpg",
+    "images": [
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/bDggtKQIlm6GAAByFYDQ.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/1gCGub9EJcR0q70No8LU.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/otSV8hDpYTeJWn2CjXC5.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/bKwzhsEdnAq7mW16MBJl.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/jwzNqGHX8K7FkD3DM6pK.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/LBqWPEjOBKrNayRs2b3g.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/9U5kD2vhPqpWtQPgI8Oa.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/Md5dVBVXwJhuJHkLUbQY.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/4b9aQ0ZTzQZkmiZvAGcV.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/0vNuoECTNqPPfhuykFRy.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/nS6U6eXefbSwX7mFTNzY.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/MeXl7fpTh6OuaMMPcAi5.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/t1EOIoamcjAO69i7uU9K.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/IyhqBVKWSd0tJvOEP84v.jpg",
+      "https://intramax.bo/storage/listings/13104616-862A-4CBF-962B-5EE82093E82A/LargeImageURL/CM5H5JQsrO2yccV4EbVM.jpg"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "30",
+        "operacion": "Venta",
+        "precio": 135000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "19",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "19",
+          "name": "Lizette Nieme Rios",
+          "whatsapp": "59168215551",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "19",
+      "name": "Lizette Nieme Rios",
+      "whatsapp": "59168215551"
+    },
+    "agente_nombre": "Lizette Nieme Rios",
+    "agente_whatsapp": "59168215551",
+    "complejo_nombre": null
+  },
+  {
+    "ciudad": "Santa Cruz de la Sierra",
+    "superficie_m2": 79.0,
+    "fecha_entrega": null,
+    "agente_id": "20",
+    "lat": -17.76447814,
+    "zona": "Sirari",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Depto 2 Dorm. · Condominio Mirage Sirari",
+    "lng": -63.20418478,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 16,
+    "operacion": "Venta",
+    "piso": "4",
+    "subtipo_comercial": null,
+    "precio_usd": 85000.0,
+    "tipo_inmueble": "Departamento",
+    "amoblado": false,
+    "descripcion": "Departamento de 2 dormitorios en venta en Condominio Mirage (Barrio Sirari / Equipetrol), una de las zonas de mayor demanda residencial de Santa Cruz de la Sierra. 79 m² bien distribuidos, cocina americana, balcón y áreas comunes de esparcimiento.\n\nDistribución & Dimensiones:\n• Superficie 79 m² | Piso 4 | Balcón con baranda de vidrio\n• 2 dormitorios (1 en suite con ropero empotrado) | 2 baños completos\n• Living-comedor luminoso con salida al balcón\n• Cocina integrada estilo americana con mesones de cuarzo y cajonería\n• Espacio de lavandería independiente | 1 parqueo incluido\n\nServicios Básicos & Equipamiento:\n• Conexión de gas domiciliario | Aires acondicionados instalados\n• Termotanque eléctrico | Grifería y sanitarios de primera calidad\n• Áreas comunes del Condominio Mirage: piscina, churrasquera techada, salón de eventos y terraza\n• Seguridad 24 horas | Portón eléctrico y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Excelente activo para vivienda propia o alquiler a profesionales en Sirari\n• Zona de alta plusvalía a minutos de centros comerciales y avenidas principales\n• Retorno estimado atractivo por alquiler tradicional o temporal\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 85.000 USD)\n• Documentación en orden para compra al contado o financiamiento bancario\n• Asesor asignado: Maria Renée Cronenbold (+591 78474747) · RE/MAX Titanium",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Balcon",
+      "Parqueo",
+      "Cocina",
+      "Cuarto de Juegos",
+      "Lavandería (en depto.)",
+      "Ascensor",
+      "Comercios cercanos",
+      "Iglesia cerca",
+      "Plaza cerca",
+      "Zona Tranquila",
+      "Zona Turística",
+      "Agua potable",
+      "Aire Acondicionado",
+      "Alcantarillado",
+      "Cable",
+      "Cámara de seguridad"
+    ],
+    "habitaciones": 2,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "departamento",
+      "venta",
+      "santa cruz de la sierra",
+      "sirari",
+      "re/max fortaleza",
+      "remax"
+    ],
+    "banos": 2,
+    "baulera": false,
+    "datos_especificos_json": "{\"piso\": 4, \"vista\": \"Vista residencial a Sirari\", \"precioM2\": 1075.9493670886077, \"aptoAirbnb\": false, \"demandaZona\": true, \"equipamiento\": [\"Aires acondicionados instalados\", \"Roperos empotrados en ambos dormitorios\", \"Cocina americana con mesón de cuarzo\", \"Cajonería alta y baja completa\", \"Box de blindex en baños\", \"Balcón con vista exterior\"], \"amenidadesEdificio\": [\"Piscina con área de solárium\", \"Churrasquera techada para eventos\", \"Salón de uso múltiple\", \"Seguridad y recepción 24 horas\", \"Ascensor y garaje cubierto\"], \"remax_id\": 46583, \"remax_mlsid\": \"120034087-74\", \"remax_slug\": \"venta-departamento-santa-cruz-de-la-sierra-sirari-120034087-74\", \"oficina\": \"RE/MAX Titanium\"}",
+    "imagenes": "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/NAOHoAdbaVFelebbe0gD.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/JwFVHU8zKFl2fvJ9ToWf.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/zdyQH5umZHT6tRIAQQFr.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/FcATYcf9SOZ8U5JMzBky.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/fJNMs4JUMMQl0Wo5BRkO.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/7ewEr6aoQr7SU0qOy0ni.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/7ziCXtyHpxJPW2B1A0Eb.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/tiaavKtcefsi0drX8J0S.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/90B8FLQPCHQVsoEhm3ls.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/PgHFZrfuF6ZxWy8mTNgi.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/vPKBUxuw9Fxu4t3qFa5p.jpg, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/ByeB4J9r82cylnPTCKyp.webp, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/fq6Kk2uyRyvIMbSVpN4w.webp, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/u01K2iWgIU02E6enpEnn.webp, https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/1vWM10xsPBNXygRTJCsh.webp",
+    "images": [
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/NAOHoAdbaVFelebbe0gD.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/JwFVHU8zKFl2fvJ9ToWf.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/zdyQH5umZHT6tRIAQQFr.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/FcATYcf9SOZ8U5JMzBky.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/fJNMs4JUMMQl0Wo5BRkO.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/7ewEr6aoQr7SU0qOy0ni.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/7ziCXtyHpxJPW2B1A0Eb.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/tiaavKtcefsi0drX8J0S.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/90B8FLQPCHQVsoEhm3ls.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/PgHFZrfuF6ZxWy8mTNgi.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/vPKBUxuw9Fxu4t3qFa5p.jpg",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/ByeB4J9r82cylnPTCKyp.webp",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/fq6Kk2uyRyvIMbSVpN4w.webp",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/u01K2iWgIU02E6enpEnn.webp",
+      "https://intramax.bo/storage/listings/71c65ccd-da3b-482d-a5d5-867504d09eda/LargeImageURL/1vWM10xsPBNXygRTJCsh.webp"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "31",
+        "operacion": "Venta",
+        "precio": 85000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "20",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "20",
+          "name": "Rolando Alberto Moro Barba",
+          "whatsapp": "59176600776",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "20",
+      "name": "Rolando Alberto Moro Barba",
+      "whatsapp": "59176600776"
+    },
+    "agente_nombre": "Rolando Alberto Moro Barba",
+    "agente_whatsapp": "59176600776",
+    "complejo_nombre": null
+  },
+  {
+    "ciudad": "Cochabamba",
+    "superficie_m2": 223.0,
+    "fecha_entrega": null,
+    "agente_id": "21",
+    "lat": -17.37502998,
+    "zona": "Queru Queru",
+    "avance_obra": null,
+    "complejo_id": null,
+    "titulo": "Depto 3 Dorm. · Av. Pando Queru Queru",
+    "lng": -66.15101515,
+    "direccion": "",
+    "fase_obra": null,
+    "id": 17,
+    "operacion": "Venta",
+    "piso": "5",
+    "subtipo_comercial": null,
+    "precio_usd": 186000.0,
+    "tipo_inmueble": "Departamento",
+    "amoblado": false,
+    "descripcion": "Exclusivo departamento de 223 m² en piso 5 sobre la prestigiosa Av. Pando (Queru Queru, Cochabamba). Diseñado con acabados de primera línea, ambientes amplios, suite con hidromasaje y balcón perimetral con vistas despejadas a la ciudad.\n\nDistribución & Dimensiones:\n• Superficie 223 m² | Piso 5 | Orientación privilegiada\n• 3 dormitorios en suite (master suite con hidromasaje y vestidor amplio) | 4 baños totales\n• Living y comedor de dimensiones generosas con salida a terraza-balcón\n• Cocina cerrada de alta gama con isla central, mesones de cuarzo y despensa\n• Sala de estar familiar / TV | Baño de visitas | Dependencia de servicio completa\n• 2 parqueos cubiertos en sótano | 1 baulera amplia\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario | Calefón central | Pisos entablonados y porcelanato importado\n• Mesones de cuarzo en cocina y baños | Grifería importada\n• Edificio exclusivo con seguridad 24 horas, cámaras, salón de copropietarios y parrilleros\n• Bajas expensas y administración profesional\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar premium en la zona más codiciada de Cochabamba\n• Inversión sólida en activo inmobiliario de gran metraje sobre Av. Pando\n• Acceso inmediato a oferta gastronómica, médica y colegios de prestigio\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 186.000 USD)\n• Títulos registrados al día, libre de gravámenes\n• Asesor asignado: Andrés Sebastián Bayá (+591 76902009) · RE/MAX Libertad",
+    "moneda": "$ (USD)",
+    "estado": "Publicado",
+    "acepta_mascotas": false,
+    "dimensiones": null,
+    "amenidades": [
+      "Edificio Antiguo",
+      "Estacionamiento",
+      "Cocina",
+      "Lavandería (en depto.)",
+      "Conserje disponible",
+      "Ascensor",
+      "Cerca de Avenida",
+      "Comercios cercanos",
+      "Gimnasio cercano",
+      "Iglesia cerca",
+      "Plaza cerca",
+      "Residencial",
+      "Zona Concurrida",
+      "Zona Turística",
+      "Noroeste",
+      "Acceso a Internet de alta velocidad (fibra óptica)"
+    ],
+    "habitaciones": 3,
+    "ocupacion": "Disponible",
+    "parqueos": 0,
+    "servicios_basicos": null,
+    "keywords": [
+      "departamento",
+      "venta",
+      "cochabamba",
+      "queru queru",
+      "re/max libertad",
+      "remax"
+    ],
+    "banos": 4,
+    "baulera": false,
+    "datos_especificos_json": "{\"piso\": 5, \"vista\": \"Vista panorámica a la Av. Pando y cerros\", \"precioM2\": 834.0807174887892, \"aptoAirbnb\": false, \"demandaZona\": true, \"equipamiento\": [\"Master suite con hidromasaje y vestidor\", \"Cocina cerrada de alta gama con isla\", \"Mesones de cuarzo y cajonería a medida\", \"Pisos entablonados y porcelanato importado\", \"Terraza-balcón con baranda panorámica\", \"2 parqueos techados y baulera privada\"], \"amenidadesEdificio\": [\"Salón de eventos climatizado\", \"Churrasqueras techadas en terraza\", \"Seguridad física 24/7 y circuito cerrado\", \"Ascensores de alta velocidad\", \"Recepción y lobby de lujo\"], \"remax_id\": 58738, \"remax_mlsid\": \"125004108-199\", \"remax_slug\": \"venta-departamento-cochabamba-queru-queru-125004108-199\", \"oficina\": \"RE/MAX Libertad\"}",
+    "imagenes": "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/jOvfTPA0BHWpKvyj5LwL.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/k3WyQxXoI8RoxYDsg4yV.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/zfHkb0dOFYlZUEmUTdG8.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/mMNwiuCEt3YXmx5ufk1F.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/emU6xK30cicyMpcjXTu5.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/T9uXBwb5bxosTDJE7HAn.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/DvYF2TkOrNLX0fg7xh6Y.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/o33BiZY9oZqNGTTExub5.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/xXutIyQA4HH8nRLrXNn5.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/uFgVbYoQwYIIOdlPZC0S.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/xLfufy3YX8d0syLINwfP.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/Vm32pO72Hciltd5Ibp1E.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/WvZOYKgPYplllwAahHL2.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/GecDwUEGcdAGcAmqWxUj.webp, https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/MErGdrseIh9utoNoUZ6M.webp",
+    "images": [
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/jOvfTPA0BHWpKvyj5LwL.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/k3WyQxXoI8RoxYDsg4yV.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/zfHkb0dOFYlZUEmUTdG8.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/mMNwiuCEt3YXmx5ufk1F.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/emU6xK30cicyMpcjXTu5.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/T9uXBwb5bxosTDJE7HAn.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/DvYF2TkOrNLX0fg7xh6Y.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/o33BiZY9oZqNGTTExub5.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/xXutIyQA4HH8nRLrXNn5.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/uFgVbYoQwYIIOdlPZC0S.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/xLfufy3YX8d0syLINwfP.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/Vm32pO72Hciltd5Ibp1E.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/WvZOYKgPYplllwAahHL2.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/GecDwUEGcdAGcAmqWxUj.webp",
+      "https://intramax.bo/storage/listings/27211a58-4074-492a-ada4-63932fe78acc/LargeImageURL/MErGdrseIh9utoNoUZ6M.webp"
+    ],
+    "unidades_proyecto": [],
+    "mensaje_urgencia": null,
+    "total_unidades": null,
+    "unidades_disponibles": null,
+    "pisos": null,
+    "reserva_usd": null,
+    "precio_m2_desde": null,
+    "brochure_url": null,
+    "planes_pago": null,
+    "detalle_completo": true,
+    "ofertas": [
+      {
+        "id": "32",
+        "operacion": "Venta",
+        "precio": 186000.0,
+        "moneda": "$ (USD)",
+        "estado": "Publicado",
+        "agente_id": "21",
+        "agente": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "captador": {
+          "id": "21",
+          "name": "Andres Sebastian Baya Montero",
+          "whatsapp": "59176902009",
+          "oficina": "REMAX Patrimonio"
+        },
+        "colocador": {
+          "id": "5",
+          "name": "Alejandro Coca",
+          "whatsapp": "59157015854",
+          "oficina": "REMAX Patrimonio"
+        },
+        "incluye_expensas": false,
+        "monto_expensas": null,
+        "expensas_moneda": "Bs"
+      }
+    ],
+    "agente": {
+      "id": "21",
+      "name": "Andres Sebastian Baya Montero",
+      "whatsapp": "59176902009"
+    },
+    "agente_nombre": "Andres Sebastian Baya Montero",
+    "agente_whatsapp": "59176902009",
+    "complejo_nombre": null
   }
 ]
