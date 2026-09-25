@@ -83,14 +83,21 @@ export default function AdminCatalogDashboard() {
     return offers.find((offer: any) => String(offer.operacion).toLowerCase().includes(operation.toLowerCase()));
   };
 
-  const buildOffersPayload = (fd: FormData, operation: string, agentId: number, fallbackCurrency: string, offerStatus: string) => {
+  const buildOffersPayload = (
+    fd: FormData,
+    operation: string,
+    agentId: number,
+    fallbackCurrency: string,
+    offerStatus: string,
+    captadorId?: number | null,
+  ) => {
     if (operation === "Alquiler y Venta") {
       return [
-        { operacion: "Alquiler", precio: Number(fd.get("rentPrice")) || 0, moneda: String(fd.get("rentCurrency") || "Bs"), agente_id: agentId, estado: offerStatus },
-        { operacion: "Venta", precio: Number(fd.get("salePrice")) || 0, moneda: String(fd.get("saleCurrency") || "$ (USD)"), agente_id: agentId, estado: offerStatus },
+        { operacion: "Alquiler", precio: Number(fd.get("rentPrice")) || 0, moneda: String(fd.get("rentCurrency") || "Bs"), agente_id: agentId, captador_id: captadorId || null, estado: offerStatus },
+        { operacion: "Venta", precio: Number(fd.get("salePrice")) || 0, moneda: String(fd.get("saleCurrency") || "$ (USD)"), agente_id: agentId, captador_id: captadorId || null, estado: offerStatus },
       ].filter((offer) => offer.precio > 0);
     }
-    return [{ operacion: operation, precio: Number(fd.get("price")) || 0, moneda: fallbackCurrency, agente_id: agentId, estado: offerStatus }];
+    return [{ operacion: operation, precio: Number(fd.get("price")) || 0, moneda: fallbackCurrency, agente_id: agentId, captador_id: captadorId || null, estado: offerStatus }];
   };
 
   const fetchCatalog = useCallback(async () => {
@@ -246,9 +253,11 @@ export default function AdminCatalogDashboard() {
     const lat = coordsParts.length === 2 && !Number.isNaN(coordsParts[0]) ? coordsParts[0] : Number(editingProperty.lat || 0);
     const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
     const agentId = Number(fd.get("agentId")) || 0;
+    const captadorIdRaw = fd.get("captadorId");
+    const captadorId = captadorIdRaw && String(captadorIdRaw).trim() !== "" ? Number(captadorIdRaw) : null;
     const operation = String(fd.get("operation") || editOperation || "Venta");
     const propertyStatus = editStatus || String(fd.get("status") || editingProperty.estado || "Borrador");
-    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus);
+    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus, captadorId);
     const primaryOffer = offers[0];
     const propertyType = String(fd.get("type") || editingProperty.tipo_inmueble || "Departamento");
     const isTerreno = propertyType === "Terreno";
@@ -269,6 +278,7 @@ export default function AdminCatalogDashboard() {
       estado: propertyStatus,
       descripcion: String(fd.get("description") || "").trim() || "Sin descripcion.",
       agente_id: agentId,
+      captador_id: captadorId,
       imagenes: String(fd.get("imageLinks") || "").trim(),
       amenidades: String(fd.get("amenities") || "").trim(),
       keywords: String(fd.get("keywords") || "").trim(),
@@ -499,7 +509,14 @@ export default function AdminCatalogDashboard() {
             <form onSubmit={handleUpdateProperty} className="space-y-6 p-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Titulo comercial</label><input name="title" required defaultValue={editingProperty.titulo || ""} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold" /></div>
-                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Asesor</label><select name="agentId" required defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option value="">Selecciona un asesor...</option>{agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}</select></div>
+                <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Asesor (Contacto público)</label><select name="agentId" required defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option value="">Selecciona un asesor...</option>{agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}</select></div>
+                <div>
+                  <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--accent-main)]">Asesor Captador (Confidencial)</label>
+                  <select name="captadorId" defaultValue={String(editingProperty.captador_id || editingProperty.captador?.id || editingProperty.ofertas?.[0]?.captador_id || editingProperty.ofertas?.[0]?.captador?.id || "")} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold">
+                    <option value="">Sin captador / Directo...</option>
+                    {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name} {agent.oficina ? `(${agent.oficina})` : ""}</option>)}
+                  </select>
+                </div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Operacion</label><select name="operation" value={editOperation} onChange={(e) => setEditOperation(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Venta</option><option>Alquiler</option><option>Alquiler y Venta</option><option>Inversion</option></select></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Tipo</label><select name="type" value={editPropertyType} onChange={(e) => setEditPropertyType(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold">{PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}</select></div>
                 <div><label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Estado</label><select name="status" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="w-full rounded border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-gold"><option>Borrador</option><option>Publicado</option><option>Pausado</option></select></div>

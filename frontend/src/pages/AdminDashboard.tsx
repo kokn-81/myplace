@@ -148,7 +148,7 @@ export default function AdminDashboard() {
     return offers.find((offer: any) => String(offer.operacion).toLowerCase().includes(operation.toLowerCase()));
   };
 
-  const buildOffersPayload = (fd: FormData, operation: string, agentId: number | null, fallbackCurrency: string, offerStatus = formStatus) => {
+  const buildOffersPayload = (fd: FormData, operation: string, agentId: number | null, fallbackCurrency: string, offerStatus = formStatus, captadorId?: number | null) => {
     if (operation === "Alquiler y Venta") {
       return [
         {
@@ -156,6 +156,7 @@ export default function AdminDashboard() {
           precio: Number(fd.get("rentPrice")) || 0,
           moneda: String(fd.get("rentCurrency") || "Bs"),
           agente_id: agentId,
+          captador_id: captadorId || null,
           estado: offerStatus,
         },
         {
@@ -163,6 +164,7 @@ export default function AdminDashboard() {
           precio: Number(fd.get("salePrice")) || 0,
           moneda: String(fd.get("saleCurrency") || "$ (USD)"),
           agente_id: agentId,
+          captador_id: captadorId || null,
           estado: offerStatus,
         },
       ].filter((offer) => offer.precio > 0);
@@ -173,6 +175,7 @@ export default function AdminDashboard() {
       precio: Number(fd.get("price")) || 0,
       moneda: fallbackCurrency,
       agente_id: agentId,
+      captador_id: captadorId || null,
       estado: offerStatus,
     }];
   };
@@ -328,10 +331,12 @@ export default function AdminDashboard() {
     const lat = coordsParts.length === 2 && !Number.isNaN(coordsParts[0]) ? coordsParts[0] : Number(editingProperty.lat || 0);
     const lng = coordsParts.length === 2 && !Number.isNaN(coordsParts[1]) ? coordsParts[1] : Number(editingProperty.lng || 0);
     const agentId = Number(fd.get("agentId")) || 0;
+    const captadorIdRaw = fd.get("captadorId");
+    const captadorId = captadorIdRaw && String(captadorIdRaw).trim() !== "" ? Number(captadorIdRaw) : null;
     const operation = String(fd.get("operation") || editOperation || "Venta");
     const propertyType = String(fd.get("type") || editingProperty.tipo_inmueble || "Departamento");
     const propertyStatus = String(editingProperty.estado || fd.get("status") || "Borrador").trim() || "Borrador";
-    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus);
+    const offers = buildOffersPayload(fd, operation, agentId, String(fd.get("currency") || "$ (USD)"), propertyStatus, captadorId);
     const primaryOffer = offers[0];
     const isTerreno = propertyType === "Terreno";
     const isComercial = propertyType === "Comercial";
@@ -351,6 +356,7 @@ export default function AdminDashboard() {
       estado: propertyStatus,
       descripcion: String(fd.get("description") || "").trim() || "Sin descripcion.",
       agente_id: agentId || null,
+      captador_id: captadorId,
       imagenes: fd.get("imageLinks") !== null ? String(fd.get("imageLinks")).trim() : (editingProperty.imagenes || ""),
       amenidades: fd.get("amenities") !== null ? String(fd.get("amenities")).trim() : (editingProperty.amenidades || ""),
       keywords: fd.get("keywords") !== null ? String(fd.get("keywords")).trim() : (editingProperty.keywords || ""),
@@ -1080,10 +1086,17 @@ export default function AdminDashboard() {
                   <input name="title" required defaultValue={editingProperty.titulo || ""} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Asesor</label>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--text-muted)] dark:text-[var(--text-muted)] block mb-1">Asesor (Contacto público)</label>
                   <select name="agentId" defaultValue={String(editingProperty.agente_id || editingProperty.agentId || "")} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
                     <option value="">Selecciona un asesor...</option>
                     {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider font-bold text-[var(--accent-main)] dark:text-[var(--accent-main)] block mb-1">Asesor Captador (Confidencial)</label>
+                  <select name="captadorId" defaultValue={String(editingProperty.captador_id || editingProperty.captador?.id || editingProperty.ofertas?.[0]?.captador_id || editingProperty.ofertas?.[0]?.captador?.id || "")} className="w-full bg-[var(--surface-control)] dark:bg-[var(--surface-control)] border border-[var(--border-soft)] dark:border-[var(--border-soft)] rounded px-3 py-2 text-sm focus:border-gold outline-none text-[var(--text-main)] dark:text-[var(--text-main)] placeholder:text-stone-400 dark:placeholder:text-stone-500">
+                    <option value="">Sin captador / Directo...</option>
+                    {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name} {agent.oficina ? `(${agent.oficina})` : ""}</option>)}
                   </select>
                 </div>
                 <div>

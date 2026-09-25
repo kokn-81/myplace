@@ -131,6 +131,7 @@ class InmuebleCreate(BaseModel):
     agente_id: Optional[int] = None
     complejo_id: Optional[int] = None
     complejo_nombre: Optional[str] = None
+    captador_id: Optional[int] = None
     captador_nombre: Optional[str] = None
     captador_whatsapp: Optional[str] = None
     colocador_id: Optional[int] = None
@@ -347,18 +348,19 @@ def get_db():
 
 
 def serializar_oferta(oferta: OfertaDB) -> dict:
-    captador = getattr(oferta, "captador", None) or oferta.agente
-    colocador = getattr(oferta, "colocador", None)
+    captador = getattr(oferta, "captador", None)
+    colocador = getattr(oferta, "colocador", None) or oferta.agente
     return {
         "id": str(oferta.id),
         "operacion": oferta.operacion,
         "precio": oferta.precio,
         "moneda": oferta.moneda or "$ (USD)",
         "estado": oferta.estado or "Publicado",
-        "agente_id": str(oferta.agente_id or getattr(oferta, "captador_id", None) or "") or "0",
-        "agente": serializar_agente_min(colocador or captador),
+        "agente_id": str(oferta.agente_id or getattr(oferta, "colocador_id", None) or "") or "0",
+        "captador_id": str(oferta.captador_id) if getattr(oferta, "captador_id", None) else None,
+        "agente": serializar_agente_min(colocador),
         "captador": serializar_agente_min(captador),
-        "colocador": serializar_agente_min(colocador or captador),
+        "colocador": serializar_agente_min(colocador),
         "incluye_expensas": bool(getattr(oferta, "incluye_expensas", False)),
         "monto_expensas": getattr(oferta, "monto_expensas", None),
         "expensas_moneda": getattr(oferta, "expensas_moneda", None),
@@ -407,19 +409,38 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
         inm_dict["precio_usd"] = oferta_principal.precio
         inm_dict["moneda"] = oferta_principal.moneda or "$ (USD)"
         inm_dict["agente_id"] = str(oferta_principal.agente_id) if oferta_principal.agente_id else inm_dict["agente_id"]
-        if oferta_principal.agente:
+        # Agente comercial de contacto publico (Alejandro Coca por defecto)
+        agente_comercial = oferta_principal.colocador or oferta_principal.agente or inm.agente
+        if agente_comercial and agente_comercial.whatsapp:
             inm_dict["agente"] = {
-                "id": str(oferta_principal.agente.id),
-                "name": oferta_principal.agente.nombre,
-                "whatsapp": oferta_principal.agente.whatsapp,
+                "id": str(agente_comercial.id),
+                "name": agente_comercial.nombre,
+                "whatsapp": agente_comercial.whatsapp,
             }
-            inm_dict["agente_nombre"] = oferta_principal.agente.nombre
-            inm_dict["agente_whatsapp"] = oferta_principal.agente.whatsapp
+            inm_dict["agente_nombre"] = agente_comercial.nombre
+            inm_dict["agente_whatsapp"] = agente_comercial.whatsapp
         else:
-            inm_dict["agente"] = None
-            inm_dict["agente_nombre"] = ""
-            inm_dict["agente_whatsapp"] = ""
-    elif inm.agente:
+            inm_dict["agente"] = {
+                "id": "5",
+                "name": "Alejandro Coca",
+                "whatsapp": "59157015854",
+            }
+            inm_dict["agente_nombre"] = "Alejandro Coca"
+            inm_dict["agente_whatsapp"] = "59157015854"
+
+        # Captador para vista interna (admin / asesor)
+        captador = oferta_principal.captador
+        if captador:
+            inm_dict["captador_id"] = str(captador.id)
+            inm_dict["captador"] = serializar_agente_min(captador)
+            inm_dict["captador_nombre"] = captador.nombre
+            inm_dict["captador_whatsapp"] = captador.whatsapp
+        else:
+            inm_dict["captador_id"] = None
+            inm_dict["captador"] = None
+            inm_dict["captador_nombre"] = None
+            inm_dict["captador_whatsapp"] = None
+    elif getattr(inm, "agente", None) and inm.agente.whatsapp:
         inm_dict["agente"] = {
             "id": str(inm.agente.id),
             "name": inm.agente.nombre,
@@ -427,10 +448,22 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
         }
         inm_dict["agente_nombre"] = inm.agente.nombre
         inm_dict["agente_whatsapp"] = inm.agente.whatsapp
+        inm_dict["captador_id"] = None
+        inm_dict["captador"] = None
+        inm_dict["captador_nombre"] = None
+        inm_dict["captador_whatsapp"] = None
     else:
-        inm_dict["agente"] = None
-        inm_dict["agente_nombre"] = ""
-        inm_dict["agente_whatsapp"] = ""
+        inm_dict["agente"] = {
+            "id": "5",
+            "name": "Alejandro Coca",
+            "whatsapp": "59157015854",
+        }
+        inm_dict["agente_nombre"] = "Alejandro Coca"
+        inm_dict["agente_whatsapp"] = "59157015854"
+        inm_dict["captador_id"] = None
+        inm_dict["captador"] = None
+        inm_dict["captador_nombre"] = None
+        inm_dict["captador_whatsapp"] = None
 
     complejo = getattr(inm, "complejo", None)
     inm_dict["ocupacion"] = getattr(inm, "ocupacion", None) or "Disponible"
@@ -1023,7 +1056,11 @@ async def crear_inmueble(
         )
         oferta_principal, agente_principal = ofertas_validadas[0]
 
-        captador = find_or_create_captador(db, inmueble.captador_nombre, inmueble.captador_whatsapp)
+        captador = None
+        if inmueble.captador_id:
+            captador = db.query(AgenteDB).filter(AgenteDB.id == inmueble.captador_id).first()
+        if not captador:
+            captador = find_or_create_captador(db, inmueble.captador_nombre, inmueble.captador_whatsapp)
         colocador_id = inmueble.colocador_id or (agente_principal.id if agente_principal else None)
         complejo = find_or_create_complejo(
             db,
@@ -1063,16 +1100,15 @@ async def crear_inmueble(
         db.flush()
 
         for oferta, agente in ofertas_validadas:
-            listing_agent = captador or agente
             db.add(OfertaDB(
                 inmueble_id=nuevo_inmueble.id,
                 operacion=oferta.operacion,
                 precio=oferta.precio,
                 moneda=oferta.moneda or "$ (USD)",
                 estado=estado_inmueble,
-                agente_id=listing_agent.id if listing_agent else None,
-                captador_id=listing_agent.id if listing_agent else None,
-                colocador_id=oferta.colocador_id or colocador_id,
+                agente_id=agente.id if agente else (colocador_id or None),
+                captador_id=oferta.captador_id or (captador.id if captador else None),
+                colocador_id=oferta.colocador_id or colocador_id or (agente.id if agente else None),
                 incluye_expensas=bool(oferta.incluye_expensas),
                 monto_expensas=oferta.monto_expensas,
                 expensas_moneda=oferta.expensas_moneda,
@@ -1221,8 +1257,8 @@ async def actualizar_inmueble(
                 moneda=oferta.moneda or "$ (USD)",
                 estado=estado_inmueble,
                 agente_id=agente.id if agente else None,
-                captador_id=getattr(oferta, "captador_id", None) or (agente.id if agente else None),
-                colocador_id=getattr(oferta, "colocador_id", None),
+                captador_id=getattr(oferta, "captador_id", None) or inmueble.captador_id,
+                colocador_id=getattr(oferta, "colocador_id", None) or (agente.id if agente else None),
                 incluye_expensas=bool(getattr(oferta, "incluye_expensas", False)),
                 monto_expensas=getattr(oferta, "monto_expensas", None),
                 expensas_moneda=getattr(oferta, "expensas_moneda", None),

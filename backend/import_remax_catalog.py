@@ -116,8 +116,9 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
         if colocador_obj and not colocador_obj.oficina_id:
             colocador_obj.oficina_id = default_office_id
 
-    # Legacy alias used below for inmueble.agente_id / oferta fields
-    agente_obj = captador_obj
+    # Colocador / Asesor Comercial es el agente público de contacto (Alejandro Coca)
+    # El captador se mantiene exclusivamente en captador_obj / captador_id
+    agente_comercial_obj = colocador_obj
 
     # Complejo / Condominio
     complejo_nombre = item.get("complejo_nombre")
@@ -198,7 +199,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
         inmueble.imagenes = imagenes_str
         inmueble.amenidades = amenidades_str
         inmueble.keywords = keywords_str
-        inmueble.agente_id = (colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None))
+        inmueble.agente_id = colocador_obj.id if colocador_obj else None
         inmueble.complejo_id = complejo_obj.id if complejo_obj else None
         db.query(OfertaDB).filter(OfertaDB.inmueble_id == inmueble.id).delete()
     else:
@@ -234,7 +235,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
             imagenes=imagenes_str,
             amenidades=amenidades_str,
             keywords=keywords_str,
-            agente_id=(colocador_obj.id if colocador_obj else (agente_obj.id if agente_obj else None)),
+            agente_id=colocador_obj.id if colocador_obj else None,
             complejo_id=complejo_obj.id if complejo_obj else None,
         )
         db.add(inmueble)
@@ -258,8 +259,8 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 precio=o_precio,
                 moneda=o_moneda,
                 estado=o.get("estado") or "Publicado",
-                agente_id=agente_obj.id if agente_obj else None,
-                captador_id=agente_obj.id if agente_obj else None,
+                agente_id=colocador_obj.id if colocador_obj else None,
+                captador_id=captador_obj.id if captador_obj else None,
                 colocador_id=colocador_obj.id if colocador_obj else None,
                 incluye_expensas=bool(o.get("incluye_expensas", False)),
                 monto_expensas=float(o["monto_expensas"]) if o.get("monto_expensas") else None,
@@ -275,8 +276,8 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 precio=float(item.get("precio_venta") or precio_usd),
                 moneda=item.get("moneda_venta") or "$ (USD)",
                 estado="Publicado",
-                agente_id=agente_obj.id if agente_obj else None,
-                captador_id=agente_obj.id if agente_obj else None,
+                agente_id=colocador_obj.id if colocador_obj else None,
+                captador_id=captador_obj.id if captador_obj else None,
                 colocador_id=colocador_obj.id if colocador_obj else None,
             ))
             db.add(OfertaDB(
@@ -285,8 +286,9 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 precio=float(item.get("precio_alquiler") or item.get("precio_renta") or (precio_usd / 200)),
                 moneda=item.get("moneda_alquiler") or "Bs",
                 estado="Publicado",
-                agente_id=agente_obj.id if agente_obj else None,
-                captador_id=agente_obj.id if agente_obj else None,
+                agente_id=colocador_obj.id if colocador_obj else None,
+                captador_id=captador_obj.id if captador_obj else None,
+                colocador_id=colocador_obj.id if colocador_obj else None,
                 incluye_expensas=bool(item.get("incluye_expensas", False)),
                 monto_expensas=float(item["monto_expensas"]) if item.get("monto_expensas") else None,
                 expensas_moneda=item.get("expensas_moneda") or "Bs",
@@ -298,8 +300,8 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
                 precio=precio_usd,
                 moneda=moneda,
                 estado="Publicado",
-                agente_id=agente_obj.id if agente_obj else None,
-                captador_id=agente_obj.id if agente_obj else None,
+                agente_id=colocador_obj.id if colocador_obj else None,
+                captador_id=captador_obj.id if captador_obj else None,
                 colocador_id=colocador_obj.id if colocador_obj else None,
                 incluye_expensas=bool(item.get("incluye_expensas", False)),
                 monto_expensas=float(item["monto_expensas"]) if item.get("monto_expensas") else None,

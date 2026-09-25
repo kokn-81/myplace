@@ -18,7 +18,7 @@ import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthP
 import { detectSearchIntent, SearchIntent } from "../searchIntent";
 import { openContactWhatsapp, recordLeadEvent, shareLeadUrl } from "../leadTracking";
 import { resolveNiaUserId } from "../visitorId";
-import { PLAZO_OPTIONS } from "../whatsappMessage";
+import { CONTACT_WHATSAPP_NUMBER, PLAZO_OPTIONS } from "../whatsappMessage";
 import {
   GuidedOperation,
   GuidedStage,
@@ -86,9 +86,9 @@ const mapApiProperty = (inm: any): Property => {
         price: Number(offer.precio ?? 0),
         currency: offer.moneda || "$ (USD)",
         status: offer.estado || "Publicado",
-        agentId: offer.agente_id?.toString(),
-        agentName: offer.agente?.name ?? offer.captador?.name ?? "",
-        agentWhatsapp: offer.agente?.whatsapp ?? offer.captador?.whatsapp ?? "",
+        agentId: offer.agente_id?.toString() || "5",
+        agentName: offer.agente?.name || offer.colocador?.name || "Alejandro Coca",
+        agentWhatsapp: offer.agente?.whatsapp || offer.colocador?.whatsapp || CONTACT_WHATSAPP_NUMBER,
         captador: offer.captador || null,
         colocador: offer.colocador || null,
         incluyeExpensas: Boolean(offer.incluye_expensas),
@@ -115,9 +115,9 @@ const mapApiProperty = (inm: any): Property => {
     images: normalizeMediaLinks(inm),
     currency: primaryOffer?.currency ?? inm.moneda,
     exchangeRate: "Oficial",
-    agentId: primaryOffer?.agentId ?? inm.agente_id,
-    agentName: primaryOffer?.agentName ?? inm.agente?.name ?? inm.agente_nombre ?? "",
-    agentWhatsapp: primaryOffer?.agentWhatsapp ?? inm.agente?.whatsapp ?? inm.agente_whatsapp ?? "",
+    agentId: primaryOffer?.agentId ?? (inm.agente_id ? String(inm.agente_id) : "5"),
+    agentName: primaryOffer?.agentName || inm.agente?.name || inm.agente_nombre || "Alejandro Coca",
+    agentWhatsapp: primaryOffer?.agentWhatsapp || inm.agente?.whatsapp || inm.agente_whatsapp || CONTACT_WHATSAPP_NUMBER,
     offers,
     detailsLoaded: Boolean(inm.detalle_completo),
     complejoId: inm.complejo_id ? String(inm.complejo_id) : null,
@@ -3453,20 +3453,21 @@ export default function MapPage() {
                           })()
                         )}
 
-                        {/* ASESOR CAPTADOR */}
-                        {(() => {
-                          const captadorName = selectedDisplayOffer?.captador?.name ||
-                            selectedProperty.offers?.find(o => o.captador?.name)?.captador?.name ||
-                            (selectedProperty.title.includes("STONE IV") ? "Fátima Montaño" :
-                             (selectedProperty.title.includes("Los Pozos") || selectedProperty.title.includes("San Carlos") || selectedProperty.title.includes("Segundo Anillo") || selectedProperty.title.includes("Cristóbal de Mendoza")) ? "Yamile Cuéllar" : null);
+                        {/* ASESOR CAPTADOR - EXCLUSIVO PARA USUARIOS CON ROL ASESOR O ADMIN */}
+                        {canOpenAdvisor && (() => {
+                          const captador = selectedDisplayOffer?.captador ||
+                            selectedProperty.offers?.find(o => o.captador?.name)?.captador ||
+                            (selectedProperty as any).captador;
+                          const captadorName = captador?.name || (selectedProperty as any).captador_nombre;
                           if (!captadorName) return null;
+                          const captadorWa = captador?.whatsapp || (selectedProperty as any).captador_whatsapp;
                           return (
-                            <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3">
+                            <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3 bg-[var(--surface-control)]/30 rounded p-2 my-1">
                               <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-2 text-sm">
-                                <UserCircle size={16} /> Asesor Captador
+                                <UserCircle size={16} /> Asesor Captador (Confidencial)
                               </span>
                               <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold text-right">
-                                {captadorName}
+                                {captadorName} {captadorWa ? `(+${String(captadorWa).replace(/^\+/, "")})` : ""}
                               </span>
                             </div>
                           );

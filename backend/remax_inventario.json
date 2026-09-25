@@ -86,7 +86,11 @@
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129355/inmuebles/i0kk9vmwpfliduwv1bhc.jpg"
     ],
     "lat": -17.8135,
-    "lng": -63.1565
+    "lng": -63.1565,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. · Lares del Parque",
@@ -188,7 +192,11 @@
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129420/inmuebles/wlpwtynhvyrqkmsvr0ct.jpg"
     ],
     "lat": -17.79523,
-    "lng": -63.17054
+    "lng": -63.17054,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. · Swissôtel Santa Cruz",
@@ -283,7 +291,11 @@
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129481/inmuebles/v1jvco34i77utuzpowqs.jpg"
     ],
     "lat": -17.745744,
-    "lng": -63.195316
+    "lng": -63.195316,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. · La Riviera Equipetrol",
@@ -386,7 +398,11 @@
       "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129552/inmuebles/wryeow3y221twrmcweaa.jpg"
     ],
     "lat": -17.760107,
-    "lng": -63.201759
+    "lng": -63.201759,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "ONA Residences Preventa · Av. Los Cusis",
@@ -546,7 +562,11 @@
     "lng": -63.1745,
     "habitaciones": 1,
     "banos": 1,
-    "superficie_m2": 32.3
+    "superficie_m2": 32.3,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. Amoblado · Sky Eclipse Equipetrol",
@@ -562,7 +582,7 @@
     "direccion": "",
     "lat": -17.772427,
     "lng": -63.19185731,
-    "descripcion": "Departamento de lujo completamente amoblado en Edificio Sky Eclipse (Equipetrol / NorOeste), piso 9, a pocos pasos de la Av. Busch y 2do Anillo. 68 m² diseñados con estándar ejecutivo para quien busca confort inmediato, ubicación estratégica y vistas panorámicas.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 9 | Vista abierta a la ciudad\n• 1 master suite matrimonial con vestidor y balcón privado\n• 2 baños (suite principal + baño de visitas)\n• Living-comedor integrado con salida directa al balcón\n• Cocina funcional totalmente equipada con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Totalmente amoblado con cama matrimonial, televisor, veladores y luminarias\n• Persianas blackout en puertas y ventanas | Aires acondicionados instalados\n• Cocina con cajonería alta/baja, refrigerador y microondas\n• Áreas comunes del edificio: piscina, sauna, sala de juegos y terraza social\n• Seguridad y control de acceso 24/7 | Conserjería | Ascensor de última generación\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / corporativa lista para habitar\n• Ubicación en Equipetrol con acceso caminando a centros gastronómicos y bancarios\n• Excelente estándar de habitabilidad y aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 630 USD)\n• Asesor asignado: Jorge Walter Ayala (+591 71640409) · RE/MAX Emprende",
+    "descripcion": "Departamento de lujo completamente amoblado en Edificio Sky Eclipse (Equipetrol / NorOeste), piso 9, a pocos pasos de la Av. Busch y 2do Anillo. 68 m² diseñados con estándar ejecutivo para quien busca confort inmediato, ubicación estratégica y vistas panorámicas.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 9 | Vista abierta a la ciudad\n• 1 master suite matrimonial con vestidor y balcón privado\n• 2 baños (suite principal + baño de visitas)\n• Living-comedor integrado con salida directa al balcón\n• Cocina funcional totalmente equipada con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Totalmente amoblado con cama matrimonial, televisor, veladores y luminarias\n• Persianas blackout en puertas y ventanas | Aires acondicionados instalados\n• Cocina con cajonería alta/baja, refrigerador y microondas\n• Áreas comunes del edificio: piscina, sauna, sala de juegos y terraza social\n• Seguridad y control de acceso 24/7 | Conserjería | Ascensor de última generación\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / corporativa lista para habitar\n• Ubicación en Equipetrol con acceso caminando a centros gastronómicos y bancarios\n• Excelente estándar de habitabilidad y aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 630 USD)",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -639,7 +659,11 @@
       "oficina": "RE/MAX Emprende"
     },
     "piso": "9",
-    "amoblado": true
+    "amoblado": true,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Casa 4 Dorm. Amoblada · Condominio Zona Norte",
@@ -655,7 +679,7 @@
     "direccion": "",
     "lat": -17.7376296,
     "lng": -63.1571768,
-    "descripcion": "Residencia familiar de dos niveles en Zona Norte (Santa Cruz de la Sierra), con 250 m² de construcción cubierta sobre amplio lote. Una propiedad completamente amoblada y acondicionada en un entorno residencial seguro y tranquilo, pensada para familias que priorizan amplitud, jardín y confort.\n\nDistribución & Dimensiones:\n• Construcción 250 m² | 2 plantas | Lote amplio con jardín\n• 4 dormitorios (2 en suite privada con vestidor) | 4 baños completos\n• Living y comedor principal independientes con cielos altos\n• Cocina cerrada amplia con isla central y comedor de diario\n• Galería techada posterior con churrasquera y jardín privado\n• Garaje cerrado para 2 vehículos | Área de servicio y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Completamente amoblada con mobiliario de alta calidad en sala, comedor y dormitorios\n• Aires acondicionados en todos los ambientes | Calefón a gas\n• Cocina equipada con electrodomésticos y despensa\n• Seguridad 24 horas y monitoreo perimetral\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente de alto estándar\n• Residencia para diplomáticos o ejecutivos reubicados\n• Cercanía a colegios internacionales y centros comerciales del eje norte\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 3.142 USD)\n• Asesor asignado: Maria Alejandra Calderón (+591 76761379) · RE/MAX Express",
+    "descripcion": "Residencia familiar de dos niveles en Zona Norte (Santa Cruz de la Sierra), con 250 m² de construcción cubierta sobre amplio lote. Una propiedad completamente amoblada y acondicionada en un entorno residencial seguro y tranquilo, pensada para familias que priorizan amplitud, jardín y confort.\n\nDistribución & Dimensiones:\n• Construcción 250 m² | 2 plantas | Lote amplio con jardín\n• 4 dormitorios (2 en suite privada con vestidor) | 4 baños completos\n• Living y comedor principal independientes con cielos altos\n• Cocina cerrada amplia con isla central y comedor de diario\n• Galería techada posterior con churrasquera y jardín privado\n• Garaje cerrado para 2 vehículos | Área de servicio y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Completamente amoblada con mobiliario de alta calidad en sala, comedor y dormitorios\n• Aires acondicionados en todos los ambientes | Calefón a gas\n• Cocina equipada con electrodomésticos y despensa\n• Seguridad 24 horas y monitoreo perimetral\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente de alto estándar\n• Residencia para diplomáticos o ejecutivos reubicados\n• Cercanía a colegios internacionales y centros comerciales del eje norte\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 3.142 USD)",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -733,7 +757,11 @@
       "remax_slug": "alquiler-casa-santa-cruz-de-la-sierra-norte-1200164217-56",
       "oficina": "RE/MAX Express"
     },
-    "amoblado": true
+    "amoblado": true,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
@@ -749,7 +777,7 @@
     "direccion": "",
     "lat": -17.76352282,
     "lng": -63.17827463,
-    "descripcion": "Departamento moderno a estrenar de 1 dormitorio en el Edificio Macororó 15 (Zona Norte, Santa Cruz de la Sierra). 46 m² optimizados con balcón exterior, cocina integrada y acceso al exclusivo Club House con piscina panorámica del complejo Macororó.\n\nDistribución & Dimensiones:\n• Superficie 46 m² | Piso intermedio con balcón exterior\n• 1 dormitorio con ropero empotrado a medida | 1 baño completo\n• Living-comedor integrado con ventanales de piso a techo\n• Cocina estilo americano con mesones de granito y cajonería\n• Conexión para lavadora y espacio funcional de guardado\n\nServicios Básicos & Equipamiento:\n• Aires acondicionados split instalados y luminarias LED\n• Cocina con cajonería alta y baja | Box de vidrio templado en baño\n• Áreas comunes del Edificio Macororó 15: piscina panorámica, churrasqueras techadas, salón de eventos y lobby moderno\n• Seguridad 24 horas con cámaras y control de ingreso\n\nPotencial de Uso & Rentabilidad:\n• Vivienda para profesional independiente o pareja joven\n• Excelente conectividad sobre el eje norte de la ciudad\n• Edificio nuevo con bajas expensas y alta plusvalía\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 600 USD)\n• Asesor asignado: Nahir Limón Peña (+591 78545296) · RE/MAX Infinity",
+    "descripcion": "Departamento moderno a estrenar de 1 dormitorio en el Edificio Macororó 15 (Zona Norte, Santa Cruz de la Sierra). 46 m² optimizados con balcón exterior, cocina integrada y acceso al exclusivo Club House con piscina panorámica del complejo Macororó.\n\nDistribución & Dimensiones:\n• Superficie 46 m² | Piso intermedio con balcón exterior\n• 1 dormitorio con ropero empotrado a medida | 1 baño completo\n• Living-comedor integrado con ventanales de piso a techo\n• Cocina estilo americano con mesones de granito y cajonería\n• Conexión para lavadora y espacio funcional de guardado\n\nServicios Básicos & Equipamiento:\n• Aires acondicionados split instalados y luminarias LED\n• Cocina con cajonería alta y baja | Box de vidrio templado en baño\n• Áreas comunes del Edificio Macororó 15: piscina panorámica, churrasqueras techadas, salón de eventos y lobby moderno\n• Seguridad 24 horas con cámaras y control de ingreso\n\nPotencial de Uso & Rentabilidad:\n• Vivienda para profesional independiente o pareja joven\n• Excelente conectividad sobre el eje norte de la ciudad\n• Edificio nuevo con bajas expensas y alta plusvalía\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 600 USD)",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -825,7 +853,11 @@
       "oficina": "RE/MAX Infinity"
     },
     "piso": "6",
-    "amoblado": false
+    "amoblado": false,
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Casa 3 Dorm. · Condominio La Pradera Zona Norte",
@@ -841,7 +873,7 @@
     "direccion": "",
     "lat": -17.70192219,
     "lng": -63.1781218,
-    "descripcion": "Casa familiar de dos plantas en el exclusivo Condominio Cerrado La Pradera (Zona Norte, Santa Cruz de la Sierra). 204 m² de construcción sólida sobre terreno privado, con suite principal, galería con churrasquera y acceso al club house con piscinas y canchas del condominio.\n\nDistribución & Dimensiones:\n• Construcción 204 m² | Terreno 260 m² | 2 niveles\n• 3 dormitorios (master suite con vestidor y balcón) | 3 baños\n• Planta baja: living-comedor amplio, cocina funcional con isla, baño de visitas, galería techada y churrasquera\n• Planta alta: suite principal, 2 dormitorios amplios con baño compartido, sala de estar familiar\n• Parqueo techado para 2 vehículos | Jardín privado interior\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario conectado | Agua potable y alcantarillado\n• Mesones de granito en cocina y baños | Box de blindex en duchas\n• Áreas sociales de La Pradera: piscina para adultos y niños, salón de eventos, canchas polifuncionales y parques infantiles\n• Seguridad estricta 24/7 con guardia y cámaras perimetrales\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar segura en entorno verde y consolidado\n• Alta demanda residencial con constante revalorización patrimonial en Zona Norte\n• Cercanía inmediata a supermercados, farmacias y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 135.000 USD)\n• Papeles al día, lista para transferencia o crédito bancario\n• Asesor asignado: Lizette Nieme Ríos (+591 68215551) · RE/MAX Platinum",
+    "descripcion": "Casa familiar de dos plantas en el exclusivo Condominio Cerrado La Pradera (Zona Norte, Santa Cruz de la Sierra). 204 m² de construcción sólida sobre terreno privado, con suite principal, galería con churrasquera y acceso al club house con piscinas y canchas del condominio.\n\nDistribución & Dimensiones:\n• Construcción 204 m² | Terreno 260 m² | 2 niveles\n• 3 dormitorios (master suite con vestidor y balcón) | 3 baños\n• Planta baja: living-comedor amplio, cocina funcional con isla, baño de visitas, galería techada y churrasquera\n• Planta alta: suite principal, 2 dormitorios amplios con baño compartido, sala de estar familiar\n• Parqueo techado para 2 vehículos | Jardín privado interior\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario conectado | Agua potable y alcantarillado\n• Mesones de granito en cocina y baños | Box de blindex en duchas\n• Áreas sociales de La Pradera: piscina para adultos y niños, salón de eventos, canchas polifuncionales y parques infantiles\n• Seguridad estricta 24/7 con guardia y cámaras perimetrales\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar segura en entorno verde y consolidado\n• Alta demanda residencial con constante revalorización patrimonial en Zona Norte\n• Cercanía inmediata a supermercados, farmacias y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 135.000 USD)\n• Papeles al día, lista para transferencia o crédito bancario",
     "amenidades": [
       "Parqueo",
       "Casa",
@@ -918,7 +950,11 @@
       "remax_mlsid": "120034126-50",
       "remax_slug": "venta-casa-santa-cruz-de-la-sierra-norte-120034126-50",
       "oficina": "RE/MAX Platinum"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. · Condominio Mirage Sirari",
@@ -934,7 +970,7 @@
     "direccion": "",
     "lat": -17.76447814,
     "lng": -63.20418478,
-    "descripcion": "Departamento de 2 dormitorios en venta en Condominio Mirage (Barrio Sirari / Equipetrol), una de las zonas de mayor demanda residencial de Santa Cruz de la Sierra. 79 m² bien distribuidos, cocina americana, balcón y áreas comunes de esparcimiento.\n\nDistribución & Dimensiones:\n• Superficie 79 m² | Piso 4 | Balcón con baranda de vidrio\n• 2 dormitorios (1 en suite con ropero empotrado) | 2 baños completos\n• Living-comedor luminoso con salida al balcón\n• Cocina integrada estilo americana con mesones de cuarzo y cajonería\n• Espacio de lavandería independiente | 1 parqueo incluido\n\nServicios Básicos & Equipamiento:\n• Conexión de gas domiciliario | Aires acondicionados instalados\n• Termotanque eléctrico | Grifería y sanitarios de primera calidad\n• Áreas comunes del Condominio Mirage: piscina, churrasquera techada, salón de eventos y terraza\n• Seguridad 24 horas | Portón eléctrico y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Excelente activo para vivienda propia o alquiler a profesionales en Sirari\n• Zona de alta plusvalía a minutos de centros comerciales y avenidas principales\n• Retorno estimado atractivo por alquiler tradicional o temporal\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 85.000 USD)\n• Documentación en orden para compra al contado o financiamiento bancario\n• Asesor asignado: Maria Renée Cronenbold (+591 78474747) · RE/MAX Titanium",
+    "descripcion": "Departamento de 2 dormitorios en venta en Condominio Mirage (Barrio Sirari / Equipetrol), una de las zonas de mayor demanda residencial de Santa Cruz de la Sierra. 79 m² bien distribuidos, cocina americana, balcón y áreas comunes de esparcimiento.\n\nDistribución & Dimensiones:\n• Superficie 79 m² | Piso 4 | Balcón con baranda de vidrio\n• 2 dormitorios (1 en suite con ropero empotrado) | 2 baños completos\n• Living-comedor luminoso con salida al balcón\n• Cocina integrada estilo americana con mesones de cuarzo y cajonería\n• Espacio de lavandería independiente | 1 parqueo incluido\n\nServicios Básicos & Equipamiento:\n• Conexión de gas domiciliario | Aires acondicionados instalados\n• Termotanque eléctrico | Grifería y sanitarios de primera calidad\n• Áreas comunes del Condominio Mirage: piscina, churrasquera techada, salón de eventos y terraza\n• Seguridad 24 horas | Portón eléctrico y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Excelente activo para vivienda propia o alquiler a profesionales en Sirari\n• Zona de alta plusvalía a minutos de centros comerciales y avenidas principales\n• Retorno estimado atractivo por alquiler tradicional o temporal\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 85.000 USD)\n• Documentación en orden para compra al contado o financiamiento bancario",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -1009,7 +1045,11 @@
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-sirari-120034087-74",
       "oficina": "RE/MAX Titanium"
     },
-    "piso": "4"
+    "piso": "4",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. · Av. Pando Queru Queru",
@@ -1025,7 +1065,7 @@
     "direccion": "",
     "lat": -17.37502998,
     "lng": -66.15101515,
-    "descripcion": "Exclusivo departamento de 223 m² en piso 5 sobre la prestigiosa Av. Pando (Queru Queru, Cochabamba). Diseñado con acabados de primera línea, ambientes amplios, suite con hidromasaje y balcón perimetral con vistas despejadas a la ciudad.\n\nDistribución & Dimensiones:\n• Superficie 223 m² | Piso 5 | Orientación privilegiada\n• 3 dormitorios en suite (master suite con hidromasaje y vestidor amplio) | 4 baños totales\n• Living y comedor de dimensiones generosas con salida a terraza-balcón\n• Cocina cerrada de alta gama con isla central, mesones de cuarzo y despensa\n• Sala de estar familiar / TV | Baño de visitas | Dependencia de servicio completa\n• 2 parqueos cubiertos en sótano | 1 baulera amplia\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario | Calefón central | Pisos entablonados y porcelanato importado\n• Mesones de cuarzo en cocina y baños | Grifería importada\n• Edificio exclusivo con seguridad 24 horas, cámaras, salón de copropietarios y parrilleros\n• Bajas expensas y administración profesional\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar premium en la zona más codiciada de Cochabamba\n• Inversión sólida en activo inmobiliario de gran metraje sobre Av. Pando\n• Acceso inmediato a oferta gastronómica, médica y colegios de prestigio\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 186.000 USD)\n• Títulos registrados al día, libre de gravámenes\n• Asesor asignado: Andrés Sebastián Bayá (+591 76902009) · RE/MAX Libertad",
+    "descripcion": "Exclusivo departamento de 223 m² en piso 5 sobre la prestigiosa Av. Pando (Queru Queru, Cochabamba). Diseñado con acabados de primera línea, ambientes amplios, suite con hidromasaje y balcón perimetral con vistas despejadas a la ciudad.\n\nDistribución & Dimensiones:\n• Superficie 223 m² | Piso 5 | Orientación privilegiada\n• 3 dormitorios en suite (master suite con hidromasaje y vestidor amplio) | 4 baños totales\n• Living y comedor de dimensiones generosas con salida a terraza-balcón\n• Cocina cerrada de alta gama con isla central, mesones de cuarzo y despensa\n• Sala de estar familiar / TV | Baño de visitas | Dependencia de servicio completa\n• 2 parqueos cubiertos en sótano | 1 baulera amplia\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario | Calefón central | Pisos entablonados y porcelanato importado\n• Mesones de cuarzo en cocina y baños | Grifería importada\n• Edificio exclusivo con seguridad 24 horas, cámaras, salón de copropietarios y parrilleros\n• Bajas expensas y administración profesional\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar premium en la zona más codiciada de Cochabamba\n• Inversión sólida en activo inmobiliario de gran metraje sobre Av. Pando\n• Acceso inmediato a oferta gastronómica, médica y colegios de prestigio\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 186.000 USD)\n• Títulos registrados al día, libre de gravámenes",
     "amenidades": [
       "Edificio Antiguo",
       "Estacionamiento",
@@ -1100,7 +1140,11 @@
       "remax_slug": "venta-departamento-cochabamba-queru-queru-125004108-199",
       "oficina": "RE/MAX Libertad"
     },
-    "piso": "5"
+    "piso": "5",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. a Estrenar · Brickell 7 Roca y Coronado",
@@ -1118,7 +1162,7 @@
     "direccion": "",
     "lat": -17.78657163,
     "lng": -63.22285295,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Brickell 7 Roca y Coronado en Oeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 4 | Vista exterior despejada\n• 1 dormitorio amplio con balcón privado y ropero empotrado\n• 1 baño completo con grifería moderna\n• Living-comedor integrado de concepto abierto\n• Cocina estilo americano con mesón desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidor de agua individual\n• Aires acondicionados frío/calor\n• Áreas sociales completas en azotea: piscina, churrasqueras y solárium\n• Expensas incluidas en canon referencial (Bs. 3.500)\n\nPotencial de Uso & Rentabilidad:\n• Vivienda moderna para ejecutivo o estudiante sobre el eje oeste\n• Excelente conexión entre 4to y 5to anillo de Av. Roca y Coronado\n• A minutos de FEXPOCRUZ, universidades y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 300 USD / Bs. 3.500 con expensas)\n• Asesor: Jessica Massiel Ortega (+591 77666006) · RE/MAX Infinity",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Brickell 7 Roca y Coronado en Oeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 4 | Vista exterior despejada\n• 1 dormitorio amplio con balcón privado y ropero empotrado\n• 1 baño completo con grifería moderna\n• Living-comedor integrado de concepto abierto\n• Cocina estilo americano con mesón desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidor de agua individual\n• Aires acondicionados frío/calor\n• Áreas sociales completas en azotea: piscina, churrasqueras y solárium\n• Expensas incluidas en canon referencial (Bs. 3.500)\n\nPotencial de Uso & Rentabilidad:\n• Vivienda moderna para ejecutivo o estudiante sobre el eje oeste\n• Excelente conexión entre 4to y 5to anillo de Av. Roca y Coronado\n• A minutos de FEXPOCRUZ, universidades y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 300 USD / Bs. 3.500 con expensas)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1203,7 +1247,11 @@
       "remax_mlsid": "1200796323-17",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-oeste-1200796323-17",
       "oficina": "RE/MAX Infinity"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. con Terraza · Equipetrol Dpto 505",
@@ -1221,7 +1269,7 @@
     "direccion": "",
     "lat": -17.758495,
     "lng": -63.194832,
-    "descripcion": "Depto 1 Dorm. con Terraza · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor privado\n• 1 baño completo con acabados de primera\n• Living-comedor con salida a terraza privada\n• Cocina funcional integrada\n\nServicios Básicos & Equipamiento:\n• Instalación de gas por cañería y termotanque\n• Aires acondicionados split\n• Piscina, parrilleros y terraza social común\n• Edificio residencial seguro y de alta demanda\n\nPotencial de Uso & Rentabilidad:\n• Ubicación privilegiada en Equipetrol NorOeste\n• Cercanía inmediata a centros empresariales, cafés y restaurantes\n• Ideal para vivienda de ejecutivos o profesionales independientes\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 460 USD)\n• Asesor: Sonia Antelo (+591 74588351) · RE/MAX Norte",
+    "descripcion": "Depto 1 Dorm. con Terraza · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor privado\n• 1 baño completo con acabados de primera\n• Living-comedor con salida a terraza privada\n• Cocina funcional integrada\n\nServicios Básicos & Equipamiento:\n• Instalación de gas por cañería y termotanque\n• Aires acondicionados split\n• Piscina, parrilleros y terraza social común\n• Edificio residencial seguro y de alta demanda\n\nPotencial de Uso & Rentabilidad:\n• Ubicación privilegiada en Equipetrol NorOeste\n• Cercanía inmediata a centros empresariales, cafés y restaurantes\n• Ideal para vivienda de ejecutivos o profesionales independientes\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 460 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1307,7 +1355,11 @@
       "remax_mlsid": "125002207-155",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125002207-155",
       "oficina": "RE/MAX Norte"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Monoambiente Amoblado · Nano by Smart Studio Equipetrol",
@@ -1325,7 +1377,7 @@
     "direccion": "",
     "lat": -17.76411543,
     "lng": -63.19193244,
-    "descripcion": "Monoambiente Amoblado · Nano by Smart Studio Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 32.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 32 m² optimizados | Concepto Smart Studio\n• Ambiente integrado de descanso, living y cocina\n• 1 baño completo moderno con box de vidrio\n• Área de kitchenette completamente montada\n\nServicios Básicos & Equipamiento:\n• Wi-Fi en áreas comunes y coworking\n• Piscina, rooftop y cinema en terraza\n• Control de acceso digital y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en el epicentro comercial de Equipetrol\n• Estilo de vida hotelero con todas las comodidades incluidas\n• Acceso caminando a Av. San Martín y centros corporativos\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 335 USD)\n• Asesor: Rolando Alberto Moro (+591 76600776) · RE/MAX Fortaleza",
+    "descripcion": "Monoambiente Amoblado · Nano by Smart Studio Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 32.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 32 m² optimizados | Concepto Smart Studio\n• Ambiente integrado de descanso, living y cocina\n• 1 baño completo moderno con box de vidrio\n• Área de kitchenette completamente montada\n\nServicios Básicos & Equipamiento:\n• Wi-Fi en áreas comunes y coworking\n• Piscina, rooftop y cinema en terraza\n• Control de acceso digital y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en el epicentro comercial de Equipetrol\n• Estilo de vida hotelero con todas las comodidades incluidas\n• Acceso caminando a Av. San Martín y centros corporativos\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 335 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Salida Emergencia Disponible",
@@ -1406,7 +1458,11 @@
       "remax_mlsid": "120034087-95",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-120034087-95",
       "oficina": "RE/MAX Fortaleza"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. a Estrenar · Breeze Tower Equipetrol",
@@ -1424,7 +1480,7 @@
     "direccion": "",
     "lat": -17.75504731,
     "lng": -63.19131201,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Breeze Tower Equipetrol en Noroeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 6 | Excelente iluminación natural\n• 1 dormitorio con ventanales de piso a techo y ropero empotrado\n• 1 baño completo de primera calidad\n• Living-comedor integrado con salida al balcón\n• Cocina americana moderna con mesón de granito\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y red de fibra óptica\n• Edificio de diseño contemporáneo Breeze Tower\n• Áreas sociales de alto impacto en piso superior\n\nPotencial de Uso & Rentabilidad:\n• Inmueble a estrenar entre Av. San Martín y Av. La Salle\n• Zona consolidada con alta revalorización y demanda de alquiler\n• Cercanía a hoteles de lujo, bancos y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 334 USD)\n• Asesor: Mery Elvira Cortez (+591 77674388) · RE/MAX Origen",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Breeze Tower Equipetrol en Noroeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 6 | Excelente iluminación natural\n• 1 dormitorio con ventanales de piso a techo y ropero empotrado\n• 1 baño completo de primera calidad\n• Living-comedor integrado con salida al balcón\n• Cocina americana moderna con mesón de granito\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y red de fibra óptica\n• Edificio de diseño contemporáneo Breeze Tower\n• Áreas sociales de alto impacto en piso superior\n\nPotencial de Uso & Rentabilidad:\n• Inmueble a estrenar entre Av. San Martín y Av. La Salle\n• Zona consolidada con alta revalorización y demanda de alquiler\n• Cercanía a hoteles de lujo, bancos y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 334 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1510,7 +1566,11 @@
       "remax_mlsid": "120104004-7",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-noroeste-120104004-7",
       "oficina": "RE/MAX Origen"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507",
@@ -1528,7 +1588,7 @@
     "direccion": "",
     "lat": -17.75849,
     "lng": -63.194827,
-    "descripcion": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio confortable con vestidor\n• 1 baño completo\n• Living-comedor espacioso con terraza\n• Cocina americana integrada\n\nServicios Básicos & Equipamiento:\n• Gas natural conectado\n• Servicio de conserjería permanente\n• Áreas sociales para eventos privados\n\nPotencial de Uso & Rentabilidad:\n• Inmejorable ubicación en Equipetrol NorOeste\n• Conexión rápida al 2do y 3er anillo\n• Ambiente tranquilo y residencial con alta oferta de servicios\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)\n• Asesor: Sonia Antelo (+591 74588351) · RE/MAX Norte",
+    "descripcion": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio confortable con vestidor\n• 1 baño completo\n• Living-comedor espacioso con terraza\n• Cocina americana integrada\n\nServicios Básicos & Equipamiento:\n• Gas natural conectado\n• Servicio de conserjería permanente\n• Áreas sociales para eventos privados\n\nPotencial de Uso & Rentabilidad:\n• Inmejorable ubicación en Equipetrol NorOeste\n• Conexión rápida al 2do y 3er anillo\n• Ambiente tranquilo y residencial con alta oferta de servicios\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1614,7 +1674,11 @@
       "remax_mlsid": "125002207-154",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125002207-154",
       "oficina": "RE/MAX Norte"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte",
@@ -1632,7 +1696,7 @@
     "direccion": "",
     "lat": -17.7504033,
     "lng": -63.17022785,
-    "descripcion": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte en Norte (Santa Cruz de la Sierra). Con una superficie de 145.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 145 m² | Piso 14 | Vistas ininterrumpidas a la ciudad\n• 3 dormitorios amplios (1 master suite con vestidor y 2 con roperos)\n• 3 baños (suite, compartido y baño de visitas)\n• Living y comedor formal con ventanales de doble vidrio\n• Cocina gourmet con despensa y comedor de diario\n• Dependencia de servicio con baño independiente\n\nServicios Básicos & Equipamiento:\n• Gas por red domiciliaria y termotanque central\n• Expensas controladas y administración profesional\n• Complejo Torres Zen reconocido por su estándar y seguridad\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el eje norte de Santa Cruz\n• Cercanía a colegios bilingües, supermercados y clínicas\n• Habitabilidad de primer nivel con aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 1.215 USD)\n• Asesor: Patricia Camargo (+591 70001788) · RE/MAX Infinity",
+    "descripcion": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte en Norte (Santa Cruz de la Sierra). Con una superficie de 145.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 145 m² | Piso 14 | Vistas ininterrumpidas a la ciudad\n• 3 dormitorios amplios (1 master suite con vestidor y 2 con roperos)\n• 3 baños (suite, compartido y baño de visitas)\n• Living y comedor formal con ventanales de doble vidrio\n• Cocina gourmet con despensa y comedor de diario\n• Dependencia de servicio con baño independiente\n\nServicios Básicos & Equipamiento:\n• Gas por red domiciliaria y termotanque central\n• Expensas controladas y administración profesional\n• Complejo Torres Zen reconocido por su estándar y seguridad\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el eje norte de Santa Cruz\n• Cercanía a colegios bilingües, supermercados y clínicas\n• Habitabilidad de primer nivel con aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 1.215 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1719,7 +1783,11 @@
       "remax_mlsid": "1200796319-166",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-norte-1200796319-166",
       "oficina": "RE/MAX Infinity"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. con Parqueo · Uptown Nuu Equipetrol",
@@ -1737,7 +1805,7 @@
     "direccion": "",
     "lat": -17.7834217,
     "lng": -63.1820853,
-    "descripcion": "Depto 2 Dorm. con Parqueo · Uptown Nuu Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 72.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 72 m² | Piso 7 | Diseño moderno Uptown Nuu\n• 2 dormitorios (master suite + segundo dormitorio con ropero)\n• 2 baños completos con box de blindex\n• Living-comedor con salida directa al balcón\n• Cocina integrada funcional\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones listas para internet de alta velocidad\n• Edificio boutique con áreas sociales de alto confort\n• Mantenimiento permanente y conserjería\n\nPotencial de Uso & Rentabilidad:\n• Ubicación en el corazón residencial de Equipetrol\n• Ideal para parejas, profesionales o diplomáticos\n• Parqueo privado incluido en el canon\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)\n• Asesor: Rafael Eduardo Paccieri (+591 75009433) · RE/MAX Union",
+    "descripcion": "Depto 2 Dorm. con Parqueo · Uptown Nuu Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 72.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 72 m² | Piso 7 | Diseño moderno Uptown Nuu\n• 2 dormitorios (master suite + segundo dormitorio con ropero)\n• 2 baños completos con box de blindex\n• Living-comedor con salida directa al balcón\n• Cocina integrada funcional\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones listas para internet de alta velocidad\n• Edificio boutique con áreas sociales de alto confort\n• Mantenimiento permanente y conserjería\n\nPotencial de Uso & Rentabilidad:\n• Ubicación en el corazón residencial de Equipetrol\n• Ideal para parejas, profesionales o diplomáticos\n• Parqueo privado incluido en el canon\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1823,7 +1891,11 @@
       "remax_mlsid": "120088024-647",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-120088024-647",
       "oficina": "RE/MAX Union"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari",
@@ -1841,7 +1913,7 @@
     "direccion": "",
     "lat": -17.76544367,
     "lng": -63.20200682,
-    "descripcion": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari en Sirari (Santa Cruz de la Sierra). Con una superficie de 48.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 48 m² | Piso 4 | Barrio Sirari a pasos de Av. San Martín\n• 1 master suite amoblada con ropero de piso a techo\n• 1 baño completo con grifería importada\n• Living-comedor amoblado de concepto abierto\n• Cocina americana moderna con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Agua caliente central y gas por cañería\n• Mobiliario completo listo para habitar de inmediato\n• Zona residencial exclusiva y segura\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en una de las zonas más cotizadas de Santa Cruz\n• Cercanía caminando a restaurantes gourmet, cafés y centros financieros\n• Confort y elegancia con bajo costo de mantenimiento\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 478 USD)\n• Asesor: Mabeline Aguiar (+591 68816772) · RE/MAX Union",
+    "descripcion": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari en Sirari (Santa Cruz de la Sierra). Con una superficie de 48.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 48 m² | Piso 4 | Barrio Sirari a pasos de Av. San Martín\n• 1 master suite amoblada con ropero de piso a techo\n• 1 baño completo con grifería importada\n• Living-comedor amoblado de concepto abierto\n• Cocina americana moderna con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Agua caliente central y gas por cañería\n• Mobiliario completo listo para habitar de inmediato\n• Zona residencial exclusiva y segura\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en una de las zonas más cotizadas de Santa Cruz\n• Cercanía caminando a restaurantes gourmet, cafés y centros financieros\n• Confort y elegancia con bajo costo de mantenimiento\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 478 USD)",
     "amenidades": [
       "Salida Emergencia Disponible",
       "Seguridad - Sistema",
@@ -1922,7 +1994,11 @@
       "remax_mlsid": "1200886318-9",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-sirari-1200886318-9",
       "oficina": "RE/MAX Union"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. · Smart Studio Nanotec Equipetrol",
@@ -1940,7 +2016,7 @@
     "direccion": "",
     "lat": -17.7605751,
     "lng": -63.19572508,
-    "descripcion": "Depto 2 Dorm. · Smart Studio Nanotec Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 68.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 5 | Complejo Nanotec\n• 2 dormitorios con excelente ventilación natural\n• 2 baños completos\n• Living y comedor integrados con salida al balcón\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Conexión a gas natural\n• Servicios básicos completos y expensas equilibradas\n• Piscina con vistas urbanas de Equipetrol\n\nPotencial de Uso & Rentabilidad:\n• Excelente alternativa para profesionales o compañeros de trabajo\n• Ubicación céntrica en Equipetrol con rápido acceso al 2do anillo\n• Entorno corporativo con alta demanda comercial\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 550 USD)\n• Asesor: Rolando Alberto Moro (+591 76600776) · RE/MAX Fortaleza",
+    "descripcion": "Depto 2 Dorm. · Smart Studio Nanotec Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 68.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 5 | Complejo Nanotec\n• 2 dormitorios con excelente ventilación natural\n• 2 baños completos\n• Living y comedor integrados con salida al balcón\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Conexión a gas natural\n• Servicios básicos completos y expensas equilibradas\n• Piscina con vistas urbanas de Equipetrol\n\nPotencial de Uso & Rentabilidad:\n• Excelente alternativa para profesionales o compañeros de trabajo\n• Ubicación céntrica en Equipetrol con rápido acceso al 2do anillo\n• Entorno corporativo con alta demanda comercial\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 550 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Gimnasio cercano",
@@ -2021,7 +2097,11 @@
       "remax_mlsid": "120034087-97",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-120034087-97",
       "oficina": "RE/MAX Fortaleza"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. Amoblado con Parqueo · Cond. Zero Zona Norte",
@@ -2039,7 +2119,7 @@
     "direccion": "",
     "lat": -17.76210261,
     "lng": -63.18444371,
-    "descripcion": "Depto 1 Dorm. Amoblado con Parqueo · Cond. Zero Zona Norte en Ovidio Barbery (Santa Cruz de la Sierra). Con una superficie de 44.1 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.1 m² | Piso 3 | Condominio Zero\n• 1 dormitorio amoblado con ropero empotrado\n• 1 baño completo moderno\n• Living-comedor con balcón exterior\n• Cocina americana y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y agua caliente\n• Parqueo vehicular privado techado\n• Expensas accesibles y gestión comunitaria ordenada\n\nPotencial de Uso & Rentabilidad:\n• Vivienda lista para mudanza inmediata en Barrio Ovidio Barbery / Zona Norte\n• A pasos de avenidas principales, supermercados y farmacias\n• Comodidad absoluta con parqueo garantizado\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 360 USD)\n• Asesor: Catherine Calla (+591 71692922) · RE/MAX Patrimonio",
+    "descripcion": "Depto 1 Dorm. Amoblado con Parqueo · Cond. Zero Zona Norte en Ovidio Barbery (Santa Cruz de la Sierra). Con una superficie de 44.1 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.1 m² | Piso 3 | Condominio Zero\n• 1 dormitorio amoblado con ropero empotrado\n• 1 baño completo moderno\n• Living-comedor con balcón exterior\n• Cocina americana y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y agua caliente\n• Parqueo vehicular privado techado\n• Expensas accesibles y gestión comunitaria ordenada\n\nPotencial de Uso & Rentabilidad:\n• Vivienda lista para mudanza inmediata en Barrio Ovidio Barbery / Zona Norte\n• A pasos de avenidas principales, supermercados y farmacias\n• Comodidad absoluta con parqueo garantizado\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 360 USD)",
     "amenidades": [
       "Cámara de seguridad",
       "Seguridad - Vigilancia",
@@ -2120,7 +2200,11 @@
       "remax_mlsid": "120096022-4",
       "remax_slug": "alquiler-departamento-santa-cruz-de-la-sierra-ovidio-barbery-120096022-4",
       "oficina": "RE/MAX Patrimonio"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. a Estrenar · Equipetrol NorOeste",
@@ -2138,7 +2222,7 @@
     "direccion": "",
     "lat": -17.77029167,
     "lng": -63.2004508,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42 m² | Piso 3 | A estrenar\n• 1 dormitorio con ventanal exterior y ropero\n• 1 baño completo\n• Living-comedor integrado\n• Cocina estilo americano\n\nServicios Básicos & Equipamiento:\n• Instalaciones eléctricas y sanitarias de primera calidad\n• Gas domiciliario conectado\n• Bajas expensas proyectadas\n\nPotencial de Uso & Rentabilidad:\n• Oportunidad de inversión de alta rentabilidad en Equipetrol\n• Precio de entrada competitivo para renta tradicional o Airbnb\n• Zona de máxima valorización inmobiliaria\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 60.255 USD)\n• Documentación al día para transferencia inmediata o crédito bancario\n• Asesor: Eduardo Zapata (+591 71340353) · RE/MAX Emporio",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42 m² | Piso 3 | A estrenar\n• 1 dormitorio con ventanal exterior y ropero\n• 1 baño completo\n• Living-comedor integrado\n• Cocina estilo americano\n\nServicios Básicos & Equipamiento:\n• Instalaciones eléctricas y sanitarias de primera calidad\n• Gas domiciliario conectado\n• Bajas expensas proyectadas\n\nPotencial de Uso & Rentabilidad:\n• Oportunidad de inversión de alta rentabilidad en Equipetrol\n• Precio de entrada competitivo para renta tradicional o Airbnb\n• Zona de máxima valorización inmobiliaria\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 60.255 USD)\n• Documentación al día para transferencia inmediata o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2219,7 +2303,11 @@
       "remax_mlsid": "125001323-57",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125001323-57",
       "oficina": "RE/MAX Emporio"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. a Estrenar · Equipetrol NorOeste",
@@ -2237,7 +2325,7 @@
     "direccion": "",
     "lat": -17.77029167,
     "lng": -63.2004508,
-    "descripcion": "Depto 3 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 88.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 88 m² | Piso 5 | Orientación este\n• 3 dormitorios (1 suite principal + 2 dormitorios familiares)\n• 2 baños completos\n• Living-comedor amplio con salida a balcón\n• Cocina semi-integrada y área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidores independientes\n• Termotanque y servicios básicos completos\n• Edificio residencial nuevo y moderno\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de 3 dormitorios en el corazón de Equipetrol\n• Excelente relación precio por m² en zona premium\n• Alta plusvalía y demanda de reventa garantizada\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 112.031 USD)\n• Papeles al día, apto para financiamiento bancario\n• Asesor: Eduardo Zapata (+591 71340353) · RE/MAX Emporio",
+    "descripcion": "Depto 3 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 88.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 88 m² | Piso 5 | Orientación este\n• 3 dormitorios (1 suite principal + 2 dormitorios familiares)\n• 2 baños completos\n• Living-comedor amplio con salida a balcón\n• Cocina semi-integrada y área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidores independientes\n• Termotanque y servicios básicos completos\n• Edificio residencial nuevo y moderno\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de 3 dormitorios en el corazón de Equipetrol\n• Excelente relación precio por m² en zona premium\n• Alta plusvalía y demanda de reventa garantizada\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 112.031 USD)\n• Papeles al día, apto para financiamiento bancario",
     "amenidades": [
       "Comercios cercanos",
       "Salida Emergencia Disponible",
@@ -2318,7 +2406,11 @@
       "remax_mlsid": "125001323-55",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125001323-55",
       "oficina": "RE/MAX Emporio"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. con Terraza Privada · Equipetrol Dpto 507",
@@ -2336,7 +2428,7 @@
     "direccion": "",
     "lat": -17.75849,
     "lng": -63.194827,
-    "descripcion": "Depto 1 Dorm. con Terraza Privada · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor con salida directa a terraza\n• Cocina integrada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y calefón\n• Áreas comunes equipadas\n• Conserjería permanente\n\nPotencial de Uso & Rentabilidad:\n• Inversión inmobiliaria segura con retorno por alquiler\n• Ubicación estratégica en Equipetrol NorOeste\n• Zona preferida por empresas y organismos internacionales\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 80.580 USD)\n• Títulos en orden para transferencia inmediata\n• Asesor: Sonia Antelo (+591 74588351) · RE/MAX Norte",
+    "descripcion": "Depto 1 Dorm. con Terraza Privada · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor con salida directa a terraza\n• Cocina integrada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y calefón\n• Áreas comunes equipadas\n• Conserjería permanente\n\nPotencial de Uso & Rentabilidad:\n• Inversión inmobiliaria segura con retorno por alquiler\n• Ubicación estratégica en Equipetrol NorOeste\n• Zona preferida por empresas y organismos internacionales\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 80.580 USD)\n• Títulos en orden para transferencia inmediata",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2422,7 +2514,11 @@
       "remax_mlsid": "125002207-153",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125002207-153",
       "oficina": "RE/MAX Norte"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. Amoblado de Lujo · La Riviera Equipetrol",
@@ -2440,7 +2536,7 @@
     "direccion": "",
     "lat": -17.76048825,
     "lng": -63.20186734,
-    "descripcion": "Depto 2 Dorm. Amoblado de Lujo · La Riviera Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 110.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 110 m² | Piso 8 | Edificio La Riviera\n• 2 dormitorios (1 en suite matrimonial con vestidor)\n• 2 baños completos con mesones de cuarzo\n• Living y comedor integrados con vistas privilegiadas\n• Cocina americana y dependencia de servicio\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, climatización integral y aislamiento termoacústico\n• Infraestructura cinco estrellas del complejo La Riviera & Beauty Plaza\n• Seguridad privada de nivel diplomático\n\nPotencial de Uso & Rentabilidad:\n• Activo patrimonial de primera categoría en Equipetrol Norte\n• Alta tasa de ocupación ejecutiva y corporativa\n• Ubicación inigualable sobre el 4to anillo con oferta comercial integral\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 170.000 USD)\n• Títulos registrados al día, listo para escriturar\n• Asesor: Patricia Ruth Jalil (+591 72606006) · RE/MAX Express",
+    "descripcion": "Depto 2 Dorm. Amoblado de Lujo · La Riviera Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 110.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 110 m² | Piso 8 | Edificio La Riviera\n• 2 dormitorios (1 en suite matrimonial con vestidor)\n• 2 baños completos con mesones de cuarzo\n• Living y comedor integrados con vistas privilegiadas\n• Cocina americana y dependencia de servicio\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, climatización integral y aislamiento termoacústico\n• Infraestructura cinco estrellas del complejo La Riviera & Beauty Plaza\n• Seguridad privada de nivel diplomático\n\nPotencial de Uso & Rentabilidad:\n• Activo patrimonial de primera categoría en Equipetrol Norte\n• Alta tasa de ocupación ejecutiva y corporativa\n• Ubicación inigualable sobre el 4to anillo con oferta comercial integral\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 170.000 USD)\n• Títulos registrados al día, listo para escriturar",
     "amenidades": [
       "Salida Emergencia Disponible",
       "Seguridad - Sistema",
@@ -2524,7 +2620,11 @@
       "remax_mlsid": "120016146-8",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-120016146-8",
       "oficina": "RE/MAX Express"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 1 Dorm. con Vestidor · Equipetrol Dpto 505",
@@ -2542,7 +2642,7 @@
     "direccion": "",
     "lat": -17.758495,
     "lng": -63.194832,
-    "descripcion": "Depto 1 Dorm. con Vestidor · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor luminoso con terraza\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y servicios básicos instalados\n• Conserjería permanente\n• Edificio moderno con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Inversión rentable en Equipetrol NorOeste\n• Zona consolidada con constante flujo de inquilinos de alto perfil\n• Excelente alternativa patrimonial accesible\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 76.645 USD)\n• Documentación en orden para transferencia inmediata\n• Asesor: Sonia Antelo (+591 74588351) · RE/MAX Norte",
+    "descripcion": "Depto 1 Dorm. con Vestidor · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor luminoso con terraza\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y servicios básicos instalados\n• Conserjería permanente\n• Edificio moderno con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Inversión rentable en Equipetrol NorOeste\n• Zona consolidada con constante flujo de inquilinos de alto perfil\n• Excelente alternativa patrimonial accesible\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 76.645 USD)\n• Documentación en orden para transferencia inmediata",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2628,7 +2728,11 @@
       "remax_mlsid": "125002207-152",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125002207-152",
       "oficina": "RE/MAX Norte"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. Amplio · Condominio Sky Blue Equipetrol",
@@ -2646,7 +2750,7 @@
     "direccion": "",
     "lat": -17.766118,
     "lng": -63.193411,
-    "descripcion": "Depto 2 Dorm. Amplio · Condominio Sky Blue Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 92.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 92 m² | Piso 6 | Condominio Sky Blue\n• 2 master suites independientes con vestidores y baños privados\n• 3 baños en total (2 en suites + baño de visitas)\n• Living y comedor amplios con excelente ventilación cruzada\n• Cocina completa y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Gas natural domiciliario y calefón a gas\n• Garaje techado propio\n• Administración profesional y vigilancia 24/7\n\nPotencial de Uso & Rentabilidad:\n• Residencia espaciosa en el corazón de Equipetrol NorOeste\n• Planta de 92 m² difícil de encontrar para tipologías de 2 dormitorios\n• Alta plusvalía y demanda de alquiler familiar o corporativo\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 120.000 USD)\n• Papeles al día, sin gravámenes, apto crédito bancario\n• Asesor: Marcelo Saldaña (+591 78000670) · RE/MAX Emporio",
+    "descripcion": "Depto 2 Dorm. Amplio · Condominio Sky Blue Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 92.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 92 m² | Piso 6 | Condominio Sky Blue\n• 2 master suites independientes con vestidores y baños privados\n• 3 baños en total (2 en suites + baño de visitas)\n• Living y comedor amplios con excelente ventilación cruzada\n• Cocina completa y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Gas natural domiciliario y calefón a gas\n• Garaje techado propio\n• Administración profesional y vigilancia 24/7\n\nPotencial de Uso & Rentabilidad:\n• Residencia espaciosa en el corazón de Equipetrol NorOeste\n• Planta de 92 m² difícil de encontrar para tipologías de 2 dormitorios\n• Alta plusvalía y demanda de alquiler familiar o corporativo\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 120.000 USD)\n• Papeles al día, sin gravámenes, apto crédito bancario",
     "amenidades": [
       "Seguridad - Sistema",
       "Parqueo",
@@ -2729,7 +2833,11 @@
       "remax_mlsid": "125001007-1390",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125001007-1390",
       "oficina": "RE/MAX Emporio"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 4 Dorm. Piso 16 · Condominio Torres Aventura 2do Anillo",
@@ -2747,7 +2855,7 @@
     "direccion": "",
     "lat": -17.77116522,
     "lng": -63.17234167,
-    "descripcion": "Depto 4 Dorm. Piso 16 · Condominio Torres Aventura 2do Anillo en Norte (Santa Cruz de la Sierra). Con una superficie de 195.49 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 195.49 m² | Piso 16 | Condominio Torres Aventura\n• 4 dormitorios confortables (master suite + 3 dormitorios con roperos)\n• 3 baños completos más baño de servicio\n• Living y comedor social con ventanales piso a techo y salida al balcón\n• Cocina gourmet independiente y lavandería ventilada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería, agua potable y calefón central\n• 2 parqueos cubiertos asignados en subsuelo\n• Seguridad permanente con control de visitas\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el 2do Anillo y Av. Trinidad\n• Cercanía inmediata a colegios, universidades y centros médicos\n• Metraje generoso (195 m²) con vista inigualable en piso alto\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 205.000 USD)\n• Títulos registrados al día, libre de gravamen\n• Asesor: Dyana Zurita (+591 77316416) · RE/MAX Infinity",
+    "descripcion": "Depto 4 Dorm. Piso 16 · Condominio Torres Aventura 2do Anillo en Norte (Santa Cruz de la Sierra). Con una superficie de 195.49 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 195.49 m² | Piso 16 | Condominio Torres Aventura\n• 4 dormitorios confortables (master suite + 3 dormitorios con roperos)\n• 3 baños completos más baño de servicio\n• Living y comedor social con ventanales piso a techo y salida al balcón\n• Cocina gourmet independiente y lavandería ventilada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería, agua potable y calefón central\n• 2 parqueos cubiertos asignados en subsuelo\n• Seguridad permanente con control de visitas\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el 2do Anillo y Av. Trinidad\n• Cercanía inmediata a colegios, universidades y centros médicos\n• Metraje generoso (195 m²) con vista inigualable en piso alto\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 205.000 USD)\n• Títulos registrados al día, libre de gravamen",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2834,7 +2942,11 @@
       "remax_mlsid": "1200796325-68",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-norte-1200796325-68",
       "oficina": "RE/MAX Infinity"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Monoambiente Amoblado · Sky Plaza Italia Equipetrol",
@@ -2852,7 +2964,7 @@
     "direccion": "",
     "lat": -17.76949986,
     "lng": -63.1966853,
-    "descripcion": "Monoambiente Amoblado · Sky Plaza Italia Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.43 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42.43 m² | Piso 4 | Edificio Sky Plaza Italia\n• Ambiente amplio e iluminado con balcón exterior\n• 1 baño completo con grifería moderna y box de vidrio\n• Kitchenette equipada y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones de alta velocidad\n• Amoblamiento completo incluido en el precio\n• Edificio nuevo con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Activo ideal para alquiler temporal (Airbnb) o renta ejecutiva\n• Ubicación privilegiada entre 2do y 3er anillo de Equipetrol\n• Rentabilidad proyectada superior al promedio de la zona\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 61.800 USD)\n• Listo para transferencia o crédito bancario\n• Asesor: Diego Novak (+591 77331449) · RE/MAX Emporio",
+    "descripcion": "Monoambiente Amoblado · Sky Plaza Italia Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.43 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42.43 m² | Piso 4 | Edificio Sky Plaza Italia\n• Ambiente amplio e iluminado con balcón exterior\n• 1 baño completo con grifería moderna y box de vidrio\n• Kitchenette equipada y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones de alta velocidad\n• Amoblamiento completo incluido en el precio\n• Edificio nuevo con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Activo ideal para alquiler temporal (Airbnb) o renta ejecutiva\n• Ubicación privilegiada entre 2do y 3er anillo de Equipetrol\n• Rentabilidad proyectada superior al promedio de la zona\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 61.800 USD)\n• Listo para transferencia o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2938,7 +3050,11 @@
       "remax_mlsid": "125001318-39",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-equipetrolnoroeste-125001318-39",
       "oficina": "RE/MAX Emporio"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 2 Dorm. a Estrenar · Torre Barcelona Radial 10",
@@ -2956,7 +3072,7 @@
     "direccion": "",
     "lat": -17.80397601,
     "lng": -63.15573095,
-    "descripcion": "Depto 2 Dorm. a Estrenar · Torre Barcelona Radial 10 en Parque Urbano (Santa Cruz de la Sierra). Con una superficie de 65.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 65 m² | Piso 3 | Torre Barcelona\n• 2 dormitorios (1 suite principal + 1 dormitorio con ropero)\n• 2 baños completos con box de vidrio\n• Living-comedor espacioso con balcón\n• Cocina integrada y lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y alcantarillado\n• Excelente conectividad sobre la Radial 10 en Zona Sureste\n• Edificio residencial nuevo y funcional\n\nPotencial de Uso & Rentabilidad:\n• Precio accesible de compra en zona de rápido crecimiento urbano\n• Excelente activo para primera vivienda familiar o renta tradicional\n• Cercanía a centros de abasto, transporte y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 68.500 USD)\n• Papeles al día, apto para financiamiento de vivienda\n• Asesor: Paola Virgos (+591 70885703) · RE/MAX Legacy",
+    "descripcion": "Depto 2 Dorm. a Estrenar · Torre Barcelona Radial 10 en Parque Urbano (Santa Cruz de la Sierra). Con una superficie de 65.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 65 m² | Piso 3 | Torre Barcelona\n• 2 dormitorios (1 suite principal + 1 dormitorio con ropero)\n• 2 baños completos con box de vidrio\n• Living-comedor espacioso con balcón\n• Cocina integrada y lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y alcantarillado\n• Excelente conectividad sobre la Radial 10 en Zona Sureste\n• Edificio residencial nuevo y funcional\n\nPotencial de Uso & Rentabilidad:\n• Precio accesible de compra en zona de rápido crecimiento urbano\n• Excelente activo para primera vivienda familiar o renta tradicional\n• Cercanía a centros de abasto, transporte y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 68.500 USD)\n• Papeles al día, apto para financiamiento de vivienda",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -3042,7 +3158,11 @@
       "remax_mlsid": "120043018-310",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-parque-urbano-120043018-310",
       "oficina": "RE/MAX Legacy"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   },
   {
     "titulo": "Depto 3 Dorm. Exclusivo · Edificio Atocha Las Palmas",
@@ -3060,7 +3180,7 @@
     "direccion": "",
     "lat": -17.8080165,
     "lng": -63.20654022,
-    "descripcion": "Depto 3 Dorm. Exclusivo · Edificio Atocha Las Palmas en Las Palmas (Santa Cruz de la Sierra). Con una superficie de 128.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 128 m² | Piso 2 | Edificio Atocha sobre Av. Ibérica\n• 3 dormitorios amplios (1 en suite matrimonial con vestidor)\n• 2 baños completos con acabados de primera\n• Living y comedor de generosas dimensiones con balcón\n• Cocina independiente con área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas natural por red, termotanque y servicios completos\n• Parqueo propio en planta baja\n• Barrio residencial Las Palmas: entorno arbolado y de máxima tranquilidad\n\nPotencial de Uso & Rentabilidad:\n• Vivienda en el tradicional y cotizado Barrio Las Palmas\n• Edificio privado sin aglomeraciones con solo 9 copropietarios\n• Valor metro cuadrado altamente competitivo para Las Palmas\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 140.000 USD con parqueo incluido)\n• Documentación en orden para transferencia al contado o crédito bancario\n• Asesor: Monica Barba (+591 76758155) · RE/MAX Legacy",
+    "descripcion": "Depto 3 Dorm. Exclusivo · Edificio Atocha Las Palmas en Las Palmas (Santa Cruz de la Sierra). Con una superficie de 128.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 128 m² | Piso 2 | Edificio Atocha sobre Av. Ibérica\n• 3 dormitorios amplios (1 en suite matrimonial con vestidor)\n• 2 baños completos con acabados de primera\n• Living y comedor de generosas dimensiones con balcón\n• Cocina independiente con área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas natural por red, termotanque y servicios completos\n• Parqueo propio en planta baja\n• Barrio residencial Las Palmas: entorno arbolado y de máxima tranquilidad\n\nPotencial de Uso & Rentabilidad:\n• Vivienda en el tradicional y cotizado Barrio Las Palmas\n• Edificio privado sin aglomeraciones con solo 9 copropietarios\n• Valor metro cuadrado altamente competitivo para Las Palmas\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 140.000 USD con parqueo incluido)\n• Documentación en orden para transferencia al contado o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -3147,6 +3267,10 @@
       "remax_mlsid": "120043060-46",
       "remax_slug": "venta-departamento-santa-cruz-de-la-sierra-las-palmas-120043060-46",
       "oficina": "RE/MAX Legacy"
-    }
+    },
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "colocador_nombre": "Alejandro Coca",
+    "colocador_whatsapp": "59157015854"
   }
 ]
