@@ -29,6 +29,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
+from sqlalchemy import func
 from database import SessionLocal
 from models import InmuebleDB, OfertaDB, AgenteDB, ComplejoDB
 from catalog import find_or_create_oficina, find_or_create_captador, find_or_create_complejo
@@ -197,6 +198,7 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     if not inmueble:
         inmueble = db.query(InmuebleDB).filter(InmuebleDB.titulo == titulo).first()
     if inmueble:
+        inmueble.titulo = titulo
         inmueble.precio_usd = precio_usd
         inmueble.moneda = moneda
         inmueble.habitaciones = int(item.get("habitaciones") or item.get("dormitorios") or 0)
@@ -350,6 +352,17 @@ def run_batch_import(data: List[Dict[str, Any]]) -> List[int]:
                 print(f"[{index}/{len(data)}] OK: #{inm.id} - {inm.titulo} ({inm.tipo_inmueble} en {inm.zona})")
             except Exception as e:
                 print(f"[{index}/{len(data)}] ERROR importando '{item.get('titulo')}': {e}", file=sys.stderr)
+        
+        # Limpiar registros huérfanos con títulos inválidos de intentos previos
+        orphans = db.query(InmuebleDB).filter(
+            (InmuebleDB.titulo == "–") |
+            (InmuebleDB.titulo == "Inmueble sin título") |
+            (InmuebleDB.titulo == "") |
+            (func.length(func.trim(InmuebleDB.titulo)) < 3)
+        ).all()
+        for orphan in orphans:
+            db.query(OfertaDB).filter(OfertaDB.inmueble_id == orphan.id).delete()
+            db.delete(orphan)
         
         invalidate_search_cache(db)
         db.commit()

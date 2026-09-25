@@ -67,7 +67,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "394",
+        "id": "528",
         "operacion": "Venta",
         "precio": 220000.0,
         "moneda": "$ (USD)",
@@ -181,7 +181,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "395",
+        "id": "529",
         "operacion": "Venta",
         "precio": 150000.0,
         "moneda": "$ (USD)",
@@ -406,7 +406,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "397",
+        "id": "531",
         "operacion": "Venta",
         "precio": 330000.0,
         "moneda": "$ (USD)",
@@ -524,7 +524,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "398",
+        "id": "532",
         "operacion": "Venta",
         "precio": 40375.0,
         "moneda": "$ (USD)",
@@ -640,7 +640,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "399",
+        "id": "533",
         "operacion": "Alquiler",
         "precio": 630.0,
         "moneda": "$ (USD)",
@@ -756,7 +756,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "400",
+        "id": "534",
         "operacion": "Alquiler",
         "precio": 3142.0,
         "moneda": "$ (USD)",
@@ -806,7 +806,7 @@
   },
   {
     "id": 14,
-    "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
+    "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
     "precio_usd": 600.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -872,7 +872,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "401",
+        "id": "535",
         "operacion": "Alquiler",
         "precio": 600.0,
         "moneda": "$ (USD)",
@@ -988,7 +988,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "402",
+        "id": "536",
         "operacion": "Venta",
         "precio": 135000.0,
         "moneda": "$ (USD)",
@@ -1104,7 +1104,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "403",
+        "id": "537",
         "operacion": "Venta",
         "precio": 85000.0,
         "moneda": "$ (USD)",
@@ -1220,7 +1220,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "404",
+        "id": "538",
         "operacion": "Venta",
         "precio": 186000.0,
         "moneda": "$ (USD)",
@@ -1339,7 +1339,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "405",
+        "id": "539",
         "operacion": "Alquiler",
         "precio": 300.0,
         "moneda": "$ (USD)",
@@ -1458,7 +1458,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "406",
+        "id": "540",
         "operacion": "Alquiler",
         "precio": 460.0,
         "moneda": "$ (USD)",
@@ -1577,7 +1577,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "407",
+        "id": "541",
         "operacion": "Alquiler",
         "precio": 335.0,
         "moneda": "$ (USD)",
@@ -1696,7 +1696,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "408",
+        "id": "542",
         "operacion": "Alquiler",
         "precio": 334.0,
         "moneda": "$ (USD)",
@@ -1746,7 +1746,7 @@
   },
   {
     "id": 22,
-    "titulo": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507",
+    "titulo": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507",
     "precio_usd": 490.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -1815,7 +1815,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "409",
+        "id": "543",
         "operacion": "Alquiler",
         "precio": 490.0,
         "moneda": "$ (USD)",
@@ -1865,7 +1865,7 @@
   },
   {
     "id": 23,
-    "titulo": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte",
+    "titulo": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte",
     "precio_usd": 1215.0,
     "moneda": "$ (USD)",
     "habitaciones": 3,
@@ -1934,7 +1934,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "410",
+        "id": "544",
         "operacion": "Alquiler",
         "precio": 1215.0,
         "moneda": "$ (USD)",
@@ -2053,7 +2053,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "411",
+        "id": "545",
         "operacion": "Alquiler",
         "precio": 490.0,
         "moneda": "$ (USD)",
@@ -2103,7 +2103,7 @@
   },
   {
     "id": 25,
-    "titulo": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari",
+    "titulo": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari",
     "precio_usd": 478.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -2172,7 +2172,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "412",
+        "id": "546",
         "operacion": "Alquiler",
         "precio": 478.0,
         "moneda": "$ (USD)",
@@ -2291,7 +2291,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "413",
+        "id": "547",
         "operacion": "Alquiler",
         "precio": 550.0,
         "moneda": "$ (USD)",
@@ -2410,7 +2410,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "414",
+        "id": "548",
         "operacion": "Alquiler",
         "precio": 360.0,
         "moneda": "$ (USD)",
@@ -2529,7 +2529,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "415",
+        "id": "549",
         "operacion": "Venta",
         "precio": 60255.0,
         "moneda": "$ (USD)",
@@ -2648,7 +2648,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "416",
+        "id": "550",
         "operacion": "Venta",
         "precio": 112031.0,
         "moneda": "$ (USD)",
@@ -2767,7 +2767,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "417",
+        "id": "551",
         "operacion": "Venta",
         "precio": 80580.0,
         "moneda": "$ (USD)",
@@ -2886,7 +2886,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "418",
+        "id": "552",
         "operacion": "Venta",
         "precio": 170000.0,
         "moneda": "$ (USD)",
@@ -3005,7 +3005,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "419",
+        "id": "553",
         "operacion": "Venta",
         "precio": 76645.0,
         "moneda": "$ (USD)",
@@ -3124,7 +3124,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "420",
+        "id": "554",
         "operacion": "Venta",
         "precio": 120000.0,
         "moneda": "$ (USD)",
@@ -3243,7 +3243,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "421",
+        "id": "555",
         "operacion": "Venta",
         "precio": 205000.0,
         "moneda": "$ (USD)",
@@ -3362,7 +3362,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "422",
+        "id": "556",
         "operacion": "Venta",
         "precio": 61800.0,
         "moneda": "$ (USD)",
@@ -3481,7 +3481,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "423",
+        "id": "557",
         "operacion": "Venta",
         "precio": 68500.0,
         "moneda": "$ (USD)",
@@ -3600,7 +3600,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "424",
+        "id": "558",
         "operacion": "Venta",
         "precio": 140000.0,
         "moneda": "$ (USD)",
@@ -3714,7 +3714,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "425",
+        "id": "559",
         "operacion": "Alquiler",
         "precio": 391.0,
         "moneda": "$ (USD)",
@@ -3828,7 +3828,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "426",
+        "id": "560",
         "operacion": "Alquiler",
         "precio": 230.0,
         "moneda": "$ (USD)",
@@ -3942,7 +3942,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "427",
+        "id": "561",
         "operacion": "Alquiler",
         "precio": 490.0,
         "moneda": "$ (USD)",
@@ -3992,7 +3992,7 @@
   },
   {
     "id": 41,
-    "titulo": "🏢 Departamento – 1 Dormitorio",
+    "titulo": "Departamento – 1 Dormitorio",
     "precio_usd": 2600.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -4056,7 +4056,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "428",
+        "id": "562",
         "operacion": "Alquiler",
         "precio": 2600.0,
         "moneda": "$ (USD)",
@@ -4170,7 +4170,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "429",
+        "id": "563",
         "operacion": "Alquiler",
         "precio": 357.0,
         "moneda": "$ (USD)",
@@ -4284,7 +4284,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "430",
+        "id": "564",
         "operacion": "Alquiler",
         "precio": 675.0,
         "moneda": "$ (USD)",
@@ -4394,7 +4394,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "431",
+        "id": "565",
         "operacion": "Alquiler",
         "precio": 500.0,
         "moneda": "$ (USD)",
@@ -4508,7 +4508,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "432",
+        "id": "566",
         "operacion": "Alquiler",
         "precio": 514.0,
         "moneda": "$ (USD)",
@@ -4622,7 +4622,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "433",
+        "id": "567",
         "operacion": "Alquiler",
         "precio": 614.0,
         "moneda": "$ (USD)",
@@ -4732,7 +4732,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "434",
+        "id": "568",
         "operacion": "Alquiler",
         "precio": 300.0,
         "moneda": "$ (USD)",
@@ -4846,7 +4846,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "435",
+        "id": "569",
         "operacion": "Alquiler",
         "precio": 1000.0,
         "moneda": "$ (USD)",
@@ -4960,7 +4960,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "436",
+        "id": "570",
         "operacion": "Alquiler",
         "precio": 450.0,
         "moneda": "$ (USD)",
@@ -5074,7 +5074,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "437",
+        "id": "571",
         "operacion": "Alquiler",
         "precio": 285.0,
         "moneda": "$ (USD)",
@@ -5124,7 +5124,7 @@
   },
   {
     "id": 51,
-    "titulo": "𝐌𝐨𝐧𝐨𝐚𝐦𝐛𝐢𝐞𝐧𝐭𝐞 𝐚 𝐞𝐬𝐭𝐫𝐞𝐧𝐚𝐫 𝐞𝐧 𝐚𝐥𝐪𝐮𝐢𝐥𝐞𝐫 - 𝐄𝐝𝐢𝐟𝐢𝐜𝐢𝐨 𝐒𝐚𝐨𝐭𝐚 𝐏𝐚𝐫𝐤",
+    "titulo": "Monoambiente a Estrenar - Edificio Saota Park",
     "precio_usd": 372.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -5188,7 +5188,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "438",
+        "id": "572",
         "operacion": "Alquiler",
         "precio": 372.0,
         "moneda": "$ (USD)",
@@ -5302,7 +5302,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "439",
+        "id": "573",
         "operacion": "Alquiler",
         "precio": 3500.0,
         "moneda": "$ (USD)",
@@ -5416,7 +5416,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "440",
+        "id": "574",
         "operacion": "Alquiler",
         "precio": 480.0,
         "moneda": "$ (USD)",
@@ -5530,7 +5530,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "441",
+        "id": "575",
         "operacion": "Alquiler",
         "precio": 314.0,
         "moneda": "$ (USD)",
@@ -5644,7 +5644,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "442",
+        "id": "576",
         "operacion": "Alquiler",
         "precio": 450.0,
         "moneda": "$ (USD)",
@@ -5758,7 +5758,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "443",
+        "id": "577",
         "operacion": "Alquiler",
         "precio": 320.0,
         "moneda": "$ (USD)",
@@ -5868,7 +5868,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "444",
+        "id": "578",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -5982,7 +5982,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "445",
+        "id": "579",
         "operacion": "Alquiler",
         "precio": 428.0,
         "moneda": "$ (USD)",
@@ -6096,7 +6096,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "446",
+        "id": "580",
         "operacion": "Alquiler",
         "precio": 658.0,
         "moneda": "$ (USD)",
@@ -6210,7 +6210,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "447",
+        "id": "581",
         "operacion": "Alquiler",
         "precio": 301.0,
         "moneda": "$ (USD)",
@@ -6324,7 +6324,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "448",
+        "id": "582",
         "operacion": "Alquiler",
         "precio": 350.0,
         "moneda": "$ (USD)",
@@ -6438,7 +6438,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "449",
+        "id": "583",
         "operacion": "Alquiler",
         "precio": 452.0,
         "moneda": "$ (USD)",
@@ -6552,7 +6552,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "450",
+        "id": "584",
         "operacion": "Alquiler",
         "precio": 392.0,
         "moneda": "$ (USD)",
@@ -6663,7 +6663,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "451",
+        "id": "585",
         "operacion": "Alquiler",
         "precio": 1050.0,
         "moneda": "$ (USD)",
@@ -6777,7 +6777,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "452",
+        "id": "586",
         "operacion": "Alquiler",
         "precio": 522.0,
         "moneda": "$ (USD)",
@@ -6891,7 +6891,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "453",
+        "id": "587",
         "operacion": "Alquiler",
         "precio": 435.0,
         "moneda": "$ (USD)",
@@ -7005,7 +7005,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "454",
+        "id": "588",
         "operacion": "Alquiler",
         "precio": 410.0,
         "moneda": "$ (USD)",
@@ -7119,7 +7119,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "455",
+        "id": "589",
         "operacion": "Alquiler",
         "precio": 391.0,
         "moneda": "$ (USD)",
@@ -7233,7 +7233,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "456",
+        "id": "590",
         "operacion": "Alquiler",
         "precio": 293.0,
         "moneda": "$ (USD)",
@@ -7283,7 +7283,7 @@
   },
   {
     "id": 70,
-    "titulo": "🏙️ Penthouse Amoblado en Venta y | av. Beni 🏙️",
+    "titulo": "Penthouse Amoblado en Venta y | av. Beni",
     "precio_usd": 900.0,
     "moneda": "$ (USD)",
     "habitaciones": 3,
@@ -7347,7 +7347,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "457",
+        "id": "591",
         "operacion": "Alquiler",
         "precio": 900.0,
         "moneda": "$ (USD)",
@@ -7461,7 +7461,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "458",
+        "id": "592",
         "operacion": "Alquiler",
         "precio": 230.0,
         "moneda": "$ (USD)",
@@ -7575,7 +7575,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "459",
+        "id": "593",
         "operacion": "Alquiler",
         "precio": 5500.0,
         "moneda": "$ (USD)",
@@ -7625,7 +7625,7 @@
   },
   {
     "id": 73,
-    "titulo": "Monoambiente Amoblado Curupaú Isuto",
+    "titulo": "Monoambiente Amoblado Curupaú Isuto",
     "precio_usd": 515.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -7689,7 +7689,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "460",
+        "id": "594",
         "operacion": "Alquiler",
         "precio": 515.0,
         "moneda": "$ (USD)",
@@ -7803,7 +7803,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "461",
+        "id": "595",
         "operacion": "Alquiler",
         "precio": 500.0,
         "moneda": "$ (USD)",
@@ -7853,7 +7853,7 @@
   },
   {
     "id": 75,
-    "titulo": "Departamento de 1 Dormitorio a Estrenar y Totalmente Amoblado!",
+    "titulo": "Departamento de 1 Dormitorio a Estrenar y Totalmente Amoblado",
     "precio_usd": 320.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -7917,7 +7917,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "462",
+        "id": "596",
         "operacion": "Alquiler",
         "precio": 320.0,
         "moneda": "$ (USD)",
@@ -7967,7 +7967,7 @@
   },
   {
     "id": 76,
-    "titulo": "Departamento de. 1 habitación amoblado",
+    "titulo": "Departamento de. 1 habitación amoblado",
     "precio_usd": 0.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -8031,7 +8031,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "463",
+        "id": "597",
         "operacion": "Alquiler",
         "precio": 0.0,
         "moneda": "$ (USD)",
@@ -8145,7 +8145,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "464",
+        "id": "598",
         "operacion": "Alquiler",
         "precio": 328.0,
         "moneda": "$ (USD)",
@@ -8259,7 +8259,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "465",
+        "id": "599",
         "operacion": "Alquiler",
         "precio": 244.7,
         "moneda": "$ (USD)",
@@ -8309,7 +8309,7 @@
   },
   {
     "id": 79,
-    "titulo": "Duplex de Lujo Amoblado !! Equipetrol",
+    "titulo": "Duplex de Lujo Amoblado Equipetrol",
     "precio_usd": 1200.0,
     "moneda": "$ (USD)",
     "habitaciones": 3,
@@ -8364,7 +8364,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "466",
+        "id": "600",
         "operacion": "Alquiler",
         "precio": 1200.0,
         "moneda": "$ (USD)",
@@ -8414,7 +8414,7 @@
   },
   {
     "id": 80,
-    "titulo": "Casa comercial de 54 m² en Las Palmas – ideal para consultorio, café u oficina, a 500 m de Hipermaxi",
+    "titulo": "Casa comercial de 54 m2 en Las Palmas – ideal para consultorio, café u oficina, a 500 m de Hipermaxi",
     "precio_usd": 400.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -8471,7 +8471,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "467",
+        "id": "601",
         "operacion": "Alquiler",
         "precio": 400.0,
         "moneda": "$ (USD)",
@@ -8576,7 +8576,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "468",
+        "id": "602",
         "operacion": "Alquiler",
         "precio": 565.0,
         "moneda": "$ (USD)",
@@ -8682,7 +8682,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "469",
+        "id": "603",
         "operacion": "Alquiler",
         "precio": 555.0,
         "moneda": "$ (USD)",
@@ -8788,7 +8788,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "470",
+        "id": "604",
         "operacion": "Alquiler",
         "precio": 850.0,
         "moneda": "$ (USD)",
@@ -8902,7 +8902,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "471",
+        "id": "605",
         "operacion": "Alquiler",
         "precio": 400.0,
         "moneda": "$ (USD)",
@@ -9009,7 +9009,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "472",
+        "id": "606",
         "operacion": "Alquiler",
         "precio": 760.0,
         "moneda": "$ (USD)",
@@ -9115,7 +9115,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "473",
+        "id": "607",
         "operacion": "Alquiler",
         "precio": 347.83,
         "moneda": "$ (USD)",
@@ -9218,7 +9218,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "474",
+        "id": "608",
         "operacion": "Alquiler",
         "precio": 550.0,
         "moneda": "$ (USD)",
@@ -9321,7 +9321,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "475",
+        "id": "609",
         "operacion": "Alquiler",
         "precio": 550.0,
         "moneda": "$ (USD)",
@@ -9371,7 +9371,7 @@
   },
   {
     "id": 89,
-    "titulo": "🏡 Departamento | 3 Habitaciones",
+    "titulo": "Departamento | 3 Habitaciones",
     "precio_usd": 350.0,
     "moneda": "$ (USD)",
     "habitaciones": 3,
@@ -9424,7 +9424,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "476",
+        "id": "610",
         "operacion": "Alquiler",
         "precio": 350.0,
         "moneda": "$ (USD)",
@@ -9474,7 +9474,7 @@
   },
   {
     "id": 90,
-    "titulo": "🏡✨ DEPARTAMENTO A ESTRENAR | LOFTY ISLAND ¡Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz! 💙 📍 Condominio LOFTY ISLAND",
+    "titulo": "DEPARTAMENTO A ESTRENAR | LOFTY ISLAND Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz Condominio LOFTY ISLAND",
     "precio_usd": 363.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -9527,7 +9527,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "477",
+        "id": "611",
         "operacion": "Alquiler",
         "precio": 363.0,
         "moneda": "$ (USD)",
@@ -9631,7 +9631,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "478",
+        "id": "612",
         "operacion": "Alquiler",
         "precio": 430.0,
         "moneda": "$ (USD)",
@@ -9745,7 +9745,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "479",
+        "id": "613",
         "operacion": "Alquiler",
         "precio": 502.0,
         "moneda": "$ (USD)",
@@ -9859,7 +9859,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "480",
+        "id": "614",
         "operacion": "Alquiler",
         "precio": 431.03,
         "moneda": "$ (USD)",
@@ -9973,7 +9973,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "481",
+        "id": "615",
         "operacion": "Alquiler",
         "precio": 395.78,
         "moneda": "$ (USD)",
@@ -10087,7 +10087,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "482",
+        "id": "616",
         "operacion": "Alquiler",
         "precio": 603.0,
         "moneda": "$ (USD)",
@@ -10189,7 +10189,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "483",
+        "id": "617",
         "operacion": "Alquiler",
         "precio": 457.0,
         "moneda": "$ (USD)",
@@ -10291,7 +10291,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "484",
+        "id": "618",
         "operacion": "Alquiler",
         "precio": 333.0,
         "moneda": "$ (USD)",
@@ -10391,7 +10391,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "485",
+        "id": "619",
         "operacion": "Alquiler",
         "precio": 480.0,
         "moneda": "$ (USD)",
@@ -10505,7 +10505,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "486",
+        "id": "620",
         "operacion": "Alquiler",
         "precio": 236.0,
         "moneda": "$ (USD)",
@@ -10555,7 +10555,7 @@
   },
   {
     "id": 100,
-    "titulo": "Depto 2 Dorm. en Alquiler · Doble vía La Guardia",
+    "titulo": "Depto 2 Dorm. en Alquiler · Doble vía La Guardia",
     "precio_usd": 258.0,
     "moneda": "$ (USD)",
     "habitaciones": 2,
@@ -10605,7 +10605,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "487",
+        "id": "621",
         "operacion": "Alquiler",
         "precio": 258.0,
         "moneda": "$ (USD)",
@@ -10707,7 +10707,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "488",
+        "id": "622",
         "operacion": "Alquiler",
         "precio": 700.0,
         "moneda": "$ (USD)",
@@ -10757,7 +10757,7 @@
   },
   {
     "id": 102,
-    "titulo": "🏡 Departamento 1 Habitación | Torre Virtus 6b",
+    "titulo": "Departamento 1 Habitación | Torre Virtus 6b",
     "precio_usd": 285.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -10821,7 +10821,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "489",
+        "id": "623",
         "operacion": "Alquiler",
         "precio": 285.0,
         "moneda": "$ (USD)",
@@ -10871,7 +10871,7 @@
   },
   {
     "id": 103,
-    "titulo": "🏡 Departamento 1 Habitación | Torre Virtus 7b",
+    "titulo": "Departamento 1 Habitación | Torre Virtus 7b",
     "precio_usd": 315.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -10935,7 +10935,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "490",
+        "id": "624",
         "operacion": "Alquiler",
         "precio": 315.0,
         "moneda": "$ (USD)",
@@ -11037,7 +11037,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "491",
+        "id": "625",
         "operacion": "Alquiler",
         "precio": 330.0,
         "moneda": "$ (USD)",
@@ -11151,7 +11151,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "492",
+        "id": "626",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -11265,7 +11265,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "493",
+        "id": "627",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -11379,7 +11379,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "494",
+        "id": "628",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -11493,7 +11493,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "495",
+        "id": "629",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -11593,7 +11593,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "496",
+        "id": "630",
         "operacion": "Alquiler",
         "precio": 450.0,
         "moneda": "$ (USD)",
@@ -11694,7 +11694,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "497",
+        "id": "631",
         "operacion": "Alquiler",
         "precio": 450.0,
         "moneda": "$ (USD)",
@@ -11808,7 +11808,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "498",
+        "id": "632",
         "operacion": "Alquiler",
         "precio": 180.0,
         "moneda": "$ (USD)",
@@ -11922,7 +11922,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "499",
+        "id": "633",
         "operacion": "Alquiler",
         "precio": 216.0,
         "moneda": "$ (USD)",
@@ -12036,7 +12036,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "500",
+        "id": "634",
         "operacion": "Alquiler",
         "precio": 203.0,
         "moneda": "$ (USD)",
@@ -12150,7 +12150,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "501",
+        "id": "635",
         "operacion": "Alquiler",
         "precio": 367.0,
         "moneda": "$ (USD)",
@@ -12264,7 +12264,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "502",
+        "id": "636",
         "operacion": "Alquiler",
         "precio": 1200.0,
         "moneda": "$ (USD)",
@@ -12378,7 +12378,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "503",
+        "id": "637",
         "operacion": "Alquiler",
         "precio": 220.0,
         "moneda": "$ (USD)",
@@ -12492,7 +12492,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "504",
+        "id": "638",
         "operacion": "Alquiler",
         "precio": 200.0,
         "moneda": "$ (USD)",
@@ -12606,7 +12606,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "505",
+        "id": "639",
         "operacion": "Alquiler",
         "precio": 330.0,
         "moneda": "$ (USD)",
@@ -12656,7 +12656,7 @@
   },
   {
     "id": 119,
-    "titulo": "🏡 ¡departamento – Condominio Portofino i",
+    "titulo": "departamento – Condominio Portofino i",
     "precio_usd": 250.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -12720,7 +12720,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "506",
+        "id": "640",
         "operacion": "Alquiler",
         "precio": 250.0,
         "moneda": "$ (USD)",
@@ -12820,7 +12820,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "507",
+        "id": "641",
         "operacion": "Alquiler",
         "precio": 300.0,
         "moneda": "$ (USD)",
@@ -12934,7 +12934,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "508",
+        "id": "642",
         "operacion": "Alquiler",
         "precio": 5600.0,
         "moneda": "$ (USD)",
@@ -13048,7 +13048,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "509",
+        "id": "643",
         "operacion": "Alquiler",
         "precio": 470.0,
         "moneda": "$ (USD)",
@@ -13162,7 +13162,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "510",
+        "id": "644",
         "operacion": "Alquiler",
         "precio": 820.0,
         "moneda": "$ (USD)",
@@ -13212,7 +13212,7 @@
   },
   {
     "id": 124,
-    "titulo": "🏡𝐀𝐌𝐏𝐋𝐈𝐎 𝐃𝐄𝐏𝐀𝐑𝐓𝐀𝐌𝐄𝐍𝐓𝐎 𝐄𝐍 𝐀𝐋𝐐𝐔𝐈𝐋𝐄𝐑 – 𝟏𝐄𝐑 𝐀𝐍𝐈𝐋𝐋𝐎",
+    "titulo": "Amplio Departamento en Alquiler - 1er Anillo",
     "precio_usd": 291.0,
     "moneda": "$ (USD)",
     "habitaciones": 3,
@@ -13276,7 +13276,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "511",
+        "id": "645",
         "operacion": "Alquiler",
         "precio": 291.0,
         "moneda": "$ (USD)",
@@ -13377,7 +13377,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "512",
+        "id": "646",
         "operacion": "Alquiler",
         "precio": 358.0,
         "moneda": "$ (USD)",
@@ -13491,7 +13491,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "513",
+        "id": "647",
         "operacion": "Alquiler",
         "precio": 360.0,
         "moneda": "$ (USD)",
@@ -13605,7 +13605,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "514",
+        "id": "648",
         "operacion": "Alquiler",
         "precio": 332.31,
         "moneda": "$ (USD)",
@@ -13655,7 +13655,7 @@
   },
   {
     "id": 128,
-    "titulo": "Monoambiente Amoblado y Equipàdo - Equipetrol",
+    "titulo": "Monoambiente Amoblado y Equipàdo - Equipetrol",
     "precio_usd": 457.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -13719,7 +13719,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "515",
+        "id": "649",
         "operacion": "Alquiler",
         "precio": 457.0,
         "moneda": "$ (USD)",
@@ -13769,7 +13769,7 @@
   },
   {
     "id": 129,
-    "titulo": "𝐌𝐨𝐧𝐨𝐚𝐦𝐛𝐢𝐞𝐧𝐭𝐞 𝐞𝐧 𝐚𝐥𝐪𝐮𝐢𝐥𝐞𝐫 𝐬𝐨𝐛𝐫𝐞 𝐞𝐥 𝟏𝐞𝐫 𝐀𝐧𝐢𝐥𝐥𝐨 𝐚 𝐩𝐚𝐬𝐨𝐬 𝐝𝐞𝐥 𝐏𝐚𝐫𝐪𝐮𝐞 𝐔𝐫𝐛𝐚𝐧𝐨",
+    "titulo": "Monoambiente en Alquiler sobre 1er Anillo Parque Urbano",
     "precio_usd": 272.0,
     "moneda": "$ (USD)",
     "habitaciones": 1,
@@ -13833,7 +13833,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "516",
+        "id": "650",
         "operacion": "Alquiler",
         "precio": 272.0,
         "moneda": "$ (USD)",
@@ -13947,7 +13947,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "517",
+        "id": "651",
         "operacion": "Alquiler",
         "precio": 216.0,
         "moneda": "$ (USD)",
@@ -14061,7 +14061,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "518",
+        "id": "652",
         "operacion": "Alquiler",
         "precio": 278.0,
         "moneda": "$ (USD)",
@@ -14175,7 +14175,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "519",
+        "id": "653",
         "operacion": "Alquiler",
         "precio": 375.0,
         "moneda": "$ (USD)",
@@ -14281,7 +14281,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "520",
+        "id": "654",
         "operacion": "Alquiler",
         "precio": 280.0,
         "moneda": "$ (USD)",
@@ -14387,7 +14387,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "521",
+        "id": "655",
         "operacion": "Alquiler",
         "precio": 260.0,
         "moneda": "$ (USD)",
@@ -14501,7 +14501,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "522",
+        "id": "656",
         "operacion": "Alquiler",
         "precio": 690.0,
         "moneda": "$ (USD)",
@@ -14601,7 +14601,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "523",
+        "id": "657",
         "operacion": "Alquiler",
         "precio": 364.0,
         "moneda": "$ (USD)",
@@ -14715,7 +14715,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "524",
+        "id": "658",
         "operacion": "Alquiler",
         "precio": 260.0,
         "moneda": "$ (USD)",
@@ -14829,7 +14829,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "525",
+        "id": "659",
         "operacion": "Alquiler",
         "precio": 350.0,
         "moneda": "$ (USD)",
@@ -14943,7 +14943,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "526",
+        "id": "660",
         "operacion": "Alquiler",
         "precio": 2600.0,
         "moneda": "$ (USD)",
@@ -15057,7 +15057,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "527",
+        "id": "661",
         "operacion": "Alquiler",
         "precio": 1640.0,
         "moneda": "$ (USD)",
@@ -15168,7 +15168,7 @@
     "agente_id": "5",
     "ofertas": [
       {
-        "id": "396",
+        "id": "530",
         "operacion": "Venta",
         "precio": 195000.0,
         "moneda": "$ (USD)",
