@@ -13,6 +13,17 @@ import os
 import sys
 from typing import Any, Dict, List, Optional
 
+if sys.stdout:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+if sys.stderr:
+    try:
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 # Asegurar path de backend
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
@@ -179,7 +190,12 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     precio_usd = float(item.get("precio_usd") or item.get("precio") or 0.0)
     moneda = item.get("moneda") or ("Bs" if operacion == "Alquilar" and precio_usd < 20000 else "$ (USD)")
 
-    inmueble = db.query(InmuebleDB).filter(InmuebleDB.titulo == titulo).first()
+    remax_slug = datos_especificos.get("remax_slug") if isinstance(datos_especificos, dict) else None
+    inmueble = None
+    if remax_slug:
+        inmueble = db.query(InmuebleDB).filter(InmuebleDB.datos_especificos_json.contains(f'"remax_slug": "{remax_slug}"')).first()
+    if not inmueble:
+        inmueble = db.query(InmuebleDB).filter(InmuebleDB.titulo == titulo).first()
     if inmueble:
         inmueble.precio_usd = precio_usd
         inmueble.moneda = moneda
