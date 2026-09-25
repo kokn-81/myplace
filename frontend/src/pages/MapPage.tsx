@@ -132,6 +132,11 @@ const mapApiProperty = (inm: any): Property => {
     dimensiones: inm.dimensiones ?? null,
     serviciosBasicos: inm.servicios_basicos ?? null,
     piso: inm.piso || null,
+    captador: primaryOffer?.captador || inm.captador || null,
+    captadorId: primaryOffer?.captador?.id || (inm.captador_id ? String(inm.captador_id) : null),
+    captadorNombre: primaryOffer?.captador?.name || inm.captador_nombre || null,
+    captadorWhatsapp: primaryOffer?.captador?.whatsapp || inm.captador_whatsapp || null,
+    captadorOficina: primaryOffer?.captador?.oficina || inm.captador_oficina || null,
     ...(() => {
       const proj = parseProjectDetailsJson(inm.datos_especificos_json || inm);
       return {
@@ -3457,18 +3462,27 @@ export default function MapPage() {
                         {canOpenAdvisor && (() => {
                           const captador = selectedDisplayOffer?.captador ||
                             selectedProperty.offers?.find(o => o.captador?.name)?.captador ||
+                            selectedProperty.captador ||
                             (selectedProperty as any).captador;
-                          const captadorName = captador?.name || (selectedProperty as any).captador_nombre;
+                          const captadorName = captador?.name || selectedProperty.captadorNombre || (selectedProperty as any).captador_nombre;
                           if (!captadorName) return null;
-                          const captadorWa = captador?.whatsapp || (selectedProperty as any).captador_whatsapp;
+                          const captadorWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
+                          const captadorOffice = captador?.oficina || selectedProperty.captadorOficina || (selectedProperty as any).captador_oficina;
                           return (
                             <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3 bg-[var(--surface-control)]/30 rounded p-2 my-1">
                               <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-2 text-sm">
                                 <UserCircle size={16} /> Asesor Captador (Confidencial)
                               </span>
-                              <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold text-right">
-                                {captadorName} {captadorWa ? `(+${String(captadorWa).replace(/^\+/, "")})` : ""}
-                              </span>
+                              <div className="text-right">
+                                <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold block">
+                                  {captadorName} {captadorWa ? `(+${String(captadorWa).replace(/^\+/, "")})` : ""}
+                                </span>
+                                {captadorOffice ? (
+                                  <span className="text-xs text-[var(--accent-main)] font-medium block">
+                                    {captadorOffice}
+                                  </span>
+                                ) : null}
+                              </div>
                             </div>
                           );
                         })()}

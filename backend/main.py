@@ -435,11 +435,13 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
             inm_dict["captador"] = serializar_agente_min(captador)
             inm_dict["captador_nombre"] = captador.nombre
             inm_dict["captador_whatsapp"] = captador.whatsapp
+            inm_dict["captador_oficina"] = captador.oficina.nombre if getattr(captador, "oficina", None) else None
         else:
             inm_dict["captador_id"] = None
             inm_dict["captador"] = None
             inm_dict["captador_nombre"] = None
             inm_dict["captador_whatsapp"] = None
+            inm_dict["captador_oficina"] = None
     elif getattr(inm, "agente", None) and inm.agente.whatsapp:
         inm_dict["agente"] = {
             "id": str(inm.agente.id),
@@ -452,6 +454,7 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
         inm_dict["captador"] = None
         inm_dict["captador_nombre"] = None
         inm_dict["captador_whatsapp"] = None
+        inm_dict["captador_oficina"] = None
     else:
         inm_dict["agente"] = {
             "id": "5",
@@ -464,6 +467,7 @@ def aplicar_oferta_principal(inm: InmuebleDB, inm_dict: dict) -> dict:
         inm_dict["captador"] = None
         inm_dict["captador_nombre"] = None
         inm_dict["captador_whatsapp"] = None
+        inm_dict["captador_oficina"] = None
 
     complejo = getattr(inm, "complejo", None)
     inm_dict["ocupacion"] = getattr(inm, "ocupacion", None) or "Disponible"
@@ -1137,7 +1141,7 @@ async def obtener_inmuebles_resumen(db: Session = Depends(get_db)):
         selectinload(InmuebleDB.agente),
         selectinload(InmuebleDB.complejo),
         selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
-        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
         selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
     ).filter(InmuebleDB.estado == "Publicado").all()
     summary = [serializar_inmueble_resumen(inm) for inm in inmuebles_db if es_publicable(inm.ocupacion, inm.estado)]
@@ -1151,7 +1155,7 @@ async def obtener_inmuebles(db: Session = Depends(get_db)):
         selectinload(InmuebleDB.agente),
         selectinload(InmuebleDB.complejo),
         selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
-        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
         selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
     ).filter(InmuebleDB.estado == "Publicado").all()
     return [serializar_inmueble(inm) for inm in inmuebles_db if es_publicable(inm.ocupacion, inm.estado)]
@@ -1176,7 +1180,13 @@ def sincronizar_catalogo_remax(db: Session = Depends(get_db)):
 
 @app.get("/api/inmuebles/admin")
 async def obtener_inmuebles_admin(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
-    inmuebles_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).all()
+    inmuebles_db = db.query(InmuebleDB).options(
+        selectinload(InmuebleDB.agente),
+        selectinload(InmuebleDB.complejo),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
+    ).all()
     return [serializar_inmueble(inm, include_search_metadata=True) for inm in inmuebles_db]
 
 
@@ -1201,7 +1211,13 @@ async def regenerar_search_text_inmueble(
 
 @app.get("/api/inmuebles/{inmueble_id}")
 async def obtener_inmueble_detalle(inmueble_id: int, db: Session = Depends(get_db)):
-    inmueble_db = db.query(InmuebleDB).options(selectinload(InmuebleDB.agente), selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente)).filter(InmuebleDB.id == inmueble_id, InmuebleDB.estado == "Publicado").first()
+    inmueble_db = db.query(InmuebleDB).options(
+        selectinload(InmuebleDB.agente),
+        selectinload(InmuebleDB.complejo),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.colocador),
+    ).filter(InmuebleDB.id == inmueble_id, InmuebleDB.estado == "Publicado").first()
     if not inmueble_db:
         raise HTTPException(status_code=404, detail="Inmueble no encontrado")
     return serializar_inmueble(inmueble_db)
@@ -1365,7 +1381,7 @@ async def dashboard_asesor(db: Session = Depends(get_db), current_profile: dict 
     agente = db.query(AgenteDB).options(selectinload(AgenteDB.oficina)).filter(AgenteDB.email == email).first()
     inventario = db.query(InmuebleDB).options(
         selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente),
-        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador),
+        selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
     ).all()
     if current_profile["role"] != "admin" and agente:
         inventario = [

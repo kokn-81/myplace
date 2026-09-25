@@ -91,6 +91,17 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     # (defaulting to Alejandro's number would merge distinct captadores into him).
     captador_nombre = item.get("captador_nombre") or item.get("agente_nombre")
     captador_whatsapp = item.get("captador_whatsapp") or item.get("agente_whatsapp")
+    captador_oficina = item.get("captador_oficina") or item.get("oficina_nombre")
+    if not captador_oficina and item.get("datos_especificos_json"):
+        if isinstance(item["datos_especificos_json"], dict):
+            captador_oficina = item["datos_especificos_json"].get("oficina")
+
+    captador_oficina_obj = None
+    if captador_oficina and str(captador_oficina).strip():
+        captador_oficina_obj = find_or_create_oficina(db, str(captador_oficina).strip(), ciudad)
+
+    captador_oficina_id = captador_oficina_obj.id if captador_oficina_obj else default_office_id
+
     if not captador_nombre and not captador_whatsapp and not item.get("agente_id") and not item.get("captador_id"):
         captador_whatsapp = "59157015854"  # fallback only when no captador identity at all
 
@@ -98,11 +109,12 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     if item.get("captador_id"):
         captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["captador_id"])).first()
     elif captador_nombre or captador_whatsapp:
-        captador_obj = find_or_create_captador(db, captador_nombre, captador_whatsapp)
-        if captador_obj and not captador_obj.oficina_id:
-            captador_obj.oficina_id = default_office_id
+        captador_obj = find_or_create_captador(db, captador_nombre, captador_whatsapp, captador_oficina_id)
     elif item.get("agente_id"):
         captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["agente_id"])).first()
+
+    if captador_obj and captador_oficina_id:
+        captador_obj.oficina_id = captador_oficina_id
 
     # Public contact / colocador: Alejandro Coca (override via colocador_id / colocador_whatsapp)
     colocador_id = item.get("colocador_id")

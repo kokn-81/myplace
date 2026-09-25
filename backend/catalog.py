@@ -76,7 +76,7 @@ def find_or_create_complejo(
     return complejo
 
 
-def find_or_create_captador(db: Session, nombre: Optional[str], whatsapp: Optional[str]) -> Optional[AgenteDB]:
+def find_or_create_captador(db: Session, nombre: Optional[str], whatsapp: Optional[str], oficina_id: Optional[int] = None) -> Optional[AgenteDB]:
     label = (nombre or "").strip()
     phone = "".join(ch for ch in str(whatsapp or "") if ch.isdigit())
     if not label and not phone:
@@ -86,14 +86,18 @@ def find_or_create_captador(db: Session, nombre: Optional[str], whatsapp: Option
         if existente:
             if label:
                 existente.nombre = label
+            if oficina_id:
+                existente.oficina_id = oficina_id
             return existente
     if label:
         existente = db.query(AgenteDB).filter(AgenteDB.nombre == label, AgenteDB.email.is_(None)).first()
         if existente:
             if phone:
                 existente.whatsapp = phone
+            if oficina_id:
+                existente.oficina_id = oficina_id
             return existente
-    agente = AgenteDB(nombre=label or "Captador", whatsapp=phone or "")
+    agente = AgenteDB(nombre=label or "Captador", whatsapp=phone or "", oficina_id=oficina_id)
     db.add(agente)
     db.flush()
     return agente

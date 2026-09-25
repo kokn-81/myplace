@@ -69,6 +69,11 @@ export interface Property {
   precioM2Desde?: number | null;
   brochureUrl?: string | null;
   planesPago?: string | null;
+  captador?: PropertyAgent | null;
+  captadorId?: string | null;
+  captadorNombre?: string | null;
+  captadorWhatsapp?: string | null;
+  captadorOficina?: string | null;
 }
 
 export type PropertyType = "Departamento" | "Casa" | "Comercial" | "Terreno" | "Proyecto (preventa)" | "Proyecto";

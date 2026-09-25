@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Building2, Database, Loader2, LogOut, Moon, Pencil, RefreshCw, Save, Search, ShieldCheck, Sun, Trash2, X } from "lucide-react";
+import { ArrowLeft, Building2, Database, Loader2, LogOut, Moon, Pencil, RefreshCw, Save, Search, ShieldCheck, Sun, Trash2, UserCircle, X } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 import { auth, authPersistenceReady } from "../firebase";
@@ -446,6 +446,30 @@ export default function AdminCatalogDashboard() {
                     <span>Dorm: <strong className="text-[var(--text-main)]">{inm.habitaciones ?? 0}</strong></span>
                     <span>Banos: <strong className="text-[var(--text-main)]">{inm.banos ?? 1}</strong></span>
                   </div>
+                  {/* Captador info */}
+                  {(inm.captador_nombre || inm.captador?.name || (inm.ofertas?.[0]?.captador?.name)) && (() => {
+                    const capName = inm.captador_nombre || inm.captador?.name || inm.ofertas?.[0]?.captador?.name;
+                    const capWa = inm.captador_whatsapp || inm.captador?.whatsapp || inm.ofertas?.[0]?.captador?.whatsapp;
+                    const capOfic = inm.captador_oficina || inm.captador?.oficina || inm.ofertas?.[0]?.captador?.oficina;
+                    return (
+                      <div className="mt-2.5 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)]/60 px-2.5 py-1.5 text-xs flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1.5 font-medium text-[var(--text-main)] truncate">
+                          <UserCircle size={14} className="text-[var(--accent-main)] shrink-0" />
+                          <span className="truncate">{capName}</span>
+                          {capWa && (
+                            <span className="text-[var(--text-muted)] font-mono text-[11px] shrink-0">
+                              (+{String(capWa).replace(/^\+/, "")})
+                            </span>
+                          )}
+                        </span>
+                        {capOfic && (
+                          <span className="rounded bg-[var(--accent-main)]/15 border border-[var(--accent-main)]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--accent-main)] shrink-0">
+                            {capOfic}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <div className="mt-4 flex flex-wrap gap-2">
                     <button onClick={() => {
                       setEditingProperty(inm);
