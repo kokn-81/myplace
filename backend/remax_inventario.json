@@ -10,7 +10,7 @@
     "parqueos": 2,
     "zona": "Sur / Av. San Aurelio",
     "direccion": "Av. San Aurelio (entre 3er y 4to Anillo)",
-    "descripcion": "Casa familiar de dos niveles en Av. San Aurelio (entre 3er y 4to Anillo), con 305 m² de construcción sobre terreno de 200 m². Orientada a familia numerosa o multigeneracional que prioriza distribución clara, acabados diferenciados y garaje techado.\n\nDistribución & Dimensiones:\n• Construcción 305 m² | Terreno 200 m² | 2 niveles (planta baja y alta)\n• 4 dormitorios | 5 baños | 2 parqueos en garaje techado | 2 depósitos\n• Planta baja: sala amplia, cocina funcional/amplia, churrasquera, lavandería independiente y ventilada, dependencia de servicio con baño privado, baño de visitas\n• Planta alta: master suite con baño privado y walking closet; dormitorio con baño privado; 2 dormitorios adicionales; baño compartido\n\nServicios Básicos & Equipamiento:\n• Blindex doble laminado antisonido\n• Mesones de cuarzo en cocina y baños\n• Piso importado de Brasil\n• Garaje techado para 2 vehículos\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente\n• Residencia multigeneracional\n• Activo residencial en zona Sur / Av. San Aurelio\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (tipo de cambio paralelo según ficha de origen)\n• Estado de ocupación y títulos: a confirmar con documentación del propietario",
+    "descripcion": "Casa familiar de dos niveles en Av. San Aurelio (entre 3er y 4to Anillo), con 305 m2 de construcción sobre terreno de 200 m2. Orientada a familia numerosa o multigeneracional que prioriza distribución clara, acabados diferenciados y garaje techado.\n\nDistribución & Dimensiones:\n• Construcción 305 m2 | Terreno 200 m2 | 2 niveles (planta baja y alta)\n• 4 dormitorios | 5 baños | 2 parqueos en garaje techado | 2 depósitos\n• Planta baja: sala amplia, cocina funcional/amplia, churrasquera, lavandería independiente y ventilada, dependencia de servicio con baño privado, baño de visitas\n• Planta alta: master suite con baño privado y walking closet; dormitorio con baño privado; 2 dormitorios adicionales; baño compartido\n\nServicios Básicos & Equipamiento:\n• Blindex doble laminado antisonido\n• Mesones de cuarzo en cocina y baños\n• Piso importado de Brasil\n• Garaje techado para 2 vehículos\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente\n• Residencia multigeneracional\n• Activo residencial en zona Sur / Av. San Aurelio\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (tipo de cambio paralelo según ficha de origen)\n• Estado de ocupación y títulos: a confirmar con documentación del propietario",
     "amenidades": [
       "sala amplia",
       "cocina funcional/amplia",
@@ -108,7 +108,7 @@
     "zona": "Parque Urbano / Teniente Cuéllar",
     "direccion": "Av. Teniente Mamerto Cuéllar #320, frente Parque Urbano",
     "complejo_nombre": "Lares del Parque",
-    "descripcion": "Departamento en Edificio Lares del Parque, piso 12, en primera línea frente al Parque Urbano (Calle Teniente Cuéllar). 130,57 m² con 3 dormitorios, suite con vestidor, 2 parqueos y baulera privada de 5,27 m².\n\nDistribución & Dimensiones:\n• Superficie 130,57 m² | Piso 12\n• 3 dormitorios (uno en suite con vestidor) | 2 baños (suite + visitas)\n• Living-comedor integrado con salida al balcón\n• 2 parqueos incluidos (12,65 m² cada uno) | Baulera privada 5,27 m²\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 725 Bs\n• Áreas comunes del complejo: piscina, churrasquera, salón de eventos, parque recreativo/infantil\n• Seguridad 24 horas\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar frente a parque\n• Residencia con balcón y vistas despejadas\n• Activo en zona Teniente Cuéllar / Parque Urbano\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "descripcion": "Departamento en Edificio Lares del Parque, piso 12, en primera línea frente al Parque Urbano (Calle Teniente Cuéllar). 130,57 m2 con 3 dormitorios, suite con vestidor, 2 parqueos y baulera privada de 5,27 m2.\n\nDistribución & Dimensiones:\n• Superficie 130,57 m2 | Piso 12\n• 3 dormitorios (uno en suite con vestidor) | 2 baños (suite + visitas)\n• Living-comedor integrado con salida al balcón\n• 2 parqueos incluidos (12,65 m2 cada uno) | Baulera privada 5,27 m2\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 725 Bs\n• Áreas comunes del complejo: piscina, churrasquera, salón de eventos, parque recreativo/infantil\n• Seguridad 24 horas\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar frente a parque\n• Residencia con balcón y vistas despejadas\n• Activo en zona Teniente Cuéllar / Parque Urbano\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "amenidades": [
       "piscina",
       "churrasquera",
@@ -203,7 +203,7 @@
     "oficina_nombre": "RE/MAX Patrimonio"
   },
   {
-    "titulo": "Depto 1 Dorm. · Swissôtel Santa Cruz",
+    "titulo": "Depto 1 Dorm. · Swissôtel Santa Cruz",
     "tipo_inmueble": "Departamento",
     "operacion": "Venta",
     "precio_usd": 195000,
@@ -215,7 +215,7 @@
     "zona": "Canal Isuto / Equipetrol (Swissôtel)",
     "direccion": "Av. La Salle 4500 / 5to Anillo, Canal Isuto",
     "complejo_nombre": "Swissôtel Santa Cruz",
-    "descripcion": "Departamento a estrenar de 1 dormitorio en Swissôtel Santa Cruz (5to Anillo y Av. La Salle, zona Equipetrol / Canal Isuto). 132,55 m² en piso 8, con master suite, baño de visitas, cocina equipada y 1 parqueo, dentro de complejo mixed-use.\n\nDistribución & Dimensiones:\n• Superficie 132,55 m² | Piso 8\n• 1 dormitorio (master suite) | 2 baños (master + visitas)\n• Living-comedor | Cocina equipada | 1 parqueo\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 924 (moneda no especificada en fuente)\n• Áreas del complejo: piscina, churrasquera, salas de reuniones/eventos, gimnasio equipado\n• Conectividad urbana; cercanía a Ventura Mall y Las Brisas según ficha\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / profesional\n• Producto a estrenar en marca hotelera mixed-use\n• Demanda en Equipetrol / Canal Isuto\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "descripcion": "Departamento a estrenar de 1 dormitorio en Swissôtel Santa Cruz (5to Anillo y Av. La Salle, zona Equipetrol / Canal Isuto). 132,55 m2 en piso 8, con master suite, baño de visitas, cocina equipada y 1 parqueo, dentro de complejo mixed-use.\n\nDistribución & Dimensiones:\n• Superficie 132,55 m2 | Piso 8\n• 1 dormitorio (master suite) | 2 baños (master + visitas)\n• Living-comedor | Cocina equipada | 1 parqueo\n\nServicios Básicos & Equipamiento:\n• Expensas informadas: 924 (moneda no especificada en fuente)\n• Áreas del complejo: piscina, churrasquera, salas de reuniones/eventos, gimnasio equipado\n• Conectividad urbana; cercanía a Ventura Mall y Las Brisas según ficha\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / profesional\n• Producto a estrenar en marca hotelera mixed-use\n• Demanda en Equipetrol / Canal Isuto\n\nSeguridad Jurídica & Entrega:\n• Operación: venta (Tc. flexible según ficha de origen)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "amenidades": [
       "Swissôtel mixed-use",
       "piscina",
@@ -317,7 +317,7 @@
     "zona": "Equipetrol Norte",
     "direccion": "4to Anillo y Av. Las Ramblas, Condominio La Riviera & Beauty Plaza",
     "complejo_nombre": "La Riviera & Beauty Plaza",
-    "descripcion": "Departamento 16-04 en Condominio La Riviera & Beauty Plaza (Equipetrol Norte): 204,26 m² en piso 16, con 3 dormitorios más escritorio, cocina con balcón, lavandería, 2 parqueos y 1 baulera. Acceso a oferta gastronómica, comercial y empresarial del Beauty Plaza.\n\nDistribución & Dimensiones:\n• Superficie 204,26 m² | Piso 16 | Dpto. 16-04\n• 3 dormitorios + escritorio\n• Baños: master, compartido, visitas y servicio\n• Master suite con balcón privado\n• 2 habitaciones amplias con baño compartido\n• Living-comedor amplio y luminoso + baño de visitas\n• Cocina con balcón propio y alacena/depósito\n• Lavandería y baño de servicio\n• 2 parqueos | 1 baulera\n\nServicios Básicos & Equipamiento:\n• Expensas: Bs. 1.700\n• Áreas comunes de primer nivel y seguridad 24 horas (según copy)\n• Ubicación sobre Beauty Plaza / Equipetrol Norte\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de alto estándar\n• Home office (escritorio)\n• Activo en Equipetrol Norte con acceso comercial directo\n\nSeguridad Jurídica & Entrega:\n• Operación: venta | Precio USD 330.000 | Tipo de cambio flexible (según copy)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
+    "descripcion": "Departamento 16-04 en Condominio La Riviera & Beauty Plaza (Equipetrol Norte): 204,26 m2 en piso 16, con 3 dormitorios más escritorio, cocina con balcón, lavandería, 2 parqueos y 1 baulera. Acceso a oferta gastronómica, comercial y empresarial del Beauty Plaza.\n\nDistribución & Dimensiones:\n• Superficie 204,26 m2 | Piso 16 | Dpto. 16-04\n• 3 dormitorios + escritorio\n• Baños: master, compartido, visitas y servicio\n• Master suite con balcón privado\n• 2 habitaciones amplias con baño compartido\n• Living-comedor amplio y luminoso + baño de visitas\n• Cocina con balcón propio y alacena/depósito\n• Lavandería y baño de servicio\n• 2 parqueos | 1 baulera\n\nServicios Básicos & Equipamiento:\n• Expensas: Bs. 1.700\n• Áreas comunes de primer nivel y seguridad 24 horas (según copy)\n• Ubicación sobre Beauty Plaza / Equipetrol Norte\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de alto estándar\n• Home office (escritorio)\n• Activo en Equipetrol Norte con acceso comercial directo\n\nSeguridad Jurídica & Entrega:\n• Operación: venta | Precio USD 330.000 | Tipo de cambio flexible (según copy)\n• Estado registral y ocupación: a confirmar con documentación del propietario",
     "amenidades": [
       "master suite con balcón privado",
       "escritorio",
@@ -420,7 +420,7 @@
     "zona": "Av. Los Cusis / Banzer-Beni",
     "direccion": "Av. Los Cusis entre Banzer y Beni",
     "complejo_nombre": "ONA Residences",
-    "descripcion": "ONA Residences es un proyecto en preventa en Av. Los Cusis (entre Banzer y Beni), con tipologías de 1 y 2 dormitorios desde 32,3 m² hasta ~92 m² y precios desde USD 40.375. Pensado para primera vivienda o inversión con varias formas de pago.\n\nDistribución & Dimensiones:\n• Tipologías (fuente tabla/copy): Tipo 3/4 ≈ 32,3 m² (1 dorm.); Tipo 1 ≈ 54,14 m² (2 dorm.); Tipo 2 ≈ 92,00 m² (2 dorm.); Tipo 5 ≈ 92,05 m² (2 dorm.)\n• Rango comercial comunicado: 32 m², 54 m² y 92 m² | 1 y 2 dormitorios\n• Precio desde USD 40.375 (tabla 1° fase / copy)\n\nServicios Básicos & Equipamiento:\n• Amenidades de proyecto: piscina, áreas de relajación, gimnasio, sauna, churrasquera, espacios sociales, seguridad y control de acceso, parqueos cubiertos\n• Parqueos: precio unitario USD 15.000; A y B USD 22.000 (tabla parqueos 1° fase)\n\nPotencial de Uso & Rentabilidad:\n• Primera vivienda\n• Inversión para alquiler o revalorización\n• Entrada con reserva USD 1.000 (congela precio según Formas de Pago)\n\nSeguridad Jurídica & Entrega:\n• Modalidad: preventa / Proyecto\n• Formas de pago: reserva USD 1.000; contado (mayor descuento); inicial 40% o 60% y saldo contra entrega\n• Fecha de entrega y avance de obra: no constan en las fuentes revisadas (omitidas)",
+    "descripcion": "ONA Residences es un proyecto en preventa en Av. Los Cusis (entre Banzer y Beni), con tipologías de 1 y 2 dormitorios desde 32,3 m2 hasta ~92 m2 y precios desde USD 40.375. Pensado para primera vivienda o inversión con varias formas de pago.\n\nDistribución & Dimensiones:\n• Tipologías (fuente tabla/copy): Tipo 3/4 ≈ 32,3 m2 (1 dorm.); Tipo 1 ≈ 54,14 m2 (2 dorm.); Tipo 2 ≈ 92,00 m2 (2 dorm.); Tipo 5 ≈ 92,05 m2 (2 dorm.)\n• Rango comercial comunicado: 32 m2, 54 m2 y 92 m2 | 1 y 2 dormitorios\n• Precio desde USD 40.375 (tabla 1° fase / copy)\n\nServicios Básicos & Equipamiento:\n• Amenidades de proyecto: piscina, áreas de relajación, gimnasio, sauna, churrasquera, espacios sociales, seguridad y control de acceso, parqueos cubiertos\n• Parqueos: precio unitario USD 15.000; A y B USD 22.000 (tabla parqueos 1° fase)\n\nPotencial de Uso & Rentabilidad:\n• Primera vivienda\n• Inversión para alquiler o revalorización\n• Entrada con reserva USD 1.000 (congela precio según Formas de Pago)\n\nSeguridad Jurídica & Entrega:\n• Modalidad: preventa / Proyecto\n• Formas de pago: reserva USD 1.000; contado (mayor descuento); inicial 40% o 60% y saldo contra entrega\n• Fecha de entrega y avance de obra: no constan en las fuentes revisadas (omitidas)",
     "amenidades": [
       "piscina",
       "áreas de relajación",
@@ -592,7 +592,7 @@
     "direccion": "",
     "lat": -17.772427,
     "lng": -63.19185731,
-    "descripcion": "Departamento de lujo completamente amoblado en Edificio Sky Eclipse (Equipetrol / NorOeste), piso 9, a pocos pasos de la Av. Busch y 2do Anillo. 68 m² diseñados con estándar ejecutivo para quien busca confort inmediato, ubicación estratégica y vistas panorámicas.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 9 | Vista abierta a la ciudad\n• 1 master suite matrimonial con vestidor y balcón privado\n• 2 baños (suite principal + baño de visitas)\n• Living-comedor integrado con salida directa al balcón\n• Cocina funcional totalmente equipada con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Totalmente amoblado con cama matrimonial, televisor, veladores y luminarias\n• Persianas blackout en puertas y ventanas | Aires acondicionados instalados\n• Cocina con cajonería alta/baja, refrigerador y microondas\n• Áreas comunes del edificio: piscina, sauna, sala de juegos y terraza social\n• Seguridad y control de acceso 24/7 | Conserjería | Ascensor de última generación\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / corporativa lista para habitar\n• Ubicación en Equipetrol con acceso caminando a centros gastronómicos y bancarios\n• Excelente estándar de habitabilidad y aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 630 USD)",
+    "descripcion": "Departamento de lujo completamente amoblado en Edificio Sky Eclipse (Equipetrol / NorOeste), piso 9, a pocos pasos de la Av. Busch y 2do Anillo. 68 m2 diseñados con estándar ejecutivo para quien busca confort inmediato, ubicación estratégica y vistas panorámicas.\n\nDistribución & Dimensiones:\n• Superficie 68 m2 | Piso 9 | Vista abierta a la ciudad\n• 1 master suite matrimonial con vestidor y balcón privado\n• 2 baños (suite principal + baño de visitas)\n• Living-comedor integrado con salida directa al balcón\n• Cocina funcional totalmente equipada con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Totalmente amoblado con cama matrimonial, televisor, veladores y luminarias\n• Persianas blackout en puertas y ventanas | Aires acondicionados instalados\n• Cocina con cajonería alta/baja, refrigerador y microondas\n• Áreas comunes del edificio: piscina, sauna, sala de juegos y terraza social\n• Seguridad y control de acceso 24/7 | Conserjería | Ascensor de última generación\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva / corporativa lista para habitar\n• Ubicación en Equipetrol con acceso caminando a centros gastronómicos y bancarios\n• Excelente estándar de habitabilidad y aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 630 USD)",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -690,7 +690,7 @@
     "direccion": "",
     "lat": -17.7376296,
     "lng": -63.1571768,
-    "descripcion": "Residencia familiar de dos niveles en Zona Norte (Santa Cruz de la Sierra), con 250 m² de construcción cubierta sobre amplio lote. Una propiedad completamente amoblada y acondicionada en un entorno residencial seguro y tranquilo, pensada para familias que priorizan amplitud, jardín y confort.\n\nDistribución & Dimensiones:\n• Construcción 250 m² | 2 plantas | Lote amplio con jardín\n• 4 dormitorios (2 en suite privada con vestidor) | 4 baños completos\n• Living y comedor principal independientes con cielos altos\n• Cocina cerrada amplia con isla central y comedor de diario\n• Galería techada posterior con churrasquera y jardín privado\n• Garaje cerrado para 2 vehículos | Área de servicio y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Completamente amoblada con mobiliario de alta calidad en sala, comedor y dormitorios\n• Aires acondicionados en todos los ambientes | Calefón a gas\n• Cocina equipada con electrodomésticos y despensa\n• Seguridad 24 horas y monitoreo perimetral\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente de alto estándar\n• Residencia para diplomáticos o ejecutivos reubicados\n• Cercanía a colegios internacionales y centros comerciales del eje norte\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 3.142 USD)",
+    "descripcion": "Residencia familiar de dos niveles en Zona Norte (Santa Cruz de la Sierra), con 250 m2 de construcción cubierta sobre amplio lote. Una propiedad completamente amoblada y acondicionada en un entorno residencial seguro y tranquilo, pensada para familias que priorizan amplitud, jardín y confort.\n\nDistribución & Dimensiones:\n• Construcción 250 m2 | 2 plantas | Lote amplio con jardín\n• 4 dormitorios (2 en suite privada con vestidor) | 4 baños completos\n• Living y comedor principal independientes con cielos altos\n• Cocina cerrada amplia con isla central y comedor de diario\n• Galería techada posterior con churrasquera y jardín privado\n• Garaje cerrado para 2 vehículos | Área de servicio y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Completamente amoblada con mobiliario de alta calidad en sala, comedor y dormitorios\n• Aires acondicionados en todos los ambientes | Calefón a gas\n• Cocina equipada con electrodomésticos y despensa\n• Seguridad 24 horas y monitoreo perimetral\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar permanente de alto estándar\n• Residencia para diplomáticos o ejecutivos reubicados\n• Cercanía a colegios internacionales y centros comerciales del eje norte\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 3.142 USD)",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -776,7 +776,7 @@
     "captador_oficina": "RE/MAX Express"
   },
   {
-    "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
+    "titulo": "Depto 1 Dorm. · Macororó 15 Zona Norte",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 600.0,
@@ -789,7 +789,7 @@
     "direccion": "",
     "lat": -17.76352282,
     "lng": -63.17827463,
-    "descripcion": "Departamento moderno a estrenar de 1 dormitorio en el Edificio Macororó 15 (Zona Norte, Santa Cruz de la Sierra). 46 m² optimizados con balcón exterior, cocina integrada y acceso al exclusivo Club House con piscina panorámica del complejo Macororó.\n\nDistribución & Dimensiones:\n• Superficie 46 m² | Piso intermedio con balcón exterior\n• 1 dormitorio con ropero empotrado a medida | 1 baño completo\n• Living-comedor integrado con ventanales de piso a techo\n• Cocina estilo americano con mesones de granito y cajonería\n• Conexión para lavadora y espacio funcional de guardado\n\nServicios Básicos & Equipamiento:\n• Aires acondicionados split instalados y luminarias LED\n• Cocina con cajonería alta y baja | Box de vidrio templado en baño\n• Áreas comunes del Edificio Macororó 15: piscina panorámica, churrasqueras techadas, salón de eventos y lobby moderno\n• Seguridad 24 horas con cámaras y control de ingreso\n\nPotencial de Uso & Rentabilidad:\n• Vivienda para profesional independiente o pareja joven\n• Excelente conectividad sobre el eje norte de la ciudad\n• Edificio nuevo con bajas expensas y alta plusvalía\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 600 USD)",
+    "descripcion": "Departamento moderno a estrenar de 1 dormitorio en el Edificio Macororó 15 (Zona Norte, Santa Cruz de la Sierra). 46 m2 optimizados con balcón exterior, cocina integrada y acceso al exclusivo Club House con piscina panorámica del complejo Macororó.\n\nDistribución & Dimensiones:\n• Superficie 46 m2 | Piso intermedio con balcón exterior\n• 1 dormitorio con ropero empotrado a medida | 1 baño completo\n• Living-comedor integrado con ventanales de piso a techo\n• Cocina estilo americano con mesones de granito y cajonería\n• Conexión para lavadora y espacio funcional de guardado\n\nServicios Básicos & Equipamiento:\n• Aires acondicionados split instalados y luminarias LED\n• Cocina con cajonería alta y baja | Box de vidrio templado en baño\n• Áreas comunes del Edificio Macororó 15: piscina panorámica, churrasqueras techadas, salón de eventos y lobby moderno\n• Seguridad 24 horas con cámaras y control de ingreso\n\nPotencial de Uso & Rentabilidad:\n• Vivienda para profesional independiente o pareja joven\n• Excelente conectividad sobre el eje norte de la ciudad\n• Edificio nuevo con bajas expensas y alta plusvalía\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 600 USD)",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -886,7 +886,7 @@
     "direccion": "",
     "lat": -17.70192219,
     "lng": -63.1781218,
-    "descripcion": "Casa familiar de dos plantas en el exclusivo Condominio Cerrado La Pradera (Zona Norte, Santa Cruz de la Sierra). 204 m² de construcción sólida sobre terreno privado, con suite principal, galería con churrasquera y acceso al club house con piscinas y canchas del condominio.\n\nDistribución & Dimensiones:\n• Construcción 204 m² | Terreno 260 m² | 2 niveles\n• 3 dormitorios (master suite con vestidor y balcón) | 3 baños\n• Planta baja: living-comedor amplio, cocina funcional con isla, baño de visitas, galería techada y churrasquera\n• Planta alta: suite principal, 2 dormitorios amplios con baño compartido, sala de estar familiar\n• Parqueo techado para 2 vehículos | Jardín privado interior\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario conectado | Agua potable y alcantarillado\n• Mesones de granito en cocina y baños | Box de blindex en duchas\n• Áreas sociales de La Pradera: piscina para adultos y niños, salón de eventos, canchas polifuncionales y parques infantiles\n• Seguridad estricta 24/7 con guardia y cámaras perimetrales\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar segura en entorno verde y consolidado\n• Alta demanda residencial con constante revalorización patrimonial en Zona Norte\n• Cercanía inmediata a supermercados, farmacias y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 135.000 USD)\n• Papeles al día, lista para transferencia o crédito bancario",
+    "descripcion": "Casa familiar de dos plantas en el exclusivo Condominio Cerrado La Pradera (Zona Norte, Santa Cruz de la Sierra). 204 m2 de construcción sólida sobre terreno privado, con suite principal, galería con churrasquera y acceso al club house con piscinas y canchas del condominio.\n\nDistribución & Dimensiones:\n• Construcción 204 m2 | Terreno 260 m2 | 2 niveles\n• 3 dormitorios (master suite con vestidor y balcón) | 3 baños\n• Planta baja: living-comedor amplio, cocina funcional con isla, baño de visitas, galería techada y churrasquera\n• Planta alta: suite principal, 2 dormitorios amplios con baño compartido, sala de estar familiar\n• Parqueo techado para 2 vehículos | Jardín privado interior\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario conectado | Agua potable y alcantarillado\n• Mesones de granito en cocina y baños | Box de blindex en duchas\n• Áreas sociales de La Pradera: piscina para adultos y niños, salón de eventos, canchas polifuncionales y parques infantiles\n• Seguridad estricta 24/7 con guardia y cámaras perimetrales\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar segura en entorno verde y consolidado\n• Alta demanda residencial con constante revalorización patrimonial en Zona Norte\n• Cercanía inmediata a supermercados, farmacias y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 135.000 USD)\n• Papeles al día, lista para transferencia o crédito bancario",
     "amenidades": [
       "Parqueo",
       "Casa",
@@ -984,7 +984,7 @@
     "direccion": "",
     "lat": -17.76447814,
     "lng": -63.20418478,
-    "descripcion": "Departamento de 2 dormitorios en venta en Condominio Mirage (Barrio Sirari / Equipetrol), una de las zonas de mayor demanda residencial de Santa Cruz de la Sierra. 79 m² bien distribuidos, cocina americana, balcón y áreas comunes de esparcimiento.\n\nDistribución & Dimensiones:\n• Superficie 79 m² | Piso 4 | Balcón con baranda de vidrio\n• 2 dormitorios (1 en suite con ropero empotrado) | 2 baños completos\n• Living-comedor luminoso con salida al balcón\n• Cocina integrada estilo americana con mesones de cuarzo y cajonería\n• Espacio de lavandería independiente | 1 parqueo incluido\n\nServicios Básicos & Equipamiento:\n• Conexión de gas domiciliario | Aires acondicionados instalados\n• Termotanque eléctrico | Grifería y sanitarios de primera calidad\n• Áreas comunes del Condominio Mirage: piscina, churrasquera techada, salón de eventos y terraza\n• Seguridad 24 horas | Portón eléctrico y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Excelente activo para vivienda propia o alquiler a profesionales en Sirari\n• Zona de alta plusvalía a minutos de centros comerciales y avenidas principales\n• Retorno estimado atractivo por alquiler tradicional o temporal\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 85.000 USD)\n• Documentación en orden para compra al contado o financiamiento bancario",
+    "descripcion": "Departamento de 2 dormitorios en venta en Condominio Mirage (Barrio Sirari / Equipetrol), una de las zonas de mayor demanda residencial de Santa Cruz de la Sierra. 79 m2 bien distribuidos, cocina americana, balcón y áreas comunes de esparcimiento.\n\nDistribución & Dimensiones:\n• Superficie 79 m2 | Piso 4 | Balcón con baranda de vidrio\n• 2 dormitorios (1 en suite con ropero empotrado) | 2 baños completos\n• Living-comedor luminoso con salida al balcón\n• Cocina integrada estilo americana con mesones de cuarzo y cajonería\n• Espacio de lavandería independiente | 1 parqueo incluido\n\nServicios Básicos & Equipamiento:\n• Conexión de gas domiciliario | Aires acondicionados instalados\n• Termotanque eléctrico | Grifería y sanitarios de primera calidad\n• Áreas comunes del Condominio Mirage: piscina, churrasquera techada, salón de eventos y terraza\n• Seguridad 24 horas | Portón eléctrico y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Excelente activo para vivienda propia o alquiler a profesionales en Sirari\n• Zona de alta plusvalía a minutos de centros comerciales y avenidas principales\n• Retorno estimado atractivo por alquiler tradicional o temporal\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 85.000 USD)\n• Documentación en orden para compra al contado o financiamiento bancario",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -1080,7 +1080,7 @@
     "direccion": "",
     "lat": -17.37502998,
     "lng": -66.15101515,
-    "descripcion": "Exclusivo departamento de 223 m² en piso 5 sobre la prestigiosa Av. Pando (Queru Queru, Cochabamba). Diseñado con acabados de primera línea, ambientes amplios, suite con hidromasaje y balcón perimetral con vistas despejadas a la ciudad.\n\nDistribución & Dimensiones:\n• Superficie 223 m² | Piso 5 | Orientación privilegiada\n• 3 dormitorios en suite (master suite con hidromasaje y vestidor amplio) | 4 baños totales\n• Living y comedor de dimensiones generosas con salida a terraza-balcón\n• Cocina cerrada de alta gama con isla central, mesones de cuarzo y despensa\n• Sala de estar familiar / TV | Baño de visitas | Dependencia de servicio completa\n• 2 parqueos cubiertos en sótano | 1 baulera amplia\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario | Calefón central | Pisos entablonados y porcelanato importado\n• Mesones de cuarzo en cocina y baños | Grifería importada\n• Edificio exclusivo con seguridad 24 horas, cámaras, salón de copropietarios y parrilleros\n• Bajas expensas y administración profesional\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar premium en la zona más codiciada de Cochabamba\n• Inversión sólida en activo inmobiliario de gran metraje sobre Av. Pando\n• Acceso inmediato a oferta gastronómica, médica y colegios de prestigio\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 186.000 USD)\n• Títulos registrados al día, libre de gravámenes",
+    "descripcion": "Exclusivo departamento de 223 m2 en piso 5 sobre la prestigiosa Av. Pando (Queru Queru, Cochabamba). Diseñado con acabados de primera línea, ambientes amplios, suite con hidromasaje y balcón perimetral con vistas despejadas a la ciudad.\n\nDistribución & Dimensiones:\n• Superficie 223 m2 | Piso 5 | Orientación privilegiada\n• 3 dormitorios en suite (master suite con hidromasaje y vestidor amplio) | 4 baños totales\n• Living y comedor de dimensiones generosas con salida a terraza-balcón\n• Cocina cerrada de alta gama con isla central, mesones de cuarzo y despensa\n• Sala de estar familiar / TV | Baño de visitas | Dependencia de servicio completa\n• 2 parqueos cubiertos en sótano | 1 baulera amplia\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario | Calefón central | Pisos entablonados y porcelanato importado\n• Mesones de cuarzo en cocina y baños | Grifería importada\n• Edificio exclusivo con seguridad 24 horas, cámaras, salón de copropietarios y parrilleros\n• Bajas expensas y administración profesional\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar premium en la zona más codiciada de Cochabamba\n• Inversión sólida en activo inmobiliario de gran metraje sobre Av. Pando\n• Acceso inmediato a oferta gastronómica, médica y colegios de prestigio\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 186.000 USD)\n• Títulos registrados al día, libre de gravámenes",
     "amenidades": [
       "Edificio Antiguo",
       "Estacionamiento",
@@ -1178,7 +1178,7 @@
     "direccion": "",
     "lat": -17.78657163,
     "lng": -63.22285295,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Brickell 7 Roca y Coronado en Oeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 4 | Vista exterior despejada\n• 1 dormitorio amplio con balcón privado y ropero empotrado\n• 1 baño completo con grifería moderna\n• Living-comedor integrado de concepto abierto\n• Cocina estilo americano con mesón desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidor de agua individual\n• Aires acondicionados frío/calor\n• Áreas sociales completas en azotea: piscina, churrasqueras y solárium\n• Expensas incluidas en canon referencial (Bs. 3.500)\n\nPotencial de Uso & Rentabilidad:\n• Vivienda moderna para ejecutivo o estudiante sobre el eje oeste\n• Excelente conexión entre 4to y 5to anillo de Av. Roca y Coronado\n• A minutos de FEXPOCRUZ, universidades y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 300 USD / Bs. 3.500 con expensas)",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Brickell 7 Roca y Coronado en Oeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m2 | Piso 4 | Vista exterior despejada\n• 1 dormitorio amplio con balcón privado y ropero empotrado\n• 1 baño completo con grifería moderna\n• Living-comedor integrado de concepto abierto\n• Cocina estilo americano con mesón desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidor de agua individual\n• Aires acondicionados frío/calor\n• Áreas sociales completas en azotea: piscina, churrasqueras y solárium\n• Expensas incluidas en canon referencial (Bs. 3.500)\n\nPotencial de Uso & Rentabilidad:\n• Vivienda moderna para ejecutivo o estudiante sobre el eje oeste\n• Excelente conexión entre 4to y 5to anillo de Av. Roca y Coronado\n• A minutos de FEXPOCRUZ, universidades y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 300 USD / Bs. 3.500 con expensas)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1286,7 +1286,7 @@
     "direccion": "",
     "lat": -17.758495,
     "lng": -63.194832,
-    "descripcion": "Depto 1 Dorm. con Terraza · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor privado\n• 1 baño completo con acabados de primera\n• Living-comedor con salida a terraza privada\n• Cocina funcional integrada\n\nServicios Básicos & Equipamiento:\n• Instalación de gas por cañería y termotanque\n• Aires acondicionados split\n• Piscina, parrilleros y terraza social común\n• Edificio residencial seguro y de alta demanda\n\nPotencial de Uso & Rentabilidad:\n• Ubicación privilegiada en Equipetrol NorOeste\n• Cercanía inmediata a centros empresariales, cafés y restaurantes\n• Ideal para vivienda de ejecutivos o profesionales independientes\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 460 USD)",
+    "descripcion": "Depto 1 Dorm. con Terraza · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m2 | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor privado\n• 1 baño completo con acabados de primera\n• Living-comedor con salida a terraza privada\n• Cocina funcional integrada\n\nServicios Básicos & Equipamiento:\n• Instalación de gas por cañería y termotanque\n• Aires acondicionados split\n• Piscina, parrilleros y terraza social común\n• Edificio residencial seguro y de alta demanda\n\nPotencial de Uso & Rentabilidad:\n• Ubicación privilegiada en Equipetrol NorOeste\n• Cercanía inmediata a centros empresariales, cafés y restaurantes\n• Ideal para vivienda de ejecutivos o profesionales independientes\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 460 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1395,7 +1395,7 @@
     "direccion": "",
     "lat": -17.76411543,
     "lng": -63.19193244,
-    "descripcion": "Monoambiente Amoblado · Nano by Smart Studio Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 32.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 32 m² optimizados | Concepto Smart Studio\n• Ambiente integrado de descanso, living y cocina\n• 1 baño completo moderno con box de vidrio\n• Área de kitchenette completamente montada\n\nServicios Básicos & Equipamiento:\n• Wi-Fi en áreas comunes y coworking\n• Piscina, rooftop y cinema en terraza\n• Control de acceso digital y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en el epicentro comercial de Equipetrol\n• Estilo de vida hotelero con todas las comodidades incluidas\n• Acceso caminando a Av. San Martín y centros corporativos\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 335 USD)",
+    "descripcion": "Monoambiente Amoblado · Nano by Smart Studio Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 32.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 32 m2 optimizados | Concepto Smart Studio\n• Ambiente integrado de descanso, living y cocina\n• 1 baño completo moderno con box de vidrio\n• Área de kitchenette completamente montada\n\nServicios Básicos & Equipamiento:\n• Wi-Fi en áreas comunes y coworking\n• Piscina, rooftop y cinema en terraza\n• Control de acceso digital y cámaras de vigilancia\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en el epicentro comercial de Equipetrol\n• Estilo de vida hotelero con todas las comodidades incluidas\n• Acceso caminando a Av. San Martín y centros corporativos\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 335 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Salida Emergencia Disponible",
@@ -1499,7 +1499,7 @@
     "direccion": "",
     "lat": -17.75504731,
     "lng": -63.19131201,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Breeze Tower Equipetrol en Noroeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m² | Piso 6 | Excelente iluminación natural\n• 1 dormitorio con ventanales de piso a techo y ropero empotrado\n• 1 baño completo de primera calidad\n• Living-comedor integrado con salida al balcón\n• Cocina americana moderna con mesón de granito\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y red de fibra óptica\n• Edificio de diseño contemporáneo Breeze Tower\n• Áreas sociales de alto impacto en piso superior\n\nPotencial de Uso & Rentabilidad:\n• Inmueble a estrenar entre Av. San Martín y Av. La Salle\n• Zona consolidada con alta revalorización y demanda de alquiler\n• Cercanía a hoteles de lujo, bancos y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 334 USD)",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Breeze Tower Equipetrol en Noroeste (Santa Cruz de la Sierra). Con una superficie de 45.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 45 m2 | Piso 6 | Excelente iluminación natural\n• 1 dormitorio con ventanales de piso a techo y ropero empotrado\n• 1 baño completo de primera calidad\n• Living-comedor integrado con salida al balcón\n• Cocina americana moderna con mesón de granito\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y red de fibra óptica\n• Edificio de diseño contemporáneo Breeze Tower\n• Áreas sociales de alto impacto en piso superior\n\nPotencial de Uso & Rentabilidad:\n• Inmueble a estrenar entre Av. San Martín y Av. La Salle\n• Zona consolidada con alta revalorización y demanda de alquiler\n• Cercanía a hoteles de lujo, bancos y centros comerciales\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 334 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1593,7 +1593,7 @@
     "captador_oficina": "RE/MAX Origen"
   },
   {
-    "titulo": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507",
+    "titulo": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 490.0,
@@ -1608,7 +1608,7 @@
     "direccion": "",
     "lat": -17.75849,
     "lng": -63.194827,
-    "descripcion": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio confortable con vestidor\n• 1 baño completo\n• Living-comedor espacioso con terraza\n• Cocina americana integrada\n\nServicios Básicos & Equipamiento:\n• Gas natural conectado\n• Servicio de conserjería permanente\n• Áreas sociales para eventos privados\n\nPotencial de Uso & Rentabilidad:\n• Inmejorable ubicación en Equipetrol NorOeste\n• Conexión rápida al 2do y 3er anillo\n• Ambiente tranquilo y residencial con alta oferta de servicios\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
+    "descripcion": "Depto 1 Dorm. con Balcón Amplio · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m2 | Piso 5 | Unidad #507\n• 1 dormitorio confortable con vestidor\n• 1 baño completo\n• Living-comedor espacioso con terraza\n• Cocina americana integrada\n\nServicios Básicos & Equipamiento:\n• Gas natural conectado\n• Servicio de conserjería permanente\n• Áreas sociales para eventos privados\n\nPotencial de Uso & Rentabilidad:\n• Inmejorable ubicación en Equipetrol NorOeste\n• Conexión rápida al 2do y 3er anillo\n• Ambiente tranquilo y residencial con alta oferta de servicios\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1702,7 +1702,7 @@
     "captador_oficina": "RE/MAX Norte"
   },
   {
-    "titulo": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte",
+    "titulo": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 1215.0,
@@ -1717,7 +1717,7 @@
     "direccion": "",
     "lat": -17.7504033,
     "lng": -63.17022785,
-    "descripcion": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte en Norte (Santa Cruz de la Sierra). Con una superficie de 145.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 145 m² | Piso 14 | Vistas ininterrumpidas a la ciudad\n• 3 dormitorios amplios (1 master suite con vestidor y 2 con roperos)\n• 3 baños (suite, compartido y baño de visitas)\n• Living y comedor formal con ventanales de doble vidrio\n• Cocina gourmet con despensa y comedor de diario\n• Dependencia de servicio con baño independiente\n\nServicios Básicos & Equipamiento:\n• Gas por red domiciliaria y termotanque central\n• Expensas controladas y administración profesional\n• Complejo Torres Zen reconocido por su estándar y seguridad\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el eje norte de Santa Cruz\n• Cercanía a colegios bilingües, supermercados y clínicas\n• Habitabilidad de primer nivel con aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 1.215 USD)",
+    "descripcion": "Depto 3 Dorm. Panorámico · Torres Zen Piso 14 Zona Norte en Norte (Santa Cruz de la Sierra). Con una superficie de 145.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 145 m2 | Piso 14 | Vistas ininterrumpidas a la ciudad\n• 3 dormitorios amplios (1 master suite con vestidor y 2 con roperos)\n• 3 baños (suite, compartido y baño de visitas)\n• Living y comedor formal con ventanales de doble vidrio\n• Cocina gourmet con despensa y comedor de diario\n• Dependencia de servicio con baño independiente\n\nServicios Básicos & Equipamiento:\n• Gas por red domiciliaria y termotanque central\n• Expensas controladas y administración profesional\n• Complejo Torres Zen reconocido por su estándar y seguridad\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el eje norte de Santa Cruz\n• Cercanía a colegios bilingües, supermercados y clínicas\n• Habitabilidad de primer nivel con aislamiento acústico\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 1.215 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1827,7 +1827,7 @@
     "direccion": "",
     "lat": -17.7834217,
     "lng": -63.1820853,
-    "descripcion": "Depto 2 Dorm. con Parqueo · Uptown Nuu Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 72.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 72 m² | Piso 7 | Diseño moderno Uptown Nuu\n• 2 dormitorios (master suite + segundo dormitorio con ropero)\n• 2 baños completos con box de blindex\n• Living-comedor con salida directa al balcón\n• Cocina integrada funcional\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones listas para internet de alta velocidad\n• Edificio boutique con áreas sociales de alto confort\n• Mantenimiento permanente y conserjería\n\nPotencial de Uso & Rentabilidad:\n• Ubicación en el corazón residencial de Equipetrol\n• Ideal para parejas, profesionales o diplomáticos\n• Parqueo privado incluido en el canon\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
+    "descripcion": "Depto 2 Dorm. con Parqueo · Uptown Nuu Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 72.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 72 m2 | Piso 7 | Diseño moderno Uptown Nuu\n• 2 dormitorios (master suite + segundo dormitorio con ropero)\n• 2 baños completos con box de blindex\n• Living-comedor con salida directa al balcón\n• Cocina integrada funcional\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones listas para internet de alta velocidad\n• Edificio boutique con áreas sociales de alto confort\n• Mantenimiento permanente y conserjería\n\nPotencial de Uso & Rentabilidad:\n• Ubicación en el corazón residencial de Equipetrol\n• Ideal para parejas, profesionales o diplomáticos\n• Parqueo privado incluido en el canon\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 490 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -1921,7 +1921,7 @@
     "captador_oficina": "RE/MAX Union"
   },
   {
-    "titulo": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari",
+    "titulo": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 478.0,
@@ -1936,7 +1936,7 @@
     "direccion": "",
     "lat": -17.76544367,
     "lng": -63.20200682,
-    "descripcion": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari en Sirari (Santa Cruz de la Sierra). Con una superficie de 48.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 48 m² | Piso 4 | Barrio Sirari a pasos de Av. San Martín\n• 1 master suite amoblada con ropero de piso a techo\n• 1 baño completo con grifería importada\n• Living-comedor amoblado de concepto abierto\n• Cocina americana moderna con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Agua caliente central y gas por cañería\n• Mobiliario completo listo para habitar de inmediato\n• Zona residencial exclusiva y segura\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en una de las zonas más cotizadas de Santa Cruz\n• Cercanía caminando a restaurantes gourmet, cafés y centros financieros\n• Confort y elegancia con bajo costo de mantenimiento\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 478 USD)",
+    "descripcion": "Depto 1 Dorm. Amoblado · Ónix by Elite Sirari en Sirari (Santa Cruz de la Sierra). Con una superficie de 48.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 48 m2 | Piso 4 | Barrio Sirari a pasos de Av. San Martín\n• 1 master suite amoblada con ropero de piso a techo\n• 1 baño completo con grifería importada\n• Living-comedor amoblado de concepto abierto\n• Cocina americana moderna con barra desayunadora\n\nServicios Básicos & Equipamiento:\n• Agua caliente central y gas por cañería\n• Mobiliario completo listo para habitar de inmediato\n• Zona residencial exclusiva y segura\n\nPotencial de Uso & Rentabilidad:\n• Vivienda ejecutiva en una de las zonas más cotizadas de Santa Cruz\n• Cercanía caminando a restaurantes gourmet, cafés y centros financieros\n• Confort y elegancia con bajo costo de mantenimiento\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 478 USD)",
     "amenidades": [
       "Salida Emergencia Disponible",
       "Seguridad - Sistema",
@@ -2040,7 +2040,7 @@
     "direccion": "",
     "lat": -17.7605751,
     "lng": -63.19572508,
-    "descripcion": "Depto 2 Dorm. · Smart Studio Nanotec Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 68.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 68 m² | Piso 5 | Complejo Nanotec\n• 2 dormitorios con excelente ventilación natural\n• 2 baños completos\n• Living y comedor integrados con salida al balcón\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Conexión a gas natural\n• Servicios básicos completos y expensas equilibradas\n• Piscina con vistas urbanas de Equipetrol\n\nPotencial de Uso & Rentabilidad:\n• Excelente alternativa para profesionales o compañeros de trabajo\n• Ubicación céntrica en Equipetrol con rápido acceso al 2do anillo\n• Entorno corporativo con alta demanda comercial\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 550 USD)",
+    "descripcion": "Depto 2 Dorm. · Smart Studio Nanotec Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 68.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 68 m2 | Piso 5 | Complejo Nanotec\n• 2 dormitorios con excelente ventilación natural\n• 2 baños completos\n• Living y comedor integrados con salida al balcón\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Conexión a gas natural\n• Servicios básicos completos y expensas equilibradas\n• Piscina con vistas urbanas de Equipetrol\n\nPotencial de Uso & Rentabilidad:\n• Excelente alternativa para profesionales o compañeros de trabajo\n• Ubicación céntrica en Equipetrol con rápido acceso al 2do anillo\n• Entorno corporativo con alta demanda comercial\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 550 USD)",
     "amenidades": [
       "Comercios cercanos",
       "Gimnasio cercano",
@@ -2144,7 +2144,7 @@
     "direccion": "",
     "lat": -17.76210261,
     "lng": -63.18444371,
-    "descripcion": "Depto 1 Dorm. Amoblado con Parqueo · Cond. Zero Zona Norte en Ovidio Barbery (Santa Cruz de la Sierra). Con una superficie de 44.1 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.1 m² | Piso 3 | Condominio Zero\n• 1 dormitorio amoblado con ropero empotrado\n• 1 baño completo moderno\n• Living-comedor con balcón exterior\n• Cocina americana y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y agua caliente\n• Parqueo vehicular privado techado\n• Expensas accesibles y gestión comunitaria ordenada\n\nPotencial de Uso & Rentabilidad:\n• Vivienda lista para mudanza inmediata en Barrio Ovidio Barbery / Zona Norte\n• A pasos de avenidas principales, supermercados y farmacias\n• Comodidad absoluta con parqueo garantizado\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 360 USD)",
+    "descripcion": "Depto 1 Dorm. Amoblado con Parqueo · Cond. Zero Zona Norte en Ovidio Barbery (Santa Cruz de la Sierra). Con una superficie de 44.1 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.1 m2 | Piso 3 | Condominio Zero\n• 1 dormitorio amoblado con ropero empotrado\n• 1 baño completo moderno\n• Living-comedor con balcón exterior\n• Cocina americana y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y agua caliente\n• Parqueo vehicular privado techado\n• Expensas accesibles y gestión comunitaria ordenada\n\nPotencial de Uso & Rentabilidad:\n• Vivienda lista para mudanza inmediata en Barrio Ovidio Barbery / Zona Norte\n• A pasos de avenidas principales, supermercados y farmacias\n• Comodidad absoluta con parqueo garantizado\n\nSeguridad Jurídica & Entrega:\n• Operación: Alquiler mensual ($ 360 USD)",
     "amenidades": [
       "Cámara de seguridad",
       "Seguridad - Vigilancia",
@@ -2248,7 +2248,7 @@
     "direccion": "",
     "lat": -17.77029167,
     "lng": -63.2004508,
-    "descripcion": "Depto 1 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42 m² | Piso 3 | A estrenar\n• 1 dormitorio con ventanal exterior y ropero\n• 1 baño completo\n• Living-comedor integrado\n• Cocina estilo americano\n\nServicios Básicos & Equipamiento:\n• Instalaciones eléctricas y sanitarias de primera calidad\n• Gas domiciliario conectado\n• Bajas expensas proyectadas\n\nPotencial de Uso & Rentabilidad:\n• Oportunidad de inversión de alta rentabilidad en Equipetrol\n• Precio de entrada competitivo para renta tradicional o Airbnb\n• Zona de máxima valorización inmobiliaria\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 60.255 USD)\n• Documentación al día para transferencia inmediata o crédito bancario",
+    "descripcion": "Depto 1 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42 m2 | Piso 3 | A estrenar\n• 1 dormitorio con ventanal exterior y ropero\n• 1 baño completo\n• Living-comedor integrado\n• Cocina estilo americano\n\nServicios Básicos & Equipamiento:\n• Instalaciones eléctricas y sanitarias de primera calidad\n• Gas domiciliario conectado\n• Bajas expensas proyectadas\n\nPotencial de Uso & Rentabilidad:\n• Oportunidad de inversión de alta rentabilidad en Equipetrol\n• Precio de entrada competitivo para renta tradicional o Airbnb\n• Zona de máxima valorización inmobiliaria\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 60.255 USD)\n• Documentación al día para transferencia inmediata o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2352,7 +2352,7 @@
     "direccion": "",
     "lat": -17.77029167,
     "lng": -63.2004508,
-    "descripcion": "Depto 3 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 88.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 88 m² | Piso 5 | Orientación este\n• 3 dormitorios (1 suite principal + 2 dormitorios familiares)\n• 2 baños completos\n• Living-comedor amplio con salida a balcón\n• Cocina semi-integrada y área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidores independientes\n• Termotanque y servicios básicos completos\n• Edificio residencial nuevo y moderno\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de 3 dormitorios en el corazón de Equipetrol\n• Excelente relación precio por m² en zona premium\n• Alta plusvalía y demanda de reventa garantizada\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 112.031 USD)\n• Papeles al día, apto para financiamiento bancario",
+    "descripcion": "Depto 3 Dorm. a Estrenar · Equipetrol NorOeste en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 88.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 88 m2 | Piso 5 | Orientación este\n• 3 dormitorios (1 suite principal + 2 dormitorios familiares)\n• 2 baños completos\n• Living-comedor amplio con salida a balcón\n• Cocina semi-integrada y área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y medidores independientes\n• Termotanque y servicios básicos completos\n• Edificio residencial nuevo y moderno\n\nPotencial de Uso & Rentabilidad:\n• Vivienda familiar de 3 dormitorios en el corazón de Equipetrol\n• Excelente relación precio por m2 en zona premium\n• Alta plusvalía y demanda de reventa garantizada\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 112.031 USD)\n• Papeles al día, apto para financiamiento bancario",
     "amenidades": [
       "Comercios cercanos",
       "Salida Emergencia Disponible",
@@ -2456,7 +2456,7 @@
     "direccion": "",
     "lat": -17.75849,
     "lng": -63.194827,
-    "descripcion": "Depto 1 Dorm. con Terraza Privada · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m² | Piso 5 | Unidad #507\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor con salida directa a terraza\n• Cocina integrada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y calefón\n• Áreas comunes equipadas\n• Conserjería permanente\n\nPotencial de Uso & Rentabilidad:\n• Inversión inmobiliaria segura con retorno por alquiler\n• Ubicación estratégica en Equipetrol NorOeste\n• Zona preferida por empresas y organismos internacionales\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 80.580 USD)\n• Títulos en orden para transferencia inmediata",
+    "descripcion": "Depto 1 Dorm. con Terraza Privada · Equipetrol Dpto 507 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 47.4 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 47.4 m2 | Piso 5 | Unidad #507\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor con salida directa a terraza\n• Cocina integrada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y calefón\n• Áreas comunes equipadas\n• Conserjería permanente\n\nPotencial de Uso & Rentabilidad:\n• Inversión inmobiliaria segura con retorno por alquiler\n• Ubicación estratégica en Equipetrol NorOeste\n• Zona preferida por empresas y organismos internacionales\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 80.580 USD)\n• Títulos en orden para transferencia inmediata",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2565,7 +2565,7 @@
     "direccion": "",
     "lat": -17.76048825,
     "lng": -63.20186734,
-    "descripcion": "Depto 2 Dorm. Amoblado de Lujo · La Riviera Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 110.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 110 m² | Piso 8 | Edificio La Riviera\n• 2 dormitorios (1 en suite matrimonial con vestidor)\n• 2 baños completos con mesones de cuarzo\n• Living y comedor integrados con vistas privilegiadas\n• Cocina americana y dependencia de servicio\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, climatización integral y aislamiento termoacústico\n• Infraestructura cinco estrellas del complejo La Riviera & Beauty Plaza\n• Seguridad privada de nivel diplomático\n\nPotencial de Uso & Rentabilidad:\n• Activo patrimonial de primera categoría en Equipetrol Norte\n• Alta tasa de ocupación ejecutiva y corporativa\n• Ubicación inigualable sobre el 4to anillo con oferta comercial integral\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 170.000 USD)\n• Títulos registrados al día, listo para escriturar",
+    "descripcion": "Depto 2 Dorm. Amoblado de Lujo · La Riviera Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 110.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 110 m2 | Piso 8 | Edificio La Riviera\n• 2 dormitorios (1 en suite matrimonial con vestidor)\n• 2 baños completos con mesones de cuarzo\n• Living y comedor integrados con vistas privilegiadas\n• Cocina americana y dependencia de servicio\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, climatización integral y aislamiento termoacústico\n• Infraestructura cinco estrellas del complejo La Riviera & Beauty Plaza\n• Seguridad privada de nivel diplomático\n\nPotencial de Uso & Rentabilidad:\n• Activo patrimonial de primera categoría en Equipetrol Norte\n• Alta tasa de ocupación ejecutiva y corporativa\n• Ubicación inigualable sobre el 4to anillo con oferta comercial integral\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 170.000 USD)\n• Títulos registrados al día, listo para escriturar",
     "amenidades": [
       "Salida Emergencia Disponible",
       "Seguridad - Sistema",
@@ -2672,7 +2672,7 @@
     "direccion": "",
     "lat": -17.758495,
     "lng": -63.194832,
-    "descripcion": "Depto 1 Dorm. con Vestidor · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m² | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor luminoso con terraza\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y servicios básicos instalados\n• Conserjería permanente\n• Edificio moderno con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Inversión rentable en Equipetrol NorOeste\n• Zona consolidada con constante flujo de inquilinos de alto perfil\n• Excelente alternativa patrimonial accesible\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 76.645 USD)\n• Documentación en orden para transferencia inmediata",
+    "descripcion": "Depto 1 Dorm. con Vestidor · Equipetrol Dpto 505 en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 44.55 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 44.55 m2 | Piso 5 | Unidad #505\n• 1 dormitorio en suite con vestidor\n• 1 baño completo\n• Living-comedor luminoso con terraza\n• Cocina americana funcional\n\nServicios Básicos & Equipamiento:\n• Gas por cañería y servicios básicos instalados\n• Conserjería permanente\n• Edificio moderno con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Inversión rentable en Equipetrol NorOeste\n• Zona consolidada con constante flujo de inquilinos de alto perfil\n• Excelente alternativa patrimonial accesible\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 76.645 USD)\n• Documentación en orden para transferencia inmediata",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2781,7 +2781,7 @@
     "direccion": "",
     "lat": -17.766118,
     "lng": -63.193411,
-    "descripcion": "Depto 2 Dorm. Amplio · Condominio Sky Blue Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 92.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 92 m² | Piso 6 | Condominio Sky Blue\n• 2 master suites independientes con vestidores y baños privados\n• 3 baños en total (2 en suites + baño de visitas)\n• Living y comedor amplios con excelente ventilación cruzada\n• Cocina completa y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Gas natural domiciliario y calefón a gas\n• Garaje techado propio\n• Administración profesional y vigilancia 24/7\n\nPotencial de Uso & Rentabilidad:\n• Residencia espaciosa en el corazón de Equipetrol NorOeste\n• Planta de 92 m² difícil de encontrar para tipologías de 2 dormitorios\n• Alta plusvalía y demanda de alquiler familiar o corporativo\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 120.000 USD)\n• Papeles al día, sin gravámenes, apto crédito bancario",
+    "descripcion": "Depto 2 Dorm. Amplio · Condominio Sky Blue Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 92.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 92 m2 | Piso 6 | Condominio Sky Blue\n• 2 master suites independientes con vestidores y baños privados\n• 3 baños en total (2 en suites + baño de visitas)\n• Living y comedor amplios con excelente ventilación cruzada\n• Cocina completa y lavandería independiente\n\nServicios Básicos & Equipamiento:\n• Gas natural domiciliario y calefón a gas\n• Garaje techado propio\n• Administración profesional y vigilancia 24/7\n\nPotencial de Uso & Rentabilidad:\n• Residencia espaciosa en el corazón de Equipetrol NorOeste\n• Planta de 92 m2 difícil de encontrar para tipologías de 2 dormitorios\n• Alta plusvalía y demanda de alquiler familiar o corporativo\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 120.000 USD)\n• Papeles al día, sin gravámenes, apto crédito bancario",
     "amenidades": [
       "Seguridad - Sistema",
       "Parqueo",
@@ -2887,7 +2887,7 @@
     "direccion": "",
     "lat": -17.77116522,
     "lng": -63.17234167,
-    "descripcion": "Depto 4 Dorm. Piso 16 · Condominio Torres Aventura 2do Anillo en Norte (Santa Cruz de la Sierra). Con una superficie de 195.49 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 195.49 m² | Piso 16 | Condominio Torres Aventura\n• 4 dormitorios confortables (master suite + 3 dormitorios con roperos)\n• 3 baños completos más baño de servicio\n• Living y comedor social con ventanales piso a techo y salida al balcón\n• Cocina gourmet independiente y lavandería ventilada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería, agua potable y calefón central\n• 2 parqueos cubiertos asignados en subsuelo\n• Seguridad permanente con control de visitas\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el 2do Anillo y Av. Trinidad\n• Cercanía inmediata a colegios, universidades y centros médicos\n• Metraje generoso (195 m²) con vista inigualable en piso alto\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 205.000 USD)\n• Títulos registrados al día, libre de gravamen",
+    "descripcion": "Depto 4 Dorm. Piso 16 · Condominio Torres Aventura 2do Anillo en Norte (Santa Cruz de la Sierra). Con una superficie de 195.49 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 195.49 m2 | Piso 16 | Condominio Torres Aventura\n• 4 dormitorios confortables (master suite + 3 dormitorios con roperos)\n• 3 baños completos más baño de servicio\n• Living y comedor social con ventanales piso a techo y salida al balcón\n• Cocina gourmet independiente y lavandería ventilada\n\nServicios Básicos & Equipamiento:\n• Gas por cañería, agua potable y calefón central\n• 2 parqueos cubiertos asignados en subsuelo\n• Seguridad permanente con control de visitas\n\nPotencial de Uso & Rentabilidad:\n• Residencia familiar premium sobre el 2do Anillo y Av. Trinidad\n• Cercanía inmediata a colegios, universidades y centros médicos\n• Metraje generoso (195 m2) con vista inigualable en piso alto\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 205.000 USD)\n• Títulos registrados al día, libre de gravamen",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -2997,7 +2997,7 @@
     "direccion": "",
     "lat": -17.76949986,
     "lng": -63.1966853,
-    "descripcion": "Monoambiente Amoblado · Sky Plaza Italia Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.43 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42.43 m² | Piso 4 | Edificio Sky Plaza Italia\n• Ambiente amplio e iluminado con balcón exterior\n• 1 baño completo con grifería moderna y box de vidrio\n• Kitchenette equipada y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones de alta velocidad\n• Amoblamiento completo incluido en el precio\n• Edificio nuevo con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Activo ideal para alquiler temporal (Airbnb) o renta ejecutiva\n• Ubicación privilegiada entre 2do y 3er anillo de Equipetrol\n• Rentabilidad proyectada superior al promedio de la zona\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 61.800 USD)\n• Listo para transferencia o crédito bancario",
+    "descripcion": "Monoambiente Amoblado · Sky Plaza Italia Equipetrol en Equipetrol/NorOeste (Santa Cruz de la Sierra). Con una superficie de 42.43 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 42.43 m2 | Piso 4 | Edificio Sky Plaza Italia\n• Ambiente amplio e iluminado con balcón exterior\n• 1 baño completo con grifería moderna y box de vidrio\n• Kitchenette equipada y desayunador\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario y conexiones de alta velocidad\n• Amoblamiento completo incluido en el precio\n• Edificio nuevo con bajas expensas\n\nPotencial de Uso & Rentabilidad:\n• Activo ideal para alquiler temporal (Airbnb) o renta ejecutiva\n• Ubicación privilegiada entre 2do y 3er anillo de Equipetrol\n• Rentabilidad proyectada superior al promedio de la zona\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 61.800 USD)\n• Listo para transferencia o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -3106,7 +3106,7 @@
     "direccion": "",
     "lat": -17.80397601,
     "lng": -63.15573095,
-    "descripcion": "Depto 2 Dorm. a Estrenar · Torre Barcelona Radial 10 en Parque Urbano (Santa Cruz de la Sierra). Con una superficie de 65.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 65 m² | Piso 3 | Torre Barcelona\n• 2 dormitorios (1 suite principal + 1 dormitorio con ropero)\n• 2 baños completos con box de vidrio\n• Living-comedor espacioso con balcón\n• Cocina integrada y lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y alcantarillado\n• Excelente conectividad sobre la Radial 10 en Zona Sureste\n• Edificio residencial nuevo y funcional\n\nPotencial de Uso & Rentabilidad:\n• Precio accesible de compra en zona de rápido crecimiento urbano\n• Excelente activo para primera vivienda familiar o renta tradicional\n• Cercanía a centros de abasto, transporte y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 68.500 USD)\n• Papeles al día, apto para financiamiento de vivienda",
+    "descripcion": "Depto 2 Dorm. a Estrenar · Torre Barcelona Radial 10 en Parque Urbano (Santa Cruz de la Sierra). Con una superficie de 65.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 65 m2 | Piso 3 | Torre Barcelona\n• 2 dormitorios (1 suite principal + 1 dormitorio con ropero)\n• 2 baños completos con box de vidrio\n• Living-comedor espacioso con balcón\n• Cocina integrada y lavandería\n\nServicios Básicos & Equipamiento:\n• Gas domiciliario, agua potable y alcantarillado\n• Excelente conectividad sobre la Radial 10 en Zona Sureste\n• Edificio residencial nuevo y funcional\n\nPotencial de Uso & Rentabilidad:\n• Precio accesible de compra en zona de rápido crecimiento urbano\n• Excelente activo para primera vivienda familiar o renta tradicional\n• Cercanía a centros de abasto, transporte y colegios\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 68.500 USD)\n• Papeles al día, apto para financiamiento de vivienda",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -3215,7 +3215,7 @@
     "direccion": "",
     "lat": -17.8080165,
     "lng": -63.20654022,
-    "descripcion": "Depto 3 Dorm. Exclusivo · Edificio Atocha Las Palmas en Las Palmas (Santa Cruz de la Sierra). Con una superficie de 128.0 m², esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 128 m² | Piso 2 | Edificio Atocha sobre Av. Ibérica\n• 3 dormitorios amplios (1 en suite matrimonial con vestidor)\n• 2 baños completos con acabados de primera\n• Living y comedor de generosas dimensiones con balcón\n• Cocina independiente con área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas natural por red, termotanque y servicios completos\n• Parqueo propio en planta baja\n• Barrio residencial Las Palmas: entorno arbolado y de máxima tranquilidad\n\nPotencial de Uso & Rentabilidad:\n• Vivienda en el tradicional y cotizado Barrio Las Palmas\n• Edificio privado sin aglomeraciones con solo 9 copropietarios\n• Valor metro cuadrado altamente competitivo para Las Palmas\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 140.000 USD con parqueo incluido)\n• Documentación en orden para transferencia al contado o crédito bancario",
+    "descripcion": "Depto 3 Dorm. Exclusivo · Edificio Atocha Las Palmas en Las Palmas (Santa Cruz de la Sierra). Con una superficie de 128.0 m2, esta unidad ofrece un estándar residencial superior en una ubicación estratégica de alta demanda.\n\nDistribución & Dimensiones:\n• Superficie 128 m2 | Piso 2 | Edificio Atocha sobre Av. Ibérica\n• 3 dormitorios amplios (1 en suite matrimonial con vestidor)\n• 2 baños completos con acabados de primera\n• Living y comedor de generosas dimensiones con balcón\n• Cocina independiente con área de lavandería\n\nServicios Básicos & Equipamiento:\n• Gas natural por red, termotanque y servicios completos\n• Parqueo propio en planta baja\n• Barrio residencial Las Palmas: entorno arbolado y de máxima tranquilidad\n\nPotencial de Uso & Rentabilidad:\n• Vivienda en el tradicional y cotizado Barrio Las Palmas\n• Edificio privado sin aglomeraciones con solo 9 copropietarios\n• Valor metro cuadrado altamente competitivo para Las Palmas\n\nSeguridad Jurídica & Entrega:\n• Operación: Venta ($ 140.000 USD con parqueo incluido)\n• Documentación en orden para transferencia al contado o crédito bancario",
     "amenidades": [
       "Comercios cercanos",
       "Seguridad - Sistema",
@@ -3323,7 +3323,7 @@
     "direccion": "",
     "lat": -17.748707,
     "lng": -63.169037,
-    "descripcion": "Vive en Gardenia Condominio Club, un espacio exclusivo en Av. Beni y 4to anillo. Departamento de 2 dormitorios con suite, vestidor y balcón con churrasquera. Disfruta áreas sociales de lujo: piscina, gym, cine y más. Ubicación privilegiada y confort total.",
+    "descripcion": "Vive en Gardenia Condominio Club, un espacio exclusivo en Av. Beni y 4to anillo. Departamento de 2 dormitorios con suite, vestidor y balcón con churrasquera. Disfruta áreas sociales de lujo: piscina, gym, cine y más. Ubicación privilegiada y confort total.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -3394,7 +3394,7 @@
     "direccion": "",
     "lat": -17.799484,
     "lng": -63.182802,
-    "descripcion": "¡ESTRENA TU NUEVO DEPARTAMENTO EN LA ZONA SUR! 🏡\n¿Buscas comodidad, ubicación y un espacio listo para comenzar una nueva etapa? 🔑\nEste departamento a estrenar en Condominio HH Sur es una excelente opción para ti.\n📍 Av. El Trompillo, 2do Anillo\nEntre calle Tacna y Pisagua.\n🛏️ 1 dormitorio\n📐 33,09 m²\n🆕 A estrenar\n💰 Bs 2.600/mes",
+    "descripcion": "¡ESTRENA TU NUEVO DEPARTAMENTO EN LA ZONA SUR! 🏡\n¿Buscas comodidad, ubicación y un espacio listo para comenzar una nueva etapa? 🔑\nEste departamento a estrenar en Condominio HH Sur es una excelente opción para ti.\n📍 Av. El Trompillo, 2do Anillo\nEntre calle Tacna y Pisagua.\n🛏️ 1 dormitorio\n📐 33,09 m2\n🆕 A estrenar\n💰 Bs 2.600/mes",
     "amenidades": [
       "Piscina",
       "Edificio Nuevo",
@@ -3465,7 +3465,7 @@
     "direccion": "",
     "lat": -17.760639,
     "lng": -63.195891,
-    "descripcion": "Viví en el corazón de Equipetrol Norte, en Smart Studio Nanotec. Departamento de 68 m² con 2 dormitorios, 2 baños y modernas áreas sociales: piscina panorámica, cowork, sala Netflix, churrasqueras y fogateras. Comodidad, estilo y ubicación estratégica por solo 5.900 Bs. mensuales. ¡Agendá tu visita!",
+    "descripcion": "Viví en el corazón de Equipetrol Norte, en Smart Studio Nanotec. Departamento de 68 m2 con 2 dormitorios, 2 baños y modernas áreas sociales: piscina panorámica, cowork, sala Netflix, churrasqueras y fogateras. Comodidad, estilo y ubicación estratégica por solo 5.900 Bs. mensuales. ¡Agendá tu visita!",
     "amenidades": [
       "Piscina",
       "Edificio Nuevo",
@@ -3536,7 +3536,7 @@
     "direccion": "",
     "lat": -17.737589,
     "lng": -63.164113,
-    "descripcion": "🏢 DEPARTAMENTO EN ALQUILER – 1 DORMITORIO\n📍 Ubicación: Condominio Los Jazmines del Parque\nZona Norte – Av. Beni, 5to Anillo\n👉 Planta baja: cómoda y de fácil acceso\n💰 Precio: Bs 2.800\n📐 Superficie: 37.80 m²\n🚗 Incluye parqueo y baulera\n✨ Características:\n* 1 dormitorio\n* 1 baño\n* Sala-comedor\n* Cocina equipada",
+    "descripcion": "🏢 DEPARTAMENTO EN ALQUILER – 1 DORMITORIO\n📍 Ubicación: Condominio Los Jazmines del Parque\nZona Norte – Av. Beni, 5to Anillo\n👉 Planta baja: cómoda y de fácil acceso\n💰 Precio: Bs 2.800\n📐 Superficie: 37.80 m2\n🚗 Incluye parqueo y baulera\n✨ Características:\n* 1 dormitorio\n* 1 baño\n* Sala-comedor\n* Cocina equipada",
     "amenidades": [
       "Sistema de Alarma",
       "Piscina",
@@ -3607,7 +3607,7 @@
     "direccion": "",
     "lat": -17.859413,
     "lng": -63.19336,
-    "descripcion": "𝐃𝐄𝐏𝐀𝐑𝐓𝐀𝐌𝐄𝐍𝐓𝐎 𝐄𝐍 𝐀𝐋𝐐𝐔𝐈𝐋𝐄𝐑 - 𝐙𝐎𝐍𝐀 𝐒𝐔𝐑\n📍𝐔𝐁𝐈𝐂𝐀𝐂𝐈𝐎𝐍: Av. 3er anillo  Radial 13 C/ Ignacio Quintana.\n💰 𝐏𝐑𝐄𝐂𝐈𝐎: 2.500 Bs\n🔰 𝐃𝐄𝐒𝐂𝐑𝐈𝐏𝐂𝐈𝐎𝐍:\n* Living comedor\n* Cocina con cajonería\n* lavandería independiente\n* Baño de visita\n* deposito\n* 1 habitaciones\n* 1 suite con balcon\n📍𝐂𝐎𝐍𝐃𝐈𝐂𝐈𝐎𝐍𝐄𝐒:\n-Me",
+    "descripcion": "DEPARTAMENTO EN ALQUILER - ZONA SUR\n📍UBICACION: Av. 3er anillo  Radial 13 C/ Ignacio Quintana.\n💰 PRECIO: 2.500 Bs\n🔰 DESCRIPCION:\n* Living comedor\n* Cocina con cajonería\n* lavandería independiente\n* Baño de visita\n* deposito\n* 1 habitaciones\n* 1 suite con balcon\n📍CONDICIONES:\n-Me",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -3672,7 +3672,7 @@
     "direccion": "",
     "lat": -17.76033,
     "lng": -63.201706,
-    "descripcion": "se puede alquilar sin garaje 7000 bs. incluida las expensas\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 2 baños.\n\nEquipamiento y amenidades destacadas: Edificio Nuevo, Jardin, Estacionamiento, Aire Acondicionado Central, Hall de Entrada, Textura, Area Escolar, Cerca de Avenida.\n\nCanon mensual: $ 675 USD.",
+    "descripcion": "se puede alquilar sin garaje 7000 bs. incluida las expensas\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 2 baños.\n\nEquipamiento y amenidades destacadas: Edificio Nuevo, Jardin, Estacionamiento, Aire Acondicionado Central, Hall de Entrada, Textura, Area Escolar, Cerca de Avenida.\n\nCanon mensual: $ 675 USD.",
     "amenidades": [
       "Edificio Nuevo",
       "Jardin",
@@ -3742,7 +3742,7 @@
     "direccion": "",
     "lat": -17.713042,
     "lng": -63.174981,
-    "descripcion": "Departamento amoblado de 3 dormitorios en alquiler en la zona Norte de Santa Cruz 📍. Cuenta con 2 baños, aire acondicionado, parqueo 🚗 y acceso a piscina, jacuzzi, gimnasio y áreas sociales. Seguridad permanente 🔒 y disponibilidad a partir del 15 de julio por USD 550 💰",
+    "descripcion": "Departamento amoblado de 3 dormitorios en alquiler en la zona Norte de Santa Cruz 📍. Cuenta con 2 baños, aire acondicionado, parqueo 🚗 y acceso a piscina, jacuzzi, gimnasio y áreas sociales. Seguridad permanente 🔒 y disponibilidad a partir del 15 de julio por USD 550 💰",
     "amenidades": [
       "Parqueo",
       "Agua potable",
@@ -3806,7 +3806,7 @@
     "direccion": "",
     "lat": -17.761561,
     "lng": -63.18432,
-    "descripcion": "Excelente opción de departamento en alquiler ubicado en Ovidio Barbery, Santa Cruz de la Sierra.\n\nCuenta con 3 dormitorios, 3 baños.\n\nEquipamiento y amenidades destacadas: Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Estacionamiento, Garage con Puerta Automática, Aire Acondicionado Central.\n\nCanon mensual: $ 514 USD.",
+    "descripcion": "Excelente opción de departamento en alquiler ubicado en Ovidio Barbery, Santa Cruz de la Sierra.\n\nCuenta con 3 dormitorios, 3 baños.\n\nEquipamiento y amenidades destacadas: Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Estacionamiento, Garage con Puerta Automática, Aire Acondicionado Central.\n\nCanon mensual: $ 514 USD.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -3877,7 +3877,7 @@
     "direccion": "",
     "lat": -17.754718,
     "lng": -63.166752,
-    "descripcion": "DEPARTAMENTO AMOBLADO 3D EN AV. ALEMANA 4TO ANILLO\n\n📍 A 1 cuadra del Saint George\n🏠 117,50 m²\n✅ 3 dormitorios\n✅ Churrasquera privada\n✅ Parqueo y expensas incluidas\n\n💰 Bs 6.000/mes\nOpción\n💰 Venta: USD 120.000",
+    "descripcion": "DEPARTAMENTO AMOBLADO 3D EN AV. ALEMANA 4TO ANILLO\n\n📍 A 1 cuadra del Saint George\n🏠 117,50 m2\n✅ 3 dormitorios\n✅ Churrasquera privada\n✅ Parqueo y expensas incluidas\n\n💰 Bs 6.000/mes\nOpción\n💰 Venta: USD 120.000",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -4015,7 +4015,7 @@
     "direccion": "",
     "lat": -17.765238,
     "lng": -63.191761,
-    "descripcion": "Hermoso y amplio departamento de 115 m², con 3 dormitorios, garaje y baulera, en una zona tranquila y residencial con plazas cerca para caminar, con restaurantes, comercios y servicios muy cerca, este departamento engloba comodidad, ubicación, cercanía a varios comercios todo en un solo lugar.",
+    "descripcion": "Hermoso y amplio departamento de 115 m2, con 3 dormitorios, garaje y baulera, en una zona tranquila y residencial con plazas cerca para caminar, con restaurantes, comercios y servicios muy cerca, este departamento engloba comodidad, ubicación, cercanía a varios comercios todo en un solo lugar.",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -4086,7 +4086,7 @@
     "direccion": "",
     "lat": -17.757678,
     "lng": -63.198466,
-    "descripcion": "Disfruta de la comodidad de vivir en Sky Luxury, Equipetrol. 🏡 Departamento amoblado de 1 dormitorio, 42 m², a estrenar, con balcón, vestidor y lavandería. Piscina, sauna, ascensor, conserjería y seguridad 🔒 en una ubicación privilegiada cerca de restaurantes, comercios y avenidas principales. Desde Bs 5000 al mes",
+    "descripcion": "Disfruta de la comodidad de vivir en Sky Luxury, Equipetrol. 🏡 Departamento amoblado de 1 dormitorio, 42 m2, a estrenar, con balcón, vestidor y lavandería. Piscina, sauna, ascensor, conserjería y seguridad 🔒 en una ubicación privilegiada cerca de restaurantes, comercios y avenidas principales. Desde Bs 5000 al mes",
     "amenidades": [
       "Sistema de Alarma",
       "Piscina",
@@ -4152,7 +4152,7 @@
     "direccion": "",
     "lat": -17.766685,
     "lng": -63.193113,
-    "descripcion": "¡Wow! 😍 Este monoambiente es un verdadero sueño hecho realidad. Con 40.88 m² de espacio, está equipado con todo lo esencial para vivir con comodidad y estilo.\nCompletamente amoblado y listo para habitar",
+    "descripcion": "¡Wow! 😍 Este monoambiente es un verdadero sueño hecho realidad. Con 40.88 m2 de espacio, está equipado con todo lo esencial para vivir con comodidad y estilo.\nCompletamente amoblado y listo para habitar",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -4204,7 +4204,7 @@
     }
   },
   {
-    "titulo": "",
+    "titulo": "Monoambiente a Estrenar - Edificio Saota Park",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 372.0,
@@ -4217,7 +4217,7 @@
     "direccion": "",
     "lat": -17.770123,
     "lng": -63.199657,
-    "descripcion": "𝐌𝐨𝐧𝐨𝐚𝐦𝐛𝐢𝐞𝐧𝐭𝐞 𝐚 𝐞𝐬𝐭𝐫𝐞𝐧𝐚𝐫 𝐞𝐧 𝐚𝐥𝐪𝐮𝐢𝐥𝐞𝐫 - 𝐄𝐝𝐢𝐟𝐢𝐜𝐢𝐨 𝐒𝐚𝐨𝐭𝐚 𝐏𝐚𝐫𝐤\n📍Zona Equipetrol, Calle 9 Oeste\n💰 Precio: Bs 2.800 (Expensas incluidas)\n📐 Superficie: 27,21 m²\n✓ Piso 3",
+    "descripcion": "Monoambiente a estrenar en alquiler - Edificio Saota Park\n📍Zona Equipetrol, Calle 9 Oeste\n💰 Precio: Bs 2.800 (Expensas incluidas)\n📐 Superficie: 27,21 m2\n✓ Piso 3",
     "amenidades": [
       "Terraza",
       "Sistema de Alarma",
@@ -4284,7 +4284,7 @@
     "direccion": "",
     "lat": -17.76857,
     "lng": -63.192329,
-    "descripcion": "DEPARTAMENTO DE LUJO EN ALQUILER\nCompletamente amoblado, ubicado en equipetrol\nCuenta con.-\n3 dormitorios en suite\ncocina americana\nbalcón\nárea de servicio y lavandería\nparqueo\nprecio 3500$",
+    "descripcion": "DEPARTAMENTO DE LUJO EN ALQUILER\nCompletamente amoblado, ubicado en equipetrol\nCuenta con.-\n3 dormitorios en suite\ncocina americana\nbalcón\nárea de servicio y lavandería\nparqueo\nprecio 3500$",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -4355,7 +4355,7 @@
     "direccion": "",
     "lat": -17.765658,
     "lng": -63.200301,
-    "descripcion": "✨ Viví donde cada día se siente como un descanso. ✨\n\nTe presento este monoambiente de 42,88 m² en MARE, diseñado para quienes buscan comodidad, modernidad y una experiencia de vida diferente.\n\nAdemás, tendrás acceso a exclusivas áreas sociales que elevan tu calidad de vida:\n🏊 Piscina\n💆 Spa\n💪 Gimnasio\n🎤 Sala de karaoke\n👨‍🍳 Cocina de chef",
+    "descripcion": "✨ Viví donde cada día se siente como un descanso. ✨\n\nTe presento este monoambiente de 42,88 m2 en MARE, diseñado para quienes buscan comodidad, modernidad y una experiencia de vida diferente.\n\nAdemás, tendrás acceso a exclusivas áreas sociales que elevan tu calidad de vida:\n🏊 Piscina\n💆 Spa\n💪 Gimnasio\n🎤 Sala de karaoke\n👨‍🍳 Cocina de chef",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -4418,7 +4418,7 @@
     "direccion": "",
     "lat": -17.749943,
     "lng": -63.149532,
-    "descripcion": "DEPARTAMENTO SEMIINDEPENDIENTE EN ALQUILER\n\n📍 Cambódromo, entre 4to y 5to anillo\n\n✨ Características\n🛏️ 3 dormitorios\n👑 1 dormitorio en suite\n🚿 2 dormitorios con baño compartido\n🛋️ Amplia sala – comedor con aire acondicionado\n🍽️ Cocina con cajonería alta y baja\n🚗 1 garaje",
+    "descripcion": "DEPARTAMENTO SEMIINDEPENDIENTE EN ALQUILER\n\n📍 Cambódromo, entre 4to y 5to anillo\n\n✨ Características\n🛏️ 3 dormitorios\n👑 1 dormitorio en suite\n🚿 2 dormitorios con baño compartido\n🛋️ Amplia sala – comedor con aire acondicionado\n🍽️ Cocina con cajonería alta y baja\n🚗 1 garaje",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -4489,7 +4489,7 @@
     "direccion": "",
     "lat": -17.76547,
     "lng": -63.202921,
-    "descripcion": "✨ DEPARTAMENTO EN ALQUILER – COND. PUERTO MADERO ✨\n📍 Sirari – Equipetrol\n\n📐 75 m² | Piso alto con excelente iluminación",
+    "descripcion": "✨ DEPARTAMENTO EN ALQUILER – COND. PUERTO MADERO ✨\n📍 Sirari – Equipetrol\n\n📐 75 m2 | Piso alto con excelente iluminación",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -4557,7 +4557,7 @@
     "direccion": "",
     "lat": -17.758588,
     "lng": -63.198144,
-    "descripcion": "✨ ️¡Vive en el corazón de Equipetrol Norte!\n✨Hermoso monoambiente totalmente amoblado en piso alto, ubicado en el\nmoderno edificio Smart You, ideal para quienes buscan comodidad, estilo y una\nubicación privilegiada.",
+    "descripcion": "✨ ️¡Vive en el corazón de Equipetrol Norte!\n✨Hermoso monoambiente totalmente amoblado en piso alto, ubicado en el\nmoderno edificio Smart You, ideal para quienes buscan comodidad, estilo y una\nubicación privilegiada.",
     "amenidades": [
       "Amoblado",
       "Ascensor",
@@ -4625,7 +4625,7 @@
     "direccion": "",
     "lat": -17.768798,
     "lng": -63.189893,
-    "descripcion": "Monoambiente amoblado en alquiler\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 1 dormitorio, 1 baño.\n\nEquipamiento y amenidades destacadas: Terraza, Balcon, Piscina, Parqueo, Acceso silla de ruedas, Vida citadina, Inversión, Jubilación.\n\nCanon mensual: $ 280 USD.",
+    "descripcion": "Monoambiente amoblado en alquiler\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 1 dormitorio, 1 baño.\n\nEquipamiento y amenidades destacadas: Terraza, Balcon, Piscina, Parqueo, Acceso silla de ruedas, Vida citadina, Inversión, Jubilación.\n\nCanon mensual: $ 280 USD.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -4687,7 +4687,7 @@
     "direccion": "",
     "lat": -17.756217,
     "lng": -63.196385,
-    "descripcion": "✨ DEPARTAMENTO SEMI- INDEPENDIENTE CON PARQUEO EN ALQUILER✨\n📍 Zona Equipetrol 4to anillo calle Dra. María de Boland\n📐Superficie 40m\n🪧 Características\n* Dormitorio en suite\n* Cocina Independiente\n* Comedor\n* Área de lavandería\n* ⁠Patio\n* ParqueO",
+    "descripcion": "✨ DEPARTAMENTO SEMI- INDEPENDIENTE CON PARQUEO EN ALQUILER✨\n📍 Zona Equipetrol 4to anillo calle Dra. María de Boland\n📐Superficie 40m\n🪧 Características\n* Dormitorio en suite\n* Cocina Independiente\n* Comedor\n* Área de lavandería\n* ⁠Patio\n* ParqueO",
     "amenidades": [
       "Parqueo",
       "Casa",
@@ -4753,7 +4753,7 @@
     "direccion": "",
     "lat": -17.765198,
     "lng": -63.20323,
-    "descripcion": "Una excelente opción para vivir en una de las zonas más buscadas de Santa Cruz, combinando comodidad, ubicación y completas áreas sociales.",
+    "descripcion": "Una excelente opción para vivir en una de las zonas más buscadas de Santa Cruz, combinando comodidad, ubicación y completas áreas sociales.",
     "amenidades": [
       "Terraza",
       "Parqueo",
@@ -4824,7 +4824,7 @@
     "direccion": "",
     "lat": -17.764514,
     "lng": -63.191686,
-    "descripcion": "> ✨ ¡TUS MALETAS Y NADA MÁS! DEPARTAMENTO 100% EQUIPADO EN EQUIPETROL ✨\n> Vive con el máximo confort en el Edificio Portobello Green (Depto. 3A). Un espacio moderno, amoblado y con todo el equipamiento necesario para tu día a día.",
+    "descripcion": "> ✨ ¡TUS MALETAS Y NADA MÁS! DEPARTAMENTO 100% EQUIPADO EN EQUIPETROL ✨\n> Vive con el máximo confort en el Edificio Portobello Green (Depto. 3A). Un espacio moderno, amoblado y con todo el equipamiento necesario para tu día a día.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -4891,7 +4891,7 @@
     "direccion": "",
     "lat": -17.755717,
     "lng": -63.193327,
-    "descripcion": "DEPARTAMENTO AMOBLADO DE 1 DORMITORIO – EQUIPETROL\n📍 Condominio Siria II – Zona Equipetrol\nVive con comodidad y excelente ubicación en este acogedor departamento completamente amoblado y equipado. ✨\n\n💰Precio : 4200 bs\n\n📍 Excelente ubicación en Equipetrol, cerca de restaurantes, cafeterías, supermercados, centros comerciales.",
+    "descripcion": "DEPARTAMENTO AMOBLADO DE 1 DORMITORIO – EQUIPETROL\n📍 Condominio Siria II – Zona Equipetrol\nVive con comodidad y excelente ubicación en este acogedor departamento completamente amoblado y equipado. ✨\n\n💰Precio : 4200 bs\n\n📍 Excelente ubicación en Equipetrol, cerca de restaurantes, cafeterías, supermercados, centros comerciales.",
     "amenidades": [
       "Piscina",
       "Parqueo",
@@ -4961,7 +4961,7 @@
     "direccion": "",
     "lat": -17.748707,
     "lng": -63.169037,
-    "descripcion": "🏡✨ ¡Viví con todo listo en Gardenia Condominio Club! Departamento de 2 dormitorios, 83,5 m², completamente amoblado y equipado, con lavadora, balcón con churrasquera y parqueo propio. 🏊‍♀️ Disfrutá increíbles áreas sociales tipo club. 📍 Av. Beni y 4to anillo. 💰 Bs. 5.200 con expensas.",
+    "descripcion": "🏡✨ ¡Viví con todo listo en Gardenia Condominio Club! Departamento de 2 dormitorios, 83,5 m2, completamente amoblado y equipado, con lavadora, balcón con churrasquera y parqueo propio. 🏊‍♀️ Disfrutá increíbles áreas sociales tipo club. 📍 Av. Beni y 4to anillo. 💰 Bs. 5.200 con expensas.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -5031,7 +5031,7 @@
     "direccion": "",
     "lat": -17.764994,
     "lng": -63.193575,
-    "descripcion": "DEPARTAMENTO DE 1 DORMITORIO EN ALQUILER EN DOMUS INFINITY\n\n✨ Ubicado en piso 5, en fachada, con 49,6 m² distribuidos de manera funcional y moderna.",
+    "descripcion": "DEPARTAMENTO DE 1 DORMITORIO EN ALQUILER EN DOMUS INFINITY\n\n✨ Ubicado en piso 5, en fachada, con 49,6 m2 distribuidos de manera funcional y moderna.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -5099,7 +5099,7 @@
     "direccion": "",
     "lat": -17.757004,
     "lng": -63.197844,
-    "descripcion": "🏢✨ DEPARTAMENTO EN ALQUILER | 𝐒𝐊𝐘 𝐌𝐎𝐎𝐍 ✨🏢\n📍 Ubicado en Equipetrol, a 1 cuadra del Ventura Mall🛍️ y a 2 cuadras de la Av. San Martín🌳\n📐 Sup. 105 m²",
+    "descripcion": "🏢✨ DEPARTAMENTO EN ALQUILER | SKY MOON ✨🏢\n📍 Ubicado en Equipetrol, a 1 cuadra del Ventura Mall🛍️ y a 2 cuadras de la Av. San Martín🌳\n📐 Sup. 105 m2",
     "amenidades": [
       "Balcon",
       "Cocina",
@@ -5165,7 +5165,7 @@
     "direccion": "",
     "lat": -17.75964,
     "lng": -63.1941,
-    "descripcion": "✨ 𝐕𝐢𝐯𝐢́ 𝐞𝐧 𝐄𝐪𝐮𝐢𝐩𝐞𝐭𝐫𝐨𝐥 𝐲 𝐝𝐢𝐬𝐟𝐫𝐮𝐭𝐚́ 𝐝𝐞 𝐥𝐚 𝐜𝐨𝐦𝐨𝐝𝐢𝐝𝐚𝐝 𝐪𝐮𝐞 𝐦𝐞𝐫𝐞𝐜𝐞𝐬 ✨\n\nHay lugares donde no solo alquilas un departamento… eliges cómo quieres vivir. 🏡\n\nEste departamento de 2 dormitorios a estrenar te ofrece la combinación perfecta entre ubicación, comodidad y espacios pensados para tu día a día, en una d",
+    "descripcion": "✨ Viví en Equipetrol y disfrutá de la comodidad que mereces ✨\n\nHay lugares donde no solo alquilas un departamento... eliges cómo quieres vivir. 🏡\n\nEste departamento de 2 dormitorios a estrenar te ofrece la combinación perfecta entre ubicación, comodidad y espacios pensados para tu día a día, en una d",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5234,7 +5234,7 @@
     "direccion": "",
     "lat": -17.759661,
     "lng": -63.1941,
-    "descripcion": "Hay una diferencia entre simplemente alquilar un departamento y elegir un lugar que se adapte a tu estilo de vida. 🏡\nEste departamento a estrenar de 57 m² está pensado para quienes valoran los espacios funcionales, una buena ubicación y la comodidad de tener todo cerca.",
+    "descripcion": "Hay una diferencia entre simplemente alquilar un departamento y elegir un lugar que se adapte a tu estilo de vida. 🏡\nEste departamento a estrenar de 57 m2 está pensado para quienes valoran los espacios funcionales, una buena ubicación y la comodidad de tener todo cerca.",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5305,7 +5305,7 @@
     "direccion": "",
     "lat": -17.767431,
     "lng": -63.195248,
-    "descripcion": "🏡✨ DEPARTAMENTO AMOBLADO EN ALQUILER – SPERANTO RESIDENZE\n\nVive con comodidad y estilo en este acogedor departamento amoblado de 1 dormitorio\n\n🏙️Primer piso\n📐 Superficie: 50 m²\n🛏️ 1 dormitorio con baño privado\n🚽 Baño de visita\n🚗 Parqueo incluido",
+    "descripcion": "🏡✨ DEPARTAMENTO AMOBLADO EN ALQUILER – SPERANTO RESIDENZE\n\nVive con comodidad y estilo en este acogedor departamento amoblado de 1 dormitorio\n\n🏙️Primer piso\n📐 Superficie: 50 m2\n🛏️ 1 dormitorio con baño privado\n🚽 Baño de visita\n🚗 Parqueo incluido",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5376,7 +5376,7 @@
     "direccion": "",
     "lat": -17.748707,
     "lng": -63.169037,
-    "descripcion": "Vive en Gardenia Condominio Club, un espacio exclusivo en Av. Beni y 4to anillo. Departamento de 2 dormitorios con suite, vestidor y balcón con churrasquera. Disfruta áreas sociales de lujo: piscina, gym, cine y más. Ubicación privilegiada y confort total.",
+    "descripcion": "Vive en Gardenia Condominio Club, un espacio exclusivo en Av. Beni y 4to anillo. Departamento de 2 dormitorios con suite, vestidor y balcón con churrasquera. Disfruta áreas sociales de lujo: piscina, gym, cine y más. Ubicación privilegiada y confort total.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -5447,7 +5447,7 @@
     "direccion": "",
     "lat": -17.731928,
     "lng": -63.168211,
-    "descripcion": "🏢✨ DEPARTAMENTO DE LUJO EN ALQUILER – ZONA NORTE\n\n📍 Condominio Tamisa 3 – Av. Banzer, 6.º Anillo\n\nViví con comodidad en un departamento moderno, totalmente equipado y con excelentes áreas sociales.",
+    "descripcion": "🏢✨ DEPARTAMENTO DE LUJO EN ALQUILER – ZONA NORTE\n\n📍 Condominio Tamisa 3 – Av. Banzer, 6.o Anillo\n\nViví con comodidad en un departamento moderno, totalmente equipado y con excelentes áreas sociales.",
     "amenidades": [
       "Sistema de Alarma",
       "Piscina",
@@ -5511,7 +5511,7 @@
     "direccion": "",
     "lat": -17.768933,
     "lng": -63.178028,
-    "descripcion": "Viví con comodidad, amplitud y exclusividad en este espectacular penthouse completamente amoblado y equipado, ubicado en una zona residencial estratégica sobre la Av. Beni. ✨\n\n📐 260 m²",
+    "descripcion": "Viví con comodidad, amplitud y exclusividad en este espectacular penthouse completamente amoblado y equipado, ubicado en una zona residencial estratégica sobre la Av. Beni. ✨\n\n📐 260 m2",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -5580,7 +5580,7 @@
     "direccion": "",
     "lat": -17.793682,
     "lng": -63.194733,
-    "descripcion": "DEPARTAMENTO AMOBLADO\n\nUbicación: 2do anillo, Condominio Torres Urbarí\nSuperficie: 50 m2\nCaracterísticas:\n1 dorm en suite\nLiving comedor\nCocina integrada\nÁrea de lavandería\nBalcón\n1 parqueo\n\nPrecio: 2500bs con expensas incluidas",
+    "descripcion": "DEPARTAMENTO AMOBLADO\n\nUbicación: 2do anillo, Condominio Torres Urbarí\nSuperficie: 50 m2\nCaracterísticas:\n1 dorm en suite\nLiving comedor\nCocina integrada\nÁrea de lavandería\nBalcón\n1 parqueo\n\nPrecio: 2500bs con expensas incluidas",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -5648,7 +5648,7 @@
     "direccion": "",
     "lat": -17.770368,
     "lng": -63.196376,
-    "descripcion": "🛏️ 2 dormitorios (1 en suite)\n🌅 Balcón con hermosas vistas\n🍩Cocina equipada y amoblada\n🌬️Aires acondicionados y cortinas\n⛽Gas a domicilio\n🚗 parqueo incluidos",
+    "descripcion": "🛏️ 2 dormitorios (1 en suite)\n🌅 Balcón con hermosas vistas\n🍩Cocina equipada y amoblada\n🌬️Aires acondicionados y cortinas\n⛽Gas a domicilio\n🚗 parqueo incluidos",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5703,7 +5703,7 @@
     }
   },
   {
-    "titulo": "Monoambiente Amoblado Curupaú Isuto",
+    "titulo": "Monoambiente Amoblado Curupaú Isuto",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 515.0,
@@ -5716,7 +5716,7 @@
     "direccion": "",
     "lat": -17.751323,
     "lng": -63.191642,
-    "descripcion": "✨ MONOAMBIENTE AMOBLADO EN ALQUILER | CURUPAÚ ISUTO\nUn espacio ideal para quienes buscan comodidad, entretenimiento y una excelente ubicación. ✨\n\n📐Superficie de  50,21 m² en el  🌇 Piso 12\n🌿 Balcón con hermosa vista\n\n💰 Alquiler: Bs 3.600",
+    "descripcion": "✨ MONOAMBIENTE AMOBLADO EN ALQUILER | CURUPAÚ ISUTO\nUn espacio ideal para quienes buscan comodidad, entretenimiento y una excelente ubicación. ✨\n\n📐Superficie de  50,21 m2 en el  🌇 Piso 12\n🌿 Balcón con hermosa vista\n\n💰 Alquiler: Bs 3.600",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5786,7 +5786,7 @@
     "direccion": "",
     "lat": -17.767364,
     "lng": -63.195119,
-    "descripcion": "🏡✨ DEPARTAMENTO EN ALQUILER | SPERANTO RESIDENZE\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 3 baños.\n\nEquipamiento y amenidades destacadas: Parqueo, Edificio Nuevo, Cocina, Lavandería (en edificio), Fumar está permitido, Lavandería (en depto.), Madera, Tableta.\n\nCanon mensual: $ 500 USD.",
+    "descripcion": "🏡✨ DEPARTAMENTO EN ALQUILER | SPERANTO RESIDENZE\n\nExcelente opción de departamento en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 3 baños.\n\nEquipamiento y amenidades destacadas: Parqueo, Edificio Nuevo, Cocina, Lavandería (en edificio), Fumar está permitido, Lavandería (en depto.), Madera, Tableta.\n\nCanon mensual: $ 500 USD.",
     "amenidades": [
       "Parqueo",
       "Edificio Nuevo",
@@ -5857,7 +5857,7 @@
     "direccion": "",
     "lat": -17.797999,
     "lng": -63.173267,
-    "descripcion": "¡A ESTRENAR Y  AMOBLADO! Dpto de 1 Dormitorio sobre el 2do Anillo (Zona Madre India)\n\nEste hermoso departamento de 40.62 m² cuenta con, excelente iluminación natural, con balcón propio.\n\n¡Todo listo para que entrés a vivir!\n\n💰 Precio: Bs. 3,500.- (¡EXPENSAS Y PARQUEO INCLUIDOS en el precio!)",
+    "descripcion": "¡A ESTRENAR Y  AMOBLADO! Dpto de 1 Dormitorio sobre el 2do Anillo (Zona Madre India)\n\nEste hermoso departamento de 40.62 m2 cuenta con, excelente iluminación natural, con balcón propio.\n\n¡Todo listo para que entrés a vivir!\n\n💰 Precio: Bs. 3,500.- (¡EXPENSAS Y PARQUEO INCLUIDOS en el precio!)",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -5912,7 +5912,7 @@
     }
   },
   {
-    "titulo": "Departamento de. 1 habitación amoblado",
+    "titulo": "Departamento de. 1 habitación amoblado",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 0.0,
@@ -5925,7 +5925,7 @@
     "direccion": "",
     "lat": -17.758774,
     "lng": -63.198177,
-    "descripcion": "Departamento de 1 Habitación Amoblado en Alquiler – Smart by You\n- Amoblado\n- Incluye expensas\n-Balcon sobre la fachada\n-Parqueo para visitas 24 horas o hasta mismo se puede alquilar aparte el parqueo.\n- Lavadora\n- Piso 2.",
+    "descripcion": "Departamento de 1 Habitación Amoblado en Alquiler – Smart by You\n- Amoblado\n- Incluye expensas\n-Balcon sobre la fachada\n-Parqueo para visitas 24 horas o hasta mismo se puede alquilar aparte el parqueo.\n- Lavadora\n- Piso 2.",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -5991,7 +5991,7 @@
     "direccion": "",
     "lat": -17.759191,
     "lng": -63.193402,
-    "descripcion": "DEPARTAMENTO A ESTRENAR EN ALQUILER MONOAMBIENTE AMOBLADO CERCA EQUIPETROL\n\n📍Cond. STONE III\nZona Equipetrol\n🟩Superficie: 39 m2\n𝗕𝗦 3.600.- (𝙀𝙭𝙥𝙚𝙣𝙨𝙖𝙨 𝙄𝙣𝙘𝙡𝙪𝙞𝙙𝙖𝙨)\n🔵Descripción:\n- 1 Habitación con salida al balcón\n- Living / Comedor\n- Cocina equipada\n- 1 Baño\n- Área de lavandería",
+    "descripcion": "DEPARTAMENTO A ESTRENAR EN ALQUILER MONOAMBIENTE AMOBLADO CERCA EQUIPETROL\n\n📍Cond. STONE III\nZona Equipetrol\n🟩Superficie: 39 m2\nBS 3.600.- (Expensas Incluidas)\n🔵Descripción:\n- 1 Habitación con salida al balcón\n- Living / Comedor\n- Cocina equipada\n- 1 Baño\n- Área de lavandería",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -6062,7 +6062,7 @@
     "direccion": "",
     "lat": -17.713788,
     "lng": -63.179369,
-    "descripcion": "🏡 DEPARTAMENTO EN ALQUILER – PIAZZA CONDOMINIO CLUB ✨\n📍 Zona Norte | 8vo Anillo entre Av. Banzer y Radial 26\n💰 ALQUILER: Bs 3.000/mes\n✨ ¡EXPENSAS INCLUIDAS!\n📐 62 m² | Planta baja\n🛏️ 2 dormitorios",
+    "descripcion": "🏡 DEPARTAMENTO EN ALQUILER – PIAZZA CONDOMINIO CLUB ✨\n📍 Zona Norte | 8vo Anillo entre Av. Banzer y Radial 26\n💰 ALQUILER: Bs 3.000/mes\n✨ ¡EXPENSAS INCLUIDAS!\n📐 62 m2 | Planta baja\n🛏️ 2 dormitorios",
     "amenidades": [
       "Balcon",
       "Parqueo",
@@ -6125,7 +6125,7 @@
     "direccion": "",
     "lat": -17.769081,
     "lng": -63.195376,
-    "descripcion": "Vive la experiencia de un hogar de alto nivel en este elegante dúplex totalmente amoblado con mobiliario de lujo, diseñado a medida para cada espacio. Amplitud, confort y una distribución inteligente en una de las mejores zonas residenciales. Ideal para quienes buscan calidad, estilo y practicidad en un solo lugar.",
+    "descripcion": "Vive la experiencia de un hogar de alto nivel en este elegante dúplex totalmente amoblado con mobiliario de lujo, diseñado a medida para cada espacio. Amplitud, confort y una distribución inteligente en una de las mejores zonas residenciales. Ideal para quienes buscan calidad, estilo y practicidad en un solo lugar.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -6174,7 +6174,7 @@
     }
   },
   {
-    "titulo": "Casa comercial de 54 m² en Las Palmas – ideal para consultorio, café u oficina, a 500 m de Hipermaxi",
+    "titulo": "Casa comercial de 54 m2 en Las Palmas – ideal para consultorio, café u oficina, a 500 m de Hipermaxi",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 400.0,
@@ -6187,7 +6187,7 @@
     "direccion": "",
     "lat": -17.809066,
     "lng": -63.208981,
-    "descripcion": "Casa comercial de 54 m² en Las Palmas, a 500 m de Hipermaxi. Ideal para consultorio, estética, café, oficina o showroom. Buena ubicación y fácil acceso. Lista para operar.",
+    "descripcion": "Casa comercial de 54 m2 en Las Palmas, a 500 m de Hipermaxi. Ideal para consultorio, estética, café, oficina o showroom. Buena ubicación y fácil acceso. Lista para operar.",
     "amenidades": [
       "Parqueo",
       "Cocina",
@@ -6244,7 +6244,7 @@
     "direccion": "",
     "lat": -17.765771,
     "lng": -63.199882,
-    "descripcion": "✨ DEPARTAMENTO DE LUJO EN ALQUILER EN EDIFICIO MARE ✨\n📍 Ubicado en Equipetrol sobre el 3° anillo externo.\n📐 Superficie:  42 m², piso 10",
+    "descripcion": "✨ DEPARTAMENTO DE LUJO EN ALQUILER EN EDIFICIO MARE ✨\n📍 Ubicado en Equipetrol sobre el 3° anillo externo.\n📐 Superficie:  42 m2, piso 10",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -6303,7 +6303,7 @@
     "direccion": "",
     "lat": -17.761251,
     "lng": -63.196804,
-    "descripcion": "🌟 Departamento de Lujo a Estrenar en Alquiler | Golden Tower 🌟\n📍 Piso 14\n📐 Superficie: 53 m²\n✅ 1 dormitorio en suite\n✅ Cocina completamente equipada\n✅ Ropero empotrado\n✅ Amplio balcón con acceso desde la sala y el dormitorio\nÁreas sociales :\n🏊 Piscina 🏋️ Gimnasio 🎬 Sala de cine\n💼 Coworking\n🎉 Salón de eventos\n💰 Precio 5.000B",
+    "descripcion": "🌟 Departamento de Lujo a Estrenar en Alquiler | Golden Tower 🌟\n📍 Piso 14\n📐 Superficie: 53 m2\n✅ 1 dormitorio en suite\n✅ Cocina completamente equipada\n✅ Ropero empotrado\n✅ Amplio balcón con acceso desde la sala y el dormitorio\nÁreas sociales :\n🏊 Piscina 🏋️ Gimnasio 🎬 Sala de cine\n💼 Coworking\n🎉 Salón de eventos\n💰 Precio 5.000B",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -6366,7 +6366,7 @@
     "direccion": "",
     "lat": -17.772269,
     "lng": -63.192501,
-    "descripcion": "Departamento en alquiler anual en Equipetrol 📍 con 168 m², 3 dormitorios, 3 baños, medio baño, vestidor, lavandería y 2 parqueos 🚗. Disfruta de piscina 🏊, sistema de seguridad y disponibilidad inmediata 🔒. Una excelente opción para vivir con comodidad por USD 8.500.",
+    "descripcion": "Departamento en alquiler anual en Equipetrol 📍 con 168 m2, 3 dormitorios, 3 baños, medio baño, vestidor, lavandería y 2 parqueos 🚗. Disfruta de piscina 🏊, sistema de seguridad y disponibilidad inmediata 🔒. Una excelente opción para vivir con comodidad por USD 8.500.",
     "amenidades": [
       "Sistema de Alarma",
       "Piscina",
@@ -6429,7 +6429,7 @@
     "direccion": "",
     "lat": -17.792002,
     "lng": -63.177376,
-    "descripcion": "DEPARTAMENTO DE 2 DORMITORIOS AMOBLADOS EN ALQUILER - AV. IRALA\n\nExcelente opción de departamento en alquiler ubicado en Sur, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 1 baño.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 400 USD.",
+    "descripcion": "DEPARTAMENTO DE 2 DORMITORIOS AMOBLADOS EN ALQUILER - AV. IRALA\n\nExcelente opción de departamento en alquiler ubicado en Sur, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 1 baño.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 400 USD.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -6500,7 +6500,7 @@
     "direccion": "",
     "lat": -17.761438,
     "lng": -63.197072,
-    "descripcion": "Ubicación: Av San Martin entre 3er y 4to anillo calle. Alejandro Ramirez\nPrecio: 9000 BS\nSuperficie: 115 m2\nDormitorios: 2\nBaños: 3\nPiso: 14\nParqueo: Sí",
+    "descripcion": "Ubicación: Av San Martin entre 3er y 4to anillo calle. Alejandro Ramirez\nPrecio: 9000 BS\nSuperficie: 115 m2\nDormitorios: 2\nBaños: 3\nPiso: 14\nParqueo: Sí",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -6563,7 +6563,7 @@
     "direccion": "",
     "lat": -17.761183,
     "lng": -63.196739,
-    "descripcion": "𝐄𝐧 𝐥𝐚 𝐙𝐨𝐧𝐚 𝐦à𝐬 𝐞𝐱𝐜𝐥𝐮𝐬𝐢𝐯𝐚 𝐝𝐞 𝐒𝐚𝐧𝐭𝐚 𝐂𝐫𝐮𝐳\nDPTO en Alquiler\nUbicado en Equipetrol\nSup. 60.80 m2\n4000BS",
+    "descripcion": "En la Zona màs exclusiva de Santa Cruz\nDPTO en Alquiler\nUbicado en Equipetrol\nSup. 60.80 m2\n4000BS",
     "amenidades": [
       "Piscina",
       "Cocina",
@@ -6626,7 +6626,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 243m² totales\nPrimero piso:\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n•Balcon\nSegundo piso:\n•Churrasquera\n•Baño\n•cuarto para despensa\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 5,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 243m2 totales\nPrimero piso:\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n•Balcon\nSegundo piso:\n•Churrasquera\n•Baño\n•cuarto para despensa\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 5,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -6682,7 +6682,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 243m² totales\nPrimero piso:\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n•Balcon\nSegundo piso:\n•Churrasquera\n•Baño\n•cuarto para despensa\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 5,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 243m2 totales\nPrimero piso:\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n•Balcon\nSegundo piso:\n•Churrasquera\n•Baño\n•cuarto para despensa\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 5,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -6738,7 +6738,7 @@
     "direccion": "",
     "lat": -17.820383,
     "lng": -63.21824,
-    "descripcion": "🏡 Vive con comodidad en una excelente ubicación\n\nDepartamento de 127 m² con 3 habitaciones, amplios ambientes y todas las comodidades que necesitas, en un condominio seguro con piscina y áreas sociales.\n\n📍 Doble Vía La Guardia, entre 5to y 6to anillo\n💰 Bs. 4.000 | Expensas incluidas",
+    "descripcion": "🏡 Vive con comodidad en una excelente ubicación\n\nDepartamento de 127 m2 con 3 habitaciones, amplios ambientes y todas las comodidades que necesitas, en un condominio seguro con piscina y áreas sociales.\n\n📍 Doble Vía La Guardia, entre 5to y 6to anillo\n💰 Bs. 4.000 | Expensas incluidas",
     "amenidades": [
       "Terraza",
       "Parqueo",
@@ -6785,7 +6785,7 @@
     }
   },
   {
-    "titulo": "DEPARTAMENTO A ESTRENAR | LOFTY ISLAND Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz Condominio LOFTY ISLAND",
+    "titulo": "DEPARTAMENTO A ESTRENAR | LOFTY ISLAND Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz Condominio LOFTY ISLAND",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 363.0,
@@ -6798,7 +6798,7 @@
     "direccion": "",
     "lat": -17.770604,
     "lng": -63.193063,
-    "descripcion": "🏡✨ DEPARTAMENTO A ESTRENAR EN ALQUILER |\nLOFTY ISLAND\n¡Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz! 💙\n📍 Condominio LOFTY ISLAND",
+    "descripcion": "🏡✨ DEPARTAMENTO A ESTRENAR EN ALQUILER |\nLOFTY ISLAND\n¡Estrena tu nuevo hogar en una de las zonas más buscadas de Santa Cruz! 💙\n📍 Condominio LOFTY ISLAND",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -6916,7 +6916,7 @@
     "direccion": "",
     "lat": -17.76479,
     "lng": -63.2037,
-    "descripcion": "𝙀𝙓𝘾𝙇𝙐𝙎𝙄𝙑𝙊  𝘿𝙀𝙋𝘼𝙍𝙏𝘼𝙈𝙀𝙉𝙏𝙊 1 𝘿𝙊𝙍-𝙀𝙉 𝙀𝙌𝙐𝙄𝙋𝙀𝙏𝙍𝙊𝙇\n�\n�n alquiler 𝙰𝙼𝙾𝙱𝙻𝙰𝙼𝙸𝙴𝙽𝚃𝙾 𝙸𝙽𝙲𝙻𝚄𝙸𝙳𝙾 ‼\nElement Sirari en Equipetrol\n�𝗘𝗦𝗖𝗥𝗜𝗣𝗖𝗜𝗢𝗡\n1 Dormitorio con A/C\nAmplia Sala con A/C\nCocina totalmente equipada encimera, extractor, horno microondas, cajonera alta,\nbaja y mesón de granito\nÁrea de Lavado",
+    "descripcion": "EXCLUSIVO  DEPARTAMENTO 1 DOR-EN EQUIPETROL\n�\n�n alquiler AMOBLAMIENTO INCLUIDO !!\nElement Sirari en Equipetrol\n�ESCRIPCION\n1 Dormitorio con A/C\nAmplia Sala con A/C\nCocina totalmente equipada encimera, extractor, horno microondas, cajonera alta,\nbaja y mesón de granito\nÁrea de Lavado",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -6987,7 +6987,7 @@
     "direccion": "",
     "lat": -17.767998,
     "lng": -63.179131,
-    "descripcion": "Segundo anillo El Cristo\nExcelente ubicación\n\nExcelente opción de departamento en alquiler ubicado en Norte, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 1 baño.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 431 USD.",
+    "descripcion": "Segundo anillo El Cristo\nExcelente ubicación\n\nExcelente opción de departamento en alquiler ubicado en Norte, Santa Cruz de la Sierra.\n\nCuenta con 2 dormitorios, 1 baño.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 431 USD.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7049,7 +7049,7 @@
     "direccion": "",
     "lat": -17.768601,
     "lng": -63.195854,
-    "descripcion": "✨ Viví en Equipetrol, en un departamento completamente nuevo y amoblado\n\nTe presento este elegante departamento de 1 dormitorio en el moderno Edificio Atrium, ubicado sobre la calle Enrique Finot, una de las mejores zonas de Equipetrol.\n\nCon 45.43 m² perfectamente distribuidos, este espacio combina diseño moderno y comodidad.",
+    "descripcion": "✨ Viví en Equipetrol, en un departamento completamente nuevo y amoblado\n\nTe presento este elegante departamento de 1 dormitorio en el moderno Edificio Atrium, ubicado sobre la calle Enrique Finot, una de las mejores zonas de Equipetrol.\n\nCon 45.43 m2 perfectamente distribuidos, este espacio combina diseño moderno y comodidad.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7119,7 +7119,7 @@
     "direccion": "",
     "lat": -17.792527,
     "lng": -63.176333,
-    "descripcion": "Descubre el equilibrio perfecto entre comodidad, elegancia y una ubicación privilegiada en este exclusivo departamento de un dormitorio, completamente equipado, amoblado y con acabados de lujo, ubicado en el edificio Altos del Sur, sobre la calle Gualberto Villarroel esquina Don Bosco # 150, a pasos del Parque Urbano.",
+    "descripcion": "Descubre el equilibrio perfecto entre comodidad, elegancia y una ubicación privilegiada en este exclusivo departamento de un dormitorio, completamente equipado, amoblado y con acabados de lujo, ubicado en el edificio Altos del Sur, sobre la calle Gualberto Villarroel esquina Don Bosco # 150, a pasos del Parque Urbano.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7242,7 +7242,7 @@
     "direccion": "",
     "lat": -17.72467,
     "lng": -63.18419,
-    "descripcion": "🏡 Departamento Semiamoblado de 2 Dormitorios en Alquiler ZONA NORTE\n\n💰 Precio: Bs 3.000\n\n📍 Condominio Jericó 3, Zona Norte, 6.º Anillo.\n\nCaracterísticas:\n✨ Amplio living-comedor con aire acondicionado.\n🍽️ Cocina cerrada\n🧺 Conexión para lavadora.\n🛏️ 2 dormitorios.\n🚿 1 baño.\n🌅 Balcón.\n🚗 1 parqueo.\nPRECIO 3.000 BS",
+    "descripcion": "🏡 Departamento Semiamoblado de 2 Dormitorios en Alquiler ZONA NORTE\n\n💰 Precio: Bs 3.000\n\n📍 Condominio Jericó 3, Zona Norte, 6.o Anillo.\n\nCaracterísticas:\n✨ Amplio living-comedor con aire acondicionado.\n🍽️ Cocina cerrada\n🧺 Conexión para lavadora.\n🛏️ 2 dormitorios.\n🚿 1 baño.\n🌅 Balcón.\n🚗 1 parqueo.\nPRECIO 3.000 BS",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -7355,7 +7355,7 @@
     "direccion": "",
     "lat": -17.761234,
     "lng": -63.182374,
-    "descripcion": "DEPARTAMENTO DE 2 HABITACIONES EN ALQUILER ✨🏡\n📍 Excelente ubicación, cerca de supermercados, colegios, transporte público y todos los servicios.\nA 2 cuadras del  3er  anillo y a 2 cuadras de la banzer",
+    "descripcion": "DEPARTAMENTO DE 2 HABITACIONES EN ALQUILER ✨🏡\n📍 Excelente ubicación, cerca de supermercados, colegios, transporte público y todos los servicios.\nA 2 cuadras del  3er  anillo y a 2 cuadras de la banzer",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7409,7 +7409,7 @@
     }
   },
   {
-    "titulo": "Depto 2 Dorm. en Alquiler · Doble vía La Guardia",
+    "titulo": "Depto 2 Dorm. en Alquiler · Doble vía La Guardia",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 258.0,
@@ -7422,7 +7422,7 @@
     "direccion": "",
     "lat": -17.829423,
     "lng": -63.222231,
-    "descripcion": "🏡 DEPARTAMENTO EN ALQUILER\nDisfruta de comodidad y buena ubicación en este acogedor departamento",
+    "descripcion": "🏡 DEPARTAMENTO EN ALQUILER\nDisfruta de comodidad y buena ubicación en este acogedor departamento",
     "amenidades": [
       "Parqueo"
     ],
@@ -7469,7 +7469,7 @@
     "direccion": "",
     "lat": -17.8031,
     "lng": -63.221597,
-    "descripcion": "Viva en zona residencial de gran expansión con lindas áreas verdes\nGran potencial de plusvalía\nCerca de Supermercados\nLos mejores colegios de la ciudad\nMercados\nFuturo Ventura Mall",
+    "descripcion": "Viva en zona residencial de gran expansión con lindas áreas verdes\nGran potencial de plusvalía\nCerca de Supermercados\nLos mejores colegios de la ciudad\nMercados\nFuturo Ventura Mall",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -7515,7 +7515,7 @@
     }
   },
   {
-    "titulo": "Departamento 1 Habitación | Torre Virtus 6b",
+    "titulo": "Departamento 1 Habitación | Torre Virtus 6b",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 285.0,
@@ -7528,7 +7528,7 @@
     "direccion": "",
     "lat": -17.752779,
     "lng": -63.156291,
-    "descripcion": "🏡 DEPARTAMENTO 1 HABITACIÓN EN ALQUILER | TORRE VIRTUS\n📍 Av. 2 de Agosto entre 4to y 5to anillo\nPiso 6\n🛏️ 1 dormitorio en suite y parqueo\n🏢 Torre Virtus – excelente ubicación\n💰 Alquiler: Bs 2.850\n✅ Expensas incluidas\n🚗 1 Parqueo",
+    "descripcion": "🏡 DEPARTAMENTO 1 HABITACIÓN EN ALQUILER | TORRE VIRTUS\n📍 Av. 2 de Agosto entre 4to y 5to anillo\nPiso 6\n🛏️ 1 dormitorio en suite y parqueo\n🏢 Torre Virtus – excelente ubicación\n💰 Alquiler: Bs 2.850\n✅ Expensas incluidas\n🚗 1 Parqueo",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7576,7 +7576,7 @@
     }
   },
   {
-    "titulo": "Departamento 1 Habitación | Torre Virtus 7b",
+    "titulo": "Departamento 1 Habitación | Torre Virtus 7b",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 315.0,
@@ -7650,7 +7650,7 @@
     "direccion": "",
     "lat": -17.77139,
     "lng": -63.189143,
-    "descripcion": "✨ DEPARTAMENTO EN ALQUILER EQUIPETROL✨\n📍 Edificio Domus Tower zona canal isuto y 2° anillo.\n📐 Superficie de 43 m2, 1 habitación",
+    "descripcion": "✨ DEPARTAMENTO EN ALQUILER EQUIPETROL✨\n📍 Edificio Domus Tower zona canal isuto y 2° anillo.\n📐 Superficie de 43 m2, 1 habitación",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -7709,7 +7709,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 50m² totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 50m2 totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7772,7 +7772,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 50m² totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 50m2 totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7835,7 +7835,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 50m² totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 50m2 totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7897,7 +7897,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 50m² totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 50m2 totales\n•Dormitrio\n•Cocina con cajoneria\n• Baño privado\n• Sobre calle Charcas a 1 casa del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\nREQUISITOS:\n• ⁠Alquiler 2,800 bs (Incluye expensas y agua)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -7959,7 +7959,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 132m² totales\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n• Sobre calle Charcas a metros del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 4,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 132m2 totales\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Cocina con cajoneria\n• Sobre calle Charcas a metros del Farmacorp 1er anillo (alto flujo vehicular y peatonal)\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 4,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Parqueo"
     ],
@@ -8011,7 +8011,7 @@
     "direccion": "",
     "lat": -17.779712,
     "lng": -63.173318,
-    "descripcion": "CARACTERÍSTICAS:\n• 132m² totales\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Balcon\n•Cocina con cajoneria\n• Sobre calle Charcas a metros del Farmacorp 1er anillo\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 4,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
+    "descripcion": "CARACTERÍSTICAS:\n• 132m2 totales\n•3 Dormitrio, (1en suite con baño privado)\n•Ropero empotrados en los 3 dormitorios\n•3 Baños\n•Lavanderia\n•Balcon\n•Cocina con cajoneria\n• Sobre calle Charcas a metros del Farmacorp 1er anillo\n•Garaje\nREQUISITOS:\n• ⁠Alquiler 4,500 bs (Incluye expensas)\n• ⁠Garantía\n• ⁠mes comisión",
     "amenidades": [
       "Balcon",
       "Parqueo"
@@ -8065,7 +8065,7 @@
     "direccion": "",
     "lat": -17.81234,
     "lng": -63.1545,
-    "descripcion": "Departamento En Alquiler\nZona Sur Este  4to y 5to Anillo Av Cañada El Carmen\nCalle 3 Oeste B/ Cañada El Carmen\n3 Dormitorios Planta Baja\nLiving Comedor\nCocina\nBaño a Compartir\nPatio Amplio\nParqueo para 1 Vehículo\nServicios de Agua Luz Gas Alcantarillado\nMes Alquiler 1.800 bs\nMes Garantía 1.800 bs\nComisión al 100 %",
+    "descripcion": "Departamento En Alquiler\nZona Sur Este  4to y 5to Anillo Av Cañada El Carmen\nCalle 3 Oeste B/ Cañada El Carmen\n3 Dormitorios Planta Baja\nLiving Comedor\nCocina\nBaño a Compartir\nPatio Amplio\nParqueo para 1 Vehículo\nServicios de Agua Luz Gas Alcantarillado\nMes Alquiler 1.800 bs\nMes Garantía 1.800 bs\nComisión al 100 %",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8202,7 +8202,7 @@
     "direccion": "",
     "lat": -17.712587,
     "lng": -63.145503,
-    "descripcion": "🏠✨ DEPARTAMENTO SEMI-INDEPENDIENTE EN ALQUILER ✨🏠\n📍 8vo y 9no anillo zona alemana Frente al Hospital Palos Verdes\n🚗 Zona de alto tráfico y fácil acceso\n🚌 Cerca pasa el Micro 11\n🏫 Cerca de mercados, canchas, kínder y colegio",
+    "descripcion": "🏠✨ DEPARTAMENTO SEMI-INDEPENDIENTE EN ALQUILER ✨🏠\n📍 8vo y 9no anillo zona alemana Frente al Hospital Palos Verdes\n🚗 Zona de alto tráfico y fácil acceso\n🚌 Cerca pasa el Micro 11\n🏫 Cerca de mercados, canchas, kínder y colegio",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8273,7 +8273,7 @@
     "direccion": "",
     "lat": -17.768221,
     "lng": -63.194625,
-    "descripcion": "Departamento amoblado de 1 dormitorio en alquiler en Equipetrol. 48,53 m², 1 baño y excelente ubicación sobre calle Hugo Wast, Pasaje Colegio Alemán. 📍 Vacío y en buen estado, disponible para alquiler anual. Precio: BS 4500.",
+    "descripcion": "Departamento amoblado de 1 dormitorio en alquiler en Equipetrol. 48,53 m2, 1 baño y excelente ubicación sobre calle Hugo Wast, Pasaje Colegio Alemán. 📍 Vacío y en buen estado, disponible para alquiler anual. Precio: BS 4500.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8338,7 +8338,7 @@
     "direccion": "",
     "lat": -17.783343,
     "lng": -63.176366,
-    "descripcion": "PLANTA COMPLETA EN ALQUILER – 4.º PISO | 380 m²\n\n📍 Calle Sucre, esquina Tarija\n\n✨ Se alquila el 4.º piso completo, con aproximadamente 380 m² techados, ideal para cualquier tipo de negocio.",
+    "descripcion": "PLANTA COMPLETA EN ALQUILER – 4.o PISO | 380 m2\n\n📍 Calle Sucre, esquina Tarija\n\n✨ Se alquila el 4.o piso completo, con aproximadamente 380 m2 techados, ideal para cualquier tipo de negocio.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8402,7 +8402,7 @@
     "direccion": "",
     "lat": -17.783343,
     "lng": -63.176366,
-    "descripcion": "DEPARTAMENTO EN ALQUILER – PLANTA BAJA\n\n📍 Calle Sucre, esquina Tarija\n\n✨ Ideal para vivienda u oficina, con excelente ubicación y fácil acceso.",
+    "descripcion": "DEPARTAMENTO EN ALQUILER – PLANTA BAJA\n\n📍 Calle Sucre, esquina Tarija\n\n✨ Ideal para vivienda u oficina, con excelente ubicación y fácil acceso.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8466,7 +8466,7 @@
     "direccion": "",
     "lat": -17.793825,
     "lng": -63.194797,
-    "descripcion": "Ubicación: Barrio Urbarí 2do anillo, Condominio Torres Urbarí\nSuperficie: 50m2\nCaracteristicas:\n1 dorm en suite\nLiving comedor\nCocina integrada\nÁrea de lavandería\nBalcón\n1 parqueo\n\nPrecio: 2100bs",
+    "descripcion": "Ubicación: Barrio Urbarí 2do anillo, Condominio Torres Urbarí\nSuperficie: 50m2\nCaracteristicas:\n1 dorm en suite\nLiving comedor\nCocina integrada\nÁrea de lavandería\nBalcón\n1 parqueo\n\nPrecio: 2100bs",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8530,7 +8530,7 @@
     "direccion": "",
     "lat": -17.763538,
     "lng": -63.178216,
-    "descripcion": "DEPARTAMENTO TOTALMENTE AMOBLADO EN ALQUILER | MACORORO 15\n\nVive con comodidad y estilo en una ubicación privilegiada, entre Av. Banzer y Av. Beni. Este departamento de 45,50 m² ofrece 1 dormitorio, cocina totalmente equipada, área de lavado con lavadora y televisión en el dormitorio.",
+    "descripcion": "DEPARTAMENTO TOTALMENTE AMOBLADO EN ALQUILER | MACORORO 15\n\nVive con comodidad y estilo en una ubicación privilegiada, entre Av. Banzer y Av. Beni. Este departamento de 45,50 m2 ofrece 1 dormitorio, cocina totalmente equipada, área de lavado con lavadora y televisión en el dormitorio.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8598,7 +8598,7 @@
     "direccion": "",
     "lat": -17.758895,
     "lng": -63.193723,
-    "descripcion": "🏡 ¡DEPARTAMENTO EN ALQUILER – CONDOMINIO PORTOFINO!\n📍 Ubicación: Condominio Portofino 1, Equipetrol.\n🏢 Piso: 2\n🛏️ 1 dormitorio\n📐 Superficie: 38,70 m²\n💰 Alquiler mensual: $us 250",
+    "descripcion": "🏡 ¡DEPARTAMENTO EN ALQUILER – CONDOMINIO PORTOFINO!\n📍 Ubicación: Condominio Portofino 1, Equipetrol.\n🏢 Piso: 2\n🛏️ 1 dormitorio\n📐 Superficie: 38,70 m2\n💰 Alquiler mensual: $us 250",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8719,7 +8719,7 @@
     "direccion": "",
     "lat": -17.684709,
     "lng": -63.168168,
-    "descripcion": "🏡✨ DEPARTAMENTO EN ALQUILER – ZONA NORTE ✨🏡\n\n📍 Condominio Casa de Campo – Country Club\n🌿 Completamente amoblado\n\n📌 DATOS PRINCIPALES\n\n💰 Alquiler: Bs 5.600\n📐 Superficie: 79 m²\n🛏️ 2 dormitorios\n🚗 Garaje incluido\n💡 Expensas incluidas",
+    "descripcion": "🏡✨ DEPARTAMENTO EN ALQUILER – ZONA NORTE ✨🏡\n\n📍 Condominio Casa de Campo – Country Club\n🌿 Completamente amoblado\n\n📌 DATOS PRINCIPALES\n\n💰 Alquiler: Bs 5.600\n📐 Superficie: 79 m2\n🛏️ 2 dormitorios\n🚗 Garaje incluido\n💡 Expensas incluidas",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -8909,7 +8909,7 @@
     }
   },
   {
-    "titulo": "–",
+    "titulo": "Amplio Departamento en Alquiler - 1er Anillo",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 291.0,
@@ -8922,7 +8922,7 @@
     "direccion": "",
     "lat": -17.784917,
     "lng": -63.174294,
-    "descripcion": "⭐ Ideal para una familia que busca amplitud, comodidad, buena ubicación y una terraza privada para disfrutar o recibir visitas.",
+    "descripcion": "⭐ Ideal para una familia que busca amplitud, comodidad, buena ubicación y una terraza privada para disfrutar o recibir visitas.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -9047,7 +9047,7 @@
     "direccion": "",
     "lat": -17.764687,
     "lng": -63.193324,
-    "descripcion": "💰 Bs 3.800\nIncluye:\n✅ Expensas\n✅ Agua\n\nExcelente opción de estudio/monoambiente en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 1 dormitorio, 1 baño.\n\nEquipamiento y amenidades destacadas: Terraza, Sistema de Alarma, Piscina, Parqueo, Cocina, Lavandería (en edificio), Amoblado, Cuarto de Juegos.\n\nCanon mensual: $ 360 USD.",
+    "descripcion": "💰 Bs 3.800\nIncluye:\n✅ Expensas\n✅ Agua\n\nExcelente opción de estudio/monoambiente en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 1 dormitorio, 1 baño.\n\nEquipamiento y amenidades destacadas: Terraza, Sistema de Alarma, Piscina, Parqueo, Cocina, Lavandería (en edificio), Amoblado, Cuarto de Juegos.\n\nCanon mensual: $ 360 USD.",
     "amenidades": [
       "Terraza",
       "Sistema de Alarma",
@@ -9115,7 +9115,7 @@
     "direccion": "",
     "lat": -17.760069,
     "lng": -63.197027,
-    "descripcion": "Disfruta de un espacio moderno, cómodo y listo para mudarte. Este hermoso monoambiente se encuentra totalmente amoblado y equipado, incluyendo electrodomésticos, lavadora, vajilla y ropa de cama.",
+    "descripcion": "Disfruta de un espacio moderno, cómodo y listo para mudarte. Este hermoso monoambiente se encuentra totalmente amoblado y equipado, incluyendo electrodomésticos, lavadora, vajilla y ropa de cama.",
     "amenidades": [
       "Piscina",
       "Edificio Nuevo",
@@ -9173,7 +9173,7 @@
     }
   },
   {
-    "titulo": "Monoambiente Amoblado y Equipàdo - Equipetrol",
+    "titulo": "Monoambiente Amoblado y Equipàdo - Equipetrol",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 457.0,
@@ -9186,7 +9186,7 @@
     "direccion": "",
     "lat": -17.768049,
     "lng": -63.195419,
-    "descripcion": "HERMOSO MONOAMBIENTE AMOBLADO Y EQUIPADO EN ALQUILER\n\n📍 CONDOMINIO STANZA- EQUIPETROL / Av San Martin entre 2do y 3er anillo.\n\nVive con comodidad, seguridad y estilo en uno de los sectores más privilegiados de la ciudad, cerca de todo lo que necesitas, en un edificio exclusivo y moderno.\n\n💰 𝗔𝗟𝗤𝗨𝗜𝗟𝗘𝗥: Bs 3.200 ( incluye expensas y agua)",
+    "descripcion": "HERMOSO MONOAMBIENTE AMOBLADO Y EQUIPADO EN ALQUILER\n\n📍 CONDOMINIO STANZA- EQUIPETROL / Av San Martin entre 2do y 3er anillo.\n\nVive con comodidad, seguridad y estilo en uno de los sectores más privilegiados de la ciudad, cerca de todo lo que necesitas, en un edificio exclusivo y moderno.\n\n💰 ALQUILER: Bs 3.200 ( incluye expensas y agua)",
     "amenidades": [
       "Terraza",
       "Sistema de Alarma",
@@ -9244,7 +9244,7 @@
     }
   },
   {
-    "titulo": "",
+    "titulo": "Monoambiente en Alquiler sobre 1er Anillo Parque Urbano",
     "tipo_inmueble": "Departamento",
     "operacion": "Alquiler",
     "precio_usd": 272.0,
@@ -9257,7 +9257,7 @@
     "direccion": "",
     "lat": -17.790208,
     "lng": -63.171231,
-    "descripcion": "Ideal para profesionales, estudiantes o personas que buscan comodidad, seguridad y una ubicación estratégica.",
+    "descripcion": "Ideal para profesionales, estudiantes o personas que buscan comodidad, seguridad y una ubicación estratégica.",
     "amenidades": [
       "Conserje disponible",
       "Ascensor",
@@ -9317,7 +9317,7 @@
     "direccion": "",
     "lat": -17.752386,
     "lng": -63.178296,
-    "descripcion": "Cerca de restaurantes, cafeterías, gimnasios, Bancos, Nur,\ncolegios, fidalga, hipermaxi, Mall Las Brisas y más.",
+    "descripcion": "Cerca de restaurantes, cafeterías, gimnasios, Bancos, Nur,\ncolegios, fidalga, hipermaxi, Mall Las Brisas y más.",
     "amenidades": [
       "Aire Acondicionado Central",
       "Cocina",
@@ -9387,7 +9387,7 @@
     "direccion": "",
     "lat": -17.76032,
     "lng": -63.19668,
-    "descripcion": "MONOAMBIENTE AMOBLADO EN ALQUILER\n¡Vive la comodidad que mereces en el corazón de Equipetrol en Condominio ONE SOUL BY SMART STUDIO¡¡\n💵 Precio: Bs 3.200 (Incluye expensas)\n📐Superficie: 33.95 m2 con Balcon\nTotalmente amoblado y equipado",
+    "descripcion": "MONOAMBIENTE AMOBLADO EN ALQUILER\n¡Vive la comodidad que mereces en el corazón de Equipetrol en Condominio ONE SOUL BY SMART STUDIO¡¡\n💵 Precio: Bs 3.200 (Incluye expensas)\n📐Superficie: 33.95 m2 con Balcon\nTotalmente amoblado y equipado",
     "amenidades": [
       "Balcon",
       "Lavandería (en edificio)",
@@ -9458,7 +9458,7 @@
     "direccion": "",
     "lat": -17.771625,
     "lng": -63.189272,
-    "descripcion": "MONOAMBIENTE EN ALQUILER A ESTRENAR AMOBLADO\nEdificio Domus Tower  – Av. La salle ,  y 2do Anillo/ Piso 3\nCaracterísticas: Monoambiente\n30.65 m² |\nCocina equipada con encimera, extractor, muebles empotrados y microondas\n1 aires acondicionados\nÁreas sociales:\nPiscina\nGimnasio\nSauna\nCowork\nChurrasquera\nSala de entrenamiento\nMirador",
+    "descripcion": "MONOAMBIENTE EN ALQUILER A ESTRENAR AMOBLADO\nEdificio Domus Tower  – Av. La salle ,  y 2do Anillo/ Piso 3\nCaracterísticas: Monoambiente\n30.65 m2 |\nCocina equipada con encimera, extractor, muebles empotrados y microondas\n1 aires acondicionados\nÁreas sociales:\nPiscina\nGimnasio\nSauna\nCowork\nChurrasquera\nSala de entrenamiento\nMirador",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -9529,7 +9529,7 @@
     "direccion": "",
     "lat": -17.766855,
     "lng": -63.197524,
-    "descripcion": "Monoambiente amoblado en alquiler en Equipetrol, ideal para una persona o pareja. Cuenta con balcón, cocina, aire acondicionado central y acceso a lavandería. Disfruta de piscina, churrasquera y ascensor en Smart Studio Equipe 2.0. Disponible inmediata.\nPrecio: 3800bs incluye expensas e internet 🏡📍🏊",
+    "descripcion": "Monoambiente amoblado en alquiler en Equipetrol, ideal para una persona o pareja. Cuenta con balcón, cocina, aire acondicionado central y acceso a lavandería. Disfruta de piscina, churrasquera y ascensor en Smart Studio Equipe 2.0. Disponible inmediata.\nPrecio: 3800bs incluye expensas e internet 🏡📍🏊",
     "amenidades": [
       "Balcon",
       "Piscina",
@@ -9586,7 +9586,7 @@
     "direccion": "",
     "lat": -17.748401,
     "lng": -63.178167,
-    "descripcion": "Monoambiente amoblado en alquiler anual por USD 260 💰, ubicado en la zona norte, cerca de Mall Las Brisas 📍. Cuenta con 29,78 m², 1 dormitorio, 1 baño, balcón, terraza y piscina 🏊. Seguridad 🔒 y estilo de vida citadino en el condominio Domus Madero.",
+    "descripcion": "Monoambiente amoblado en alquiler anual por USD 260 💰, ubicado en la zona norte, cerca de Mall Las Brisas 📍. Cuenta con 29,78 m2, 1 dormitorio, 1 baño, balcón, terraza y piscina 🏊. Seguridad 🔒 y estilo de vida citadino en el condominio Domus Madero.",
     "amenidades": [
       "Terraza",
       "Balcon",
@@ -9646,7 +9646,7 @@
     "direccion": "",
     "lat": -17.766813,
     "lng": -63.199292,
-    "descripcion": "!Estrena un estilo de vida moderno en Equipetrol!\nSe alquila hermoso monoambiente de lujo amoblado a estrenar en el exclusivo Edificio Mare, diseñado para quienes buscan comodidad, elegancia, áreas sociales de máximo lujo y una excelente ubicación.",
+    "descripcion": "!Estrena un estilo de vida moderno en Equipetrol!\nSe alquila hermoso monoambiente de lujo amoblado a estrenar en el exclusivo Edificio Mare, diseñado para quienes buscan comodidad, elegancia, áreas sociales de máximo lujo y una excelente ubicación.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -9717,7 +9717,7 @@
     "direccion": "",
     "lat": -17.765474,
     "lng": -63.193852,
-    "descripcion": "Vive en Sky Luxia, Equipetrol. 🏡 Monoambiente de lujo de 31,20 m², totalmente amoblado y equipado, listo para habitar. Disfruta de piscina, gimnasio, cowork, sauna y churrasquera. 📍 Alquiler por Bs 3600 con expensas incluidas. No cuenta con parqueo.",
+    "descripcion": "Vive en Sky Luxia, Equipetrol. 🏡 Monoambiente de lujo de 31,20 m2, totalmente amoblado y equipado, listo para habitar. Disfruta de piscina, gimnasio, cowork, sauna y churrasquera. 📍 Alquiler por Bs 3600 con expensas incluidas. No cuenta con parqueo.",
     "amenidades": [
       "Piscina"
     ],
@@ -9774,7 +9774,7 @@
     "direccion": "",
     "lat": -17.734278,
     "lng": -63.167503,
-    "descripcion": "🏢 ALQUILER MONOAMBIENTE AMOBLADO CONDOMINIO TORRE BARUC.\n📍 Excelente Ubicación:\nZona Norte Av. Banzer 6to. anillo\nSanta Cruz - Bolivia\n🗄️Cocina con Cajonería Baja y alta.\n-🚿 Con Box en el baño\n- Aire acondicionado\n✳️ Áreas sociales Premium:\n🏊‍♀️ Piscina\n🔥 Churrasqueras\n💃🕺 Salón de Uso Múltiple\n🎥 Sala de Cine\n🏓 Mesa de Ping pong",
+    "descripcion": "🏢 ALQUILER MONOAMBIENTE AMOBLADO CONDOMINIO TORRE BARUC.\n📍 Excelente Ubicación:\nZona Norte Av. Banzer 6to. anillo\nSanta Cruz - Bolivia\n🗄️Cocina con Cajonería Baja y alta.\n-🚿 Con Box en el baño\n- Aire acondicionado\n✳️ Áreas sociales Premium:\n🏊‍♀️ Piscina\n🔥 Churrasqueras\n💃🕺 Salón de Uso Múltiple\n🎥 Sala de Cine\n🏓 Mesa de Ping pong",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
@@ -9843,7 +9843,7 @@
     "direccion": "",
     "lat": -17.712946,
     "lng": -63.128537,
-    "descripcion": "✨Dúplex a estrenar en alquiler✨\nVive confort y estilo en este moderno dúplex ubicado en 9.º anillo y G77, calle asfaltada y de fácil acceso. Cuenta con 2 habitaciones, living comedor, cocina integrada, baños, patio, garaje y churrasquera. Ambientes con aire acondicionado, cortinas y lámparas. Disfruta áreas sociales\n📍 Precio: 3.300 Bs C/E",
+    "descripcion": "✨Dúplex a estrenar en alquiler✨\nVive confort y estilo en este moderno dúplex ubicado en 9.o anillo y G77, calle asfaltada y de fácil acceso. Cuenta con 2 habitaciones, living comedor, cocina integrada, baños, patio, garaje y churrasquera. Ambientes con aire acondicionado, cortinas y lámparas. Disfruta áreas sociales\n📍 Precio: 3.300 Bs C/E",
     "amenidades": [
       "Piscina",
       "Parqueo",
@@ -9908,7 +9908,7 @@
     "direccion": "",
     "lat": -17.758588,
     "lng": -63.199518,
-    "descripcion": "🏙️✨ PENTHOUSE DE LUJO EN ALQUILER - EDIFICIO ARANJUEZ, EQUIPETROL ✨🏙️\nVive en el exclusivo Edificio Aranjuez, en el corazón de Equipetrol, la zona más destacada de Santa Cruz. Este penthouse de 369 m² ofrece una Master Suite con vestidor, 2 dormitorios adicionales, amplios espacios sociales y balcon con vistas a Manzana 40.",
+    "descripcion": "🏙️✨ PENTHOUSE DE LUJO EN ALQUILER - EDIFICIO ARANJUEZ, EQUIPETROL ✨🏙️\nVive en el exclusivo Edificio Aranjuez, en el corazón de Equipetrol, la zona más destacada de Santa Cruz. Este penthouse de 369 m2 ofrece una Master Suite con vestidor, 2 dormitorios adicionales, amplios espacios sociales y balcon con vistas a Manzana 40.",
     "amenidades": [
       "Balcon",
       "Sistema de Alarma",
@@ -9974,7 +9974,7 @@
     "direccion": "",
     "lat": -17.765354,
     "lng": -63.190817,
-    "descripcion": "PENTHOUSE EN ALQUILER\n\nExcelente opción de penthouse en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 5 dormitorios, 6 baños.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 1.640 USD.",
+    "descripcion": "PENTHOUSE EN ALQUILER\n\nExcelente opción de penthouse en alquiler ubicado en Equipetrol/NorOeste, Santa Cruz de la Sierra.\n\nCuenta con 5 dormitorios, 6 baños.\n\nEquipamiento y amenidades destacadas: Caracteristica Principales, Terraza, Balcon, Sistema de Alarma, Piscina, Parqueo, Acceso silla de ruedas, Estilo Arquitectónico.\n\nCanon mensual: $ 1.640 USD.",
     "amenidades": [
       "Caracteristica Principales",
       "Terraza",
