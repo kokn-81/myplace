@@ -37,16 +37,12 @@ from nia_search import (
     build_property_search_text,
     update_property_embedding,
     invalidate_search_cache,
-    EMBEDDINGS_ENABLED,
     EMBEDDING_MODEL,
 )
 
-try:
-    from google import genai
-    api_key = os.getenv("GEMINI_API_KEY")
-    cliente_ia = genai.Client(api_key=api_key) if api_key else None
-except Exception:
-    cliente_ia = None
+# Bulk import does not generate external embeddings per-item to prevent network latency
+EMBEDDINGS_ENABLED = False
+cliente_ia = None
 
 # Coordenadas por defecto para Santa Cruz de la Sierra y sus zonas
 ZONE_COORDINATES = {
@@ -349,9 +345,12 @@ def run_batch_import(data: List[Dict[str, Any]]) -> List[int]:
             try:
                 inm = import_property(db, item, oficina.id)
                 imported_ids.append(inm.id)
-                print(f"[{index}/{len(data)}] OK: #{inm.id} - {inm.titulo} ({inm.tipo_inmueble} en {inm.zona})")
+                if index % 10 == 0 or index == len(data):
+                    db.commit()
+                    print(f"[{index}/{len(data)}] OK: #{inm.id} - {inm.titulo} ({inm.tipo_inmueble} en {inm.zona})", flush=True)
             except Exception as e:
-                print(f"[{index}/{len(data)}] ERROR importando '{item.get('titulo')}': {e}", file=sys.stderr)
+                db.rollback()
+                print(f"[{index}/{len(data)}] ERROR importando '{item.get('titulo')}': {e}", file=sys.stderr, flush=True)
         
         # Limpiar registros huérfanos con títulos inválidos de intentos previos
         orphans = db.query(InmuebleDB).filter(
