@@ -20,6 +20,7 @@ import { openContactWhatsapp, recordLeadEvent, shareLeadUrl } from "../leadTrack
 import { resolveNiaUserId } from "../visitorId";
 import { CONTACT_WHATSAPP_NUMBER, PLAZO_OPTIONS } from "../whatsappMessage";
 import {
+  GUIDED_BEDROOM_OPTIONS,
   GuidedOperation,
   GuidedStage,
   buildGuidedSearchQuery,
@@ -31,6 +32,7 @@ import {
   normalizeGuidedBudget,
   previousGuidedStage,
 } from "../guidedSearch";
+import { localSearchCatalog, matchesBedrooms, matchesPropertyType } from "../localSearch";
 import {
   MapFocusTarget,
   MapLocationChoice,
@@ -467,10 +469,11 @@ export default function MapPage() {
   const [guidedStage, setGuidedStage] = useState<GuidedStage>("operation");
   const [guidedOperation, setGuidedOperation] = useState<GuidedOperation>("");
   const [guidedPropertyType, setGuidedPropertyType] = useState("");
+  const [guidedBedrooms, setGuidedBedrooms] = useState("");
   const [guidedBudget, setGuidedBudget] = useState("");
   const [guidedZones, setGuidedZones] = useState<string[]>([]);
   const guidedZone = guidedZones.join(", ");
-  const [guidedCity, setGuidedCity] = useState("");
+  const [guidedCity, setGuidedCity] = useState("Santa Cruz");
   const [showSuggested, setShowSuggested] = useState(false);
   const [contactDraft, setContactDraft] = useState<ContactDraft | null>(null);
   const [isRecordingLead, setIsRecordingLead] = useState(false);
@@ -508,8 +511,16 @@ export default function MapPage() {
           if (option === "Preventa") return ["preventa", "proyecto", "en construccion", "edificio"];
           if (option === "Casa") return ["casa", "chalet", "vivienda"];
           if (option === "Departamento") return ["departamento", "depa", "monoambiente", "suite"];
-          if (option === "Comercial") return ["comercial", "oficina", "local", "galpon"];
-          if (option === "Terreno") return ["terreno", "lote"];
+          if (option === "Comercial / Oficina" || option === "Comercial") return ["comercial", "oficina", "local", "galpon"];
+          if (option === "Terreno / Lote" || option === "Terreno") return ["terreno", "lote"];
+          return [];
+        }
+        if (guidedStage === "bedrooms") {
+          if (option === "Monoambiente") return ["monoambiente", "studio", "0 dorm", "suite", "mono"];
+          if (option === "1 Dorm") return ["1 dorm", "1 dormitorio", "1 habitacion", "1 hab"];
+          if (option === "2 Dorms") return ["2 dorm", "2 dormitorios", "2 habitaciones", "2 hab"];
+          if (option === "3+ Dorms") return ["3 dorm", "3 dormitorios", "3 habitaciones", "4 dorm", "mas de 3"];
+          if (option === "Cualquiera") return ["cualquiera", "todos", "indiferente"];
           return [];
         }
         if (guidedStage === "city") {
@@ -530,8 +541,9 @@ export default function MapPage() {
       : guidedStage === "propertyType" ? guidedPropertyType
         : guidedStage === "city" ? guidedCity
           : guidedStage === "zone" ? guidedZone
-            : guidedStage === "budget" ? guidedBudget
-              : "";
+            : guidedStage === "bedrooms" ? guidedBedrooms
+              : guidedStage === "budget" ? guidedBudget
+                : "";
 
   const isChoiceSelected = (option: string) => {
     if (guidedStage === "zone") {
@@ -552,6 +564,7 @@ export default function MapPage() {
   const compactSearchLabel = formatCompactSearchLabel({
     operation: guidedOperation,
     propertyType: guidedPropertyType,
+    bedrooms: guidedBedrooms,
     city: guidedCity,
     zone: guidedZone,
     budget: guidedBudget,
@@ -562,7 +575,8 @@ export default function MapPage() {
     setGuidedStage("operation");
     setGuidedOperation("");
     setGuidedPropertyType("");
-    setGuidedCity("");
+    setGuidedBedrooms("");
+    setGuidedCity("Santa Cruz");
     setGuidedZones([]);
     setGuidedBudget("");
     setShowSuggested(false);
@@ -756,6 +770,17 @@ export default function MapPage() {
       }
     };
 
+    // PHASE 3: Evaluacion Instantanea Local Multicriterio (< 5ms) sobre el catalogo cargado en memoria
+    const localResult = localSearchCatalog(trimmedQuery, properties);
+    if (localResult.ids.length > 0) {
+      setAiFilteredIds(localResult.ids);
+      if (localResult.intent) setActiveSearchIntent(localResult.intent);
+      else if (queryIntent) setActiveSearchIntent(queryIntent);
+      setShowSuggested(false);
+      setCurrentIndex(0);
+      void applyMapFocus(localResult.matchedProperties);
+    }
+
     try {
       const candidateIds = options?.candidateIds === undefined
         ? aiFilteredIds?.map((id) => Number(id)).filter((id) => !Number.isNaN(id))
@@ -796,7 +821,7 @@ export default function MapPage() {
           .map((id: string) => properties.find((property) => property.id === id))
           .filter((property): property is Property => Boolean(property));
         await applyMapFocus(matched);
-      } else {
+      } else if (localResult.ids.length === 0) {
         setAiFilteredIds([]);
         setShowSuggested(false);
         setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
@@ -805,19 +830,22 @@ export default function MapPage() {
         await applyMapFocus([]);
       }
     } catch (err) {
-      console.error("Fallo critico en motor semantico:", err);
-      setAiClarification(previousFilteredIds?.length ? "No pude aplicar ese filtro ahora. Mantengo tus resultados anteriores." : "No pude conectar con NIA ahora. Te muestro el catalogo disponible.");
-      if (!previousFilteredIds?.length) setAiFilteredIds(null);
+      console.warn("Fallo o timeout en red neuronal (conservando resultados locales instantaneos):", err);
+      if (localResult.ids.length === 0) {
+        setAiClarification(previousFilteredIds?.length ? "No pude aplicar ese filtro ahora. Mantengo tus resultados anteriores." : "No pude conectar con NIA ahora. Te muestro el catalogo disponible.");
+        if (!previousFilteredIds?.length) setAiFilteredIds(null);
+      }
     } finally {
       setIsAsking(false);
     }
   };
 
 
-  const submitGuidedSearch = async (overrides?: { zone?: string; city?: string; budget?: string; propertyType?: string }) => {
+  const submitGuidedSearch = async (overrides?: { zone?: string; city?: string; budget?: string; propertyType?: string; bedrooms?: string }) => {
     const query = buildGuidedSearchQuery({
       operation: guidedOperation,
       propertyType: overrides?.propertyType ?? guidedPropertyType,
+      bedrooms: overrides?.bedrooms ?? guidedBedrooms,
       city: overrides?.city ?? guidedCity,
       zone: overrides?.zone ?? guidedZone,
       budget: overrides?.budget ?? guidedBudget,
@@ -829,7 +857,8 @@ export default function MapPage() {
   const handleOnboardingOperation = (option: Exclude<GuidedOperation, "">) => {
     setGuidedOperation(option);
     setGuidedPropertyType("");
-    setGuidedCity("");
+    setGuidedBedrooms("");
+    setGuidedCity("Santa Cruz");
     setGuidedZones([]);
     setGuidedBudget("");
     setShowSuggested(false);
@@ -864,22 +893,12 @@ export default function MapPage() {
     goToGuidedStage(nextGuidedStageFromOperation(option));
   };
 
-  const matchesPropertyType = (pType?: string | null, requestedType = "") => {
-    if (!requestedType) return true;
-    const norm = normalizeGeoText(requestedType);
-    const pNorm = normalizeGeoText(pType || "");
-    if (norm.includes("preventa") || norm.includes("proyecto")) return isProjectType(pType);
-    if (norm.includes("casa")) return pNorm.includes("casa");
-    if (norm.includes("departamento") || norm.includes("depa")) return pNorm.includes("departamento");
-    if (norm.includes("comercial")) return pNorm.includes("comercial");
-    if (norm.includes("terreno") || norm.includes("lote")) return pNorm.includes("terreno");
-    return true;
-  };
-
   const handlePropertyTypeSelect = (type: string) => {
     const value = type.trim();
     if (!value) return;
     setGuidedPropertyType(value);
+    setGuidedBedrooms("");
+    if (!guidedCity) setGuidedCity("Santa Cruz");
     setCurrentIndex(0);
 
     const matches = properties
@@ -899,7 +918,7 @@ export default function MapPage() {
       setAiFilteredIds(matches);
     }
 
-    goToGuidedStage("city");
+    goToGuidedStage("zone");
   };
 
   const handleCitySelect = (city: string) => {
@@ -1108,6 +1127,51 @@ export default function MapPage() {
   };
 
   const handleZonesConfirm = () => {
+    const normType = (guidedPropertyType || "").toLowerCase();
+    const hasBedrooms = !normType || normType.includes("departamento") || normType.includes("casa") || normType.includes("preventa");
+    if (hasBedrooms) {
+      goToGuidedStage("bedrooms");
+    } else {
+      goToGuidedStage("budget");
+    }
+  };
+
+  const handleBedroomsSelect = (choice: string) => {
+    const value = choice.trim();
+    if (!value) return;
+    setGuidedBedrooms(value);
+    setCurrentIndex(0);
+
+    const matches = properties
+      .filter((p) => {
+        if (guidedOperation === "Alquilar") {
+          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
+          if (!hasRent) return false;
+        } else if (guidedOperation === "Comprar") {
+          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
+          if (!hasBuy) return false;
+        }
+        if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
+          return false;
+        }
+        if (guidedCity) {
+          const normCity = normalizeGeoText(guidedCity);
+          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
+          if (!textCity.includes(normCity)) return false;
+        }
+        if (guidedZones.length > 0) {
+          const normZones = guidedZones.map(normalizeGeoText);
+          const textZone = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""} ${p.description || ""}`);
+          if (!normZones.some((nz) => textZone.includes(nz))) return false;
+        }
+        return matchesBedrooms(p.rooms, p.title, p.description, value);
+      })
+      .map((p) => p.id);
+
+    if (matches.length > 0) {
+      setAiFilteredIds(matches);
+    }
+
     goToGuidedStage("budget");
   };
 
@@ -1123,11 +1187,12 @@ export default function MapPage() {
     else if (guidedStage === "propertyType") handlePropertyTypeSelect(option);
     else if (guidedStage === "city") handleCitySelect(option);
     else if (guidedStage === "zone") handleZoneSelect(option);
+    else if (guidedStage === "bedrooms") handleBedroomsSelect(option);
     else if (guidedStage === "budget") void handleBudgetSelect(option);
   };
 
   const goPrevGuidedStep = () => {
-    const previous = previousGuidedStage(guidedStage, guidedOperation);
+    const previous = previousGuidedStage(guidedStage, guidedOperation, guidedPropertyType);
     if (previous) {
       if (previous === "operation") {
         resetGuidedSearch();
@@ -1135,9 +1200,17 @@ export default function MapPage() {
       }
       setGuidedBudget("");
       setShowSuggested(false);
-      if (previous === "propertyType") {
-        setGuidedCity("");
+      if (previous === "bedrooms") {
+        setGuidedBedrooms("");
+      }
+      if (previous === "zone") {
         setGuidedZones([]);
+        setGuidedBedrooms("");
+      }
+      if (previous === "propertyType") {
+        setGuidedCity("Santa Cruz");
+        setGuidedZones([]);
+        setGuidedBedrooms("");
         if (guidedPropertyType) handlePropertyTypeSelect(guidedPropertyType);
       }
       if (previous === "city") {
@@ -1160,6 +1233,11 @@ export default function MapPage() {
     if (guidedStage === "city") {
       if (!custom) return;
       handleCitySelect(custom);
+      return;
+    }
+    if (guidedStage === "bedrooms") {
+      if (!custom) return;
+      handleBedroomsSelect(custom);
       return;
     }
     if (guidedStage === "zone") {
@@ -1192,7 +1270,7 @@ export default function MapPage() {
       list = properties;
     }
 
-    if (guidedOperation || guidedPropertyType || guidedCity || guidedZones.length > 0 || guidedBudget) {
+    if (guidedOperation || guidedPropertyType || guidedBedrooms || guidedCity || guidedZones.length > 0 || guidedBudget) {
       const normCity = guidedCity ? normalizeGeoText(guidedCity) : "";
       const normZones = guidedZones.length > 0 ? guidedZones.map(normalizeGeoText) : [];
       const cleanBudget = guidedBudget ? guidedBudget.replace(/\./g, "").replace(/,/g, "") : "";
@@ -1209,6 +1287,10 @@ export default function MapPage() {
         }
 
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
+          return false;
+        }
+
+        if (guidedBedrooms && !matchesBedrooms(p.rooms, p.title, p.description, guidedBedrooms)) {
           return false;
         }
 
@@ -1235,7 +1317,7 @@ export default function MapPage() {
     }
 
     return list;
-  }, [properties, aiFilteredIds, guidedOperation, guidedPropertyType, guidedCity, guidedZones, guidedBudget]);
+  }, [properties, aiFilteredIds, guidedOperation, guidedPropertyType, guidedBedrooms, guidedCity, guidedZones, guidedBudget]);
 
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
@@ -1268,6 +1350,10 @@ export default function MapPage() {
           return false;
         }
 
+        if (guidedBedrooms && !matchesBedrooms(p.rooms, p.title, p.description, guidedBedrooms)) {
+          return false;
+        }
+
         return true;
       })
       .sort((a, b) => {
@@ -1279,7 +1365,7 @@ export default function MapPage() {
         return 0;
       })
       .slice(0, 6);
-  }, [properties, exactProperties, guidedOperation, guidedCity, guidedPropertyType, guidedBudget]);
+  }, [properties, exactProperties, guidedOperation, guidedCity, guidedPropertyType, guidedBedrooms, guidedBudget]);
 
   const filteredProperties = useMemo(() => {
     if (exactProperties.length > 0) {
@@ -1293,6 +1379,13 @@ export default function MapPage() {
     }
     return [];
   }, [exactProperties, suggestedProperties, showSuggested]);
+
+  const mapCanvasProperties = useMemo(() => {
+    if (isGuidedActive || hasActiveResults) {
+      return filteredProperties;
+    }
+    return properties;
+  }, [isGuidedActive, hasActiveResults, filteredProperties, properties]);
 
   const isSuggestedProperty = (prop: Property) =>
     suggestedProperties.some((sp) => sp.id === prop.id) && !exactProperties.some((ep) => ep.id === prop.id);
@@ -1501,7 +1594,7 @@ export default function MapPage() {
         >
           <MapCanvas
             mapboxToken={MAPBOX_TOKEN}
-            properties={properties}
+            properties={mapCanvasProperties}
             isDarkMode={isDarkMode}
             onSelectProperty={selectProperty}
             focusLocation={mapFocus}
@@ -1649,13 +1742,23 @@ export default function MapPage() {
                 </button>
               ))}
               {guidedStage === "zone" && (
-                <button
-                  type="button"
-                  onClick={handleZonesConfirm}
-                  className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-[var(--shadow-warm)] backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
-                >
-                  Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={handleZonesConfirm}
+                    className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-[var(--shadow-warm)] backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
+                  >
+                    Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goToGuidedStage("city")}
+                    className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-1.5 text-[10px] font-bold text-[var(--text-muted)] hover:text-[var(--accent-main)] hover:border-[var(--accent-main)]/50 transition-colors flex items-center gap-1"
+                    title="Cambiar ciudad seleccionada"
+                  >
+                    <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
+                  </button>
+                </>
               )}
               {guidedStage !== "sell" && visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
                 <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-3 py-1.5 text-[11px] font-medium text-[var(--text-muted)]">
@@ -1783,13 +1886,23 @@ export default function MapPage() {
                   </button>
                 ))}
                 {guidedStage === "zone" && (
-                  <button
-                    type="button"
-                    onClick={handleZonesConfirm}
-                    className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-sm backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
-                  >
-                    Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleZonesConfirm}
+                      className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-sm backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
+                    >
+                      Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => goToGuidedStage("city")}
+                      className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-1.5 text-[10px] font-bold text-[var(--text-muted)] hover:text-[var(--accent-main)] hover:border-[var(--accent-main)]/50 transition-colors flex items-center gap-1"
+                      title="Cambiar ciudad seleccionada"
+                    >
+                      <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
+                    </button>
+                  </>
                 )}
                 {visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
                   <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-3 py-1 text-xs font-medium text-[var(--text-muted)]">

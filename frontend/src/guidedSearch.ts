@@ -1,11 +1,29 @@
 import { BOLIVIA_DEPARTMENTS, normalizeGeoText } from "./geographicLocations";
 
 export type GuidedOperation = "" | "Comprar" | "Alquilar" | "Vender";
-export type GuidedStage = "operation" | "propertyType" | "city" | "zone" | "budget" | "sell";
+export type GuidedStage = "operation" | "propertyType" | "city" | "zone" | "bedrooms" | "budget" | "sell";
 
 export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "">[] = ["Comprar", "Alquilar", "Vender"];
-export const GUIDED_BUY_PROPERTY_TYPES = ["Casa", "Departamento", "Preventa"] as const;
-export const GUIDED_RENT_PROPERTY_TYPES = ["Casa", "Departamento", "Comercial"] as const;
+export const GUIDED_BUY_PROPERTY_TYPES = [
+  "Departamento",
+  "Casa",
+  "Terreno / Lote",
+  "Comercial / Oficina",
+  "Preventa",
+] as const;
+export const GUIDED_RENT_PROPERTY_TYPES = [
+  "Departamento",
+  "Casa",
+  "Comercial / Oficina",
+  "Terreno",
+] as const;
+export const GUIDED_BEDROOM_OPTIONS = [
+  "Monoambiente",
+  "1 Dorm",
+  "2 Dorms",
+  "3+ Dorms",
+  "Cualquiera",
+] as const;
 export const GUIDED_RENT_BUDGET_OPTIONS = ["5.000 Bs", "8.000 Bs", "12.000 Bs"] as const;
 export const GUIDED_BUY_BUDGET_OPTIONS = ["100.000 $", "200.000 $", "350.000 $"] as const;
 export const SELL_WHATSAPP_NUMBER = "57015854";
@@ -30,9 +48,17 @@ export const nextGuidedStageFromOperation = (operation: Exclude<GuidedOperation,
   return "propertyType";
 };
 
-export const previousGuidedStage = (stage: GuidedStage, operation: GuidedOperation): GuidedStage | null => {
-  if (stage === "budget") return "zone";
-  if (stage === "zone") return "city";
+export const previousGuidedStage = (
+  stage: GuidedStage,
+  operation: GuidedOperation,
+  propertyType = "",
+): GuidedStage | null => {
+  const normType = (propertyType || "").toLowerCase();
+  const hasBedrooms = !normType || normType.includes("departamento") || normType.includes("casa") || normType.includes("preventa");
+
+  if (stage === "budget") return hasBedrooms ? "bedrooms" : "zone";
+  if (stage === "bedrooms") return "zone";
+  if (stage === "zone") return "propertyType";
   if (stage === "city") return "propertyType";
   if (stage === "propertyType" || stage === "sell") return "operation";
   return null;
@@ -55,6 +81,7 @@ export const getGuidedChoiceOptions = (
   }
   if (stage === "city") return cityOptions.length > 0 ? cityOptions : [...BOLIVIA_DEPARTMENTS];
   if (stage === "zone") return zoneOptions;
+  if (stage === "bedrooms") return [...GUIDED_BEDROOM_OPTIONS];
   if (stage === "budget") return [...budgetOptionsFor(operation)];
   return [];
 };
@@ -98,6 +125,7 @@ export const getGuidedSearchPlaceholder = (stage: GuidedStage, city = "", operat
   }
   if (stage === "city") return "¿En qué ciudad buscas?";
   if (stage === "zone") return city ? `¿En qué zona de ${city}?` : "¿En qué zona(s)?";
+  if (stage === "bedrooms") return "¿Cuántos dormitorios buscas?";
   if (stage === "budget") return "Presupuesto máximo...";
   if (stage === "sell") return "¿Quieres vender tu inmueble?";
   return "Dile a NIA como es tu proximo hogar...";
@@ -115,6 +143,7 @@ export const normalizeGuidedBudget = (operation: GuidedOperation, budget: string
 export const formatCompactSearchLabel = ({
   operation = "",
   propertyType = "",
+  bedrooms = "",
   purpose = "",
   city = "",
   zone = "",
@@ -123,6 +152,7 @@ export const formatCompactSearchLabel = ({
 }: {
   operation?: GuidedOperation | string;
   propertyType?: string;
+  bedrooms?: string;
   purpose?: string;
   city?: string;
   zone?: string;
@@ -130,9 +160,11 @@ export const formatCompactSearchLabel = ({
   history?: string[];
 }) => {
   const typeText = (propertyType || purpose).trim();
+  const dormText = bedrooms && bedrooms !== "Cualquiera" && bedrooms !== "Todos" ? bedrooms.trim() : "";
   const parts = [
     operation === "Comprar" || operation === "Alquilar" || operation === "Vender" ? operation : "",
     typeText,
+    dormText,
     city.trim(),
     zone.trim(),
     budget.trim(),
@@ -145,6 +177,7 @@ export const formatCompactSearchLabel = ({
 export const buildGuidedSearchQuery = ({
   operation,
   propertyType = "",
+  bedrooms = "",
   purpose = "",
   city = "",
   zone = "",
@@ -152,6 +185,7 @@ export const buildGuidedSearchQuery = ({
 }: {
   operation: GuidedOperation;
   propertyType?: string;
+  bedrooms?: string;
   purpose?: string;
   city?: string;
   zone?: string;
@@ -175,8 +209,9 @@ export const buildGuidedSearchQuery = ({
       operationText = "quiero comprar";
     }
   }
+  const dormText = bedrooms && bedrooms !== "Cualquiera" && bedrooms !== "Todos" ? bedrooms.trim() : "";
   const locationParts = [zone.trim(), city.trim()].filter(Boolean);
   const locationText = locationParts.length > 0 ? `en ${locationParts.join(", ")}` : "";
   const normalizedBudget = normalizeGuidedBudget(operation, budget);
-  return [operationText, locationText, normalizedBudget].filter(Boolean).join(" ");
+  return [operationText, dormText, locationText, normalizedBudget].filter(Boolean).join(" ");
 };

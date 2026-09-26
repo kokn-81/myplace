@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  GUIDED_BEDROOM_OPTIONS,
   GUIDED_BUY_BUDGET_OPTIONS,
+  GUIDED_BUY_PROPERTY_TYPES,
   GUIDED_OPERATIONS,
   GUIDED_RENT_BUDGET_OPTIONS,
+  GUIDED_RENT_PROPERTY_TYPES,
   SELL_WHATSAPP_NUMBER,
   buildGuidedSearchQuery,
   buildSellWhatsappUrl,
@@ -21,9 +24,22 @@ test("las 3 opciones iniciales son Comprar, Alquilar y Vender", () => {
   assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Vender"]);
 });
 
-test("Comprar pide tipo de inmueble (Casa, Departamento, Preventa), ciudad, zona y presupuesto", () => {
+test("Comprar pide tipo de inmueble completo (Departamento, Casa, Terreno / Lote, Comercial / Oficina, Preventa), dormitorios y presupuesto", () => {
   assert.equal(nextGuidedStageFromOperation("Comprar"), "propertyType");
-  assert.deepEqual(getGuidedChoiceOptions("propertyType", "Comprar"), ["Casa", "Departamento", "Preventa"]);
+  assert.deepEqual(getGuidedChoiceOptions("propertyType", "Comprar"), [
+    "Departamento",
+    "Casa",
+    "Terreno / Lote",
+    "Comercial / Oficina",
+    "Preventa",
+  ]);
+  assert.deepEqual(getGuidedChoiceOptions("bedrooms", "Comprar"), [
+    "Monoambiente",
+    "1 Dorm",
+    "2 Dorms",
+    "3+ Dorms",
+    "Cualquiera",
+  ]);
   assert.deepEqual(getGuidedChoiceOptions("city", "Comprar"), [
     "Santa Cruz",
     "Cochabamba",
@@ -36,18 +52,22 @@ test("Comprar pide tipo de inmueble (Casa, Departamento, Preventa), ciudad, zona
     "Pando",
   ]);
   assert.equal(previousGuidedStage("city", "Comprar"), "propertyType");
-  assert.equal(previousGuidedStage("zone", "Comprar"), "city");
+  assert.equal(previousGuidedStage("zone", "Comprar"), "propertyType");
+  assert.equal(previousGuidedStage("bedrooms", "Comprar"), "zone");
+  assert.equal(previousGuidedStage("budget", "Comprar", "Departamento"), "bedrooms");
+  assert.equal(previousGuidedStage("budget", "Comprar", "Terreno / Lote"), "zone");
   assert.deepEqual(getGuidedChoiceOptions("budget", "Comprar"), ["100.000 $", "200.000 $", "350.000 $"]);
   assert.deepEqual([...GUIDED_BUY_BUDGET_OPTIONS], ["100.000 $", "200.000 $", "350.000 $"]);
   assert.equal(
     buildGuidedSearchQuery({
       operation: "Comprar",
       propertyType: "Casa",
+      bedrooms: "3+ Dorms",
       city: "Santa Cruz",
       zone: "Equipetrol",
       budget: "menos de 150.000$",
     }),
-    "quiero comprar casa en Equipetrol, Santa Cruz menos de 150.000$",
+    "quiero comprar casa 3+ Dorms en Equipetrol, Santa Cruz menos de 150.000$",
   );
   assert.equal(
     buildGuidedSearchQuery({
@@ -61,21 +81,27 @@ test("Comprar pide tipo de inmueble (Casa, Departamento, Preventa), ciudad, zona
   );
 });
 
-test("Alquilar pide tipo de inmueble (Casa, Departamento, Comercial), ciudad, zona y presupuesto en Bs", () => {
+test("Alquilar pide tipo de inmueble (Departamento, Casa, Comercial / Oficina, Terreno), dormitorios y presupuesto en Bs", () => {
   assert.equal(nextGuidedStageFromOperation("Alquilar"), "propertyType");
-  assert.deepEqual(getGuidedChoiceOptions("propertyType", "Alquilar"), ["Casa", "Departamento", "Comercial"]);
-  assert.equal(previousGuidedStage("city", "Alquilar"), "propertyType");
+  assert.deepEqual(getGuidedChoiceOptions("propertyType", "Alquilar"), [
+    "Departamento",
+    "Casa",
+    "Comercial / Oficina",
+    "Terreno",
+  ]);
+  assert.equal(previousGuidedStage("bedrooms", "Alquilar"), "zone");
   assert.equal(previousGuidedStage("propertyType", "Alquilar"), "operation");
   assert.deepEqual(getGuidedChoiceOptions("budget", "Alquilar"), [...GUIDED_RENT_BUDGET_OPTIONS]);
   assert.equal(
     buildGuidedSearchQuery({
       operation: "Alquilar",
       propertyType: "Departamento",
+      bedrooms: "2 Dorms",
       city: "Santa Cruz",
       zone: "Equipetrol",
       budget: "menos de 5.000 Bs",
     }),
-    "quiero alquilar departamento en Equipetrol, Santa Cruz menos de 5.000 Bs",
+    "quiero alquilar departamento 2 Dorms en Equipetrol, Santa Cruz menos de 5.000 Bs",
   );
 });
 
