@@ -3471,7 +3471,8 @@ export default function MapPage() {
                             (selectedProperty as any).captador;
                           const captadorName = captador?.name || selectedProperty.captadorNombre || (selectedProperty as any).captador_nombre;
                           if (!captadorName) return null;
-                          const captadorWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
+                          const rawWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
+                          const captadorWa = rawWa && String(rawWa).includes("57015854") && !captadorName.toLowerCase().includes("alejandro coca") ? "" : rawWa;
                           const captadorOffice = captador?.oficina || selectedProperty.captadorOficina || (selectedProperty as any).captador_oficina;
                           return (
                             <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3 bg-[var(--surface-control)]/30 rounded p-2 my-1">

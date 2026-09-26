@@ -99,6 +99,8 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     # (defaulting to Alejandro's number would merge distinct captadores into him).
     captador_nombre = item.get("captador_nombre") or item.get("agente_nombre")
     captador_whatsapp = item.get("captador_whatsapp") or item.get("agente_whatsapp")
+    if captador_whatsapp and str(captador_whatsapp).endswith("57015854") and captador_nombre and "alejandro coca" not in str(captador_nombre).lower():
+        captador_whatsapp = None
     captador_oficina = item.get("captador_oficina") or item.get("oficina_nombre")
     if not captador_oficina and item.get("datos_especificos_json"):
         if isinstance(item["datos_especificos_json"], dict):

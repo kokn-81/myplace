@@ -81,22 +81,31 @@ def find_or_create_captador(db: Session, nombre: Optional[str], whatsapp: Option
     phone = "".join(ch for ch in str(whatsapp or "") if ch.isdigit())
     if not label and not phone:
         return None
-    if phone:
+
+    # Never treat Alejandro Coca's public phone as a captador filter for other agents
+    if phone.endswith("57015854") and label and "alejandro coca" not in label.lower():
+        phone = ""
+
+    # 1. Prioritize name match first
+    if label:
+        existente = db.query(AgenteDB).filter(AgenteDB.nombre.ilike(label)).first()
+        if existente:
+            if phone and not existente.whatsapp:
+                existente.whatsapp = phone
+            if oficina_id and not existente.oficina_id:
+                existente.oficina_id = oficina_id
+            return existente
+
+    # 2. Match by unique real phone
+    if phone and not phone.endswith("57015854"):
         existente = db.query(AgenteDB).filter(AgenteDB.whatsapp.contains(phone[-8:])).first()
         if existente:
-            if label:
+            if label and not existente.nombre:
                 existente.nombre = label
-            if oficina_id:
+            if oficina_id and not existente.oficina_id:
                 existente.oficina_id = oficina_id
             return existente
-    if label:
-        existente = db.query(AgenteDB).filter(AgenteDB.nombre == label, AgenteDB.email.is_(None)).first()
-        if existente:
-            if phone:
-                existente.whatsapp = phone
-            if oficina_id:
-                existente.oficina_id = oficina_id
-            return existente
+
     agente = AgenteDB(nombre=label or "Captador", whatsapp=phone or "", oficina_id=oficina_id)
     db.add(agente)
     db.flush()
