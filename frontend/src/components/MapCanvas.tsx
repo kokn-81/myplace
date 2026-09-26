@@ -1,10 +1,9 @@
-import React, { memo, useEffect, useMemo, useRef } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 // @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
 import Map, { Marker, MapRef } from "react-map-gl/mapbox";
 import { Property } from "../types";
-import { MarkerKind, MarkerTone, getMarkerKind, getMarkerTone } from "../mapLocation";
-
+import { MarkerKind, MarkerTone, getMarkerKind } from "../mapLocation";
 
 export type MapFocus = {
   longitude: number;
@@ -42,6 +41,65 @@ const PING_COLOR: Record<MarkerKind, string> = {
 
 const TONE_RANK: Record<MarkerTone, number> = { muted: 0, match: 1, active: 2, selected: 3 };
 
+const getMarkerToneFast = (
+  id: string,
+  highlightedSet: Set<string>,
+  matchedSet: Set<string> | null,
+  selectedId?: string | null,
+): MarkerTone => {
+  if (selectedId && id === selectedId) return "selected";
+  if (highlightedSet.has(id)) return "active";
+  if (matchedSet !== null && matchedSet.has(id)) return "match";
+  return "muted";
+};
+
+type MarkerPinProps = {
+  longitude: number;
+  latitude: number;
+  tone: MarkerTone;
+  kind: MarkerKind;
+  count: number;
+  label: string;
+  onSelect: () => void;
+};
+
+const MarkerPin = memo(function MarkerPin({
+  longitude,
+  latitude,
+  tone,
+  kind,
+  count,
+  label,
+  onSelect,
+}: MarkerPinProps) {
+  return (
+    <Marker
+      longitude={longitude}
+      latitude={latitude}
+      onClick={(event) => {
+        event.originalEvent.stopPropagation();
+        onSelect();
+      }}
+    >
+      <div className="relative flex items-center justify-center">
+        {tone === "active" || tone === "selected" ? (
+          <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
+        ) : null}
+        <div
+          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[tone]}`}
+          title={`${label}${count > 1 ? ` · ${count} unidades` : ""} · ${kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
+        >
+          {count > 1 ? (
+            <span className="text-[9px] font-black text-[var(--color-ivory)]">{count}</span>
+          ) : (
+            <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
+          )}
+        </div>
+      </div>
+    </Marker>
+  );
+});
+
 type MapCanvasProps = {
   mapboxToken: string;
   properties: Property[];
@@ -65,6 +123,37 @@ function MapCanvas({
 }: MapCanvasProps) {
   const mapRef = useRef<MapRef | null>(null);
 
+  // Viewport bounds for culling offscreen markers (with a generous 35% margin)
+  const [viewportBounds, setViewportBounds] = useState<{
+    west: number;
+    east: number;
+    south: number;
+    north: number;
+  } | null>(null);
+
+  const updateViewportBounds = useCallback(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+    try {
+      const b = map.getBounds();
+      if (!b) return;
+      const west = b.getWest();
+      const east = b.getEast();
+      const south = b.getSouth();
+      const north = b.getNorth();
+      const lngMargin = (east - west) * 0.35;
+      const latMargin = (north - south) * 0.35;
+      setViewportBounds({
+        west: west - lngMargin,
+        east: east + lngMargin,
+        south: south - latMargin,
+        north: north + latMargin,
+      });
+    } catch {
+      // Map may not be fully initialized yet
+    }
+  }, []);
+
   useEffect(() => {
     if (!focusLocation || !mapRef.current) return;
 
@@ -79,59 +168,81 @@ function MapCanvas({
     });
   }, [focusLocation?.longitude, focusLocation?.latitude, focusLocation?.zoom, focusLocation?.key, focusLocation?.source]);
 
+  // Fast O(1) Sets for tone checks
+  const highlightedSet = useMemo(() => new Set(highlightedIds), [highlightedIds]);
+  const matchedSet = useMemo(() => (matchedIds ? new Set(matchedIds) : null), [matchedIds]);
+
   const markers = useMemo(() => {
     const plotted = properties
       .filter((property) => Number.isFinite(property.lat) && Number.isFinite(property.lng))
       .map((property) => ({
         property,
-        tone: getMarkerTone(property.id, highlightedIds, matchedIds, selectedId),
+        tone: getMarkerToneFast(property.id, highlightedSet, matchedSet, selectedId),
         kind: getMarkerKind(property),
       }));
 
+    // Group units in same building or same location
     const groups: Record<string, typeof plotted> = {};
     for (const item of plotted) {
-      const key = item.property.complejoId || `unit-${item.property.id}`;
+      const p = item.property;
+      const key =
+        p.complejoId
+          ? `c-${p.complejoId}`
+          : p.complejoNombre && p.complejoNombre.trim().length > 3
+          ? `b-${p.complejoNombre.trim().toLowerCase()}`
+          : `l-${p.lat.toFixed(4)}-${p.lng.toFixed(4)}`;
+
       groups[key] = groups[key] || [];
       groups[key].push(item);
     }
 
-    return Object.entries(groups).map(([key, items]) => {
+    const result: React.ReactNode[] = [];
+
+    for (const [key, items] of Object.entries(groups)) {
       const ranked = [...items].sort((left, right) => TONE_RANK[left.tone] - TONE_RANK[right.tone]);
       const top = ranked[ranked.length - 1];
+      const highlight =
+        items.find((item) => item.tone === "selected") ||
+        items.find((item) => item.tone === "active") ||
+        top;
+
+      const lng = top.property.lng;
+      const lat = top.property.lat;
+
+      // Viewport culling: skip rendering if offscreen, UNLESS it is currently selected or active
+      if (
+        viewportBounds &&
+        top.tone !== "selected" &&
+        top.tone !== "active" &&
+        (lng < viewportBounds.west ||
+          lng > viewportBounds.east ||
+          lat < viewportBounds.south ||
+          lat > viewportBounds.north)
+      ) {
+        continue;
+      }
+
       const kinds = new Set(items.map((item) => item.kind));
       const kind = kinds.has("rent") && kinds.has("buy") ? "both" : top.kind;
-      const highlight = items.find((item) => item.tone === "selected") || items.find((item) => item.tone === "active") || top;
       const count = items.length;
       const label = top.property.complejoNombre || top.property.title;
-      return (
-      <Marker
-        key={key}
-        longitude={top.property.lng}
-        latitude={top.property.lat}
-        onClick={(event) => {
-          event.originalEvent.stopPropagation();
-          onSelectProperty(highlight.property);
-        }}
-      >
-        <div className="relative flex items-center justify-center">
-          {top.tone === "active" || top.tone === "selected" ? (
-            <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
-          ) : null}
-          <div
-            className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[top.tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[top.tone]}`}
-            title={`${label}${count > 1 ? ` · ${count} unidades` : ""} · ${kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
-          >
-            {count > 1 ? (
-              <span className="text-[9px] font-black text-[var(--color-ivory)]">{count}</span>
-            ) : (
-              <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
-            )}
-          </div>
-        </div>
-      </Marker>
+
+      result.push(
+        <MarkerPin
+          key={key}
+          longitude={lng}
+          latitude={lat}
+          tone={top.tone}
+          kind={kind}
+          count={count}
+          label={label}
+          onSelect={() => onSelectProperty(highlight.property)}
+        />
       );
-    });
-  }, [highlightedIds, matchedIds, onSelectProperty, properties, selectedId]);
+    }
+
+    return result;
+  }, [highlightedSet, matchedSet, onSelectProperty, properties, selectedId, viewportBounds]);
 
   return (
     <div className="relative h-full w-full">
@@ -143,6 +254,8 @@ function MapCanvas({
         mapStyle={isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
         reuseMaps
         attributionControl
+        onLoad={updateViewportBounds}
+        onMoveEnd={updateViewportBounds}
       >
         {markers}
       </Map>
@@ -151,3 +264,4 @@ function MapCanvas({
 }
 
 export default memo(MapCanvas);
+

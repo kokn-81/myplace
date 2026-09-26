@@ -181,11 +181,13 @@ const readCachedCatalog = (): Property[] => {
 const writeCachedCatalog = (items: unknown[]) => {
   if (typeof window === "undefined") return;
 
-  try {
-    window.localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), items }));
-  } catch (error) {
-    console.warn("No se pudo guardar el cache del catalogo:", error);
-  }
+  setTimeout(() => {
+    try {
+      window.localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), items }));
+    } catch (error) {
+      console.warn("No se pudo guardar el cache del catalogo:", error);
+    }
+  }, 100);
 };
 
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -1191,6 +1193,12 @@ export default function MapPage() {
     }
 
     if (guidedOperation || guidedPropertyType || guidedCity || guidedZones.length > 0 || guidedBudget) {
+      const normCity = guidedCity ? normalizeGeoText(guidedCity) : "";
+      const normZones = guidedZones.length > 0 ? guidedZones.map(normalizeGeoText) : [];
+      const cleanBudget = guidedBudget ? guidedBudget.replace(/\./g, "").replace(/,/g, "") : "";
+      const budgetMatch = cleanBudget.match(/(\d+)/);
+      const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
+
       list = list.filter((p) => {
         if (guidedOperation === "Alquilar") {
           const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
@@ -1204,28 +1212,22 @@ export default function MapPage() {
           return false;
         }
 
-        if (guidedCity) {
-          const normCity = normalizeGeoText(guidedCity);
+        if (normCity) {
           const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
           const inCity = textCity.includes(normCity) || (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
           if (!inCity) return false;
         }
 
-        if (guidedZones.length > 0) {
-          const textZone = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""} ${p.description || ""}`);
-          const inZone = guidedZones.some((z) => textZone.includes(normalizeGeoText(z)));
+        if (normZones.length > 0) {
+          const textZone = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""}`);
+          const inZone = normZones.some((nz) => textZone.includes(nz));
           if (!inZone) return false;
         }
 
-        if (guidedBudget) {
-          const clean = guidedBudget.replace(/\./g, "").replace(/,/g, "");
-          const match = clean.match(/(\d+)/);
-          if (match) {
-            const maxVal = Number(match[1]);
-            const offer = selectPropertyOffer(p, guidedOperation === "Alquilar" ? "rent" : "buy");
-            const price = offer?.price ?? p.price;
-            if (price > maxVal) return false;
-          }
+        if (maxBudget !== null) {
+          const offer = selectPropertyOffer(p, guidedOperation === "Alquilar" ? "rent" : "buy");
+          const price = offer?.price ?? p.price;
+          if (price > maxBudget) return false;
         }
 
         return true;
@@ -1237,6 +1239,11 @@ export default function MapPage() {
 
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
+
+    const normCity = guidedCity ? normalizeGeoText(guidedCity) : "";
+    const cleanBudget = guidedBudget ? guidedBudget.replace(/\./g, "").replace(/,/g, "") : "";
+    const budgetMatch = cleanBudget.match(/(\d+)/);
+    const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
 
     const exactIds = new Set(exactProperties.map((p) => p.id));
     return properties
@@ -1251,8 +1258,7 @@ export default function MapPage() {
           if (!hasBuy) return false;
         }
 
-        if (guidedCity) {
-          const normCity = normalizeGeoText(guidedCity);
+        if (normCity) {
           const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
           const inCity = textCity.includes(normCity) || (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
           if (!inCity) return false;
@@ -1265,15 +1271,10 @@ export default function MapPage() {
         return true;
       })
       .sort((a, b) => {
-        if (guidedBudget) {
-          const clean = guidedBudget.replace(/\./g, "").replace(/,/g, "");
-          const match = clean.match(/(\d+)/);
-          if (match) {
-            const maxVal = Number(match[1]);
-            const priceA = selectPropertyOffer(a, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? a.price;
-            const priceB = selectPropertyOffer(b, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? b.price;
-            return Math.abs(priceA - maxVal) - Math.abs(priceB - maxVal);
-          }
+        if (maxBudget !== null) {
+          const priceA = selectPropertyOffer(a, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? a.price;
+          const priceB = selectPropertyOffer(b, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? b.price;
+          return Math.abs(priceA - maxBudget) - Math.abs(priceB - maxBudget);
         }
         return 0;
       })
@@ -1357,6 +1358,8 @@ export default function MapPage() {
   const visibleProperties = useMemo(() => {
     return filteredProperties.slice(currentIndex, currentIndex + carouselStep);
   }, [filteredProperties, currentIndex, carouselStep]);
+
+  const highlightedIds = useMemo(() => visibleProperties.map((property) => property.id), [visibleProperties]);
 
   useEffect(() => {
     if (currentIndex >= filteredProperties.length) {
@@ -1502,7 +1505,7 @@ export default function MapPage() {
             isDarkMode={isDarkMode}
             onSelectProperty={selectProperty}
             focusLocation={mapFocus}
-            highlightedIds={visibleProperties.map((property) => property.id)}
+            highlightedIds={highlightedIds}
             matchedIds={aiFilteredIds}
             selectedId={selectedProperty?.id ?? null}
           />
@@ -1980,6 +1983,8 @@ export default function MapPage() {
             ) : (
               <img
                 src={coverUrl}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 alt={p.title}
                 referrerPolicy="no-referrer"
