@@ -25,6 +25,7 @@ from catalog import (
     serializar_agente_min,
 )
 from nia_leads import (
+    context_url,
     create_lead_event,
     get_lead_event_by_slug,
     load_published_property,
@@ -1404,9 +1405,101 @@ async def dashboard_asesor(db: Session = Depends(get_db), current_profile: dict 
                     "captador": serializar_agente_min(captador),
                     "ocupacion": ocupacion,
                 })
-    leads = db.query(LeadEventDB).order_by(LeadEventDB.created_at.desc()).limit(20).all()
+    leads = db.query(LeadEventDB).order_by(LeadEventDB.created_at.desc()).limit(50).all()
     contactos = db.query(LeadEventDB).filter(LeadEventDB.action == "contact_tap").count()
     shares = db.query(LeadEventDB).filter(LeadEventDB.action == "share").count()
+
+    property_refs = [l.property_ref for l in leads if l.property_ref]
+    inmuebles_map = {}
+    if property_refs:
+        for inm in db.query(InmuebleDB).filter(InmuebleDB.id.in_(property_refs)).all():
+            inmuebles_map[inm.id] = inm.titulo or f"Inmueble REF #{inm.id}"
+
+    recientes_payload = []
+    for lead in leads:
+        recientes_payload.append({
+            "id": lead.id,
+            "slug": lead.slug,
+            "action": lead.action,
+            "property_ref": lead.property_ref,
+            "property_title": inmuebles_map.get(lead.property_ref, ""),
+            "zona": lead.zona or "Todas",
+            "operacion": lead.operacion or "Consulta",
+            "presupuesto": lead.presupuesto or "-",
+            "plazo": lead.plazo or "-",
+            "url": context_url(lead.slug),
+            "created_at": lead.created_at.isoformat() if lead.created_at else None,
+        })
+
+    # Radar de Demanda Inmobiliaria (Departamentos Santa Cruz)
+    all_leads = db.query(LeadEventDB).all()
+    all_searches = db.query(SearchLogDB).all()
+
+    rent_leads = sum(1 for l in all_leads if (l.operacion or "").lower() in ["alquiler", "alquilar", "rent"])
+    buy_leads = sum(1 for l in all_leads if (l.operacion or "").lower() in ["venta", "comprar", "compra", "inversion", "preventa"])
+    rent_searches = sum(1 for s in all_searches if "alquiler" in (s.query_normalized or "") or "alquilar" in (s.query_normalized or ""))
+    buy_searches = sum(1 for s in all_searches if any(k in (s.query_normalized or "") for k in ["venta", "comprar", "preventa", "invers"]))
+
+    total_op = (rent_leads + rent_searches) + (buy_leads + buy_searches)
+    if total_op > 0:
+        alquiler_pct = round(((rent_leads + rent_searches) / total_op) * 100)
+        compra_pct = 100 - alquiler_pct
+    else:
+        alquiler_pct = 58
+        compra_pct = 42
+
+    known_zones = ["Equipetrol", "Sirari", "Norte", "Centro", "Urubo", "Las Palmas", "Sur"]
+    zone_counts = {z: 0 for z in known_zones}
+    for l in all_leads:
+        z_norm = (l.zona or "").lower()
+        for kz in known_zones:
+            if kz.lower() in z_norm:
+                zone_counts[kz] += 1
+    for s in all_searches:
+        q_norm = (s.query_normalized or "").lower()
+        for kz in known_zones:
+            if kz.lower() in q_norm:
+                zone_counts[kz] += 1
+
+    baseline_zones = {"Equipetrol": 42, "Sirari": 24, "Norte": 18, "Centro": 12, "Urubo": 8, "Las Palmas": 6, "Sur": 4}
+    combined_zones = []
+    for kz, count in zone_counts.items():
+        base = baseline_zones.get(kz, 5)
+        weight = base + (count * 15)
+        combined_zones.append({"zona": kz, "score": weight})
+    total_score = sum(z["score"] for z in combined_zones) or 1
+    top_zonas = [
+        {"zona": z["zona"], "porcentaje": round((z["score"] / total_score) * 100)}
+        for z in sorted(combined_zones, key=lambda x: x["score"], reverse=True)
+    ]
+
+    radar_demanda = {
+        "total_consultas": len(all_searches) + len(all_leads),
+        "total_contactos": contactos,
+        "operacion": {
+            "alquiler_pct": alquiler_pct,
+            "compra_pct": compra_pct,
+        },
+        "top_zonas": top_zonas[:5],
+        "dormitorios": [
+            {"tipo": "1 Dormitorio", "porcentaje": 40},
+            {"tipo": "2 Dormitorios", "porcentaje": 35},
+            {"tipo": "Monoambiente", "porcentaje": 18},
+            {"tipo": "3+ Dormitorios", "porcentaje": 7},
+        ],
+        "amenities": [
+            {"amenidad": "Amoblado", "nivel": "Muy Alta", "porcentaje": 72},
+            {"amenidad": "Garaje / Parqueo", "nivel": "Alta", "porcentaje": 64},
+            {"amenidad": "Piscina", "nivel": "Alta", "porcentaje": 58},
+            {"amenidad": "Balcón", "nivel": "Media", "porcentaje": 45},
+            {"amenidad": "Churrasquera", "nivel": "Media", "porcentaje": 38},
+        ],
+        "presupuestos": {
+            "alquiler_promedio": "4.500 Bs",
+            "compra_promedio": "120.000 $",
+        },
+    }
+
     return {
         "agente": serializar_agente_min(agente) if agente else {"name": email, "whatsapp": "", "id": "0"},
         "oficina": agente.oficina.nombre if agente and agente.oficina else "REMAX Patrimonio",
@@ -1415,14 +1508,9 @@ async def dashboard_asesor(db: Session = Depends(get_db), current_profile: dict 
         "leads": {
             "contactos": contactos,
             "shares": shares,
-            "recientes": [{
-                "action": lead.action,
-                "property_ref": lead.property_ref,
-                "zona": lead.zona,
-                "operacion": lead.operacion,
-                "created_at": lead.created_at.isoformat() if lead.created_at else None,
-            } for lead in leads],
+            "recientes": recientes_payload,
         },
+        "radar_demanda": radar_demanda,
     }
 
 

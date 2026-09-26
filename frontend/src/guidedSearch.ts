@@ -6,16 +6,10 @@ export type GuidedStage = "operation" | "propertyType" | "city" | "zone" | "bedr
 export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "">[] = ["Comprar", "Alquilar", "Vender"];
 export const GUIDED_BUY_PROPERTY_TYPES = [
   "Departamento",
-  "Casa",
-  "Terreno / Lote",
-  "Comercial / Oficina",
   "Preventa",
 ] as const;
 export const GUIDED_RENT_PROPERTY_TYPES = [
   "Departamento",
-  "Casa",
-  "Comercial / Oficina",
-  "Terreno",
 ] as const;
 export const GUIDED_BEDROOM_OPTIONS = [
   "Monoambiente",

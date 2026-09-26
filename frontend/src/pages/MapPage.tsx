@@ -159,6 +159,57 @@ const mapApiProperty = (inm: any): Property => {
   };
 };
 
+export const QUICK_FILTER_OPTIONS = [
+  {
+    id: "amoblado",
+    label: "🛋️ Amoblado",
+    matches: (p: Property) =>
+      Boolean(
+        p.amoblado ||
+        (p.amenities || []).some((a) => a.toLowerCase().includes("amobla")) ||
+        (p.title + " " + p.description).toLowerCase().includes("amobla")
+      ),
+  },
+  {
+    id: "piscina",
+    label: "🏊 Con Piscina",
+    matches: (p: Property) =>
+      Boolean(
+        (p.amenities || []).some((a) => a.toLowerCase().includes("piscina")) ||
+        (p.title + " " + p.description).toLowerCase().includes("piscina")
+      ),
+  },
+  {
+    id: "churrasquera",
+    label: "🥩 Churrasquera",
+    matches: (p: Property) =>
+      Boolean(
+        (p.amenities || []).some((a) => a.toLowerCase().includes("churrasqu") || a.toLowerCase().includes("parrilla")) ||
+        (p.title + " " + p.description).toLowerCase().includes("churrasqu")
+      ),
+  },
+  {
+    id: "parqueo",
+    label: "🚗 Garaje / Parqueo",
+    matches: (p: Property) =>
+      Boolean(
+        (p.amenities || []).some((a) => a.toLowerCase().includes("parqueo") || a.toLowerCase().includes("garaje") || a.toLowerCase().includes("estacionamiento")) ||
+        (p.title + " " + p.description).toLowerCase().includes("parqueo") ||
+        (p.title + " " + p.description).toLowerCase().includes("garaje")
+      ),
+  },
+  {
+    id: "balcon",
+    label: "☀️ Balcón",
+    matches: (p: Property) =>
+      Boolean(
+        (p.amenities || []).some((a) => a.toLowerCase().includes("balcon") || a.toLowerCase().includes("balcón") || a.toLowerCase().includes("terraza")) ||
+        (p.title + " " + p.description).toLowerCase().includes("balcon") ||
+        (p.title + " " + p.description).toLowerCase().includes("balcón")
+      ),
+  },
+] as const;
+
 const CATALOG_CACHE_KEY = "nia.catalog.summary.v2";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
@@ -478,6 +529,14 @@ export default function MapPage() {
   const [contactDraft, setContactDraft] = useState<ContactDraft | null>(null);
   const [isRecordingLead, setIsRecordingLead] = useState(false);
   const [shareHint, setShareHint] = useState("");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const toggleAmenityFilter = (id: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+    setCurrentIndex(0);
+  };
 
   const cityOptions = useMemo(() => {
     return getCities("BO").map((c) => c.name);
@@ -579,6 +638,7 @@ export default function MapPage() {
     setGuidedCity("Santa Cruz");
     setGuidedZones([]);
     setGuidedBudget("");
+    setSelectedAmenities([]);
     setShowSuggested(false);
     setGeminiQuery("");
     setAiFilteredIds(null);
@@ -726,8 +786,10 @@ export default function MapPage() {
     setGuidedStage("operation");
     setGuidedOperation("");
     setGuidedPropertyType("");
+    setGuidedBedrooms("");
     setGuidedZones([]);
     setGuidedBudget("");
+    setSelectedAmenities([]);
     setActiveSearchIntent(null);
   };
 
@@ -1316,8 +1378,17 @@ export default function MapPage() {
       });
     }
 
+    if (selectedAmenities.length > 0) {
+      list = list.filter((p) => {
+        return selectedAmenities.every((amenityId) => {
+          const filterDef = QUICK_FILTER_OPTIONS.find((opt) => opt.id === amenityId);
+          return filterDef ? filterDef.matches(p) : true;
+        });
+      });
+    }
+
     return list;
-  }, [properties, aiFilteredIds, guidedOperation, guidedPropertyType, guidedBedrooms, guidedCity, guidedZones, guidedBudget]);
+  }, [properties, aiFilteredIds, guidedOperation, guidedPropertyType, guidedBedrooms, guidedCity, guidedZones, guidedBudget, selectedAmenities]);
 
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
@@ -1546,7 +1617,7 @@ export default function MapPage() {
   const renderCompactFilter = (variant: "mobile" | "desktop") => {
     if (!hasActiveResults && !aiClarification) return null;
     return (
-      <div className={`flex items-center justify-center ${variant === "desktop" ? "mt-2" : ""}`}>
+      <div className={`flex flex-col items-center justify-center gap-1.5 ${variant === "desktop" ? "mt-2" : ""}`}>
         <div className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[var(--accent-main)]/40 bg-[var(--surface-panel)]/95 py-1 pl-3 pr-1 shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.92)]">
           <span className="min-w-0 max-w-[11.5rem] truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--text-main)] md:max-w-[18rem]">
             {aiClarification || compactSearchLabel}
@@ -1574,6 +1645,29 @@ export default function MapPage() {
           >
             <FilterX size={14} />
           </button>
+        </div>
+
+        {/* SUGERENCIAS DE FILTROS CONTINUAS (NUNCA SE ACABAN LAS OPCIONES) */}
+        <div className="flex max-w-[95vw] overflow-x-auto no-scrollbar items-center justify-center gap-1.5 py-0.5 px-2">
+          {QUICK_FILTER_OPTIONS.map((filter) => {
+            const isSelected = selectedAmenities.includes(filter.id);
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                onClick={() => toggleAmenityFilter(filter.id)}
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm ${
+                  isSelected
+                    ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D] scale-105"
+                    : "border-[var(--border-soft)] bg-[var(--surface-panel)]/90 text-[var(--text-main)] hover:border-[var(--accent-main)]/60 hover:text-[var(--accent-main)]"
+                }`}
+                title={`Filtrar por ${filter.label}`}
+              >
+                <span>{filter.label}</span>
+                {isSelected && <span className="ml-0.5 text-[9px]">✕</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
     );

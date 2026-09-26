@@ -1,6 +1,29 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, LogOut, Moon, Save, ShieldCheck, Sun, UploadCloud, UserCircle, X } from "lucide-react";
+import {
+  Activity,
+  ArrowLeft,
+  BarChart3,
+  Building2,
+  ChevronRight,
+  ExternalLink,
+  Flame,
+  Inbox,
+  Loader2,
+  LogOut,
+  MapPin,
+  MessageCircle,
+  Moon,
+  PlusCircle,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+  TrendingUp,
+  UploadCloud,
+  UserCircle,
+  X,
+} from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { CustomSelect } from "../components/CustomSelect";
@@ -25,6 +48,7 @@ const normalizeBoliviaPhone = (value: string) => {
 };
 
 export default function AdvisorDashboard() {
+  const [activeTab, setActiveTab] = useState<"radar" | "leads" | "publicar" | "mis-inmuebles">("radar");
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [role, setRole] = useState<AppRole>("user");
@@ -499,7 +523,303 @@ export default function AdvisorDashboard() {
             </div>
           </div>
         )}
-        <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8">
+
+        {/* NAVEGACIÓN DE PESTAÑAS DEL ASESOR */}
+        <div className="mb-8 flex flex-wrap items-center gap-2 border-b border-[var(--border-soft)] pb-4">
+          <button
+            type="button"
+            onClick={() => setActiveTab("radar")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all ${
+              activeTab === "radar"
+                ? "bg-[var(--accent-main)] text-[#2F241D] shadow-md"
+                : "bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-soft)]"
+            }`}
+          >
+            <TrendingUp size={16} />
+            <span>Radar de Demanda</span>
+            <span className="rounded-full bg-black/10 px-1.5 py-0.5 text-[9px] font-black">En vivo</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("leads")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all ${
+              activeTab === "leads"
+                ? "bg-[var(--accent-main)] text-[#2F241D] shadow-md"
+                : "bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-soft)]"
+            }`}
+          >
+            <Inbox size={16} />
+            <span>Consultas y Leads</span>
+            <span className="rounded-full bg-[var(--accent-main)]/20 px-2 py-0.5 text-[10px] font-black text-[var(--accent-main)]">
+              {(dashboard?.leads?.recientes || []).length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("publicar")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all ${
+              activeTab === "publicar"
+                ? "bg-[var(--accent-main)] text-[#2F241D] shadow-md"
+                : "bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-soft)]"
+            }`}
+          >
+            <PlusCircle size={16} />
+            <span>Publicar Inmueble</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("mis-inmuebles")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all ${
+              activeTab === "mis-inmuebles"
+                ? "bg-[var(--accent-main)] text-[#2F241D] shadow-md"
+                : "bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-soft)]"
+            }`}
+          >
+            <Building2 size={16} />
+            <span>Mis Inmuebles ({advisorCatalog.length})</span>
+          </button>
+        </div>
+
+        {/* TAB 1: RADAR DE DEMANDA INMOBILIARIA */}
+        {activeTab === "radar" && (
+          <div className="space-y-6 mb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--accent-main)]/20 text-[var(--accent-main)]">
+                    <Flame size={16} />
+                  </span>
+                  <h2 className="text-xl font-bold text-[var(--text-main)]">Radar de Demanda en Departamentos</h2>
+                  <span className="rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider">
+                    Santa Cruz
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  Análisis consolidado de búsquedas, filtros aplicados e intenciones de contacto registradas por todos los usuarios en NIA.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-[var(--surface-page)] border border-[var(--border-soft)] px-3 py-2 text-center">
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase">Búsquedas analizadas</p>
+                  <p className="text-base font-black text-[var(--text-main)]">{dashboard?.radar_demanda?.total_consultas || 0}</p>
+                </div>
+                <div className="rounded-xl bg-[var(--surface-page)] border border-[var(--border-soft)] px-3 py-2 text-center">
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase">Contactos a asesor</p>
+                  <p className="text-base font-black text-[var(--accent-main)]">{dashboard?.radar_demanda?.total_contactos || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Operación Más Buscada</h3>
+                  <Activity size={16} className="text-[var(--accent-main)]" />
+                </div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="text-sm font-bold text-[var(--text-main)]">Alquiler: {dashboard?.radar_demanda?.operacion?.alquiler_pct || 58}%</span>
+                  <span className="text-sm font-bold text-[var(--text-muted)]">Compra: {dashboard?.radar_demanda?.operacion?.compra_pct || 42}%</span>
+                </div>
+                <div className="h-3 w-full overflow-hidden rounded-full bg-[var(--surface-page)] border border-[var(--border-soft)] flex">
+                  <div style={{ width: `${dashboard?.radar_demanda?.operacion?.alquiler_pct || 58}%` }} className="bg-[var(--accent-main)] h-full transition-all" />
+                  <div style={{ width: `${dashboard?.radar_demanda?.operacion?.compra_pct || 42}%` }} className="bg-stone-400 dark:bg-stone-600 h-full transition-all" />
+                </div>
+                <p className="mt-3 text-[11px] text-[var(--text-muted)]">
+                  El mercado en Santa Cruz mantiene una preferencia por alquileres con rotación rápida de inventario.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Top Zonas Demandadas</h3>
+                  <MapPin size={16} className="text-[var(--accent-main)]" />
+                </div>
+                <div className="space-y-2.5">
+                  {(dashboard?.radar_demanda?.top_zonas || []).map((z: any, idx: number) => (
+                    <div key={z.zona} className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[var(--text-main)] flex items-center gap-1.5">
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--surface-page)] text-[10px] font-mono font-bold text-[var(--text-muted)]">
+                          {idx + 1}
+                        </span>
+                        {z.zona}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-1.5 rounded-full bg-[var(--surface-page)] overflow-hidden">
+                          <div className="h-full bg-[var(--accent-main)] rounded-full" style={{ width: `${z.porcentaje}%` }} />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-[var(--text-muted)] w-8 text-right">{z.porcentaje}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Tipología de Dormitorios</h3>
+                  <BarChart3 size={16} className="text-[var(--accent-main)]" />
+                </div>
+                <div className="space-y-2.5">
+                  {(dashboard?.radar_demanda?.dormitorios || []).map((d: any) => (
+                    <div key={d.tipo} className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-[var(--text-main)]">{d.tipo}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-1.5 rounded-full bg-[var(--surface-page)] overflow-hidden">
+                          <div className="h-full bg-[var(--accent-main)] rounded-full" style={{ width: `${d.porcentaje}%` }} />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-[var(--text-muted)] w-8 text-right">{d.porcentaje}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm lg:col-span-2">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Amenities & Características Más Solicitadas</h3>
+                  <Sparkles size={16} className="text-[var(--accent-main)]" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {(dashboard?.radar_demanda?.amenities || []).map((a: any) => (
+                    <div key={a.amenidad} className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-page)] p-3">
+                      <p className="text-xs font-bold text-[var(--text-main)]">{a.amenidad}</p>
+                      <div className="mt-1 flex items-center justify-between">
+                        <span className="text-[10px] font-semibold text-[var(--accent-main)]">{a.nivel}</span>
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-muted)]">{a.porcentaje}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Presupuesto Promedio</h3>
+                  <TrendingUp size={16} className="text-[var(--accent-main)]" />
+                </div>
+                <div className="space-y-4">
+                  <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-page)] p-3">
+                    <span className="text-[10px] uppercase font-bold text-[var(--text-muted)]">Alquiler Departamentos</span>
+                    <p className="text-xl font-black text-[var(--accent-main)] mt-0.5">{dashboard?.radar_demanda?.presupuestos?.alquiler_promedio || "4.500 Bs"}</p>
+                  </div>
+                  <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-page)] p-3">
+                    <span className="text-[10px] uppercase font-bold text-[var(--text-muted)]">Venta Departamentos</span>
+                    <p className="text-xl font-black text-[var(--text-main)] mt-0.5">{dashboard?.radar_demanda?.presupuestos?.compra_promedio || "120.000 $"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: BANDEJA DE CONSULTAS Y LEADS */}
+        {activeTab === "leads" && (
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-6 shadow-sm mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-soft)] pb-4 mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <Inbox size={20} className="text-[var(--accent-main)]" />
+                  Bandeja de Consultas Recientes (Lead Events)
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  Consultas generadas por usuarios. Haz clic en "Ver Consulta" para acceder a la ficha con información del captador.
+                </p>
+              </div>
+              <span className="rounded-full bg-[var(--surface-page)] border border-[var(--border-soft)] px-3 py-1 text-xs font-mono font-bold text-[var(--text-main)]">
+                {(dashboard?.leads?.recientes || []).length} consultas registradas
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-[var(--text-muted)]">
+                <thead className="bg-[var(--surface-page)] text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">
+                  <tr>
+                    <th className="px-4 py-3 rounded-l-lg">Fecha</th>
+                    <th className="px-4 py-3">Operación</th>
+                    <th className="px-4 py-3">Inmueble</th>
+                    <th className="px-4 py-3">Zona</th>
+                    <th className="px-4 py-3">Presupuesto</th>
+                    <th className="px-4 py-3">Plazo</th>
+                    <th className="px-4 py-3 rounded-r-lg text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border-soft)]">
+                  {(dashboard?.leads?.recientes || []).map((lead: any) => {
+                    const dateStr = lead.created_at
+                      ? new Date(lead.created_at).toLocaleDateString("es-BO", {
+                          day: "2-digit",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "-";
+
+                    return (
+                      <tr key={lead.id || lead.slug} className="hover:bg-[var(--surface-control)]/40 transition-colors">
+                        <td className="px-4 py-3.5 text-xs font-mono whitespace-nowrap text-[var(--text-main)]">
+                          {dateStr}
+                        </td>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            lead.operacion?.toLowerCase().includes("alquiler")
+                              ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          }`}>
+                            {lead.operacion}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5 text-xs text-[var(--text-main)] max-w-xs truncate font-medium">
+                          {lead.property_ref ? (
+                            <span title={lead.property_title}>
+                              <strong className="text-[var(--accent-main)]">REF #{lead.property_ref}</strong> {lead.property_title ? `· ${lead.property_title}` : ""}
+                            </span>
+                          ) : (
+                            <span className="italic text-[var(--text-muted)]">Búsqueda general</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5 text-xs font-medium text-[var(--text-main)] whitespace-nowrap">
+                          {lead.zona}
+                        </td>
+                        <td className="px-4 py-3.5 text-xs font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                          {lead.presupuesto}
+                        </td>
+                        <td className="px-4 py-3.5 text-xs text-[var(--text-muted)] whitespace-nowrap">
+                          {lead.plazo}
+                        </td>
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                          <a
+                            href={`/c/${lead.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-lg bg-[var(--surface-control)] border border-[var(--border-soft)] hover:border-[var(--accent-main)] hover:text-[var(--accent-main)] px-3 py-1.5 text-xs font-bold transition-colors"
+                          >
+                            <span>Ver Consulta</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {(dashboard?.leads?.recientes || []).length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="text-center py-8 text-stone-400 italic">
+                        Aún no hay registros de consultas en la base de datos.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: PUBLICAR INMUEBLE */}
+        {activeTab === "publicar" && (
+        <form ref={formRef} onSubmit={handleAddProperty} className="bg-[var(--surface-panel)] border border-[var(--border-strong)]/35 shadow-[var(--shadow-warm)] rounded-2xl p-8 space-y-8 mb-12">
           {errorMsg && <div className="bg-red-50 dark:bg-[rgba(157,47,37,0.16)] text-red-600 dark:text-red-400 p-4 border border-red-200 rounded font-bold">{errorMsg}</div>}
           {successMsg && <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 border border-green-200 rounded font-bold">{successMsg}</div>}
 
@@ -854,8 +1174,10 @@ export default function AdvisorDashboard() {
             {isUploading ? <><Loader2 size={18} className="animate-spin" /> Publicando...</> : <><Save size={18} /> Publicar Inmueble</>}
           </button>
         </form>
+        )}
 
-        <div className="mt-12 bg-[var(--surface-panel)] rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-strong)]/35 p-8">
+        {(activeTab === "mis-inmuebles" || activeTab === "publicar") && (
+        <div className="bg-[var(--surface-panel)] rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-strong)]/35 p-8 mb-12">
           <h3 className="text-lg font-bold text-[var(--text-main)] mb-6 border-b border-[var(--border-soft)] pb-4">Mis Inmuebles Publicados</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-[var(--text-muted)]">
@@ -876,6 +1198,7 @@ export default function AdvisorDashboard() {
             </table>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

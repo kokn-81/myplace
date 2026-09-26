@@ -24,13 +24,10 @@ test("las 3 opciones iniciales son Comprar, Alquilar y Vender", () => {
   assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Vender"]);
 });
 
-test("Comprar pide tipo de inmueble completo (Departamento, Casa, Terreno / Lote, Comercial / Oficina, Preventa), dormitorios y presupuesto", () => {
+test("Comprar pide tipo de inmueble (Departamento, Preventa), dormitorios y presupuesto", () => {
   assert.equal(nextGuidedStageFromOperation("Comprar"), "propertyType");
   assert.deepEqual(getGuidedChoiceOptions("propertyType", "Comprar"), [
     "Departamento",
-    "Casa",
-    "Terreno / Lote",
-    "Comercial / Oficina",
     "Preventa",
   ]);
   assert.deepEqual(getGuidedChoiceOptions("bedrooms", "Comprar"), [
@@ -55,19 +52,19 @@ test("Comprar pide tipo de inmueble completo (Departamento, Casa, Terreno / Lote
   assert.equal(previousGuidedStage("zone", "Comprar"), "propertyType");
   assert.equal(previousGuidedStage("bedrooms", "Comprar"), "zone");
   assert.equal(previousGuidedStage("budget", "Comprar", "Departamento"), "bedrooms");
-  assert.equal(previousGuidedStage("budget", "Comprar", "Terreno / Lote"), "zone");
+  assert.equal(previousGuidedStage("budget", "Comprar", "Preventa"), "bedrooms");
   assert.deepEqual(getGuidedChoiceOptions("budget", "Comprar"), ["100.000 $", "200.000 $", "350.000 $"]);
   assert.deepEqual([...GUIDED_BUY_BUDGET_OPTIONS], ["100.000 $", "200.000 $", "350.000 $"]);
   assert.equal(
     buildGuidedSearchQuery({
       operation: "Comprar",
-      propertyType: "Casa",
+      propertyType: "Departamento",
       bedrooms: "3+ Dorms",
       city: "Santa Cruz",
       zone: "Equipetrol",
       budget: "menos de 150.000$",
     }),
-    "quiero comprar casa 3+ Dorms en Equipetrol, Santa Cruz menos de 150.000$",
+    "quiero comprar departamento 3+ Dorms en Equipetrol, Santa Cruz menos de 150.000$",
   );
   assert.equal(
     buildGuidedSearchQuery({
@@ -81,13 +78,10 @@ test("Comprar pide tipo de inmueble completo (Departamento, Casa, Terreno / Lote
   );
 });
 
-test("Alquilar pide tipo de inmueble (Departamento, Casa, Comercial / Oficina, Terreno), dormitorios y presupuesto en Bs", () => {
+test("Alquilar pide tipo de inmueble (Departamento), dormitorios y presupuesto en Bs", () => {
   assert.equal(nextGuidedStageFromOperation("Alquilar"), "propertyType");
   assert.deepEqual(getGuidedChoiceOptions("propertyType", "Alquilar"), [
     "Departamento",
-    "Casa",
-    "Comercial / Oficina",
-    "Terreno",
   ]);
   assert.equal(previousGuidedStage("bedrooms", "Alquilar"), "zone");
   assert.equal(previousGuidedStage("propertyType", "Alquilar"), "operation");

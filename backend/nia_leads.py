@@ -7,7 +7,7 @@ from urllib.parse import quote
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from models import InmuebleDB, LeadEventDB, OfertaDB
+from models import AgenteDB, InmuebleDB, LeadEventDB, OfertaDB
 
 SLUG_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789"
 PUBLIC_SITE_URL = "https://nia-web.com"
@@ -100,6 +100,31 @@ def first_image_url(inm: InmuebleDB) -> str:
 def property_snapshot(inm: Optional[InmuebleDB]) -> Optional[dict]:
     if inm is None:
         return None
+    captador = None
+    for of in (inm.ofertas or []):
+        if getattr(of, "captador", None):
+            captador = of.captador
+            break
+        if getattr(of, "agente", None):
+            captador = of.agente
+            break
+    if not captador and inm.agente:
+        captador = inm.agente
+
+    captador_info = None
+    if captador:
+        oficina_nombre = (
+            captador.oficina.nombre
+            if getattr(captador, "oficina", None) and captador.oficina
+            else "RE/MAX Patrimonio"
+        )
+        captador_info = {
+            "name": captador.nombre or "",
+            "whatsapp": captador.whatsapp or "",
+            "phone": captador.whatsapp or "",
+            "oficina": oficina_nombre,
+        }
+
     return {
         "ref": inm.id,
         "title": inm.titulo or "",
@@ -107,6 +132,7 @@ def property_snapshot(inm: Optional[InmuebleDB]) -> Optional[dict]:
         "operacion": inm.operacion or "",
         "image": first_image_url(inm),
         "type": inm.tipo_inmueble or "",
+        "captador": captador_info,
     }
 
 
@@ -164,7 +190,11 @@ def load_published_property(db: Session, property_ref: Optional[int]) -> Optiona
         return None
     return (
         db.query(InmuebleDB)
-        .options(selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente), selectinload(InmuebleDB.agente))
+        .options(
+            selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.agente).selectinload(AgenteDB.oficina),
+            selectinload(InmuebleDB.ofertas).selectinload(OfertaDB.captador).selectinload(AgenteDB.oficina),
+            selectinload(InmuebleDB.agente).selectinload(AgenteDB.oficina),
+        )
         .filter(InmuebleDB.id == property_ref, InmuebleDB.estado == "Publicado")
         .first()
     )
@@ -190,6 +220,7 @@ def public_lead_payload(event: LeadEventDB, inm: Optional[InmuebleDB] = None) ->
         "extra_filters": extra,
         "created_at": event.created_at.isoformat() if event.created_at else None,
         "property": snapshot,
+        "captador": (snapshot or {}).get("captador"),
         "url": context_url(event.slug),
     }
 
