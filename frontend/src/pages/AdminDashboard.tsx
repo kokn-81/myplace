@@ -18,6 +18,7 @@ interface LocalAgent {
   name: string;
   whatsapp: string;
   email?: string;
+  oficina?: string;
 }
 
 export default function AdminDashboard() {
