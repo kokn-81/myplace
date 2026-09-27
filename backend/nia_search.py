@@ -265,13 +265,15 @@ def parse_currency(text: str) -> Optional[str]:
 
 def parse_budget(text: str) -> tuple[Optional[float], Optional[float], Optional[str]]:
     currency = parse_currency(text)
+    # Exclude reference tokens so numbers like ref 448 are not captured as budget
+    budget_candidate_text = re.sub(r"(?:#\s*ref|ref(?:erencia)?\.?|#|id|inmueble)\s*[:#.]*\s*\d+", " ", text, flags=re.IGNORECASE)
     min_match = re.search(
         r"(?:mas de|desde|minimo|mayor a|a partir de)\s*(?:bs|usd|\$)?\s*([0-9][0-9., ]+)",
-        text,
+        budget_candidate_text,
     )
     max_match = re.search(
         r"(?:hasta|menos de|maximo|max|tope|presupuesto de|presupuesto)\s*(?:bs|usd|\$)?\s*([0-9][0-9., ]+)",
-        text,
+        budget_candidate_text,
     )
     min_price = parse_number(min_match.group(1)) if min_match else None
     max_price = parse_number(max_match.group(1)) if max_match else None
@@ -280,7 +282,7 @@ def parse_budget(text: str) -> tuple[Optional[float], Optional[float], Optional[
             r"(?:bs|usd|\$)\s*([0-9][0-9., ]+)",
             r"([0-9][0-9., ]+)\s*(?:bs|bolivianos|usd|dolares|dolar|\$)",
         ):
-            match = re.search(pattern, text)
+            match = re.search(pattern, budget_candidate_text)
             if match:
                 value = parse_number(match.group(1))
                 if value is not None:
@@ -293,7 +295,9 @@ def parse_search_filters(message: str) -> SearchFilters:
     text = normalize_query(message)
     filters = SearchFilters(complex_reasoning=any(term in text for term in COMPLEX_TERMS))
 
-    ref = re.search(r"(?:#|id|ref|referencia|inmueble)\s*(\d+)", text)
+    ref = re.search(r"(?:#\s*ref|ref(?:erencia)?\.?|#|id|inmueble)\s*[:#.]*\s*(\d+)", text)
+    if not ref:
+        ref = re.search(r"^(\d{1,6})$", text.strip())
     if ref:
         filters.reference_id = int(ref.group(1))
 
@@ -488,7 +492,7 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional
     ocupacion = normalize_text(getattr(inm, "ocupacion", None) or "disponible")
     if ocupacion in {"alquilado", "vendido", "pausado"}:
         return False
-    if filters.reference_id and inm.id != filters.reference_id:
+    if filters.reference_id and inm.id != filters.reference_id and getattr(inm, "complejo_id", None) != filters.reference_id:
         return False
     if filters.property_type and filters.property_type != inm.tipo_inmueble:
         return False
@@ -521,8 +525,11 @@ def property_matches(inm: InmuebleDB, filters: SearchFilters, haystack: Optional
 def score_property(inm: InmuebleDB, filters: SearchFilters, query_tokens: Optional[set[str]] = None, haystack: Optional[str] = None) -> float:
     score = 0.0
     haystack = haystack or get_property_search_text(inm)
-    if filters.reference_id and inm.id == filters.reference_id:
-        score += 1000
+    if filters.reference_id:
+        if inm.id == filters.reference_id:
+            score += 1000
+        elif getattr(inm, "complejo_id", None) == filters.reference_id:
+            score += 900
     if filters.operation and operation_matches(filters.operation, haystack):
         score += 40
     if filters.property_type and normalize_text(filters.property_type) in haystack:
@@ -555,7 +562,12 @@ def base_property_query(db: Session, candidate_ids: Optional[list[int]]):
 
 def apply_broad_sql_filters(query, filters: SearchFilters):
     if filters.reference_id:
-        query = query.filter(InmuebleDB.id == filters.reference_id)
+        query = query.filter(
+            or_(
+                InmuebleDB.id == filters.reference_id,
+                InmuebleDB.complejo_id == filters.reference_id,
+            )
+        )
     if filters.property_type:
         query = query.filter(InmuebleDB.tipo_inmueble == filters.property_type)
     if filters.rooms_exact is not None:

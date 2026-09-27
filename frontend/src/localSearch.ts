@@ -10,6 +10,8 @@ export const normalizeOfferOperation = (operation?: string) => {
 };
 
 export interface LocalSearchCriteria {
+  referenceId?: string | null;
+  keywords?: string[];
   operation?: "buy" | "rent" | "anticretico" | null;
   propertyType?: string | null;
   bedrooms?: string | null;
@@ -91,11 +93,38 @@ export const matchesBedrooms = (
   return true;
 };
 
+export const extractReferenceId = (rawQuery: string): string | null => {
+  const norm = normalizeGeoText(rawQuery);
+  // Matches: #ref 3, #ref3, ref 3, ref #3, ref. 3, ref: 3, #3, referencia 3, id 3, id: 3, #448, ref 448
+  const refMatch = norm.match(/(?:#\s*ref(?:erencia)?\.?|ref(?:erencia)?\.?|#|id)\s*[:#.]*\s*([a-z0-9_-]+)/i);
+  if (refMatch && refMatch[1]) {
+    return refMatch[1];
+  }
+  // Standalone digits only query (e.g. "3" or "448")
+  const trimmed = norm.trim();
+  if (/^\d{1,6}$/.test(trimmed)) {
+    return trimmed;
+  }
+  return null;
+};
+
+const COMMON_STOP_WORDS = new Set([
+  "de", "en", "la", "el", "los", "las", "un", "una", "unos", "unas", "del", "al", "con", "por", "para", "y", "o", "a",
+  "busco", "quiero", "necesito", "inmueble", "inmuebles", "propiedad", "propiedades", "zona", "barrio", "edificio",
+  "condominio", "complejo", "ref", "referencia", "id", "#"
+]);
+
 export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => {
   const query = normalizeGeoText(rawQuery);
   const criteria: LocalSearchCriteria = {};
 
-  // 1. Operation
+  // 1. Reference ID
+  const refId = extractReferenceId(rawQuery);
+  if (refId) {
+    criteria.referenceId = refId;
+  }
+
+  // 2. Operation
   if (/\b(anticretico|anticreticos|anticretica|anticresis)\b/.test(query)) {
     criteria.operation = "anticretico";
   } else if (/\b(alquiler|alquilar|alquilo|renta|rent)\b/.test(query)) {
@@ -104,7 +133,7 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
     criteria.operation = "buy";
   }
 
-  // 2. Property Type
+  // 3. Property Type
   if (/\b(departamento|departamentos|depa|depas|depto|deptos|monoambiente|monoambientes|studio|studios|suite|suites)\b/.test(query)) {
     criteria.propertyType = "Departamento";
   } else if (/\b(casa|casas|chalet|chalets|vivienda|viviendas)\b/.test(query)) {
@@ -117,7 +146,7 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
     criteria.propertyType = "Preventa";
   }
 
-  // 3. Bedrooms
+  // 4. Bedrooms
   if (/\b(monoambiente|monoambientes|studio|studios|0\s*dorms?|0\s*dormitorios?|0\s*hab(?:itacion(?:es)?)?)\b/.test(query)) {
     criteria.bedrooms = "Monoambiente";
   } else if (/\b(1\s*dorms?|1\s*dormitorios?|1\s*hab(?:itacion(?:es)?)?|un\s*dormitorio)\b/.test(query)) {
@@ -128,7 +157,7 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
     criteria.bedrooms = "3+ Dorms";
   }
 
-  // 4. Zone
+  // 5. Zone
   for (const zone of KNOWN_ZONES) {
     if (query.includes(zone)) {
       criteria.zone = zone;
@@ -136,18 +165,26 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
     }
   }
 
-  // 5. City
+  // 6. City
   if (query.includes("santa cruz")) criteria.city = "Santa Cruz";
   else if (query.includes("cochabamba") || query.includes("cbba")) criteria.city = "Cochabamba";
   else if (query.includes("la paz")) criteria.city = "La Paz";
 
-  // 6. Budget
-  const budgetMatch = rawQuery.replace(/\./g, "").match(/(?:menos de|hasta|<|maximo|max|presupuesto de)?\s*(\d{2,7})\s*(\$|usd|bs|bolivianos)?/i);
+  // 7. Budget (Make sure reference tokens are not misinterpreted as budgets)
+  let textForBudget = rawQuery;
+  if (criteria.referenceId) {
+    textForBudget = textForBudget.replace(/(?:#\s*ref(?:erencia)?\.?|ref(?:erencia)?\.?|#|id)\s*[:#.]*\s*[a-z0-9_-]+/gi, " ");
+    if (/^\s*\d{1,6}\s*$/.test(rawQuery)) {
+      textForBudget = "";
+    }
+  }
+  const budgetMatch = textForBudget.replace(/\./g, "").match(/(?:menos de|hasta|<|maximo|max|presupuesto de)\s*(\d{2,7})\s*(\$|usd|bs|bolivianos)?/i) ||
+    textForBudget.replace(/\./g, "").match(/(\d{2,7})\s*(\$|usd|bs|bolivianos)/i);
   if (budgetMatch && Number(budgetMatch[1]) > 50) {
     criteria.maxBudget = Number(budgetMatch[1]);
   }
 
-  // 7. Amenities
+  // 8. Amenities
   const amenities: string[] = [];
   if (query.includes("piscina")) amenities.push("piscina");
   if (query.includes("churrasquera") || query.includes("parrillero")) amenities.push("churrasquera");
@@ -155,19 +192,87 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
   if (query.includes("garaje") || query.includes("parqueo") || query.includes("estacionamiento")) amenities.push("garaje");
   if (amenities.length > 0) criteria.amenities = amenities;
 
+  // 9. Free-text & Building Keywords
+  // Strip recognized tokens and gather remaining words
+  let leftover = query;
+  if (criteria.referenceId) {
+    leftover = leftover.replace(/(?:#\s*ref(?:erencia)?\.?|ref(?:erencia)?\.?|#|id)\s*[:#.]*\s*[a-z0-9_-]+/gi, " ");
+    leftover = leftover.replace(new RegExp(`\\b${criteria.referenceId}\\b`, "gi"), " ");
+  }
+  leftover = leftover
+    .replace(/\b(anticretico|anticreticos|anticretica|anticresis|alquiler|alquilar|alquilo|renta|rent|venta|vender|comprar|compro|compra|inversion|invertir|preventa)\b/gi, " ")
+    .replace(/\b(departamento|departamentos|depa|depas|depto|deptos|monoambiente|monoambientes|studio|studios|suite|suites|casa|casas|chalet|chalets|vivienda|viviendas|terreno|terrenos|lote|lotes|comercial|comerciales|oficina|oficinas|local|locales|galpon|galpones)\b/gi, " ")
+    .replace(/\b(\d+\s*dorms?|\d+\s*dormitorios?|\d+\s*hab(?:itacion(?:es)?)?|un\s*dormitorio|dos\s*dormitorios|tres\s*dormitorios|cuatro\s*dormitorios)\b/gi, " ")
+    .replace(/\b(menos de|hasta|<|maximo|max|presupuesto de|\$|usd|bs|bolivianos|\d+)\b/gi, " ")
+    .replace(/\b(piscina|churrasquera|parrillero|amoblado|amoblada|garaje|parqueo|estacionamiento)\b/gi, " ")
+    .replace(/\b(santa cruz|cochabamba|cbba|la paz)\b/gi, " ");
+
+  for (const z of KNOWN_ZONES) {
+    leftover = leftover.replace(new RegExp(`\\b${z}\\b`, "gi"), " ");
+  }
+
+  const rawWords = leftover.split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && !COMMON_STOP_WORDS.has(w));
+  if (rawWords.length > 0) {
+    criteria.keywords = Array.from(new Set(rawWords));
+  }
+
   return criteria;
 };
 
 export const localSearchCatalog = (rawQuery: string, catalog: Property[]): LocalSearchResult => {
+  const trimmed = rawQuery.trim();
+  if (!trimmed) {
+    return {
+      ids: catalog.map((p) => p.id),
+      matchedProperties: catalog,
+      intent: null,
+      criteria: {},
+    };
+  }
+
   const criteria = extractSearchCriteria(rawQuery);
+  const hasCriteria = Boolean(
+    criteria.referenceId ||
+    criteria.operation ||
+    criteria.propertyType ||
+    criteria.bedrooms ||
+    criteria.zone ||
+    criteria.city ||
+    criteria.maxBudget ||
+    (criteria.amenities && criteria.amenities.length > 0) ||
+    (criteria.keywords && criteria.keywords.length > 0)
+  );
+
+  if (!hasCriteria && trimmed.length > 0) {
+    return {
+      ids: [],
+      matchedProperties: [],
+      intent: null,
+      criteria,
+    };
+  }
 
   const matched = catalog.filter((p) => {
-    // Operation filter
+    // 1. Reference ID filter
+    if (criteria.referenceId) {
+      const targetRef = criteria.referenceId.toLowerCase();
+      const pId = String(p.id || "").toLowerCase();
+      const cId = String(p.complejoId || "").toLowerCase();
+      const matchesRef = pId === targetRef || cId === targetRef || pId.includes(targetRef);
+      if (!matchesRef) {
+        const text = normalizeGeoText(`${p.title || ""} ${p.complejoNombre || ""}`);
+        if (!text.includes(targetRef)) {
+          return false;
+        }
+      }
+    }
+
+    // 2. Operation filter
     if (criteria.operation === "anticretico") {
       const isAnticretico =
         normalizeOfferOperation(p.operation) === "anticretico" ||
         p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico") ||
-        (p.title + " " + p.description).toLowerCase().includes("anticr");
+        normalizeGeoText(`${p.title || ""} ${p.description || ""}`).includes("anticr");
       if (!isAnticretico) return false;
     } else if (criteria.operation === "rent") {
       const isRent =
@@ -182,17 +287,17 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
       if (!isBuy) return false;
     }
 
-    // Property Type filter
+    // 3. Property Type filter
     if (criteria.propertyType && !matchesPropertyType(p.type, criteria.propertyType)) {
       return false;
     }
 
-    // Bedrooms filter
+    // 4. Bedrooms filter
     if (criteria.bedrooms && !matchesBedrooms(p.rooms, p.title, p.description, criteria.bedrooms)) {
       return false;
     }
 
-    // Zone filter
+    // 5. Zone filter
     if (criteria.zone) {
       const zoneText = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""} ${p.description || ""}`);
       if (!zoneText.includes(criteria.zone)) {
@@ -200,7 +305,7 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
       }
     }
 
-    // City filter
+    // 6. City filter
     if (criteria.city) {
       const normCity = normalizeGeoText(criteria.city);
       const cityText = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
@@ -209,7 +314,7 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
       }
     }
 
-    // Budget filter
+    // 7. Budget filter
     if (criteria.maxBudget) {
       const price = p.price;
       if (price > criteria.maxBudget) {
@@ -217,7 +322,7 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
       }
     }
 
-    // Amenities filter
+    // 8. Amenities filter
     if (criteria.amenities && criteria.amenities.length > 0) {
       const amText = normalizeGeoText(
         `${(p.amenities || []).join(" ")} ${p.title || ""} ${p.description || ""}`
@@ -227,8 +332,35 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
       }
     }
 
+    // 9. Building / Free-text Keywords filter
+    if (criteria.keywords && criteria.keywords.length > 0) {
+      const fullSearchText = normalizeGeoText(
+        `${p.title || ""} ${p.complejoNombre || ""} ${p.zone || ""} ${p.area || ""} ${p.description || ""}`
+      );
+      const allKeywordsMatch = criteria.keywords.every((kw) => fullSearchText.includes(kw));
+      if (!allKeywordsMatch) {
+        return false;
+      }
+    }
+
     return true;
   });
+
+  // If a reference ID was requested, sort exact ID matches first, then complex matches
+  if (criteria.referenceId) {
+    const target = criteria.referenceId.toLowerCase();
+    matched.sort((a, b) => {
+      const aExact = String(a.id).toLowerCase() === target;
+      const bExact = String(b.id).toLowerCase() === target;
+      if (aExact && !bExact) return -1;
+      if (!aExact && bExact) return 1;
+      const aComp = String(a.complejoId || "").toLowerCase() === target;
+      const bComp = String(b.complejoId || "").toLowerCase() === target;
+      if (aComp && !bComp) return -1;
+      if (!aComp && bComp) return 1;
+      return 0;
+    });
+  }
 
   return {
     ids: matched.map((p) => p.id),
