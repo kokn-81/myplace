@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Loader2, LogOut, Moon, ShieldCheck, Sun } from "lucide-react";
+import { ArrowLeft, BarChart3, Loader2, LogOut, Moon, ShieldCheck, Sun, Sparkles } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { AppRole, authFetch, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile } from "../roleAccess";
 import { auth, authPersistenceReady } from "../firebase";
@@ -123,13 +123,50 @@ export default function NiaMetricsDashboard() {
   }
 
   if (!isAdmin) {
+    const firstName = user?.displayName ? user.displayName.split(" ")[0] : "";
     return (
-      <div className="min-h-screen bg-transparent flex items-center justify-center font-sans p-4">
-        <div className="bg-[var(--surface-panel)] p-8 rounded-xl shadow-[var(--shadow-warm)] border border-[var(--border-soft)] text-center max-w-md w-full">
-          <ShieldCheck className="w-12 h-12 text-[var(--accent-main)] mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[var(--text-main)] mb-2">Acceso admin restringido</h2>
-          <p className="text-sm text-[var(--text-muted)] mb-6">Tu correo no tiene permisos de administrador.</p>
-          <Link to="/" className="bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-bold px-4 py-3 rounded transition-colors uppercase tracking-widest text-xs shadow-md">Volver al mapa</Link>
+      <div className="min-h-screen bg-[var(--surface-page)] flex items-center justify-center font-sans p-4">
+        <div className="bg-[var(--surface-panel)] p-8 sm:p-10 rounded-2xl shadow-[var(--shadow-warm)] border border-[var(--accent-main)]/40 text-center max-w-lg w-full">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-main)]/15 text-[var(--accent-main)] shadow-inner">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-black text-[var(--text-main)] mb-2 tracking-tight">
+            ¡Bienvenido a N.I.A.{firstName ? `, ${firstName}` : ""}!
+          </h2>
+          <p className="text-sm font-bold text-[var(--accent-main)] mb-3">
+            Tu portal inmobiliario exclusivo en Santa Cruz de la Sierra
+          </p>
+          <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-6">
+            El panel de métricas es un área reservada para la administración interna de la plataforma.
+            Te invitamos a explorar nuestro catálogo completo y mapa interactivo con todas las propiedades disponibles.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[var(--accent-main)] hover:bg-[var(--accent-hover)] text-[#2F241D] hover:text-white font-black px-5 py-3 text-xs uppercase tracking-wider transition-all shadow-md"
+            >
+              <span>🗺️</span>
+              <span>Ir al Mapa de Inmuebles</span>
+            </Link>
+            <a
+              href="https://wa.me/59157015854?text=Hola%20Alejandro,%20estoy%20navegando%20en%20NIA%20y%20deseo%20asesor%C3%ADa%20personalizada%20para%20encontrar%20un%20inmueble."
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 rounded-xl border border-[var(--accent-main)]/60 bg-[var(--surface-control)] hover:bg-[var(--accent-main)]/20 text-[var(--text-main)] font-bold px-4 py-3 text-xs uppercase tracking-wider transition-all"
+            >
+              <span>💬</span>
+              <span>Contactar Asesor</span>
+            </a>
+          </div>
+          <div className="pt-4 border-t border-[var(--border-soft)] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+            <span>Sesión iniciada: {user.email}</span>
+            <button
+              onClick={handleLogout}
+              className="text-red-500 hover:text-red-600 font-bold hover:underline"
+            >
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
     );

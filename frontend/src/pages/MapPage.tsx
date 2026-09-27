@@ -439,6 +439,7 @@ export default function MapPage() {
   const [roleLoading, setRoleLoading] = useState(false);
   const [userRole, setUserRole] = useState<AppRole>(() => getLastCachedAuthProfile()?.role || "user");
   const [loginError, setLoginError] = useState("");
+  const [showClientWelcome, setShowClientWelcome] = useState(false);
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedBuildingGroup, setSelectedBuildingGroup] = useState<BuildingGroupData | null>(null);
@@ -524,7 +525,17 @@ export default function MapPage() {
       setLoginError("");
       const provider = new GoogleAuthProvider();
       await authPersistenceReady;
-      await signInWithPopup(auth, provider);
+      const res = await signInWithPopup(auth, provider);
+      if (res?.user) {
+        try {
+          const profile = await fetchAuthProfile(res.user);
+          if (profile.role === "user") {
+            setShowClientWelcome(true);
+          }
+        } catch {
+          setShowClientWelcome(true);
+        }
+      }
     } catch (error: any) {
       setLoginError(error.message || "No se pudo iniciar sesion.");
     }
@@ -1880,12 +1891,29 @@ export default function MapPage() {
           ) : null}
         </div>
       ) : user ? (
-        <button onClick={handleLogout} className="absolute top-6 right-6 z-10 flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] px-4 py-2.5 text-xs font-bold text-[var(--color-ivory)] shadow-lg backdrop-blur transition-colors hover:bg-[var(--accent-hover)] hover:text-white dark:border-[var(--border-soft)] dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-muted)]">
-          <LogOut size={14} /> Salir
-        </button>
+        <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
+          <button
+            onClick={() => setShowClientWelcome(true)}
+            className="flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 px-3 py-2 text-xs font-bold text-[var(--text-main)] shadow-lg backdrop-blur hover:border-[var(--accent-main)] transition-colors"
+            title="Ver bienvenida"
+          >
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-main)]/20 text-[var(--accent-main)] text-[11px] font-black">
+              {user.displayName ? user.displayName[0].toUpperCase() : "U"}
+            </span>
+            <span className="max-w-[120px] truncate hidden sm:inline">{user.displayName?.split(" ")[0] || "Cliente"}</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            title="Cerrar sesión"
+            className="flex items-center gap-1.5 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-red-500 hover:border-red-400/50 transition-colors shadow-lg backdrop-blur"
+          >
+            <LogOut size={14} />
+            <span className="hidden sm:inline">Salir</span>
+          </button>
+        </div>
       ) : (
         <button onClick={handleLogin} disabled={authLoading} className="absolute top-6 right-6 z-10 flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] px-4 py-2.5 text-xs font-bold text-[var(--color-ivory)] shadow-lg backdrop-blur transition-colors hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-60 dark:border-[var(--border-soft)] dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-muted)]">
-          <ShieldCheck size={14} /> Entrar
+          <UserCircle size={15} /> Entrar
         </button>
       )}
 
@@ -1946,12 +1974,21 @@ export default function MapPage() {
             ) : null}
           </>
         ) : user ? (
-          <button onClick={handleLogout} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]" aria-label="Salir">
-            <LogOut size={16} />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setShowClientWelcome(true)}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--surface-panel)] text-[var(--accent-main)] font-black text-xs shadow-lg"
+              title="Mi perfil"
+            >
+              {user.displayName ? user.displayName[0].toUpperCase() : "U"}
+            </button>
+            <button onClick={handleLogout} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-soft)] bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-red-900/60" aria-label="Salir" title="Cerrar sesión">
+              <LogOut size={16} />
+            </button>
+          </div>
         ) : (
           <button onClick={handleLogin} disabled={authLoading} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-60" aria-label="Entrar">
-            <ShieldCheck size={16} />
+            <UserCircle size={18} />
           </button>
         )}
       </div>
@@ -3996,6 +4033,69 @@ export default function MapPage() {
           </div>
         </div>
       )}
+
+      {/* MODAL DE BIENVENIDA PARA CLIENTES / USUARIOS */}
+      <AnimatePresence>
+        {showClientWelcome && user && !canOpenAdvisor && !canOpenAdmin && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.94, y: 12, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.94, y: 12, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-md rounded-2xl border border-[var(--accent-main)]/50 bg-[var(--surface-panel)] p-6 sm:p-8 text-center shadow-2xl dark:bg-[rgba(27,20,17,0.98)]"
+            >
+              <button
+                type="button"
+                onClick={() => setShowClientWelcome(false)}
+                className="absolute right-4 top-4 rounded-full p-2 text-[var(--text-muted)] hover:bg-stone-200/50 hover:text-[var(--text-main)] dark:hover:bg-stone-800 transition-colors"
+                title="Cerrar"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-main)]/20 text-[var(--accent-main)] shadow-inner">
+                <Sparkles size={28} />
+              </div>
+
+              <h3 className="text-xl font-black text-[var(--text-main)] mb-1.5 tracking-tight">
+                ¡Bienvenido a N.I.A.{user.displayName ? `, ${user.displayName.split(" ")[0]}` : ""}!
+              </h3>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-main)] mb-4">
+                Tu portal inmobiliario en Santa Cruz
+              </p>
+
+              <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-6">
+                Nos alegra tenerte aquí. Tienes acceso libre e ilimitado a todo nuestro catálogo de inmuebles exclusivos directamente sobre el mapa interactivo. Explora opciones en venta, alquiler y anticrético, y consúltanos ante cualquier duda.
+              </p>
+
+              <div className="flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setShowClientWelcome(false)}
+                  className="w-full rounded-xl bg-[var(--accent-main)] px-5 py-3 text-xs font-black uppercase tracking-wider text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white transition-all shadow-md"
+                >
+                  Comenzar a Explorar Inmuebles
+                </button>
+                <a
+                  href="https://wa.me/59157015854?text=Hola%20Alejandro,%20estoy%20navegando%20en%20NIA%20y%20deseo%20asesor%C3%ADa%20personalizada%20para%20encontrar%20un%20inmueble."
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-1.5 w-full rounded-xl border border-[var(--accent-main)]/50 bg-[var(--surface-control)] px-4 py-2.5 text-xs font-bold text-[var(--text-main)] hover:bg-[var(--accent-main)]/15 transition-all"
+                >
+                  <MessageCircle size={14} className="text-[#25D366]" />
+                  <span>Hablar con un Asesor por WhatsApp</span>
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
