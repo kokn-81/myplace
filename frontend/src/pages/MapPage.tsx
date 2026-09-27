@@ -2322,11 +2322,11 @@ export default function MapPage() {
           >
             <AnimatePresence initial={false} mode="wait">
               <motion.div
-                key={`carousel-${currentIndex}-${carouselProperties.length}`}
+                key={`carousel-${selectedBuildingGroup?.key ?? 'global'}-${selectedBuildingSubfilter}-${visibleProperties.map((p) => p.id).join('-')}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                 className="flex h-full w-full items-center justify-center gap-4 md:gap-7"
               >
               {visibleProperties.length === 0 && hasFinishedAiSearch && (
@@ -2372,11 +2372,14 @@ export default function MapPage() {
         const isBestSearchMatch = isRankedSearchResult && globalResultRank === 0;
 
         return (
-        <div
+        <motion.div
           key={p.id}
+          initial={{ opacity: 0, scale: 0.96, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: -6 }}
+          transition={{ duration: 0.24, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
           onClick={() => selectProperty(p)}
-          // Tarjetas compactas para que el borde respire completo
-          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-0.5 hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
+          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
         >
         {isRankedSearchResult && (
           <span className={`absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-black shadow-md ${isBestSearchMatch ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 text-[var(--accent-main)]"}`} title={isBestSearchMatch ? "Mejor opcion" : `Opcion ${globalResultRank + 1}`}>
@@ -2411,6 +2414,12 @@ export default function MapPage() {
               <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-main)] dark:text-[var(--text-muted)]">
                 Galeria Cloudinary
               </span>
+            </div>
+          )}
+          {p.images && p.images.length > 1 && (
+            <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-md px-2 py-0.5 text-[9px] font-bold text-white shadow-sm border border-white/10">
+              <Images size={11} className="text-[var(--accent-main)]" />
+              <span>{p.images.length} fotos</span>
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[var(--surface-panel)] dark:to-stone-900 pointer-events-none" />
@@ -2521,7 +2530,7 @@ export default function MapPage() {
             </div>
           </div>
         </div>
-        </div>
+        </motion.div>
       )})}
       </motion.div>
     </AnimatePresence>
@@ -2665,6 +2674,26 @@ export default function MapPage() {
                             <ChevronRight size={20} />
                           </button>
                         </>
+                      )}
+
+                      {/* Badge de Experiencia Residencial */}
+                      {selectedMediaCount > 0 && (
+                        <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full bg-black/70 backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-[var(--color-ivory)] border border-white/15 shadow-md pointer-events-none">
+                          <Sparkles size={11} className="text-[var(--accent-main)]" />
+                          <span>
+                            {normalizedGalleryIndex === 0
+                              ? "Ambiente Principal"
+                              : normalizedGalleryIndex === 1
+                              ? "Living & Comedor"
+                              : normalizedGalleryIndex === 2
+                              ? "Master Suite / Dormitorio"
+                              : normalizedGalleryIndex === 3
+                              ? "Cocina & Equipamiento"
+                              : normalizedGalleryIndex === 4
+                              ? "Balcón & Áreas Sociales"
+                              : "Detalles & Confort"}
+                          </span>
+                        </div>
                       )}
 
                       {/* Contador de fotos elegante */}
