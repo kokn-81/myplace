@@ -2465,12 +2465,12 @@ export default function MapPage() {
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
 
-          <div className="relative mb-2.5 flex items-center justify-between">
-            <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent-main)]">
-              Ref. #{p.id}
-            </span>
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <span className="pointer-events-auto rounded-full bg-[var(--accent-main)]/15 px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)]">
+          <div className="mb-2.5 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent-main)]">
+                Ref. #{p.id}
+              </span>
+              <span className="rounded-full bg-[var(--accent-main)]/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)] truncate max-w-[130px]">
                 {formatPropertyTypeLabel(p.type)}
               </span>
             </div>
@@ -2478,9 +2478,7 @@ export default function MapPage() {
               <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                 Cercana
               </span>
-            ) : (
-              <span className="w-10 shrink-0" aria-hidden="true" />
-            )}
+            ) : null}
           </div>
 
           <h3 className="nia-property-card-title mb-2 line-clamp-2 text-[13px] font-bold leading-snug tracking-wide text-[var(--text-main)] md:text-sm">
