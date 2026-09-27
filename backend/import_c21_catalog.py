@@ -198,11 +198,12 @@ def import_c21_property(db, item: Dict[str, Any], default_office_id: int) -> Opt
 
     is_bob = "BOB" in moneda_raw or "BOB" in precio_format or "BS" in precio_format
     if operacion == "Alquilar":
-        moneda_display = "Bs"
         if is_bob:
+            moneda_display = "Bs"
             precio_usd = round(precio_raw, 0)
         else:
-            precio_usd = round(precio_raw * 6.96, 0) if precio_raw > 0 else 0.0
+            moneda_display = "$ (USD)"
+            precio_usd = round(precio_raw, 0)
     else:
         moneda_display = "$ (USD)"
         if is_bob:
