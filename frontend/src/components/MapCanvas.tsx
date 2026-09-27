@@ -64,7 +64,6 @@ type MarkerPinProps = {
   kind: MarkerKind;
   count: number;
   label: string;
-  activeCardRanks?: number[];
   onSelect: () => void;
 };
 
@@ -75,29 +74,14 @@ const MarkerPin = memo(function MarkerPin({
   kind,
   count,
   label,
-  activeCardRanks = [],
   onSelect,
 }: MarkerPinProps) {
   const isBuilding = count > 1;
-  const isCardActive = activeCardRanks.length > 0;
   const isSelected = tone === "selected";
-  const isActive = isCardActive || tone === "active";
+  const isActive = tone === "active";
 
-  const rankBadgeText =
-    activeCardRanks.includes(1) && activeCardRanks.includes(2)
-      ? "Opciones 1 y 2"
-      : activeCardRanks.includes(1)
-      ? "Opción 1"
-      : activeCardRanks.includes(2)
-      ? "Opción 2"
-      : null;
-
-  if (isBuilding) {
-    const bgClass = isSelected
-      ? "bg-amber-400 text-stone-950 border-white ring-4 ring-amber-400/80 scale-115 shadow-2xl"
-      : isCardActive
-      ? "bg-gradient-to-br from-amber-400 to-amber-500 text-stone-950 border-white ring-4 ring-amber-400/80 scale-110 shadow-[0_0_30px_rgba(245,158,11,1)]"
-      : kind === "anticretico"
+  const bgClass =
+    kind === "anticretico"
       ? "bg-[#7C3AED] text-white border-white dark:border-stone-900"
       : kind === "rent"
       ? "bg-[var(--color-teal-deep)] text-white border-white dark:border-stone-900"
@@ -105,6 +89,7 @@ const MarkerPin = memo(function MarkerPin({
       ? "bg-[var(--accent-hover)] text-stone-900 border-white dark:border-stone-900"
       : "bg-[var(--accent-main)] text-stone-900 border-white dark:border-stone-900";
 
+  if (isBuilding) {
     return (
       <Marker
         longitude={longitude}
@@ -115,28 +100,17 @@ const MarkerPin = memo(function MarkerPin({
         }}
       >
         <div className="relative flex items-center justify-center cursor-pointer group">
-          {/* LUZ RADIANTE Y ONDA EXPANSIVA */}
-          {isCardActive && (
-            <>
-              <span className="absolute -inset-3 rounded-full animate-ping bg-amber-400/60 pointer-events-none" />
-              <span className="absolute -inset-2 rounded-full bg-amber-400/35 blur-sm pointer-events-none" />
-            </>
-          )}
-          {(isSelected || (isActive && !isCardActive)) ? (
+          {isSelected || isActive ? (
             <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
           ) : null}
 
-          {/* INSIGNIA NUMERADA FLOTANTE */}
-          {rankBadgeText && (
-            <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-black text-stone-950 shadow-2xl ring-2 ring-stone-900 whitespace-nowrap animate-bounce pointer-events-none">
-              <span>📍</span>
-              <span>{rankBadgeText}</span>
-            </div>
-          )}
-
           <div
-            className={`relative z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full border-[2px] font-black shadow-lg transition-all duration-300 hover:scale-115 ${bgClass} ${
-              isSelected ? "ring-4 ring-amber-400 scale-110 shadow-xl" : isActive ? "ring-2 ring-[var(--accent-main)]" : ""
+            className={`relative z-10 flex items-center gap-1 px-2.5 py-1 rounded-full border-[2px] font-black shadow-lg transition-all duration-300 hover:scale-115 ${bgClass} ${
+              isSelected
+                ? "ring-4 ring-amber-400 scale-110 shadow-xl"
+                : isActive
+                ? "ring-2 ring-[var(--accent-main)] scale-105 shadow-md"
+                : ""
             }`}
             title={`🏢 ${label} · ${count} unidades disponibles · Clic para ver opciones`}
           >
@@ -158,38 +132,15 @@ const MarkerPin = memo(function MarkerPin({
       }}
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
-        {/* LUZ RADIANTE Y ONDA EXPANSIVA */}
-        {isCardActive && (
-          <>
-            <span className="absolute -inset-3 rounded-full animate-ping bg-amber-400/60 pointer-events-none" />
-            <span className="absolute -inset-2 rounded-full bg-amber-400/35 blur-sm pointer-events-none" />
-          </>
-        )}
-        {(tone === "active" || tone === "selected") && !isCardActive ? (
+        {tone === "active" || tone === "selected" ? (
           <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
         ) : null}
 
-        {/* INSIGNIA NUMERADA FLOTANTE */}
-        {rankBadgeText && (
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-black text-stone-950 shadow-2xl ring-2 ring-stone-900 whitespace-nowrap animate-bounce pointer-events-none">
-            <span>📍</span>
-            <span>{rankBadgeText}</span>
-          </div>
-        )}
-
         <div
-          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-115 ${
-            isCardActive
-              ? "h-8 w-8 border-[3px] border-white bg-amber-400 text-stone-950 shadow-[0_0_30px_rgba(245,158,11,1)] ring-4 ring-amber-400/70 scale-110"
-              : `${MARKER_SIZE[tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[tone]}`
-          }`}
+          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[tone]}`}
           title={`${label} · ${kind === "anticretico" ? "Anticrético" : kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
         >
-          {isCardActive ? (
-            <span className="text-[11px] font-black">{activeCardRanks[0]}</span>
-          ) : (
-            <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
-          )}
+          <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
         </div>
       </div>
     </Marker>
@@ -203,8 +154,6 @@ type ClusterPinProps = {
   pointCount: number;
   hasSelected: boolean;
   hasActive: boolean;
-  cardRank1: boolean;
-  cardRank2: boolean;
   hasBuilding: boolean;
   hasRent: boolean;
   hasBuy: boolean;
@@ -218,32 +167,18 @@ const ClusterPin = memo(function ClusterPin({
   pointCount,
   hasSelected,
   hasActive,
-  cardRank1,
-  cardRank2,
   hasBuilding,
   hasRent,
   hasBuy,
   onClick,
 }: ClusterPinProps) {
-  const isCardActive = cardRank1 || cardRank2;
   const isRentOnly = hasRent && !hasBuy;
   const isHybrid = hasRent && hasBuy;
 
-  const rankBadgeText =
-    cardRank1 && cardRank2
-      ? "Opciones 1 y 2"
-      : cardRank1
-      ? "Opción 1"
-      : cardRank2
-      ? "Opción 2"
-      : null;
-
   const bgStyle = hasSelected
-    ? "border-amber-400 bg-amber-500 text-stone-950 shadow-[0_0_25px_rgba(245,158,11,0.9)] ring-4 ring-amber-400/60"
-    : isCardActive
-    ? "border-amber-300 bg-gradient-to-br from-amber-400 to-amber-500 text-stone-950 shadow-[0_0_35px_rgba(245,158,11,1),0_0_15px_rgba(255,255,255,0.8)] ring-4 ring-amber-400/80 scale-115"
+    ? "border-[var(--color-ivory)] bg-[var(--accent-hover)] text-[#1a1410] shadow-[0_0_20px_rgba(216,170,113,0.8)]"
     : hasActive
-    ? "border-[var(--color-ivory)] bg-[var(--color-teal-deep)] text-[var(--color-ivory)] shadow-[0_0_16px_rgba(47,111,115,0.7)]"
+    ? "border-[var(--color-ivory)] bg-[var(--color-teal-deep)] text-[var(--color-ivory)] shadow-[0_0_16px_rgba(47,111,115,0.7)] ring-2 ring-[var(--accent-main)]"
     : isRentOnly
     ? "border-[var(--color-ivory)] bg-[var(--color-teal-deep)] text-[var(--color-ivory)] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
     : isHybrid
@@ -267,24 +202,9 @@ const ClusterPin = memo(function ClusterPin({
       }}
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
-        {/* LUZ RADIANTE Y ONDA EXPANSIVA DE LA BURBUJA */}
-        {isCardActive && (
-          <>
-            <span className="absolute -inset-3 rounded-full animate-ping bg-amber-400/60 pointer-events-none" />
-            <span className="absolute -inset-2 rounded-full bg-amber-400/35 blur-sm pointer-events-none" />
-          </>
-        )}
-        {(hasSelected || (hasActive && !isCardActive)) ? (
+        {hasSelected || hasActive ? (
           <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-hover)]/40 pointer-events-none" />
         ) : null}
-
-        {/* INSIGNIA NUMERADA FLOTANTE */}
-        {rankBadgeText && (
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-black text-stone-950 shadow-2xl ring-2 ring-stone-900 whitespace-nowrap animate-bounce pointer-events-none">
-            <span>📍</span>
-            <span>{rankBadgeText}</span>
-          </div>
-        )}
 
         <div
           className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full border-[2.5px] transition-all duration-300 group-hover:scale-115 group-hover:shadow-[0_0_24px_rgba(216,170,113,0.8)] ${sizeStyle} ${bgStyle}`}
@@ -314,17 +234,29 @@ export type BuildingGroupData = {
   lat: number;
 };
 
+const cleanBuildingName = (raw: string): string => {
+  let name = raw.trim();
+  name = name.replace(/\s*[-–|,/]\s*$/g, "");
+  name = name.replace(/\b(?:dpto|depto|departamento|unidad|oficina|of|suite|penthouse)\.?\s*#?\s*\w+\b/gi, "");
+  name = name.replace(/\bpiso\s*#?\s*\d+\b/gi, "");
+  name = name.replace(/\b(?:1|2|3|4)\s*dorms?\b/gi, "");
+  name = name.replace(/\b(?:en\s+)?(?:alquiler|venta|anticretico)\b/gi, "");
+  name = name.replace(/\s+/g, " ").trim();
+  name = name.replace(/\s*[-–|,/]\s*$/g, "");
+  return name.trim() || raw.trim();
+};
+
 const extractBuildingName = (p: Property): string => {
   if (p.complejoNombre && p.complejoNombre.trim().length > 3) {
-    return p.complejoNombre.trim();
+    return cleanBuildingName(p.complejoNombre);
   }
   const t = p.title || "";
   const match = t.match(/(?:edificio|condominio|torre|residence|sky|smart|macoror[oó]|onix|ares|magnum|porto|stanza|swiss[oô]tel|domus|luxe)\s+([^·\-,|–\(\)]+)/i);
   if (match) {
-    return match[0].trim();
+    return cleanBuildingName(match[0]);
   }
   if (p.zone) return `Edificio ${p.zone}`;
-  return p.title;
+  return cleanBuildingName(p.title);
 };
 
 type BuildingPointProps = {
@@ -338,7 +270,6 @@ type BuildingPointProps = {
   label: string;
   hasSelected: boolean;
   hasActive: boolean;
-  activeCardRanks: number[];
   hasRent: boolean;
   hasBuy: boolean;
   hasAnticretico: boolean;
@@ -350,8 +281,6 @@ type ClusterAccumulatedProps = {
   hasActive: number;
   hasRent: number;
   hasBuy: number;
-  cardRank1: number;
-  cardRank2: number;
   hasBuilding: number;
 };
 
@@ -364,7 +293,6 @@ type MapCanvasProps = {
   selectedBuildingKey?: string | null;
   focusLocation?: MapFocus | null;
   highlightedIds?: string[];
-  highlightedCardMap?: Record<string, number>;
   matchedIds?: string[] | null;
   selectedId?: string | null;
 };
@@ -378,7 +306,6 @@ function MapCanvas({
   selectedBuildingKey = null,
   focusLocation,
   highlightedIds = [],
-  highlightedCardMap = {},
   matchedIds = null,
   selectedId = null,
 }: MapCanvasProps) {
@@ -464,10 +391,6 @@ function MapCanvas({
         items.find((item) => item.tone === "active") ||
         top;
 
-      const activeCardRanks = items
-        .map((i) => highlightedCardMap[i.property.id])
-        .filter((r): r is number => Boolean(r));
-
       const kinds = new Set(items.map((item) => item.kind));
       const hasAnticretico = kinds.has("anticretico");
       const hasRent = items.some((item) => item.kind === "rent" || item.kind === "both");
@@ -479,8 +402,8 @@ function MapCanvas({
           ? "anticretico"
           : top.kind;
       const hasSelected = isBuildingSelected || items.some((item) => item.tone === "selected");
-      const hasActive = items.some((item) => item.tone === "active") || activeCardRanks.length > 0;
-      const label = top.property.complejoNombre || extractBuildingName(top.property);
+      const hasActive = items.some((item) => item.tone === "active");
+      const label = extractBuildingName(top.property);
 
       features.push({
         type: "Feature",
@@ -498,7 +421,6 @@ function MapCanvas({
           label,
           hasSelected,
           hasActive,
-          activeCardRanks,
           hasRent,
           hasBuy,
           hasAnticretico,
@@ -507,7 +429,7 @@ function MapCanvas({
     }
 
     return features;
-  }, [properties, highlightedSet, matchedSet, selectedId, selectedBuildingKey, highlightedCardMap]);
+  }, [properties, highlightedSet, matchedSet, selectedId, selectedBuildingKey]);
 
   // Build Supercluster spatial index with tighter radius so buildings separate into towers
   const supercluster = useMemo(() => {
@@ -520,8 +442,6 @@ function MapCanvas({
         hasActive: props.hasActive ? 1 : 0,
         hasRent: props.hasRent ? 1 : 0,
         hasBuy: props.hasBuy ? 1 : 0,
-        cardRank1: props.activeCardRanks.includes(1) ? 1 : 0,
-        cardRank2: props.activeCardRanks.includes(2) ? 1 : 0,
         hasBuilding: props.unitCount > 1 ? 1 : 0,
       }),
       reduce: (acc, props) => {
@@ -530,8 +450,6 @@ function MapCanvas({
         acc.hasActive += props.hasActive;
         acc.hasRent += props.hasRent;
         acc.hasBuy += props.hasBuy;
-        acc.cardRank1 += props.cardRank1;
-        acc.cardRank2 += props.cardRank2;
         acc.hasBuilding += props.hasBuilding;
       },
     });
@@ -601,8 +519,6 @@ function MapCanvas({
             pointCount={pointCount}
             hasSelected={clusterProps.hasSelected > 0}
             hasActive={clusterProps.hasActive > 0}
-            cardRank1={clusterProps.cardRank1 > 0}
-            cardRank2={clusterProps.cardRank2 > 0}
             hasBuilding={clusterProps.hasBuilding > 0}
             hasRent={clusterProps.hasRent > 0}
             hasBuy={clusterProps.hasBuy > 0}
@@ -621,7 +537,6 @@ function MapCanvas({
           kind={buildingProps.kind}
           count={buildingProps.unitCount}
           label={buildingProps.label}
-          activeCardRanks={buildingProps.activeCardRanks}
           onSelect={() => {
             if (buildingProps.unitCount > 1 && onSelectBuilding) {
               onSelectBuilding({

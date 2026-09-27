@@ -1620,14 +1620,6 @@ export default function MapPage() {
 
   const highlightedIds = useMemo(() => visibleProperties.map((property) => property.id), [visibleProperties]);
 
-  const highlightedCardMap = useMemo(() => {
-    const map: Record<string, number> = {};
-    visibleProperties.forEach((property, index) => {
-      map[property.id] = index + 1;
-    });
-    return map;
-  }, [visibleProperties]);
-
   useEffect(() => {
     if (currentIndex >= carouselProperties.length) {
       setCurrentIndex(Math.max(0, carouselProperties.length - carouselStep));
@@ -1847,7 +1839,6 @@ export default function MapPage() {
             selectedBuildingKey={selectedBuildingGroup?.key ?? null}
             focusLocation={mapFocus}
             highlightedIds={highlightedIds}
-            highlightedCardMap={highlightedCardMap}
             matchedIds={aiFilteredIds}
             selectedId={selectedProperty?.id ?? null}
           />
@@ -2428,36 +2419,21 @@ export default function MapPage() {
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
 
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="shrink-0 text-[10px] text-[var(--accent-main)] font-bold tracking-[0.18em] uppercase">Ref. #{p.id}</span>
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMapFocus({
-                    longitude: p.lng,
-                    latitude: p.lat,
-                    zoom: 16.5,
-                    key: Date.now(),
-                    label: p.title,
-                    source: "user",
-                  });
-                }}
-                className="flex items-center gap-0.5 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 px-2 py-0.5 text-[9px] font-black shadow-sm transition-transform hover:scale-105 cursor-pointer"
-                title={`Opción #${index + 1} en el mapa · Clic para enfocar`}
-              >
-                <span>📍</span>
-                <span>#{index + 1}</span>
+          <div className="relative mb-2.5 flex items-center justify-between">
+            <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent-main)]">
+              Ref. #{p.id}
+            </span>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <span className="pointer-events-auto rounded-full bg-[var(--accent-main)]/15 px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)]">
+                {formatPropertyTypeLabel(p.type)}
               </span>
             </div>
             {isSuggestedProperty(p) ? (
-              <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                Opción Cercana
+              <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                Cercana
               </span>
             ) : (
-              <span className="shrink-0 rounded-full bg-[var(--accent-main)]/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)]">
-                {formatPropertyTypeLabel(p.type)}
-              </span>
+              <span className="w-10 shrink-0" aria-hidden="true" />
             )}
           </div>
 
