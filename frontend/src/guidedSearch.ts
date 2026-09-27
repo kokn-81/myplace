@@ -1,14 +1,17 @@
 import { BOLIVIA_DEPARTMENTS, normalizeGeoText } from "./geographicLocations";
 
-export type GuidedOperation = "" | "Comprar" | "Alquilar" | "Vender";
+export type GuidedOperation = "" | "Comprar" | "Alquilar" | "Anticrético" | "Vender";
 export type GuidedStage = "operation" | "propertyType" | "city" | "zone" | "bedrooms" | "budget" | "sell";
 
-export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "">[] = ["Comprar", "Alquilar", "Vender"];
+export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "">[] = ["Comprar", "Alquilar", "Anticrético", "Vender"];
 export const GUIDED_BUY_PROPERTY_TYPES = [
   "Departamento",
   "Preventa",
 ] as const;
 export const GUIDED_RENT_PROPERTY_TYPES = [
+  "Departamento",
+] as const;
+export const GUIDED_ANTICRETICO_PROPERTY_TYPES = [
   "Departamento",
 ] as const;
 export const GUIDED_BEDROOM_OPTIONS = [
@@ -20,6 +23,7 @@ export const GUIDED_BEDROOM_OPTIONS = [
 ] as const;
 export const GUIDED_RENT_BUDGET_OPTIONS = ["5.000 Bs", "8.000 Bs", "12.000 Bs"] as const;
 export const GUIDED_BUY_BUDGET_OPTIONS = ["100.000 $", "200.000 $", "350.000 $"] as const;
+export const GUIDED_ANTICRETICO_BUDGET_OPTIONS = ["20.000 $", "35.000 $", "50.000 $"] as const;
 export const SELL_WHATSAPP_NUMBER = "57015854";
 export const SELL_WHATSAPP_MESSAGE = "Hola, vengo de N.I.A y quiero vender mi inmueble.";
 
@@ -60,6 +64,7 @@ export const previousGuidedStage = (
 
 export const budgetOptionsFor = (operation: GuidedOperation): readonly string[] => {
   if (operation === "Comprar") return GUIDED_BUY_BUDGET_OPTIONS;
+  if (operation === "Anticrético") return GUIDED_ANTICRETICO_BUDGET_OPTIONS;
   return GUIDED_RENT_BUDGET_OPTIONS;
 };
 
@@ -71,7 +76,9 @@ export const getGuidedChoiceOptions = (
 ): string[] => {
   if (stage === "operation") return [...GUIDED_OPERATIONS];
   if (stage === "propertyType") {
-    return operation === "Alquilar" ? [...GUIDED_RENT_PROPERTY_TYPES] : [...GUIDED_BUY_PROPERTY_TYPES];
+    if (operation === "Alquilar") return [...GUIDED_RENT_PROPERTY_TYPES];
+    if (operation === "Anticrético") return [...GUIDED_ANTICRETICO_PROPERTY_TYPES];
+    return [...GUIDED_BUY_PROPERTY_TYPES];
   }
   if (stage === "city") return cityOptions.length > 0 ? cityOptions : [...BOLIVIA_DEPARTMENTS];
   if (stage === "zone") return zoneOptions;
@@ -115,7 +122,9 @@ export const filterGuidedChoiceOptions = ({
 export const getGuidedSearchPlaceholder = (stage: GuidedStage, city = "", operation: GuidedOperation = "") => {
   if (stage === "operation") return "¿Qué estás buscando?";
   if (stage === "propertyType") {
-    return operation === "Alquilar" ? "¿Qué buscas alquilar?" : "¿Qué buscas comprar?";
+    if (operation === "Alquilar") return "¿Qué buscas alquilar?";
+    if (operation === "Anticrético") return "¿Qué buscas en anticrético?";
+    return "¿Qué buscas comprar?";
   }
   if (stage === "city") return "¿En qué ciudad buscas?";
   if (stage === "zone") return city ? `¿En qué zona de ${city}?` : "¿En qué zona(s)?";
@@ -129,7 +138,7 @@ export const normalizeGuidedBudget = (operation: GuidedOperation, budget: string
   const value = budget.trim();
   if (!value) return "";
   if (/(\$|usd|bs|boliviano)/i.test(value)) return value;
-  if (operation === "Comprar") return `${value}$`;
+  if (operation === "Comprar" || operation === "Anticrético") return `${value}$`;
   if (operation === "Alquilar") return `${value} Bs`;
   return value;
 };
@@ -156,7 +165,7 @@ export const formatCompactSearchLabel = ({
   const typeText = (propertyType || purpose).trim();
   const dormText = bedrooms && bedrooms !== "Cualquiera" && bedrooms !== "Todos" ? bedrooms.trim() : "";
   const parts = [
-    operation === "Comprar" || operation === "Alquilar" || operation === "Vender" ? operation : "",
+    operation === "Comprar" || operation === "Alquilar" || operation === "Anticrético" || operation === "Vender" ? operation : "",
     typeText,
     dormText,
     city.trim(),
@@ -190,6 +199,8 @@ export const buildGuidedSearchQuery = ({
   let operationText = "busco";
   if (operation === "Alquilar") {
     operationText = lower ? `quiero alquilar ${lower}` : "quiero alquilar";
+  } else if (operation === "Anticrético") {
+    operationText = lower ? `busco anticrético de ${lower}` : "busco anticrético";
   } else if (operation === "Comprar") {
     if (lower === "vivir") {
       operationText = "quiero comprar para vivir";

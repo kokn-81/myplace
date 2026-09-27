@@ -51,6 +51,7 @@ import {
 } from "../geographicLocations";
 
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
+import type { BuildingGroupData } from "../components/MapCanvas";
 
 const MAPBOX_TOKEN =
   process.env.VITE_MAPBOX_TOKEN ||
@@ -343,8 +344,41 @@ const getPopularZoneOptions = (properties: Property[]): string[] => {
 
 const normalizeOfferOperation = (operation?: string) => {
   const value = String(operation || "").toLowerCase();
+  if (value.includes("anticret") || value.includes("anticr")) return "anticretico";
   if (value.includes("alquiler") || value.includes("renta") || value.includes("arrendar")) return "rent";
   if (value.includes("venta") || value.includes("compra") || value.includes("comprar")) return "buy";
+  return null;
+};
+
+const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => {
+  if (!op || op === "Vender") return true;
+  if (op === "Anticrético") {
+    return (
+      normalizeOfferOperation(p.operation) === "anticretico" ||
+      (p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico") ?? false) ||
+      (p.title + " " + (p.description || "")).toLowerCase().includes("anticr")
+    );
+  }
+  if (op === "Alquilar") {
+    return (
+      normalizeOfferOperation(p.operation) === "rent" ||
+      (p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent") ?? false)
+    );
+  }
+  if (op === "Comprar") {
+    return (
+      normalizeOfferOperation(p.operation) === "buy" ||
+      (p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") ?? false) ||
+      isProjectType(p.type)
+    );
+  }
+  return true;
+};
+
+const getOperationIntent = (op: GuidedOperation): SearchIntent => {
+  if (op === "Alquilar") return "rent";
+  if (op === "Anticrético") return "anticretico";
+  if (op === "Comprar") return "buy";
   return null;
 };
 
@@ -407,6 +441,8 @@ export default function MapPage() {
   const [loginError, setLoginError] = useState("");
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedBuildingGroup, setSelectedBuildingGroup] = useState<BuildingGroupData | null>(null);
+  const [selectedBuildingSubfilter, setSelectedBuildingSubfilter] = useState<string>("all");
   const hasSearchInteractionRef = useRef(false);
 
   const selectProperty = useCallback(async (property: Property) => {
@@ -702,7 +738,7 @@ export default function MapPage() {
     const loadSnapshotIfNeeded = async () => {
       if (hasCatalogAtMount) return;
       try {
-        const snapshotResponse = await fetch(CATALOG_SNAPSHOT_URL, { cache: "force-cache" });
+        const snapshotResponse = await fetch(CATALOG_SNAPSHOT_URL, { cache: "no-cache" });
         if (!snapshotResponse.ok) return;
         applyCatalog(await snapshotResponse.json());
       } catch (error) {
@@ -924,30 +960,25 @@ export default function MapPage() {
     setGuidedZones([]);
     setGuidedBudget("");
     setShowSuggested(false);
+    setSelectedBuildingGroup(null);
     setCurrentIndex(0);
 
-    if (option === "Alquilar") {
+    if (option === "Anticrético") {
+      setActiveSearchIntent("anticretico");
+      const anticreticoIds = properties
+        .filter((p) => propertyMatchesOperation(p, "Anticrético"))
+        .map((p) => p.id);
+      setAiFilteredIds(anticreticoIds.length > 0 ? anticreticoIds : []);
+    } else if (option === "Alquilar") {
       setActiveSearchIntent("rent");
       const rentalIds = properties
-        .filter((p) => {
-          const op = normalizeOfferOperation(p.operation);
-          const hasRent = p.offers?.some(
-            (o) => normalizeOfferOperation(o.operation) === "rent" && (o.status || "Publicado") === "Publicado"
-          );
-          return op === "rent" || hasRent;
-        })
+        .filter((p) => propertyMatchesOperation(p, "Alquilar"))
         .map((p) => p.id);
       setAiFilteredIds(rentalIds.length > 0 ? rentalIds : []);
     } else if (option === "Comprar") {
       setActiveSearchIntent("buy");
       const saleIds = properties
-        .filter((p) => {
-          const op = normalizeOfferOperation(p.operation);
-          const hasBuy = p.offers?.some(
-            (o) => normalizeOfferOperation(o.operation) === "buy" && (o.status || "Publicado") === "Publicado"
-          );
-          return op === "buy" || hasBuy || isProjectType(p.type);
-        })
+        .filter((p) => propertyMatchesOperation(p, "Comprar"))
         .map((p) => p.id);
       setAiFilteredIds(saleIds.length > 0 ? saleIds : []);
     }
@@ -965,13 +996,7 @@ export default function MapPage() {
 
     const matches = properties
       .filter((p) => {
-        if (guidedOperation === "Alquilar") {
-          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-          if (!hasRent) return false;
-        } else if (guidedOperation === "Comprar") {
-          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-          if (!hasBuy) return false;
-        }
+        if (!propertyMatchesOperation(p, guidedOperation)) return false;
         return matchesPropertyType(p.type, value);
       })
       .map((p) => p.id);
@@ -1011,15 +1036,8 @@ export default function MapPage() {
         const inCity =
           text.includes(normCity) ||
           (normCity === "santa cruz" && (text.includes("ichilo") || text.includes("san carlos")));
-        if (!inCity) return false;
-        if (guidedOperation === "Alquilar") {
-          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-          if (!hasRent) return false;
-        }
-        if (guidedOperation === "Comprar") {
-          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-          if (!hasBuy) return false;
-        }
+        if (normCity && !inCity) return false;
+        if (!propertyMatchesOperation(p, guidedOperation)) return false;
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
           return false;
         }
@@ -1065,14 +1083,7 @@ export default function MapPage() {
             textCity.includes(normCity) ||
             (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
           if (!inCity) return false;
-          if (guidedOperation === "Alquilar") {
-            const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-            if (!hasRent) return false;
-          }
-          if (guidedOperation === "Comprar") {
-            const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-            if (!hasBuy) return false;
-          }
+          if (!propertyMatchesOperation(p, guidedOperation)) return false;
           if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
             return false;
           }
@@ -1167,14 +1178,7 @@ export default function MapPage() {
             textCity.includes(normCity) ||
             (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
           if (!inCity) return false;
-          if (guidedOperation === "Alquilar") {
-            const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-            if (!hasRent) return false;
-          }
-          if (guidedOperation === "Comprar") {
-            const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-            if (!hasBuy) return false;
-          }
+          if (!propertyMatchesOperation(p, guidedOperation)) return false;
           if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
             return false;
           }
@@ -1206,13 +1210,7 @@ export default function MapPage() {
 
     const matches = properties
       .filter((p) => {
-        if (guidedOperation === "Alquilar") {
-          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-          if (!hasRent) return false;
-        } else if (guidedOperation === "Comprar") {
-          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-          if (!hasBuy) return false;
-        }
+        if (!propertyMatchesOperation(p, guidedOperation)) return false;
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
           return false;
         }
@@ -1340,13 +1338,7 @@ export default function MapPage() {
       const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
 
       list = list.filter((p) => {
-        if (guidedOperation === "Alquilar") {
-          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-          if (!hasRent) return false;
-        } else if (guidedOperation === "Comprar") {
-          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-          if (!hasBuy) return false;
-        }
+        if (!propertyMatchesOperation(p, guidedOperation)) return false;
 
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
           return false;
@@ -1369,7 +1361,7 @@ export default function MapPage() {
         }
 
         if (maxBudget !== null) {
-          const offer = selectPropertyOffer(p, guidedOperation === "Alquilar" ? "rent" : "buy");
+          const offer = selectPropertyOffer(p, getOperationIntent(guidedOperation));
           const price = offer?.price ?? p.price;
           if (price > maxBudget) return false;
         }
@@ -1402,14 +1394,7 @@ export default function MapPage() {
     return properties
       .filter((p) => {
         if (exactIds.has(p.id)) return false;
-
-        if (guidedOperation === "Alquilar") {
-          const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
-          if (!hasRent) return false;
-        } else if (guidedOperation === "Comprar") {
-          const hasBuy = normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy") || isProjectType(p.type);
-          if (!hasBuy) return false;
-        }
+        if (!propertyMatchesOperation(p, guidedOperation)) return false;
 
         if (normCity) {
           const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
@@ -1429,8 +1414,8 @@ export default function MapPage() {
       })
       .sort((a, b) => {
         if (maxBudget !== null) {
-          const priceA = selectPropertyOffer(a, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? a.price;
-          const priceB = selectPropertyOffer(b, guidedOperation === "Alquilar" ? "rent" : "buy")?.price ?? b.price;
+          const priceA = selectPropertyOffer(a, getOperationIntent(guidedOperation))?.price ?? a.price;
+          const priceB = selectPropertyOffer(b, getOperationIntent(guidedOperation))?.price ?? b.price;
           return Math.abs(priceA - maxBudget) - Math.abs(priceB - maxBudget);
         }
         return 0;
@@ -1519,23 +1504,178 @@ export default function MapPage() {
 
   const carouselStep = isMobileCarousel ? 1 : 2;
 
+  const buildingFilterChips = useMemo(() => {
+    if (!selectedBuildingGroup) return [];
+    const units = selectedBuildingGroup.properties;
+    const chips: Array<{ id: string; label: string; count: number }> = [
+      { id: "all", label: "Todas", count: units.length },
+    ];
+
+    // Check typologies / bedrooms
+    const byRooms: Record<string, number> = {};
+    for (const p of units) {
+      if (p.rooms === 0 || (p.title + " " + (p.description || "")).toLowerCase().includes("monoambient")) {
+        byRooms["Monoambiente"] = (byRooms["Monoambiente"] || 0) + 1;
+      } else if (p.rooms === 1) {
+        byRooms["1 Dorm"] = (byRooms["1 Dorm"] || 0) + 1;
+      } else if (p.rooms === 2) {
+        byRooms["2 Dorms"] = (byRooms["2 Dorms"] || 0) + 1;
+      } else if (p.rooms && p.rooms >= 3) {
+        byRooms[`${p.rooms} Dorms`] = (byRooms[`${p.rooms} Dorms`] || 0) + 1;
+      }
+    }
+
+    const roomEntries = Object.entries(byRooms);
+    if (roomEntries.length > 1) {
+      for (const [label, count] of roomEntries) {
+        chips.push({ id: `rooms-${label}`, label, count });
+      }
+    }
+
+    // Check operation if both rent and buy exist
+    const hasRent = units.some((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent"));
+    const hasBuy = units.some((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy"));
+    const hasAnticretico = units.some((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico"));
+    const opCount = [hasRent, hasBuy, hasAnticretico].filter(Boolean).length;
+    if (opCount > 1) {
+      if (hasRent) {
+        const count = units.filter((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent")).length;
+        chips.push({ id: "op-rent", label: "Alquiler", count });
+      }
+      if (hasAnticretico) {
+        const count = units.filter((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico")).length;
+        chips.push({ id: "op-anticretico", label: "Anticrético", count });
+      }
+      if (hasBuy) {
+        const count = units.filter((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy")).length;
+        chips.push({ id: "op-buy", label: "Venta", count });
+      }
+    }
+
+    // Check floors if mentioned in title or description (e.g. "piso 3", "piso 12")
+    const floorGroups: Record<string, number> = {};
+    for (const p of units) {
+      const match = (p.title + " " + (p.description || "")).match(/\bpiso\s*(\d{1,2})\b/i);
+      if (match) {
+        const floorStr = `Piso ${match[1]}`;
+        floorGroups[floorStr] = (floorGroups[floorStr] || 0) + 1;
+      }
+    }
+    const floorEntries = Object.entries(floorGroups);
+    if (floorEntries.length > 1 && floorEntries.length <= 6) {
+      for (const [floorStr, count] of floorEntries) {
+        chips.push({ id: `floor-${floorStr}`, label: floorStr, count });
+      }
+    }
+
+    return chips;
+  }, [selectedBuildingGroup]);
+
+  const buildingFilteredProperties = useMemo(() => {
+    if (!selectedBuildingGroup) return [];
+    const units = selectedBuildingGroup.properties;
+    if (selectedBuildingSubfilter === "all") return units;
+
+    if (selectedBuildingSubfilter.startsWith("rooms-")) {
+      const targetRoom = selectedBuildingSubfilter.replace("rooms-", "");
+      return units.filter((p) => {
+        if (targetRoom === "Monoambiente") {
+          return p.rooms === 0 || (p.title + " " + (p.description || "")).toLowerCase().includes("monoambient");
+        }
+        if (targetRoom === "1 Dorm") return p.rooms === 1;
+        if (targetRoom === "2 Dorms") return p.rooms === 2;
+        const num = parseInt(targetRoom, 10);
+        return p.rooms === num;
+      });
+    }
+
+    if (selectedBuildingSubfilter === "op-rent") {
+      return units.filter((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent"));
+    }
+    if (selectedBuildingSubfilter === "op-anticretico") {
+      return units.filter((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico"));
+    }
+    if (selectedBuildingSubfilter === "op-buy") {
+      return units.filter((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy"));
+    }
+
+    if (selectedBuildingSubfilter.startsWith("floor-")) {
+      const floorStr = selectedBuildingSubfilter.replace("floor-", "").toLowerCase();
+      return units.filter((p) => (p.title + " " + (p.description || "")).toLowerCase().includes(floorStr));
+    }
+
+    return units;
+  }, [selectedBuildingGroup, selectedBuildingSubfilter]);
+
+  const carouselProperties = useMemo(() => {
+    if (selectedBuildingGroup) {
+      return buildingFilteredProperties;
+    }
+    return filteredProperties;
+  }, [selectedBuildingGroup, buildingFilteredProperties, filteredProperties]);
+
   const visibleProperties = useMemo(() => {
-    return filteredProperties.slice(currentIndex, currentIndex + carouselStep);
-  }, [filteredProperties, currentIndex, carouselStep]);
+    return carouselProperties.slice(currentIndex, currentIndex + carouselStep);
+  }, [carouselProperties, currentIndex, carouselStep]);
 
   const highlightedIds = useMemo(() => visibleProperties.map((property) => property.id), [visibleProperties]);
 
-  useEffect(() => {
-    if (currentIndex >= filteredProperties.length) {
-      setCurrentIndex(Math.max(0, filteredProperties.length - carouselStep));
-    }
-  }, [carouselStep, currentIndex, filteredProperties.length]);
+  const highlightedCardMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    visibleProperties.forEach((property, index) => {
+      map[property.id] = index + 1;
+    });
+    return map;
+  }, [visibleProperties]);
 
   useEffect(() => {
-    if (aiFilteredIds === null || visibleProperties.length === 0) return;
-    const focus = focusFromProperties(visibleProperties);
-    if (focus) setMapFocus(focus);
-  }, [aiFilteredIds, visibleProperties]);
+    if (currentIndex >= carouselProperties.length) {
+      setCurrentIndex(Math.max(0, carouselProperties.length - carouselStep));
+    }
+  }, [carouselStep, currentIndex, carouselProperties.length]);
+
+  useEffect(() => {
+    if (visibleProperties.length === 0) return;
+    const pts = visibleProperties.filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
+    if (pts.length === 0) return;
+
+    if (pts.length === 1) {
+      setMapFocus({
+        longitude: pts[0].lng,
+        latitude: pts[0].lat,
+        zoom: 15.6,
+        key: Date.now(),
+        label: pts[0].title,
+        source: "user",
+      });
+      return;
+    }
+
+    const p1 = pts[0];
+    const p2 = pts[1];
+    const dLat = (p2.lat - p1.lat) * 111;
+    const dLng = (p2.lng - p1.lng) * 111 * Math.cos((p1.lat * Math.PI) / 180);
+    const distKm = Math.sqrt(dLat * dLat + dLng * dLng);
+
+    const centerLng = (p1.lng + p2.lng) / 2;
+    const centerLat = (p1.lat + p2.lat) / 2;
+
+    let targetZoom = 15.0;
+    if (distKm > 8) targetZoom = 13.0;
+    else if (distKm > 4) targetZoom = 13.6;
+    else if (distKm > 2) targetZoom = 14.3;
+    else if (distKm > 0.8) targetZoom = 14.9;
+    else targetZoom = 15.5;
+
+    setMapFocus({
+      longitude: centerLng,
+      latitude: centerLat,
+      zoom: targetZoom,
+      key: Date.now(),
+      label: p1.area || p1.title,
+      source: "user",
+    });
+  }, [currentIndex, selectedBuildingGroup, visibleProperties.length > 0 ? visibleProperties[0].id : null]);
 
   const handleCarouselTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     carouselSwipeStartX.current = event.touches[0]?.clientX ?? null;
@@ -1551,7 +1691,7 @@ export default function MapPage() {
     if (Math.abs(deltaX) < 44) return;
 
     if (deltaX < 0) {
-      setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep));
+      setCurrentIndex(prev => Math.min(Math.max(0, carouselProperties.length - carouselStep), prev + carouselStep));
     } else {
       setCurrentIndex(prev => Math.max(0, prev - carouselStep));
     }
@@ -1691,8 +1831,23 @@ export default function MapPage() {
             properties={mapCanvasProperties}
             isDarkMode={isDarkMode}
             onSelectProperty={selectProperty}
+            onSelectBuilding={(building) => {
+              setSelectedBuildingGroup(building);
+              setSelectedBuildingSubfilter("all");
+              setCurrentIndex(0);
+              setMapFocus({
+                longitude: building.lng,
+                latitude: building.lat,
+                zoom: 16.5,
+                key: Date.now(),
+                label: building.label,
+                source: "user",
+              });
+            }}
+            selectedBuildingKey={selectedBuildingGroup?.key ?? null}
             focusLocation={mapFocus}
             highlightedIds={highlightedIds}
+            highlightedCardMap={highlightedCardMap}
             matchedIds={aiFilteredIds}
             selectedId={selectedProperty?.id ?? null}
           />
@@ -2093,6 +2248,67 @@ export default function MapPage() {
         </div>
       )}
 
+      {/* BANNER DE EDIFICIO Y SUBFILTROS DE PISO/TIPOLOGIA (OPCION A) */}
+      {selectedBuildingGroup && (
+        <div className="absolute bottom-[240px] md:bottom-[255px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 w-full max-w-[95vw] md:max-w-2xl px-2 pointer-events-auto">
+          <div className="flex items-center justify-between gap-3 w-full bg-[var(--surface-panel)]/95 dark:bg-[rgba(27,20,17,0.95)] border border-[var(--accent-main)]/60 px-3.5 py-1.5 rounded-2xl shadow-xl backdrop-blur">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-main)]/20 text-[var(--accent-main)]">
+                <Building2 size={15} />
+              </span>
+              <div className="min-w-0 flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-[var(--text-main)] truncate max-w-[180px] md:max-w-sm">
+                  {selectedBuildingGroup.label}
+                </span>
+                <span className="rounded-full bg-[var(--accent-main)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--accent-main)] shrink-0">
+                  {selectedBuildingGroup.count} unidades
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedBuildingGroup(null);
+                setSelectedBuildingSubfilter("all");
+                setCurrentIndex(0);
+              }}
+              className="shrink-0 flex items-center gap-1 rounded-full bg-stone-200/80 dark:bg-stone-800 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400 px-2.5 py-1 text-[11px] font-bold text-[var(--text-muted)] transition-colors"
+              title="Volver a ver todos los inmuebles del mapa"
+            >
+              <span>✕</span>
+              <span className="hidden sm:inline">Ver todo el mapa</span>
+            </button>
+          </div>
+
+          {/* Subfiltros de unidades dentro del edificio */}
+          {buildingFilterChips.length > 1 && (
+            <div className="flex max-w-full overflow-x-auto no-scrollbar items-center gap-1.5 py-0.5 px-1">
+              {buildingFilterChips.map((chip) => {
+                const isSelected = selectedBuildingSubfilter === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedBuildingSubfilter(chip.id);
+                      setCurrentIndex(0);
+                    }}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm ${
+                      isSelected
+                        ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D] scale-105"
+                        : "border-[var(--border-soft)] bg-[var(--surface-panel)]/90 text-[var(--text-main)] hover:border-[var(--accent-main)]/60 hover:text-[var(--accent-main)]"
+                    }`}
+                  >
+                    <span>{chip.label}</span>
+                    <span className="opacity-75 tabular-nums">({chip.count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
       {(visibleProperties.length > 0 || hasFinishedAiSearch) && (
         <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
@@ -2115,7 +2331,7 @@ export default function MapPage() {
           >
             <AnimatePresence initial={false} mode="wait">
               <motion.div
-                key={`carousel-${currentIndex}-${filteredProperties.length}`}
+                key={`carousel-${currentIndex}-${carouselProperties.length}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -2213,7 +2429,27 @@ export default function MapPage() {
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
 
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="shrink-0 text-[10px] text-[var(--accent-main)] font-bold tracking-[0.18em] uppercase">Ref. #{p.id}</span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="shrink-0 text-[10px] text-[var(--accent-main)] font-bold tracking-[0.18em] uppercase">Ref. #{p.id}</span>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMapFocus({
+                    longitude: p.lng,
+                    latitude: p.lat,
+                    zoom: 16.5,
+                    key: Date.now(),
+                    label: p.title,
+                    source: "user",
+                  });
+                }}
+                className="flex items-center gap-0.5 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 px-2 py-0.5 text-[9px] font-black shadow-sm transition-transform hover:scale-105 cursor-pointer"
+                title={`Opción #${index + 1} en el mapa · Clic para enfocar`}
+              >
+                <span>📍</span>
+                <span>#{index + 1}</span>
+              </span>
+            </div>
             {isSuggestedProperty(p) ? (
               <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                 Opción Cercana
@@ -2317,8 +2553,8 @@ export default function MapPage() {
 
           {visibleProperties.length > 0 && (
             <button
-              onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, filteredProperties.length - carouselStep), prev + carouselStep))}
-              disabled={currentIndex + carouselStep >= filteredProperties.length}
+              onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, carouselProperties.length - carouselStep), prev + carouselStep))}
+              disabled={currentIndex + carouselStep >= carouselProperties.length}
               className="nia-carousel-arrow nia-carousel-arrow-right absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
             >
               <ChevronRight size={28} />
@@ -3677,7 +3913,7 @@ export default function MapPage() {
                             selectedProperty.captador ||
                             (selectedProperty as any).captador;
                           const captadorName = captador?.name || selectedProperty.captadorNombre || (selectedProperty as any).captador_nombre;
-                          if (!captadorName) return null;
+                          if (!captadorName || captadorName.toLowerCase().includes("alejandro coca")) return null;
                           const rawWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
                           const captadorWa = rawWa && String(rawWa).includes("57015854") && !captadorName.toLowerCase().includes("alejandro coca") ? "" : rawWa;
                           const captadorOffice = captador?.oficina || selectedProperty.captadorOficina || (selectedProperty as any).captador_oficina;

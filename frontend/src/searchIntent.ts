@@ -1,7 +1,8 @@
-export type SearchIntent = "rent" | "buy" | "both" | null;
+export type SearchIntent = "rent" | "buy" | "anticretico" | "both" | null;
 
 const RENT_INTENT_TERMS = new Set(["alquiler", "alquilar", "renta", "rentar", "arriendo", "arrendar"]);
 const BUY_INTENT_TERMS = new Set(["compra", "comprar", "venta", "vender", "adquirir"]);
+const ANTICRETICO_INTENT_TERMS = new Set(["anticretico", "anticreticos", "anticretica", "anticresis"]);
 
 const normalizeIntentText = (value: string): string =>
   value
@@ -14,6 +15,8 @@ const normalizeIntentText = (value: string): string =>
 
 export const detectSearchIntent = (queries: string[]): SearchIntent => {
   const tokens = normalizeIntentText(queries.join(" ")).split(" ").filter(Boolean);
+  const wantsAnticretico = tokens.some((token) => ANTICRETICO_INTENT_TERMS.has(token));
+  if (wantsAnticretico) return "anticretico";
   const wantsRent = tokens.some((token) => RENT_INTENT_TERMS.has(token));
   const wantsBuy = tokens.some((token) => BUY_INTENT_TERMS.has(token));
   if (wantsRent && wantsBuy) return "both";

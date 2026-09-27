@@ -19,9 +19,9 @@ import {
   previousGuidedStage,
 } from "./guidedSearch";
 
-test("las 3 opciones iniciales son Comprar, Alquilar y Vender", () => {
-  assert.deepEqual(GUIDED_OPERATIONS, ["Comprar", "Alquilar", "Vender"]);
-  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Vender"]);
+test("las opciones iniciales son Comprar, Alquilar, Anticrético y Vender", () => {
+  assert.deepEqual(GUIDED_OPERATIONS, ["Comprar", "Alquilar", "Anticrético", "Vender"]);
+  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Anticrético", "Vender"]);
 });
 
 test("Comprar pide tipo de inmueble (Departamento, Preventa), dormitorios y presupuesto", () => {

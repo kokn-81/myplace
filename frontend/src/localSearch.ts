@@ -3,13 +3,14 @@ import { normalizeGeoText } from "./geographicLocations";
 
 export const normalizeOfferOperation = (operation?: string) => {
   const value = String(operation || "").toLowerCase();
+  if (value.includes("anticret") || value.includes("anticr") || value === "anticretico") return "anticretico";
   if (value.includes("alquiler") || value.includes("renta") || value.includes("arrendar") || value === "rent") return "rent";
   if (value.includes("venta") || value.includes("compra") || value.includes("comprar") || value.includes("invers") || value === "buy") return "buy";
   return null;
 };
 
 export interface LocalSearchCriteria {
-  operation?: "buy" | "rent" | null;
+  operation?: "buy" | "rent" | "anticretico" | null;
   propertyType?: string | null;
   bedrooms?: string | null;
   zone?: string | null;
@@ -21,7 +22,7 @@ export interface LocalSearchCriteria {
 export interface LocalSearchResult {
   ids: string[];
   matchedProperties: Property[];
-  intent: "buy" | "rent" | null;
+  intent: "buy" | "rent" | "anticretico" | null;
   criteria: LocalSearchCriteria;
 }
 
@@ -95,7 +96,9 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
   const criteria: LocalSearchCriteria = {};
 
   // 1. Operation
-  if (/\b(alquiler|alquilar|alquilo|renta|rent)\b/.test(query)) {
+  if (/\b(anticretico|anticreticos|anticretica|anticresis)\b/.test(query)) {
+    criteria.operation = "anticretico";
+  } else if (/\b(alquiler|alquilar|alquilo|renta|rent)\b/.test(query)) {
     criteria.operation = "rent";
   } else if (/\b(venta|vender|comprar|compro|compra|inversion|invertir|preventa)\b/.test(query)) {
     criteria.operation = "buy";
@@ -160,7 +163,13 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
 
   const matched = catalog.filter((p) => {
     // Operation filter
-    if (criteria.operation === "rent") {
+    if (criteria.operation === "anticretico") {
+      const isAnticretico =
+        normalizeOfferOperation(p.operation) === "anticretico" ||
+        p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico") ||
+        (p.title + " " + p.description).toLowerCase().includes("anticr");
+      if (!isAnticretico) return false;
+    } else if (criteria.operation === "rent") {
       const isRent =
         normalizeOfferOperation(p.operation) === "rent" ||
         p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");

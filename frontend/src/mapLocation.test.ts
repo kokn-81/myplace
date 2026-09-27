@@ -60,9 +60,10 @@ test("los pines del carrusel se destacan del resto del catalogo", () => {
   assert.equal(getMarkerTone("4", ["3"], null, null), "muted");
 });
 
-test("alquiler y venta usan colores distintos en el mapa", () => {
+test("alquiler, venta y anticretico usan colores distintos en el mapa", () => {
   assert.equal(getMarkerKind({ operation: "Alquiler" }), "rent");
   assert.equal(getMarkerKind({ operation: "Venta" }), "buy");
+  assert.equal(getMarkerKind({ operation: "Anticrético" }), "anticretico");
   assert.equal(
     getMarkerKind({
       operation: "Venta",

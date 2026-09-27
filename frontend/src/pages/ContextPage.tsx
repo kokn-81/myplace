@@ -62,23 +62,25 @@ export default function ContextPage() {
 
   useEffect(() => {
     const directCaptador = payload?.captador || payload?.property?.captador;
-    if (directCaptador && directCaptador.name) {
+    if (directCaptador && directCaptador.name && !directCaptador.name.toLowerCase().includes("alejandro coca")) {
       setCaptador(directCaptador);
       return;
     }
     const ref = payload?.property_ref || payload?.property?.ref;
     if (ref) {
-      fetch("/catalog-snapshot.json")
+      fetch(`/catalog-snapshot.json?t=${Date.now()}`, { cache: "no-cache" })
         .then((res) => res.json())
         .then((catalog: any[]) => {
           const match = catalog.find((item) => String(item.id) === String(ref));
-          if (match && match.captador_nombre) {
+          if (match && match.captador_nombre && !match.captador_nombre.toLowerCase().includes("alejandro coca")) {
             setCaptador({
               name: match.captador_nombre,
-              whatsapp: match.captador_whatsapp,
-              phone: match.captador_whatsapp,
-              oficina: match.captador_oficina || "RE/MAX Patrimonio",
+              whatsapp: match.captador_whatsapp || "",
+              phone: match.captador_whatsapp || "",
+              oficina: match.captador_oficina || "RE/MAX Plus",
             });
+          } else {
+            setCaptador(null);
           }
         })
         .catch(() => {});

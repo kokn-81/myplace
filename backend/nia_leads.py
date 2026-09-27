@@ -105,14 +105,9 @@ def property_snapshot(inm: Optional[InmuebleDB]) -> Optional[dict]:
         if getattr(of, "captador", None):
             captador = of.captador
             break
-        if getattr(of, "agente", None):
-            captador = of.agente
-            break
-    if not captador and inm.agente:
-        captador = inm.agente
 
     captador_info = None
-    if captador:
+    if captador and "alejandro coca" not in str(captador.nombre or "").lower():
         oficina_nombre = (
             captador.oficina.nombre
             if getattr(captador, "oficina", None) and captador.oficina

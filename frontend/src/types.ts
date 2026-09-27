@@ -10,7 +10,7 @@ export interface PropertyAgent {
 
 export interface PropertyOffer {
   id?: string;
-  operation: "Venta" | "Alquiler" | "Inversion" | "Inversión";
+  operation: "Venta" | "Alquiler" | "Inversion" | "Inversión" | "Anticrético";
   price: number;
   currency: string;
   status?: string;
@@ -27,7 +27,7 @@ export interface Property {
   id: string;
   title: string;
   description: string;
-  operation: "Venta" | "Alquiler" | "Inversión";
+  operation: "Venta" | "Alquiler" | "Inversión" | "Anticrético";
   type: string;
   price: number;
   currency: string;

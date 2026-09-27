@@ -128,7 +128,7 @@ export const normalizePlainText = (value: string) =>
     .trim();
 
 export type MarkerTone = "muted" | "match" | "active" | "selected";
-export type MarkerKind = "rent" | "buy" | "both";
+export type MarkerKind = "rent" | "buy" | "anticretico" | "both";
 
 export const getMarkerTone = (
   id: string,
@@ -144,6 +144,7 @@ export const getMarkerTone = (
 
 const classifyOperation = (operation?: string): MarkerKind | null => {
   const value = String(operation || "").toLowerCase();
+  if (value.includes("anticret") || value.includes("anticr")) return "anticretico";
   if (value.includes("alquiler") || value.includes("renta") || value.includes("arrendar")) return "rent";
   if (value.includes("venta") || value.includes("compra") || value.includes("comprar")) return "buy";
   return null;
@@ -160,6 +161,7 @@ export const getMarkerKind = (property: {
       .filter((kind): kind is MarkerKind => Boolean(kind)),
   );
   if (kinds.has("rent") && kinds.has("buy")) return "both";
+  if (kinds.has("anticretico")) return "anticretico";
   if (kinds.has("rent")) return "rent";
   if (kinds.has("buy")) return "buy";
   return classifyOperation(property.operation) || "buy";
