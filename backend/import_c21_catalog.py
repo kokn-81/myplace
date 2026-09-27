@@ -196,12 +196,20 @@ def import_c21_property(db, item: Dict[str, Any], default_office_id: int) -> Opt
     moneda_raw = str(item.get("moneda") or "").upper().strip()
     precio_format = str(item.get("precioFormat") or "").upper()
 
-    if "BOB" in moneda_raw or "BOB" in precio_format or "BS" in precio_format:
-        precio_usd = round(precio_raw / 6.96, 2) if precio_raw > 0 else 0.0
+    is_bob = "BOB" in moneda_raw or "BOB" in precio_format or "BS" in precio_format
+    if operacion == "Alquilar":
         moneda_display = "Bs"
+        if is_bob:
+            precio_usd = round(precio_raw, 0)
+        else:
+            precio_usd = round(precio_raw * 6.96, 0) if precio_raw > 0 else 0.0
     else:
-        precio_usd = precio_raw
         moneda_display = "$ (USD)"
+        if is_bob:
+            precio_usd = round(precio_raw / 6.96, 0) if precio_raw > 0 else 0.0
+        else:
+            precio_usd = round(precio_raw, 0)
+
 
     # Características físicas
     habitaciones = parse_bedrooms(item.get("recamaras"), titulo)
