@@ -211,7 +211,7 @@ export const QUICK_FILTER_OPTIONS = [
   },
 ] as const;
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v2";
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v5";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -223,6 +223,11 @@ const readCachedCatalog = (): Property[] => {
 
     const parsed = JSON.parse(raw);
     const items = Array.isArray(parsed?.items) ? parsed.items : [];
+    // Si la cache tiene menos de 1000 items, es una cache recortada u obsoleta; descartarla
+    if (items.length < 1000) {
+      window.localStorage.removeItem(CATALOG_CACHE_KEY);
+      return [];
+    }
     return items
       .map(mapApiProperty)
       .filter((property) => property.id && Number.isFinite(property.lat) && Number.isFinite(property.lng));
@@ -454,6 +459,18 @@ export default function MapPage() {
       const res = await fetch(`${API_BASE}/inmuebles/${property.id}`);
       if (!res.ok) return;
       const detail = mapApiProperty(await res.json());
+
+      // Preservar captador legitimo si el backend devuelve Alejandro Coca o null
+      const isDetailCoca = !detail.captadorNombre || detail.captadorNombre.toLowerCase().includes("alejandro coca");
+      const isPropertyReal = property.captadorNombre && !property.captadorNombre.toLowerCase().includes("alejandro coca");
+      if (isDetailCoca && isPropertyReal) {
+        detail.captador = property.captador;
+        detail.captadorNombre = property.captadorNombre;
+        detail.captadorWhatsapp = property.captadorWhatsapp;
+        detail.captadorOficina = property.captadorOficina;
+        detail.captadorId = property.captadorId;
+      }
+
       setProperties((current) => current.map((item) => (item.id === detail.id ? detail : item)));
       setSelectedProperty(detail);
     } catch (error) {
@@ -738,20 +755,22 @@ export default function MapPage() {
   // [OPALO-BRIDGE] Lectura Consolidada con snapshot estatico + refresh en segundo plano.
   useEffect(() => {
     let cancelled = false;
-    const hasCatalogAtMount = properties.length > 0;
-
-    const applyCatalog = (items: unknown[], shouldCache = true) => {
-      if (!Array.isArray(items)) throw new Error("Catalogo invalido");
-      if (shouldCache) writeCachedCatalog(items);
-      if (!cancelled) setProperties(items.map(mapApiProperty));
-    };
 
     const loadSnapshotIfNeeded = async () => {
-      if (hasCatalogAtMount) return;
       try {
         const snapshotResponse = await fetch(CATALOG_SNAPSHOT_URL, { cache: "no-cache" });
         if (!snapshotResponse.ok) return;
-        applyCatalog(await snapshotResponse.json());
+        const snapshotItems = await snapshotResponse.json();
+        if (Array.isArray(snapshotItems) && snapshotItems.length > 0 && !cancelled) {
+          setProperties((current) => {
+            // Si el catalogo en memoria tiene menos items que el snapshot maestro o esta vacio, aplicar snapshot
+            if (current.length < snapshotItems.length) {
+              writeCachedCatalog(snapshotItems);
+              return snapshotItems.map(mapApiProperty);
+            }
+            return current;
+          });
+        }
       } catch (error) {
         console.warn("No se pudo cargar el snapshot del catalogo:", error);
       }
@@ -761,7 +780,41 @@ export default function MapPage() {
       try {
         const resInmuebles = await fetch(`${API_BASE}/inmuebles/resumen`);
         if (!resInmuebles.ok) throw new Error("Fallo en la conexion al motor Python");
-        applyCatalog(await resInmuebles.json());
+        const backendItems = await resInmuebles.json();
+        if (!Array.isArray(backendItems) || backendItems.length === 0 || cancelled) return;
+
+        setProperties((current) => {
+          // NUNCA degradar un catalogo maestro de 1700+ con un resumen incompleto/antiguo de backend (ej. 654 items)
+          if (current.length > backendItems.length * 1.5) {
+            console.warn(`[Catalog] Ignorando resumen incompleto de backend (${backendItems.length} items vs ${current.length} en catalogo actual).`);
+            return current;
+          }
+
+          // Si el backend tiene volumen completo, mezclar preservando captadores autenticos
+          const backendMapped = backendItems.map(mapApiProperty);
+          const currentMap = new Map(current.map((item) => [item.id, item]));
+          const merged = backendMapped.map((bItem) => {
+            const existing = currentMap.get(bItem.id);
+            if (existing) {
+              const bItemHasCoca = !bItem.captadorNombre || bItem.captadorNombre.toLowerCase().includes("alejandro coca");
+              const existingHasReal = existing.captadorNombre && !existing.captadorNombre.toLowerCase().includes("alejandro coca");
+              if (bItemHasCoca && existingHasReal) {
+                return {
+                  ...bItem,
+                  captador: existing.captador,
+                  captadorNombre: existing.captadorNombre,
+                  captadorWhatsapp: existing.captadorWhatsapp,
+                  captadorOficina: existing.captadorOficina,
+                  captadorId: existing.captadorId,
+                };
+              }
+            }
+            return bItem;
+          });
+
+          writeCachedCatalog(merged);
+          return merged;
+        });
       } catch (error) {
         console.error("Error cargando el catalogo:", error);
       }
@@ -3947,27 +4000,60 @@ export default function MapPage() {
                         )}
 
                         {/* ASESOR CAPTADOR - EXCLUSIVO PARA USUARIOS CON ROL ASESOR O ADMIN */}
-                        {canOpenAdvisor && (() => {
-                          const captador = selectedDisplayOffer?.captador ||
-                            selectedProperty.offers?.find(o => o.captador?.name)?.captador ||
+                        {(canOpenAdvisor || canOpenAdmin) && (() => {
+                          let captador = selectedDisplayOffer?.captador ||
+                            selectedProperty.offers?.find(o => o.captador?.name && !o.captador.name.toLowerCase().includes("alejandro coca"))?.captador ||
                             selectedProperty.captador ||
                             (selectedProperty as any).captador;
-                          const captadorName = captador?.name || selectedProperty.captadorNombre || (selectedProperty as any).captador_nombre;
+                          let captadorName = captador?.name || selectedProperty.captadorNombre || (selectedProperty as any).captador_nombre;
+                          let rawWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
+                          let captadorOffice = captador?.oficina || selectedProperty.captadorOficina || (selectedProperty as any).captador_oficina;
+
+                          // Fallback a datosEspecificosJson si el captador no vino estructurado
+                          if (!captadorName || captadorName.toLowerCase().includes("alejandro coca")) {
+                            try {
+                              const rawData = selectedProperty.datosEspecificosJson || (selectedProperty as any).datos_especificos_json;
+                              if (rawData) {
+                                const parsed = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+                                if (parsed && typeof parsed === "object") {
+                                  if (parsed.asesor_nombre && !parsed.asesor_nombre.toLowerCase().includes("alejandro coca")) {
+                                    captadorName = parsed.asesor_nombre;
+                                    rawWa = parsed.asesor_whatsapp || parsed.asesor_telefono || rawWa;
+                                    captadorOffice = parsed.oficina || captadorOffice;
+                                  }
+                                }
+                              }
+                            } catch {}
+                          }
+
                           if (!captadorName || captadorName.toLowerCase().includes("alejandro coca")) return null;
-                          const rawWa = captador?.whatsapp || selectedProperty.captadorWhatsapp || (selectedProperty as any).captador_whatsapp;
                           const captadorWa = rawWa && String(rawWa).includes("57015854") && !captadorName.toLowerCase().includes("alejandro coca") ? "" : rawWa;
-                          const captadorOffice = captador?.oficina || selectedProperty.captadorOficina || (selectedProperty as any).captador_oficina;
+                          const cleanWaDigits = captadorWa ? String(captadorWa).replace(/\D/g, "") : "";
+
                           return (
-                            <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3 bg-[var(--surface-control)]/30 rounded p-2 my-1">
-                              <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-2 text-sm">
-                                <UserCircle size={16} /> Asesor Captador (Confidencial)
+                            <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3 bg-[var(--surface-control)]/30 rounded p-2.5 my-1">
+                              <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-2 text-sm font-medium">
+                                <UserCircle size={16} className="text-[var(--accent-main)] shrink-0" /> Asesor Captador (Confidencial)
                               </span>
                               <div className="text-right">
-                                <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold block">
-                                  {captadorName} {captadorWa ? `(+${String(captadorWa).replace(/^\+/, "")})` : ""}
-                                </span>
+                                <div className="flex items-center justify-end gap-2 flex-wrap">
+                                  <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold block">
+                                    {captadorName}
+                                  </span>
+                                  {cleanWaDigits ? (
+                                    <a
+                                      href={`https://wa.me/${cleanWaDigits.startsWith("591") ? cleanWaDigits : `591${cleanWaDigits}`}?text=${encodeURIComponent(`Hola ${captadorName}, te contacto desde NIA respecto a la Ref. #${selectedProperty.id} (${selectedProperty.title}).`)}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1 rounded bg-[#25D366]/20 px-2 py-0.5 text-xs font-bold text-[#25D366] hover:bg-[#25D366]/30 transition-colors"
+                                      title="Abrir WhatsApp del captador"
+                                    >
+                                      +{cleanWaDigits.startsWith("591") ? cleanWaDigits : `591${cleanWaDigits}`}
+                                    </a>
+                                  ) : null}
+                                </div>
                                 {captadorOffice ? (
-                                  <span className="text-xs text-[var(--accent-main)] font-medium block">
+                                  <span className="text-xs text-[var(--accent-main)] font-medium block mt-0.5">
                                     {captadorOffice}
                                   </span>
                                 ) : null}

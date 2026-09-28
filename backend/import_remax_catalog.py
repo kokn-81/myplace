@@ -116,10 +116,12 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
         captador_whatsapp = "59157015854"  # fallback only when no captador identity at all
 
     captador_obj = None
-    if item.get("captador_id"):
-        captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["captador_id"])).first()
-    elif captador_nombre or captador_whatsapp:
+    if captador_nombre and "alejandro coca" not in captador_nombre.lower():
         captador_obj = find_or_create_captador(db, captador_nombre, captador_whatsapp, captador_oficina_id)
+    elif item.get("captador_id"):
+        captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["captador_id"])).first()
+    elif captador_whatsapp:
+        captador_obj = find_or_create_captador(db, captador_nombre or "Captador", captador_whatsapp, captador_oficina_id)
     elif item.get("agente_id"):
         captador_obj = db.query(AgenteDB).filter(AgenteDB.id == int(item["agente_id"])).first()
 
@@ -193,6 +195,11 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
     inmueble = None
     if remax_slug:
         inmueble = db.query(InmuebleDB).filter(InmuebleDB.datos_especificos_json.contains(f'"remax_slug": "{remax_slug}"')).first()
+    if not inmueble and item.get("id"):
+        try:
+            inmueble = db.query(InmuebleDB).filter(InmuebleDB.id == int(item["id"])).first()
+        except Exception:
+            pass
     if not inmueble:
         inmueble = db.query(InmuebleDB).filter(InmuebleDB.titulo == titulo).first()
     if inmueble:
