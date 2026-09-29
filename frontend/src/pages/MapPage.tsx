@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
-import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck, FilterX, MessageCircle, Share2, UserCircle, Layers, Flame, FileText, CheckCircle2, TrendingUp, Calendar, Building2, Download } from "lucide-react";
+import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck, FilterX, MessageCircle, Share2, UserCircle, Layers, Flame, FileText, CheckCircle2, TrendingUp, Calendar, Building2, Download, Play } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
@@ -2764,23 +2764,11 @@ export default function MapPage() {
                         </>
                       )}
 
-                      {/* Badge de Experiencia Residencial */}
-                      {selectedMediaCount > 0 && (
+                      {/* Badge auténtico solo si el medio es video */}
+                      {isVideoUrl(activeMedia) && (
                         <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full bg-black/70 backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-[var(--color-ivory)] border border-white/15 shadow-md pointer-events-none">
-                          <Sparkles size={11} className="text-[var(--accent-main)]" />
-                          <span>
-                            {normalizedGalleryIndex === 0
-                              ? "Ambiente Principal"
-                              : normalizedGalleryIndex === 1
-                              ? "Living & Comedor"
-                              : normalizedGalleryIndex === 2
-                              ? "Master Suite / Dormitorio"
-                              : normalizedGalleryIndex === 3
-                              ? "Cocina & Equipamiento"
-                              : normalizedGalleryIndex === 4
-                              ? "Balcón & Áreas Sociales"
-                              : "Detalles & Confort"}
-                          </span>
+                          <Play size={11} className="text-[var(--accent-main)] fill-current" />
+                          <span>Video Recorrido</span>
                         </div>
                       )}
 
@@ -3049,77 +3037,80 @@ export default function MapPage() {
                       )}
 
                       {/* 5. Planes de Pago e Inversión */}
-                      <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5 shadow-xs">
-                        <div className="flex items-center gap-2 mb-4">
-                          <TrendingUp size={18} className="text-[var(--accent-main)]" />
-                          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-main)]">
-                            Planes de Pago y Estructura Financiera
-                          </h4>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div className="rounded-xl border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 p-4 flex flex-col justify-between">
-                            <div>
-                              <span className="rounded bg-[var(--accent-main)]/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-main)]">
-                                Pago al Contado
-                              </span>
-                              <div className="mt-2 text-lg font-bold text-[var(--text-main)]">100% Contado</div>
-                              <p className="mt-1 text-xs text-[var(--text-muted)]">
-                                Precio preferencial con descuento de inversor lista cero.
-                              </p>
-                            </div>
-                            <div className="mt-3 text-sm font-bold text-[var(--accent-main)] pt-2 border-t border-[var(--accent-main)]/20">
-                              Desde $1.250 / m²
-                            </div>
+                      {/* 5. Planes de Pago e Inversión */}
+                      {(selectedProperty.planesPago || selectedProperty.precioM2Desde || selectedProperty.brochureUrl) && (
+                        <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)] p-5 shadow-xs">
+                          <div className="flex items-center gap-2 mb-4">
+                            <TrendingUp size={18} className="text-[var(--accent-main)]" />
+                            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-main)]">
+                              Planes de Pago y Estructura Financiera
+                            </h4>
                           </div>
+                          {selectedProperty.planesPago ? (
+                            <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/40 p-4 text-xs text-[var(--text-main)] whitespace-pre-line leading-relaxed">
+                              {selectedProperty.planesPago}
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <div className="rounded-xl border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 p-4 flex flex-col justify-between">
+                                <div>
+                                  <span className="rounded bg-[var(--accent-main)]/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-main)]">
+                                    Pago al Contado
+                                  </span>
+                                  <div className="mt-2 text-lg font-bold text-[var(--text-main)]">100% Contado</div>
+                                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                                    Precio preferencial con descuento de inversor lista cero.
+                                  </p>
+                                </div>
+                                {selectedProperty.precioM2Desde ? (
+                                  <div className="mt-3 text-sm font-bold text-[var(--accent-main)] pt-2 border-t border-[var(--accent-main)]/20">
+                                    Desde ${selectedProperty.precioM2Desde.toLocaleString()} USD / m²
+                                  </div>
+                                ) : null}
+                              </div>
 
-                          <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/40 p-4 flex flex-col justify-between">
-                            <div>
-                              <span className="rounded bg-[var(--surface-control)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                Plan Flexible
-                              </span>
-                              <div className="mt-2 text-lg font-bold text-[var(--text-main)]">60% Inicial</div>
-                              <p className="mt-1 text-xs text-[var(--text-muted)]">
-                                60% cuota inicial y 40% saldo contra entrega de llaves.
-                              </p>
-                            </div>
-                            <div className="mt-3 text-sm font-bold text-[var(--accent-main)] pt-2 border-t border-[var(--border-soft)]">
-                              Desde $1.300 / m²
-                            </div>
-                          </div>
+                              <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/40 p-4 flex flex-col justify-between">
+                                <div>
+                                  <span className="rounded bg-[var(--surface-control)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                    Plan Flexible
+                                  </span>
+                                  <div className="mt-2 text-lg font-bold text-[var(--text-main)]">Cuota Inicial</div>
+                                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                                    Inicial y saldo contra entrega de llaves.
+                                  </p>
+                                </div>
+                              </div>
 
-                          <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/40 p-4 flex flex-col justify-between">
-                            <div>
-                              <span className="rounded bg-[var(--surface-control)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                Plan Clásico
-                              </span>
-                              <div className="mt-2 text-lg font-bold text-[var(--text-main)]">40% Inicial</div>
-                              <p className="mt-1 text-xs text-[var(--text-muted)]">
-                                40% cuota inicial y 60% financiado / contra entrega.
-                              </p>
+                              <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/40 p-4 flex flex-col justify-between">
+                                <div>
+                                  <span className="rounded bg-[var(--surface-control)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                    Financiado
+                                  </span>
+                                  <div className="mt-2 text-lg font-bold text-[var(--text-main)]">Plan en Obra</div>
+                                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                                    Pagos programados durante el avance de construcción.
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <div className="mt-3 text-sm font-bold text-[var(--accent-main)] pt-2 border-t border-[var(--border-soft)]">
-                              Desde $1.350 / m²
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Parqueos y Bauleras */}
-                        <div className="mt-4 pt-4 border-t border-[var(--border-soft)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
-                          <span>
-                            <strong className="text-[var(--text-main)]">Parqueos con baulera:</strong> Simple $15.000 USD · Doble $22.000 USD
-                          </span>
-                          {selectedProperty.brochureUrl && (
-                            <a
-                              href={selectedProperty.brochureUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent-main)] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white transition-colors self-start sm:self-auto"
-                            >
-                              <FileText size={14} /> Ver Dossier Oficial (PDF)
-                            </a>
                           )}
+
+                          {/* Parqueos y Bauleras / Brochure */}
+                          <div className="mt-4 pt-4 border-t border-[var(--border-soft)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
+                            <span>Consulte con un asesor las opciones de parqueos y bauleras disponibles.</span>
+                            {selectedProperty.brochureUrl && (
+                              <a
+                                href={selectedProperty.brochureUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent-main)] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white transition-colors self-start sm:self-auto"
+                              >
+                                <FileText size={14} /> Ver Dossier Oficial (PDF)
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
 
@@ -3170,30 +3161,38 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Nivel</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {depto.piso ? `Piso ${depto.piso}` : (selectedProperty.piso ? `Piso ${selectedProperty.piso}` : "Nivel Alto")}
+                              {depto.piso ? `Piso ${depto.piso}` : (selectedProperty.piso ? `Piso ${selectedProperty.piso}` : "A consultar")}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {depto.vista || "Vista abierta"}
+                              {depto.vista || (depto.piso || selectedProperty.piso ? "Ubicación en torre" : "Nivel a consultar")}
                             </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Superficie</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {selectedProperty.superficieM2 ? `${selectedProperty.superficieM2} m²` : "54.22 m²"}
+                              {selectedProperty.superficieM2 ? `${selectedProperty.superficieM2} m²` : "A consultar"}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {depto.precioM2 ? `$${Math.round(depto.precioM2)} / m²` : "Área construida"}
+                              {depto.precioM2
+                                ? `$${Math.round(depto.precioM2)} / m²`
+                                : selectedProperty.superficieM2 && selectedProperty.price && selectedProperty.currency.includes("USD")
+                                ? `$${Math.round(selectedProperty.price / selectedProperty.superficieM2)} / m²`
+                                : "Área construida"}
                             </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Dormitorios</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {selectedProperty.rooms} Dorms
+                              {selectedProperty.rooms === 0
+                                ? "Monoambiente"
+                                : `${selectedProperty.rooms} Dorm${selectedProperty.rooms === 1 ? "" : "s"}`}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {selectedProperty.bathrooms} {selectedProperty.bathrooms === 1 ? "baño completo" : "baños completos"}
+                              {selectedProperty.bathrooms
+                                ? `${selectedProperty.bathrooms} ${selectedProperty.bathrooms === 1 ? "baño" : "baños"}`
+                                : "Baños a consultar"}
                             </span>
                           </div>
                         </div>
@@ -3282,7 +3281,7 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Terreno</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {casa.superficieTerrenoM2 || selectedProperty.superficieM2} m²
+                              {casa.superficieTerrenoM2 || selectedProperty.superficieM2 ? `${casa.superficieTerrenoM2 || selectedProperty.superficieM2} m²` : "A consultar"}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">Superficie de lote</span>
                           </div>
@@ -3290,7 +3289,7 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Construcción</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {casa.superficieConstruidaM2 ? `${casa.superficieConstruidaM2} m²` : "Sólida"}
+                              {casa.superficieConstruidaM2 ? `${casa.superficieConstruidaM2} m²` : (selectedProperty.superficieM2 ? `${selectedProperty.superficieM2} m²` : "A consultar")}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">Área cubierta</span>
                           </div>
@@ -3301,17 +3300,17 @@ export default function MapPage() {
                               {casa.ambientesTotales || selectedProperty.rooms} Amb.
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {casa.banosTotales || selectedProperty.bathrooms} baños estratégicos
+                              {casa.banosTotales || selectedProperty.bathrooms} {(casa.banosTotales || selectedProperty.bathrooms) === 1 ? "baño" : "baños"}
                             </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Divisibilidad</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Patios / Extras</span>
                             <div className="mt-1 text-xl font-bold text-[var(--accent-main)]">
-                              {casa.patiosInternos ? `${casa.patiosInternos} Patios` : "Multiuso"}
+                              {casa.patiosInternos ? `${casa.patiosInternos} Patio${casa.patiosInternos > 1 ? "s" : ""}` : "Espacios ext."}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {casa.cocinasIndependientes ? `${casa.cocinasIndependientes} cocinas sep.` : "Uso mixto"}
+                              {casa.cocinasIndependientes ? `${casa.cocinasIndependientes} cocinas sep.` : "Área de servicio"}
                             </span>
                           </div>
                         </div>
@@ -3393,7 +3392,11 @@ export default function MapPage() {
                             </div>
                             <div className="shrink-0 rounded-xl bg-[var(--surface-panel)] border border-[var(--border-soft)] px-4 py-2 text-left sm:text-right">
                               <span className="block text-xl font-bold text-[var(--accent-main)] leading-none">
-                                {terr.precioM2 ? `$${terr.precioM2} USD / m²` : "$10.25 / m²"}
+                                {terr.precioM2
+                                  ? `$${terr.precioM2} USD / m²`
+                                  : selectedProperty.superficieM2 && selectedProperty.price && selectedProperty.currency.includes("USD")
+                                  ? `$${Math.round((selectedProperty.price / selectedProperty.superficieM2) * 100) / 100} USD / m²`
+                                  : "A consultar"}
                               </span>
                               <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                                 Valor por Metro Cuadrado
@@ -3407,7 +3410,7 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Superficie Total</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {terr.superficieTotalM2 || selectedProperty.superficieM2} m²
+                              {terr.superficieTotalM2 || selectedProperty.superficieM2 ? `${terr.superficieTotalM2 || selectedProperty.superficieM2} m²` : "A consultar"}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">Extensión aprovechable</span>
                           </div>
@@ -3415,27 +3418,31 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Zonificación</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              Urbano
+                              {terr.radioUrbano ? "Urbano" : "A consultar"}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">
-                              {terr.radioUrbano || "Área Urbana El Cercado"}
+                              {terr.radioUrbano || selectedProperty.zone || "Radio urbano"}
                             </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Servicios</span>
                             <div className="mt-1 text-xl font-bold text-[var(--accent-main)]">
-                              Luz y Agua
+                              {selectedProperty.serviciosBasicos ? selectedProperty.serviciosBasicos : (terr.serviciosDisponibles.length > 0 ? terr.serviciosDisponibles[0] : "A consultar")}
                             </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">En puerta / Activos</span>
+                            <span className="text-[9px] text-[var(--text-muted)]">
+                              {terr.serviciosDisponibles.length > 1 ? terr.serviciosDisponibles.slice(1).join(", ") : "Factibilidad en zona"}
+                            </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Productividad</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Vocación</span>
                             <div className="mt-1 text-xl font-bold text-[var(--accent-main)]">
-                              Frutales
+                              {terr.atributosNaturales && terr.atributosNaturales.length > 0 ? terr.atributosNaturales[0] : "Desarrollo"}
                             </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">Renta inmediata</span>
+                            <span className="text-[9px] text-[var(--text-muted)]">
+                              {terr.vocacion || "Inversión patrimonial"}
+                            </span>
                           </div>
                         </div>
 
@@ -3519,21 +3526,23 @@ export default function MapPage() {
                               </div>
                               <div>
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-main)]">
-                                  Visibilidad Comercial Troncal
+                                  Exposición Comercial
                                 </span>
                                 <h3 className="text-sm sm:text-base font-semibold text-[var(--text-main)] leading-snug">
-                                  {com.vocacion || "Inmueble Mixto sobre Segundo Anillo"}
+                                  {com.vocacion || "Inmueble con Alto Potencial Comercial"}
                                 </h3>
                               </div>
                             </div>
-                            <div className="shrink-0 rounded-xl bg-[var(--surface-panel)] border border-[var(--border-soft)] px-4 py-2 text-left sm:text-right">
-                              <span className="block text-xl font-bold text-[var(--accent-main)] leading-none">
-                                {com.niveles || 3} Niveles
-                              </span>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                PB + PA + Terraza
-                              </span>
-                            </div>
+                            {com.niveles && (
+                              <div className="shrink-0 rounded-xl bg-[var(--surface-panel)] border border-[var(--border-soft)] px-4 py-2 text-left sm:text-right">
+                                <span className="block text-xl font-bold text-[var(--accent-main)] leading-none">
+                                  {com.niveles} Niveles
+                                </span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                  Plantas operativas
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -3542,7 +3551,7 @@ export default function MapPage() {
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Construcción</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              {com.superficieConstruidaM2 || selectedProperty.superficieM2} m²
+                              {com.superficieConstruidaM2 || selectedProperty.superficieM2 ? `${com.superficieConstruidaM2 || selectedProperty.superficieM2} m²` : "A consultar"}
                             </div>
                             <span className="text-[9px] text-[var(--text-muted)]">Área cubierta total</span>
                           </div>
@@ -3552,23 +3561,27 @@ export default function MapPage() {
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
                               {com.superficieTerrenoM2 ? `${com.superficieTerrenoM2} m²` : "Lote propio"}
                             </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">Frente a la avenida</span>
+                            <span className="text-[9px] text-[var(--text-muted)]">Superficie predial</span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Flujo Vehicular</span>
                             <div className="mt-1 text-xl font-bold text-[var(--accent-main)]">
-                              Muy Alto
+                              {com.flujoVehicular || "Estratégico"}
                             </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">Arteria principal 2do Anillo</span>
+                            <span className="text-[9px] text-[var(--text-muted)]">
+                              {selectedProperty.area || "Acceso comercial"}
+                            </span>
                           </div>
 
                           <div className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)]/30 p-3.5 text-center shadow-xs">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Servicios</span>
                             <div className="mt-1 text-xl font-bold text-[var(--text-main)]">
-                              Gas & Trifásica
+                              {selectedProperty.serviciosBasicos ? selectedProperty.serviciosBasicos : (com.serviciosInstalados && com.serviciosInstalados.length > 0 ? com.serviciosInstalados[0] : "Instalados")}
                             </div>
-                            <span className="text-[9px] text-[var(--text-muted)]">Apto industria/cocina</span>
+                            <span className="text-[9px] text-[var(--text-muted)]">
+                              {com.serviciosInstalados && com.serviciosInstalados.length > 1 ? com.serviciosInstalados.slice(1).join(", ") : "Apto rubro comercial"}
+                            </span>
                           </div>
                         </div>
 
@@ -3687,30 +3700,21 @@ export default function MapPage() {
                   </div>
 
                   {/* Bloque de Amenities / Areas Sociales */}
-                  <div className="mb-8">
-                    <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-4 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-2">
-                      Amenities & Detalles
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm text-[var(--text-main)] dark:text-[var(--text-muted)]">
-                      {/* Renderizado dinamico o estatico de prueba */}
-                      {selectedProperty.amenities ? (
-                        selectedProperty.amenities.map((amenity, index) => (
+                  {selectedProperty.amenities && selectedProperty.amenities.length > 0 && (
+                    <div className="mb-8">
+                      <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-4 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-2">
+                        Amenities & Detalles
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm text-[var(--text-main)] dark:text-[var(--text-muted)]">
+                        {selectedProperty.amenities.map((amenity, index) => (
                           <div key={index} className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45">
                             <Sparkles size={14} className="text-[var(--accent-main)]" />
                             <span>{amenity}</span>
                           </div>
-                        ))
-                      ) : (
-                        <>
-                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Coworking Space</span></div>
-                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Piscina Infinita</span></div>
-                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Gimnasio Equipado</span></div>
-                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Seguridad 24/7</span></div>
-                          <div className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border-soft)]/70 bg-[var(--surface-panel)]/55 px-3 py-2 text-[13px] font-medium shadow-sm dark:bg-[var(--surface-control)]/45"><Sparkles size={14} className="text-[var(--accent-main)]" /><span>Pet Friendly</span></div>
-                        </>
-                      )}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                </div>
 
                {/* Columna Derecha: Ficha Tecnica (Sticky) */}
