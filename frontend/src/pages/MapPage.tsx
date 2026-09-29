@@ -256,7 +256,7 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v7";
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v8";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -778,27 +778,6 @@ export default function MapPage() {
   };
 
 
-  useEffect(() => {
-    if (!("geolocation" in navigator)) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        if (hasSearchInteractionRef.current) return;
-        setMapFocus({
-          longitude: position.coords.longitude,
-          latitude: position.coords.latitude,
-          zoom: 12,
-          key: Date.now(),
-          source: "user",
-        });
-      },
-      () => {
-        // Si no hay permiso, el mapa queda en Santa Cruz como fallback inicial.
-      },
-      { enableHighAccuracy: false, timeout: 4500, maximumAge: 300000 }
-    );
-  }, []);
-
   // [OPALO-BRIDGE] Lectura Consolidada con snapshot estatico + refresh en segundo plano.
   useEffect(() => {
     let cancelled = false;
@@ -832,8 +811,8 @@ export default function MapPage() {
         if (!Array.isArray(backendItems) || backendItems.length === 0 || cancelled) return;
 
         setProperties((current) => {
-          // NUNCA degradar un catalogo maestro de 1700+ con un resumen incompleto/antiguo de backend (ej. 654 items)
-          if (current.length > backendItems.length * 1.5) {
+          // NUNCA degradar el catalogo maestro (1798 items) con un resumen incompleto de backend
+          if (backendItems.length < current.length) {
             console.warn(`[Catalog] Ignorando resumen incompleto de backend (${backendItems.length} items vs ${current.length} en catalogo actual).`);
             return current;
           }
