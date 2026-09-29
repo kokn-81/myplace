@@ -211,7 +211,32 @@ export const QUICK_FILTER_OPTIONS = [
   },
 ] as const;
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v5";
+const prioritizeRecommended = (list: Property[]): Property[] => {
+  if (list.length <= 1) return list;
+  // Opción 1: Departamento de La Riviera (Ref #4 o con complejo La Riviera)
+  const riviera = list.find(
+    (p) => String(p.id) === "4" || (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera"))
+  );
+  // Opción 2: Proyecto ONA Residences (Ref #5 o con título/complejo ONA Residences)
+  const ona = list.find(
+    (p) =>
+      String(p.id) === "5" ||
+      p.title.toLowerCase().includes("ona residences") ||
+      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences"))
+  );
+
+  const priorityItems: Property[] = [];
+  if (riviera) priorityItems.push(riviera);
+  if (ona && String(ona.id) !== String(riviera?.id)) priorityItems.push(ona);
+
+  if (priorityItems.length === 0) return list;
+
+  const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
+  const remaining = list.filter((p) => !prioritySet.has(String(p.id)));
+  return [...priorityItems, ...remaining];
+};
+
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v6";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -228,9 +253,11 @@ const readCachedCatalog = (): Property[] => {
       window.localStorage.removeItem(CATALOG_CACHE_KEY);
       return [];
     }
-    return items
-      .map(mapApiProperty)
-      .filter((property) => property.id && Number.isFinite(property.lat) && Number.isFinite(property.lng));
+    return prioritizeRecommended(
+      items
+        .map(mapApiProperty)
+        .filter((property) => property.id && Number.isFinite(property.lat) && Number.isFinite(property.lng))
+    );
   } catch (error) {
     console.warn("No se pudo leer el cache del catalogo:", error);
     return [];
@@ -765,8 +792,9 @@ export default function MapPage() {
           setProperties((current) => {
             // Si el catalogo en memoria tiene menos items que el snapshot maestro o esta vacio, aplicar snapshot
             if (current.length < snapshotItems.length) {
-              writeCachedCatalog(snapshotItems);
-              return snapshotItems.map(mapApiProperty);
+              const mapped = prioritizeRecommended(snapshotItems.map(mapApiProperty));
+              writeCachedCatalog(mapped);
+              return mapped;
             }
             return current;
           });
@@ -812,8 +840,9 @@ export default function MapPage() {
             return bItem;
           });
 
-          writeCachedCatalog(merged);
-          return merged;
+          const prioritized = prioritizeRecommended(merged);
+          writeCachedCatalog(prioritized);
+          return prioritized;
         });
       } catch (error) {
         console.error("Error cargando el catalogo:", error);
@@ -1488,16 +1517,17 @@ export default function MapPage() {
   }, [properties, exactProperties, guidedOperation, guidedCity, guidedPropertyType, guidedBedrooms, guidedBudget]);
 
   const filteredProperties = useMemo(() => {
+    let list: Property[] = [];
     if (exactProperties.length > 0) {
       if (showSuggested) {
-        return [...exactProperties, ...suggestedProperties];
+        list = [...exactProperties, ...suggestedProperties];
+      } else {
+        list = exactProperties;
       }
-      return exactProperties;
+    } else if (showSuggested) {
+      list = suggestedProperties;
     }
-    if (showSuggested) {
-      return suggestedProperties;
-    }
-    return [];
+    return prioritizeRecommended(list);
   }, [exactProperties, suggestedProperties, showSuggested]);
 
   const mapCanvasProperties = useMemo(() => {
@@ -2527,7 +2557,11 @@ export default function MapPage() {
                 {formatPropertyTypeLabel(p.type)}
               </span>
             </div>
-            {isSuggestedProperty(p) ? (
+            {(String(p.id) === "4" || String(p.id) === "5") ? (
+              <span className="shrink-0 rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-main)] flex items-center gap-1">
+                <Sparkles size={10} /> Recomendado
+              </span>
+            ) : isSuggestedProperty(p) ? (
               <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                 Cercana
               </span>
