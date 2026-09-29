@@ -252,42 +252,8 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   const normTarget = normalizeGeoText(cityName);
   if (!normTarget || normTarget === "todas") return true;
 
-  const propCityNorm = normalizeGeoText(p.city || "");
-  const propZoneNorm = normalizeGeoText(p.zone || "");
-  const propAreaNorm = normalizeGeoText(p.area || "");
-  const propTitleNorm = normalizeGeoText(p.title || "");
-  const allText = `${propCityNorm} ${propZoneNorm} ${propAreaNorm} ${propTitleNorm}`;
-
-  if (normTarget === "santa cruz") {
-    if (
-      propCityNorm.includes("cochabamba") ||
-      propCityNorm.includes("la paz") ||
-      propCityNorm.includes("tarija") ||
-      propCityNorm.includes("sucre")
-    ) {
-      return false;
-    }
-    if (
-      allText.includes("santa cruz") ||
-      allText.includes("scz") ||
-      allText.includes("ichilo") ||
-      allText.includes("san carlos") ||
-      allText.includes("equipetrol") ||
-      allText.includes("banzer") ||
-      allText.includes("cusis") ||
-      allText.includes("urubo") ||
-      allText.includes("sirari") ||
-      allText.includes("palmas") ||
-      allText.includes("san aurelio")
-    ) {
-      return true;
-    }
-    if (p.lat && p.lat < -17.0 && p.lat > -18.2 && p.lng && p.lng > -63.6 && p.lng < -62.8) {
-      return true;
-    }
-  }
-
-  return allText.includes(normTarget);
+  const normCity = normalizeGeoText(p.city || "");
+  return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
 const CATALOG_CACHE_KEY = "nia.catalog.summary.v7";
