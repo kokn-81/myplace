@@ -82,79 +82,86 @@ const normalizeMediaLinks = (inm: any): string[] => {
 };
 
 const mapApiProperty = (inm: any): Property => {
-  const offers: PropertyOffer[] = Array.isArray(inm.ofertas)
-    ? inm.ofertas.map((offer: any) => ({
-        id: offer.id?.toString(),
-        operation: offer.operacion,
-        price: Number(offer.precio ?? 0),
-        currency: offer.moneda || "$ (USD)",
-        status: offer.estado || "Publicado",
-        agentId: offer.agente_id?.toString() || "5",
-        agentName: offer.agente?.name || offer.colocador?.name || "Alejandro Coca",
-        agentWhatsapp: offer.agente?.whatsapp || offer.colocador?.whatsapp || CONTACT_WHATSAPP_NUMBER,
-        captador: offer.captador || null,
-        colocador: offer.colocador || null,
-        incluyeExpensas: Boolean(offer.incluye_expensas),
-        montoExpensas: offer.monto_expensas ?? null,
-      }))
-    : [];
+  const rawOffers = Array.isArray(inm.ofertas)
+    ? inm.ofertas
+    : Array.isArray(inm.offers)
+      ? inm.offers
+      : [];
+  const offers: PropertyOffer[] = rawOffers.map((offer: any) => ({
+    id: offer.id?.toString(),
+    operation: offer.operacion || offer.operation,
+    price: Number(offer.precio ?? offer.price ?? 0),
+    currency: offer.moneda || offer.currency || "$ (USD)",
+    status: offer.estado || offer.status || "Publicado",
+    agentId: offer.agente_id?.toString() || offer.agentId?.toString() || "5",
+    agentName: offer.agente?.name || offer.colocador?.name || offer.agentName || "Alejandro Coca",
+    agentWhatsapp: offer.agente?.whatsapp || offer.colocador?.whatsapp || offer.agentWhatsapp || CONTACT_WHATSAPP_NUMBER,
+    captador: offer.captador || null,
+    colocador: offer.colocador || null,
+    incluyeExpensas: Boolean(offer.incluye_expensas ?? offer.incluyeExpensas),
+    montoExpensas: offer.monto_expensas ?? offer.montoExpensas ?? null,
+  }));
   const primaryOffer = offers[0];
 
   return {
-    id: inm.id.toString(),
-    title: inm.titulo,
-    price: Number(primaryOffer?.price ?? inm.precio_usd ?? 0),
-    rooms: inm.habitaciones,
+    id: inm.id?.toString() ?? "",
+    title: inm.titulo || inm.title || "",
+    price: Number(primaryOffer?.price ?? inm.precio ?? inm.precio_usd ?? inm.price ?? 0),
+    rooms: inm.habitaciones ?? inm.rooms ?? 0,
     bathrooms: Number(inm.banos ?? inm.bathrooms ?? 1) || 1,
-    area: inm.zona || inm.complejo_nombre || inm.ciudad,
-    city: inm.ciudad || "",
-    zone: inm.zona || "",
-    lat: inm.lat,
-    lng: inm.lng,
-    operation: primaryOffer?.operation ?? inm.operacion,
-    type: inm.tipo_inmueble,
-    description: inm.descripcion || "",
-    amenities: Array.isArray(inm.amenidades) ? inm.amenidades : [],
+    area: inm.zona || inm.complejo_nombre || inm.ciudad || inm.area || "",
+    city: inm.ciudad || inm.city || "",
+    zone: inm.zona || inm.zone || "",
+    lat: Number(inm.lat),
+    lng: Number(inm.lng),
+    operation: primaryOffer?.operation ?? inm.operacion ?? inm.operation ?? "Venta",
+    type: inm.tipo_inmueble || inm.type || "Departamento",
+    description: inm.descripcion || inm.description || "",
+    amenities: Array.isArray(inm.amenidades)
+      ? inm.amenidades
+      : Array.isArray(inm.amenities)
+        ? inm.amenities
+        : [],
     images: normalizeMediaLinks(inm),
-    currency: primaryOffer?.currency ?? inm.moneda,
+    currency: primaryOffer?.currency ?? inm.moneda ?? inm.currency ?? "$ (USD)",
     exchangeRate: "Oficial",
-    agentId: primaryOffer?.agentId ?? (inm.agente_id ? String(inm.agente_id) : "5"),
-    agentName: primaryOffer?.agentName || inm.agente?.name || inm.agente_nombre || "Alejandro Coca",
-    agentWhatsapp: primaryOffer?.agentWhatsapp || inm.agente?.whatsapp || inm.agente_whatsapp || CONTACT_WHATSAPP_NUMBER,
+    agentId: primaryOffer?.agentId ?? (inm.agente_id ? String(inm.agente_id) : (inm.agentId ? String(inm.agentId) : "5")),
+    agentName: primaryOffer?.agentName || inm.agente?.name || inm.agente_nombre || inm.agentName || "Alejandro Coca",
+    agentWhatsapp: primaryOffer?.agentWhatsapp || inm.agente?.whatsapp || inm.agente_whatsapp || inm.agentWhatsapp || CONTACT_WHATSAPP_NUMBER,
     offers,
-    detailsLoaded: Boolean(inm.detalle_completo),
-    complejoId: inm.complejo_id ? String(inm.complejo_id) : null,
-    complejoNombre: inm.complejo_nombre || null,
+    detailsLoaded: Boolean(inm.detalle_completo ?? inm.detailsLoaded),
+    complejoId: inm.complejo_id ? String(inm.complejo_id) : (inm.complejoId ? String(inm.complejoId) : null),
+    complejoNombre: inm.complejo_nombre || inm.complejoNombre || null,
     ocupacion: inm.ocupacion || "Disponible",
-    superficieM2: inm.superficie_m2 ?? null,
+    superficieM2: inm.superficie_m2 ?? inm.superficieM2 ?? null,
     amoblado: Boolean(inm.amoblado),
-    fechaEntrega: inm.fecha_entrega ?? null,
-    avanceObra: inm.avance_obra !== undefined && inm.avance_obra !== null ? Number(inm.avance_obra) : null,
-    faseObra: inm.fase_obra ?? null,
-    subtipoComercial: inm.subtipo_comercial ?? null,
-    dimensiones: inm.dimensiones ?? null,
-    serviciosBasicos: inm.servicios_basicos ?? null,
+    fechaEntrega: inm.fecha_entrega || inm.fechaEntrega || null,
+    avanceObra: inm.avance_obra !== undefined && inm.avance_obra !== null ? Number(inm.avance_obra) : (inm.avanceObra ?? null),
+    faseObra: inm.fase_obra || inm.faseObra || null,
+    subtipoComercial: inm.subtipo_comercial || inm.subtipoComercial || null,
+    dimensiones: inm.dimensiones || null,
+    serviciosBasicos: inm.servicios_basicos || inm.serviciosBasicos || null,
     piso: inm.piso || null,
     captador: primaryOffer?.captador || inm.captador || null,
-    captadorId: primaryOffer?.captador?.id || (inm.captador_id ? String(inm.captador_id) : null),
-    captadorNombre: primaryOffer?.captador?.name || inm.captador_nombre || null,
-    captadorWhatsapp: primaryOffer?.captador?.whatsapp || inm.captador_whatsapp || null,
-    captadorOficina: primaryOffer?.captador?.oficina || inm.captador_oficina || null,
+    captadorId: primaryOffer?.captador?.id || (inm.captador_id ? String(inm.captador_id) : (inm.captadorId ? String(inm.captadorId) : null)),
+    captadorNombre: primaryOffer?.captador?.name || inm.captador_nombre || inm.captadorNombre || null,
+    captadorWhatsapp: primaryOffer?.captador?.whatsapp || inm.captador_whatsapp || inm.captadorWhatsapp || null,
+    captadorOficina: primaryOffer?.captador?.oficina || inm.captador_oficina || inm.captadorOficina || null,
     ...(() => {
-      const proj = parseProjectDetailsJson(inm.datos_especificos_json || inm);
+      const proj = parseProjectDetailsJson(inm.datos_especificos_json || inm.datosEspecificosJson || inm);
       return {
         unidadesProyecto: Array.isArray(inm.unidades_proyecto) && inm.unidades_proyecto.length > 0
           ? parseProjectUnitsJson(inm.unidades_proyecto)
-          : proj.unidades,
-        datosEspecificosJson: inm.datos_especificos_json || null,
-        mensajeUrgencia: inm.mensaje_urgencia || proj.mensajeUrgencia || null,
-        totalUnidades: inm.total_unidades ?? proj.totalUnidades ?? null,
-        unidadesDisponibles: inm.unidades_disponibles ?? proj.unidadesDisponibles ?? null,
+          : (Array.isArray(inm.unidadesProyecto) && inm.unidadesProyecto.length > 0 ? inm.unidadesProyecto : proj.unidades),
+        datosEspecificosJson: inm.datos_especificos_json || inm.datosEspecificosJson || null,
+        mensajeUrgencia: inm.mensaje_urgencia || inm.mensajeUrgencia || proj.mensajeUrgencia || null,
+        totalUnidades: inm.total_unidades ?? inm.totalUnidades ?? proj.totalUnidades ?? null,
+        unidadesDisponibles: inm.unidades_disponibles ?? inm.unidadesDisponibles ?? proj.unidadesDisponibles ?? null,
         pisos: inm.pisos ?? proj.pisos ?? null,
-        reservaUsd: inm.reserva_usd ?? proj.reservaUsd ?? null,
-        precioM2Desde: inm.precio_m2_desde ?? proj.precioM2Desde ?? null,
-        brochureUrl: inm.brochure_url || proj.brochureUrl || null,
-        planesPago: inm.planes_pago || proj.planesPago || null,
+        reservaUsd: inm.reserva_usd ?? inm.reservaUsd ?? proj.reservaUsd ?? null,
+        precioM2Desde: inm.precio_m2_desde ?? inm.precioM2Desde ?? proj.precioM2Desde ?? null,
+        brochureUrl: inm.brochure_url || inm.brochureUrl || proj.brochureUrl || null,
+        planesPago: inm.planes_pago || inm.planesPago || proj.planesPago || null,
       };
     })(),
   };
@@ -212,16 +219,20 @@ export const QUICK_FILTER_OPTIONS = [
 ] as const;
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (list.length <= 1) return list;
-  // Opción 1: Departamento de La Riviera (Ref #4 o con complejo La Riviera)
+  if (!list || list.length <= 1) return list;
+  // Opción 1: Departamento de La Riviera (Ref #4 o complejo La Riviera)
   const riviera = list.find(
-    (p) => String(p.id) === "4" || (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera"))
+    (p) =>
+      String(p.id) === "4" ||
+      String(p.complejoId) === "3" ||
+      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
+      (p.title && p.title.toLowerCase().includes("riviera"))
   );
-  // Opción 2: Proyecto ONA Residences (Ref #5 o con título/complejo ONA Residences)
+  // Opción 2: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
   const ona = list.find(
     (p) =>
       String(p.id) === "5" ||
-      p.title.toLowerCase().includes("ona residences") ||
+      (p.title && p.title.toLowerCase().includes("ona residences")) ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences"))
   );
 
@@ -236,7 +247,50 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   return [...priorityItems, ...remaining];
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v6";
+export const isPropertyInCity = (p: Property, cityName: string): boolean => {
+  if (!cityName) return true;
+  const normTarget = normalizeGeoText(cityName);
+  if (!normTarget || normTarget === "todas") return true;
+
+  const propCityNorm = normalizeGeoText(p.city || "");
+  const propZoneNorm = normalizeGeoText(p.zone || "");
+  const propAreaNorm = normalizeGeoText(p.area || "");
+  const propTitleNorm = normalizeGeoText(p.title || "");
+  const allText = `${propCityNorm} ${propZoneNorm} ${propAreaNorm} ${propTitleNorm}`;
+
+  if (normTarget === "santa cruz") {
+    if (
+      propCityNorm.includes("cochabamba") ||
+      propCityNorm.includes("la paz") ||
+      propCityNorm.includes("tarija") ||
+      propCityNorm.includes("sucre")
+    ) {
+      return false;
+    }
+    if (
+      allText.includes("santa cruz") ||
+      allText.includes("scz") ||
+      allText.includes("ichilo") ||
+      allText.includes("san carlos") ||
+      allText.includes("equipetrol") ||
+      allText.includes("banzer") ||
+      allText.includes("cusis") ||
+      allText.includes("urubo") ||
+      allText.includes("sirari") ||
+      allText.includes("palmas") ||
+      allText.includes("san aurelio")
+    ) {
+      return true;
+    }
+    if (p.lat && p.lat < -17.0 && p.lat > -18.2 && p.lng && p.lng > -63.6 && p.lng < -62.8) {
+      return true;
+    }
+  }
+
+  return allText.includes(normTarget);
+};
+
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v7";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -638,7 +692,7 @@ export default function MapPage() {
     const fromGeo = getZoneNamesForCity(guidedCity);
     const normCity = normalizeGeoText(guidedCity);
     const fromCatalog = properties
-      .filter((p) => normalizeGeoText(p.city || "") === normCity || normalizeGeoText(p.area || "").includes(normCity))
+      .filter((p) => isPropertyInCity(p, guidedCity))
       .map((p) => p.zone?.trim())
       .filter((z): z is string => Boolean(z) && normalizeGeoText(z) !== normCity && !normalizeGeoText(z).includes("santa cruz de la sierra"));
     return [...new Set(["Todas", ...fromGeo, ...fromCatalog])].slice(0, 7);
@@ -790,13 +844,13 @@ export default function MapPage() {
         const snapshotItems = await snapshotResponse.json();
         if (Array.isArray(snapshotItems) && snapshotItems.length > 0 && !cancelled) {
           setProperties((current) => {
-            // Si el catalogo en memoria tiene menos items que el snapshot maestro o esta vacio, aplicar snapshot
-            if (current.length < snapshotItems.length) {
+            // Sincronizar con el snapshot maestro asegurando orden y captadores
+            if (current.length <= snapshotItems.length) {
               const mapped = prioritizeRecommended(snapshotItems.map(mapApiProperty));
               writeCachedCatalog(mapped);
               return mapped;
             }
-            return current;
+            return prioritizeRecommended(current);
           });
         }
       } catch (error) {
@@ -1170,12 +1224,7 @@ export default function MapPage() {
 
       const matches = properties
         .filter((p) => {
-          const normCity = normalizeGeoText(guidedCity);
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          const inCity =
-            textCity.includes(normCity) ||
-            (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
-          if (!inCity) return false;
+          if (!isPropertyInCity(p, guidedCity)) return false;
           if (!propertyMatchesOperation(p, guidedOperation)) return false;
           if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
             return false;
@@ -1223,12 +1272,7 @@ export default function MapPage() {
 
       const matches = properties
         .filter((p) => {
-          const normCity = normalizeGeoText(guidedCity);
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          const inCity =
-            textCity.includes(normCity) ||
-            (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
-          if (!inCity) return false;
+          if (!isPropertyInCity(p, guidedCity)) return false;
 
           if (guidedOperation === "Alquilar") {
             const hasRent = normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent");
@@ -1265,12 +1309,7 @@ export default function MapPage() {
 
       const matches = properties
         .filter((p) => {
-          const normCity = normalizeGeoText(guidedCity);
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          const inCity =
-            textCity.includes(normCity) ||
-            (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
-          if (!inCity) return false;
+          if (!isPropertyInCity(p, guidedCity)) return false;
           if (!propertyMatchesOperation(p, guidedOperation)) return false;
           if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
             return false;
@@ -1307,11 +1346,7 @@ export default function MapPage() {
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
           return false;
         }
-        if (guidedCity) {
-          const normCity = normalizeGeoText(guidedCity);
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          if (!textCity.includes(normCity)) return false;
-        }
+        if (guidedCity && !isPropertyInCity(p, guidedCity)) return false;
         if (guidedZones.length > 0) {
           const normZones = guidedZones.map(normalizeGeoText);
           const textZone = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""} ${p.description || ""}`);
@@ -1441,10 +1476,8 @@ export default function MapPage() {
           return false;
         }
 
-        if (normCity) {
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          const inCity = textCity.includes(normCity) || (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
-          if (!inCity) return false;
+        if (guidedCity) {
+          if (!isPropertyInCity(p, guidedCity)) return false;
         }
 
         if (normZones.length > 0) {
@@ -1478,7 +1511,6 @@ export default function MapPage() {
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
 
-    const normCity = guidedCity ? normalizeGeoText(guidedCity) : "";
     const cleanBudget = guidedBudget ? guidedBudget.replace(/\./g, "").replace(/,/g, "") : "";
     const budgetMatch = cleanBudget.match(/(\d+)/);
     const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
@@ -1489,10 +1521,8 @@ export default function MapPage() {
         if (exactIds.has(p.id)) return false;
         if (!propertyMatchesOperation(p, guidedOperation)) return false;
 
-        if (normCity) {
-          const textCity = normalizeGeoText(`${p.city || ""} ${p.area || ""} ${p.title || ""}`);
-          const inCity = textCity.includes(normCity) || (normCity === "santa cruz" && (textCity.includes("ichilo") || textCity.includes("san carlos")));
-          if (!inCity) return false;
+        if (guidedCity) {
+          if (!isPropertyInCity(p, guidedCity)) return false;
         }
 
         if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
