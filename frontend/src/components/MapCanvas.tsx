@@ -80,7 +80,7 @@ const MarkerPin = memo(function MarkerPin({
   const isSelected = tone === "selected";
   const isActive = tone === "active";
 
-  // Pin destacado cuando una propiedad está seleccionada o en hover: insignia flotante con puntero
+  // Pin destacado cuando una propiedad está seleccionada o en hover: insignia discreta y elegante
   if (isSelected) {
     return (
       <Marker
@@ -91,26 +91,25 @@ const MarkerPin = memo(function MarkerPin({
           onSelect();
         }}
       >
-        <div className="relative flex flex-col items-center cursor-pointer group -translate-y-6 z-40">
-          {/* Anillos radiantes de pulsación */}
-          <span className="absolute bottom-0 h-8 w-8 rounded-full animate-ping bg-amber-400/40 pointer-events-none" />
-          <span className="absolute bottom-1 h-4 w-4 rounded-full animate-pulse bg-amber-400/80 pointer-events-none" />
+        <div className="relative flex flex-col items-center cursor-pointer group -translate-y-5 z-40">
+          {/* Suave resplandor sutil en tono camel/oro */}
+          <span className="absolute bottom-0 h-6 w-6 rounded-full animate-ping bg-[var(--accent-main)]/20 pointer-events-none" />
 
-          {/* Insignia dorada flotante */}
-          <div className="relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#18120D]/95 border-2 border-amber-400 shadow-[0_8px_25px_rgba(251,191,36,0.7)] text-amber-200 text-xs font-black tracking-wide backdrop-blur-md transition-transform hover:scale-105">
-            <span>📍</span>
-            <span className="max-w-[170px] truncate">{label || "Tu futuro depa"}</span>
+          {/* Insignia sobria con la paleta de NIA */}
+          <div className="relative z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-panel)]/95 border border-[var(--accent-main)]/70 shadow-[0_6px_20px_rgba(0,0,0,0.45)] text-[var(--text-main)] text-xs font-medium tracking-wide backdrop-blur-md transition-transform hover:scale-105">
+            <span className="text-[var(--accent-main)] text-[11px]">📍</span>
+            <span className="max-w-[170px] truncate">{label || "Ubicación"}</span>
             {count > 1 && (
-              <span className="rounded-full bg-amber-400/20 px-1.5 py-0.2 text-[10px] text-amber-300">
+              <span className="rounded-full bg-[var(--surface-control)] border border-[var(--border-soft)]/50 px-1.5 py-0.2 text-[10px] text-[var(--text-muted)]">
                 {count}
               </span>
             )}
           </div>
 
-          {/* Puntero hacia el suelo */}
-          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[7px] border-t-amber-400 -mt-[1px] shadow-sm" />
-          {/* Punto de anclaje exacto en el mapa */}
-          <div className="h-2 w-2 rounded-full bg-amber-400 ring-2 ring-white shadow-md mt-0.5" />
+          {/* Puntero fino hacia el suelo */}
+          <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] border-t-[var(--accent-main)]/80 -mt-[1px]" />
+          {/* Punto de anclaje discreto */}
+          <div className="h-1.5 w-1.5 rounded-full bg-[var(--accent-main)] ring-1 ring-[var(--surface-panel)] mt-0.5" />
         </div>
       </Marker>
     );
@@ -128,18 +127,18 @@ const MarkerPin = memo(function MarkerPin({
       >
         <div className="relative flex items-center justify-center cursor-pointer group">
           {isActive ? (
-            <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/40 pointer-events-none" />
+            <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/25 pointer-events-none" />
           ) : null}
 
           <div
-            className={`relative z-10 flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-extrabold shadow-md transition-all duration-300 hover:scale-115 ${
+            className={`relative z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-xs font-medium shadow-md transition-all duration-300 hover:scale-110 ${
               isActive
-                ? "border-amber-400 bg-[var(--accent-main)] text-stone-950 font-black ring-2 ring-amber-400/50 shadow-lg scale-105"
-                : "border-[var(--accent-main)]/60 bg-[#1C140F]/90 text-[var(--accent-hover)] backdrop-blur-md hover:border-amber-400"
+                ? "border-[var(--accent-main)] bg-[var(--surface-control)] text-[var(--accent-main)] ring-1 ring-[var(--accent-main)]/40 shadow-lg scale-105"
+                : "border-[var(--border-soft)]/60 bg-[var(--surface-panel)]/90 text-[var(--text-muted)] backdrop-blur-md hover:border-[var(--accent-main)]/60 hover:text-[var(--text-main)]"
             }`}
             title={`🏢 ${label} · ${count} unidades disponibles · Clic para ver opciones`}
           >
-            <Building2 size={12} className="shrink-0 stroke-[2.5]" />
+            <Building2 size={11} className="shrink-0 stroke-[2]" />
             <span className="tracking-tight">{count}</span>
           </div>
         </div>
@@ -158,16 +157,16 @@ const MarkerPin = memo(function MarkerPin({
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
         {isActive ? (
-          <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/40 pointer-events-none" />
+          <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/25 pointer-events-none" />
         ) : null}
 
         <div
           className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-125 ${
             isActive
-              ? "h-4 w-4 border-2 border-white bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.85)] scale-110"
+              ? "h-3.5 w-3.5 border-2 border-[var(--accent-main)] bg-[var(--surface-control)] shadow-[0_0_8px_rgba(196,147,98,0.4)] scale-110"
               : tone === "match"
-              ? "h-3.5 w-3.5 border border-white/80 bg-[var(--accent-main)] shadow-sm"
-              : "h-3 w-3 border border-stone-800 bg-[var(--accent-main)]/80 opacity-80"
+              ? "h-3 w-3 border border-[var(--border-soft)] bg-[var(--accent-main)]/90 shadow-xs"
+              : "h-2.5 w-2.5 border border-[var(--border-soft)]/40 bg-[var(--accent-main)]/60 opacity-70"
           }`}
           title={`${label} · ${kind === "anticretico" ? "Anticrético" : kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
         />
@@ -203,20 +202,18 @@ const ClusterPin = memo(function ClusterPin({
 }: ClusterPinProps) {
   const isRentOnly = hasRent && !hasBuy;
 
-  const bgStyle = hasSelected
-    ? "border-2 border-white bg-gradient-to-r from-amber-400 to-amber-600 text-stone-950 font-black shadow-[0_0_28px_rgba(251,191,36,0.9)] ring-4 ring-amber-400/40 scale-110 z-30"
-    : hasActive
-    ? "border-2 border-amber-400 bg-[#221812]/95 text-amber-300 font-extrabold shadow-[0_0_18px_rgba(216,170,113,0.7)] ring-2 ring-amber-400/40 scale-105 z-20"
+  const bgStyle = hasSelected || hasActive
+    ? "border-2 border-[var(--accent-main)] bg-[var(--surface-control)] text-[var(--accent-main)] shadow-[0_4px_18px_rgba(0,0,0,0.5)] ring-2 ring-[var(--accent-main)]/25 scale-105 z-20 font-bold"
     : isRentOnly
-    ? "border border-teal-500/60 bg-[#111C1D]/90 text-teal-200 shadow-[0_4px_16px_rgba(0,0,0,0.5)] backdrop-blur-md"
-    : "border border-[var(--accent-main)]/50 bg-[#16110D]/90 text-[#F5EBE1] shadow-[0_6px_20px_rgba(0,0,0,0.6)] backdrop-blur-md";
+    ? "border border-[var(--color-teal-deep)]/50 bg-[var(--surface-panel)]/92 text-[var(--color-teal-deep)] dark:text-[#67B5BA] shadow-[0_4px_12px_rgba(0,0,0,0.4)] backdrop-blur-md"
+    : "border border-[var(--border-soft)]/50 bg-[var(--surface-panel)]/92 text-[var(--text-main)] shadow-[0_4px_12px_rgba(0,0,0,0.4)] backdrop-blur-md";
 
   const sizeStyle =
     totalUnits >= 50
-      ? "h-11 w-11 min-w-[44px] text-xs font-black"
+      ? "h-11 w-11 min-w-[44px] text-xs font-semibold"
       : totalUnits >= 10
-      ? "h-9.5 w-9.5 min-w-[38px] text-xs font-bold"
-      : "h-8 w-8 min-w-[32px] text-[11px] font-bold";
+      ? "h-9.5 w-9.5 min-w-[38px] text-xs font-medium"
+      : "h-8 w-8 min-w-[32px] text-[11px] font-medium";
 
   return (
     <Marker
@@ -229,11 +226,11 @@ const ClusterPin = memo(function ClusterPin({
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
         {(hasSelected || hasActive) && (
-          <span className="absolute inset-0 rounded-full animate-ping bg-amber-400/40 pointer-events-none" />
+          <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/20 pointer-events-none" />
         )}
 
         <div
-          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 group-hover:scale-115 group-hover:border-amber-400 group-hover:shadow-[0_0_20px_rgba(216,170,113,0.8)] ${sizeStyle} ${bgStyle}`}
+          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 group-hover:border-[var(--accent-main)] ${sizeStyle} ${bgStyle}`}
           title={`${totalUnits} unidades en esta zona · Clic para acercar`}
         >
           <span className="tabular-nums tracking-tight">{totalUnits}</span>

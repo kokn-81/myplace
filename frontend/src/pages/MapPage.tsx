@@ -2539,14 +2539,14 @@ export default function MapPage() {
           onMouseEnter={() => handleCardMouseEnter(p)}
           onMouseLeave={handleCardMouseLeave}
           onClick={() => selectProperty(p)}
-          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${
+          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${
             isPromoted
-              ? "border-amber-400/80 shadow-[0_14px_40px_rgba(216,170,113,0.3)] ring-2 ring-amber-400/60"
+              ? "border-[var(--accent-main)]/60 shadow-[var(--shadow-warm)] dark:border-[var(--accent-main)]/50"
               : isBestSearchMatch
-              ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70"
+              ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-1 ring-[var(--accent-main)]/40"
               : isRankedSearchResult
-              ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30"
-              : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"
+              ? "border-[var(--accent-main)]/60 shadow-[var(--shadow-warm)]"
+              : "border-[var(--border-strong)]/40 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]/50"
           }`}
         >
         {isRankedSearchResult && !isPromoted && (
@@ -2556,13 +2556,6 @@ export default function MapPage() {
         )}
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
         <div className="nia-property-card-media relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
-          {/* Badge de Promoción / Destacado sobre la imagen */}
-          {isPromoted && (
-            <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-stone-950 shadow-xl border border-amber-300/60 backdrop-blur-md">
-              <Sparkles size={11} className="fill-stone-950" />
-              <span>Promoción</span>
-            </div>
-          )}
           {coverUrl && !isCollection ? (
             isVideoUrl(coverUrl) ? (
               <video
@@ -2605,19 +2598,19 @@ export default function MapPage() {
 
           <div className="mb-2 flex items-center justify-between gap-1.5 min-w-0">
             <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-              <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--accent-main)]">
+              <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--accent-main)]">
                 Ref. #{p.id}
               </span>
-              <span className="rounded-full bg-[var(--accent-main)]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)] truncate max-w-[110px]">
+              <span className="rounded-full bg-[var(--accent-main)]/15 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-[var(--text-main)] truncate max-w-[120px]">
                 {formatPropertyTypeLabel(p.type)}
               </span>
             </div>
             {isPromoted ? (
-              <span className="shrink-0 rounded-full border border-amber-400/60 bg-amber-500/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-500 dark:text-amber-300 flex items-center gap-1 shadow-sm">
-                ★ Destacado
+              <span className="shrink-0 rounded-full border border-[var(--border-soft)] bg-[var(--surface-control)]/80 px-2 py-0.5 text-[9px] font-medium tracking-wider text-[var(--accent-main)]">
+                Destacado
               </span>
             ) : isSuggestedProperty(p) ? (
-              <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              <span className="shrink-0 rounded-full border border-[var(--border-soft)]/60 bg-[var(--surface-control)]/60 px-2 py-0.5 text-[9px] font-medium tracking-wider text-[var(--text-muted)]">
                 Cercana
               </span>
             ) : null}
@@ -2943,23 +2936,10 @@ export default function MapPage() {
                 {/* Columna Izquierda: Informacion Extendida */}
                 <div className="flex-1">
                   {isPromotedProperty(selectedProperty) && (
-                    <div className="mb-4 flex items-center gap-2.5 rounded-2xl border border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent p-3.5 shadow-sm">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-400/25 text-amber-400">
-                        <Sparkles size={16} className="fill-amber-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-400">
-                            Propiedad en Promoción Exclusiva NIA
-                          </span>
-                          <span className="hidden sm:inline-block rounded-full bg-amber-400/20 px-2 py-0.2 text-[9px] font-extrabold uppercase text-amber-300">
-                            Alta Plusvalía
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-1">
-                          Oportunidad inmobiliaria seleccionada con condiciones comerciales preferenciales.
-                        </p>
-                      </div>
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)]/40 bg-[var(--surface-control)]/70 px-3 py-1">
+                      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--accent-main)]">
+                        Selección Destacada
+                      </span>
                     </div>
                   )}
                   <div className="flex items-center gap-3 mb-4">
