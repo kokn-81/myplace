@@ -247,6 +247,20 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   return [...priorityItems, ...remaining];
 };
 
+export const isPromotedProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  return (
+    String(p.id) === "4" ||
+    String(p.id) === "5" ||
+    Boolean((p as any).destacado) ||
+    Boolean((p as any).promocion) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
+    Boolean(p.title && p.title.toLowerCase().includes("riviera")) ||
+    Boolean(p.title && p.title.toLowerCase().includes("ona residences")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences"))
+  );
+};
+
 export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   if (!cityName) return true;
   const normTarget = normalizeGeoText(cityName);
@@ -494,12 +508,31 @@ export default function MapPage() {
   const [showClientWelcome, setShowClientWelcome] = useState(false);
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [lastViewedProperty, setLastViewedProperty] = useState<Property | null>(null);
+  const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
+  const hoverFocusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedBuildingGroup, setSelectedBuildingGroup] = useState<BuildingGroupData | null>(null);
   const [selectedBuildingSubfilter, setSelectedBuildingSubfilter] = useState<string>("all");
   const hasSearchInteractionRef = useRef(false);
 
+  // Mueve la cámara del mapa suavemente a la ubicación exacta de un inmueble
+  const focusPropertyLocation = useCallback((p: Property, zoom = 16.0) => {
+    if (Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
+      setMapFocus({
+        longitude: p.lng,
+        latitude: p.lat,
+        zoom,
+        key: Date.now(),
+        label: p.title,
+        source: "user",
+      });
+    }
+  }, []);
+
   const selectProperty = useCallback(async (property: Property) => {
     setSelectedProperty(property);
+    setLastViewedProperty(property);
+    focusPropertyLocation(property, 16.2);
     if (property.detailsLoaded) return;
 
     try {
@@ -520,8 +553,37 @@ export default function MapPage() {
 
       setProperties((current) => current.map((item) => (item.id === detail.id ? detail : item)));
       setSelectedProperty(detail);
+      setLastViewedProperty(detail);
     } catch (error) {
       console.error("Error cargando detalle del inmueble:", error);
+    }
+  }, [focusPropertyLocation]);
+
+  // Al salir de las fotos / cerrar modal, el mapa queda enfocado en la ubicación exacta del depa
+  const closePropertyDetail = useCallback(() => {
+    const target = selectedProperty || lastViewedProperty;
+    if (target) {
+      focusPropertyLocation(target, 16.2);
+    }
+    setSelectedProperty(null);
+  }, [selectedProperty, lastViewedProperty, focusPropertyLocation]);
+
+  // Al pasar el mouse en computadora: vuela suavemente al inmueble y resalta su pin
+  const handleCardMouseEnter = useCallback((property: Property) => {
+    setHoveredPropertyId(property.id);
+    if (hoverFocusTimeoutRef.current) {
+      clearTimeout(hoverFocusTimeoutRef.current);
+    }
+    hoverFocusTimeoutRef.current = setTimeout(() => {
+      focusPropertyLocation(property, 15.8);
+    }, 120);
+  }, [focusPropertyLocation]);
+
+  const handleCardMouseLeave = useCallback(() => {
+    setHoveredPropertyId(null);
+    if (hoverFocusTimeoutRef.current) {
+      clearTimeout(hoverFocusTimeoutRef.current);
+      hoverFocusTimeoutRef.current = null;
     }
   }, []);
   const [galleryIndex, setGalleryIndex] = useState(0);
@@ -1545,7 +1607,7 @@ export default function MapPage() {
     if (!selectedProperty) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setSelectedProperty(null);
+        closePropertyDetail();
       } else if (e.key === "ArrowLeft") {
         shiftGallery(-1);
       } else if (e.key === "ArrowRight") {
@@ -1554,7 +1616,7 @@ export default function MapPage() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedProperty, selectedMediaCount]);
+  }, [selectedProperty, selectedMediaCount, closePropertyDetail]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselSwipeStartX = useRef<number | null>(null);
@@ -1909,7 +1971,7 @@ export default function MapPage() {
             focusLocation={mapFocus}
             highlightedIds={highlightedIds}
             matchedIds={aiFilteredIds}
-            selectedId={selectedProperty?.id ?? null}
+            selectedId={selectedProperty?.id ?? hoveredPropertyId ?? lastViewedProperty?.id ?? null}
           />
         </Suspense>
         <AnimatePresence>
@@ -2465,6 +2527,7 @@ export default function MapPage() {
         const globalResultRank = currentIndex + index;
         const isRankedSearchResult = aiFilteredIds !== null && !aiClarification;
         const isBestSearchMatch = isRankedSearchResult && globalResultRank === 0;
+        const isPromoted = isPromotedProperty(p);
 
         return (
         <motion.div
@@ -2473,16 +2536,33 @@ export default function MapPage() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: -6 }}
           transition={{ duration: 0.24, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+          onMouseEnter={() => handleCardMouseEnter(p)}
+          onMouseLeave={handleCardMouseLeave}
           onClick={() => selectProperty(p)}
-          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-2 dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${isBestSearchMatch ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70" : isRankedSearchResult ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30" : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"}`}
+          className={`nia-property-card group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] ring-[var(--accent-main)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${
+            isPromoted
+              ? "border-amber-400/80 shadow-[0_14px_40px_rgba(216,170,113,0.3)] ring-2 ring-amber-400/60"
+              : isBestSearchMatch
+              ? "border-[var(--accent-main)] shadow-[0_22px_55px_rgba(199,145,88,0.38)] ring-2 ring-[var(--accent-main)]/70"
+              : isRankedSearchResult
+              ? "border-[var(--accent-main)]/70 shadow-[var(--shadow-warm)] ring-1 ring-[var(--accent-main)]/30"
+              : "border-[var(--border-strong)]/50 shadow-[var(--shadow-warm)] dark:border-[var(--border-soft)]"
+          }`}
         >
-        {isRankedSearchResult && (
+        {isRankedSearchResult && !isPromoted && (
           <span className={`absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-black shadow-md ${isBestSearchMatch ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D]" : "border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 text-[var(--accent-main)]"}`} title={isBestSearchMatch ? "Mejor opcion" : `Opcion ${globalResultRank + 1}`}>
             {globalResultRank + 1}
           </span>
         )}
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
         <div className="nia-property-card-media relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
+          {/* Badge de Promoción / Destacado sobre la imagen */}
+          {isPromoted && (
+            <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-stone-950 shadow-xl border border-amber-300/60 backdrop-blur-md">
+              <Sparkles size={11} className="fill-stone-950" />
+              <span>Promoción</span>
+            </div>
+          )}
           {coverUrl && !isCollection ? (
             isVideoUrl(coverUrl) ? (
               <video
@@ -2523,18 +2603,18 @@ export default function MapPage() {
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
 
-          <div className="mb-2.5 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent-main)]">
+          <div className="mb-2 flex items-center justify-between gap-1.5 min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+              <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--accent-main)]">
                 Ref. #{p.id}
               </span>
-              <span className="rounded-full bg-[var(--accent-main)]/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)] truncate max-w-[130px]">
+              <span className="rounded-full bg-[var(--accent-main)]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--text-main)] truncate max-w-[110px]">
                 {formatPropertyTypeLabel(p.type)}
               </span>
             </div>
-            {(String(p.id) === "4" || String(p.id) === "5") ? (
-              <span className="shrink-0 rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-main)] flex items-center gap-1">
-                <Sparkles size={10} /> Recomendado
+            {isPromoted ? (
+              <span className="shrink-0 rounded-full border border-amber-400/60 bg-amber-500/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-500 dark:text-amber-300 flex items-center gap-1 shadow-sm">
+                ★ Destacado
               </span>
             ) : isSuggestedProperty(p) ? (
               <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
@@ -2657,7 +2737,7 @@ export default function MapPage() {
           >
             {/* Boton de Cierre Flotante */}
             <button
-              onClick={() => setSelectedProperty(null)}
+              onClick={closePropertyDetail}
               className="fixed top-5 right-5 md:right-8 p-3 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-[var(--accent-main)] hover:text-[#2F241D] transition-all z-50 shadow-2xl border border-white/20"
               title="Cerrar (Esc)"
             >
@@ -2862,6 +2942,26 @@ export default function MapPage() {
 
                 {/* Columna Izquierda: Informacion Extendida */}
                 <div className="flex-1">
+                  {isPromotedProperty(selectedProperty) && (
+                    <div className="mb-4 flex items-center gap-2.5 rounded-2xl border border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent p-3.5 shadow-sm">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-400/25 text-amber-400">
+                        <Sparkles size={16} className="fill-amber-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-400">
+                            Propiedad en Promoción Exclusiva NIA
+                          </span>
+                          <span className="hidden sm:inline-block rounded-full bg-amber-400/20 px-2 py-0.2 text-[9px] font-extrabold uppercase text-amber-300">
+                            Alta Plusvalía
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-1">
+                          Oportunidad inmobiliaria seleccionada con condiciones comerciales preferenciales.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-[var(--accent-main)] text-xs font-bold uppercase tracking-[0.24em]">Ref. #{selectedProperty.id}</span>
                     <span className="rounded-full bg-[var(--accent-main)]/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-main)]">

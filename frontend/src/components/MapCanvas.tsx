@@ -80,14 +80,41 @@ const MarkerPin = memo(function MarkerPin({
   const isSelected = tone === "selected";
   const isActive = tone === "active";
 
-  const bgClass =
-    kind === "anticretico"
-      ? "bg-[#7C3AED] text-white border-white dark:border-stone-900"
-      : kind === "rent"
-      ? "bg-[var(--color-teal-deep)] text-white border-white dark:border-stone-900"
-      : kind === "buy"
-      ? "bg-[var(--accent-hover)] text-stone-900 border-white dark:border-stone-900"
-      : "bg-[var(--accent-main)] text-stone-900 border-white dark:border-stone-900";
+  // Pin destacado cuando una propiedad está seleccionada o en hover: insignia flotante con puntero
+  if (isSelected) {
+    return (
+      <Marker
+        longitude={longitude}
+        latitude={latitude}
+        onClick={(event) => {
+          event.originalEvent.stopPropagation();
+          onSelect();
+        }}
+      >
+        <div className="relative flex flex-col items-center cursor-pointer group -translate-y-6 z-40">
+          {/* Anillos radiantes de pulsación */}
+          <span className="absolute bottom-0 h-8 w-8 rounded-full animate-ping bg-amber-400/40 pointer-events-none" />
+          <span className="absolute bottom-1 h-4 w-4 rounded-full animate-pulse bg-amber-400/80 pointer-events-none" />
+
+          {/* Insignia dorada flotante */}
+          <div className="relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#18120D]/95 border-2 border-amber-400 shadow-[0_8px_25px_rgba(251,191,36,0.7)] text-amber-200 text-xs font-black tracking-wide backdrop-blur-md transition-transform hover:scale-105">
+            <span>📍</span>
+            <span className="max-w-[170px] truncate">{label || "Tu futuro depa"}</span>
+            {count > 1 && (
+              <span className="rounded-full bg-amber-400/20 px-1.5 py-0.2 text-[10px] text-amber-300">
+                {count}
+              </span>
+            )}
+          </div>
+
+          {/* Puntero hacia el suelo */}
+          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[7px] border-t-amber-400 -mt-[1px] shadow-sm" />
+          {/* Punto de anclaje exacto en el mapa */}
+          <div className="h-2 w-2 rounded-full bg-amber-400 ring-2 ring-white shadow-md mt-0.5" />
+        </div>
+      </Marker>
+    );
+  }
 
   if (isBuilding) {
     return (
@@ -100,22 +127,20 @@ const MarkerPin = memo(function MarkerPin({
         }}
       >
         <div className="relative flex items-center justify-center cursor-pointer group">
-          {isSelected || isActive ? (
-            <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
+          {isActive ? (
+            <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/40 pointer-events-none" />
           ) : null}
 
           <div
-            className={`relative z-10 flex items-center gap-1 px-2.5 py-1 rounded-full border-[2px] font-black shadow-lg transition-all duration-300 hover:scale-115 ${bgClass} ${
-              isSelected
-                ? "ring-4 ring-amber-400 scale-110 shadow-xl"
-                : isActive
-                ? "ring-2 ring-[var(--accent-main)] scale-105 shadow-md"
-                : ""
+            className={`relative z-10 flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-extrabold shadow-md transition-all duration-300 hover:scale-115 ${
+              isActive
+                ? "border-amber-400 bg-[var(--accent-main)] text-stone-950 font-black ring-2 ring-amber-400/50 shadow-lg scale-105"
+                : "border-[var(--accent-main)]/60 bg-[#1C140F]/90 text-[var(--accent-hover)] backdrop-blur-md hover:border-amber-400"
             }`}
             title={`🏢 ${label} · ${count} unidades disponibles · Clic para ver opciones`}
           >
-            <Building2 size={13} className="shrink-0 stroke-[2.5]" />
-            <span className="text-xs tracking-tight">{count}</span>
+            <Building2 size={12} className="shrink-0 stroke-[2.5]" />
+            <span className="tracking-tight">{count}</span>
           </div>
         </div>
       </Marker>
@@ -132,16 +157,20 @@ const MarkerPin = memo(function MarkerPin({
       }}
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
-        {tone === "active" || tone === "selected" ? (
-          <span className={`absolute inset-0 rounded-full animate-ping ${PING_COLOR[kind]}`} />
+        {isActive ? (
+          <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-main)]/40 pointer-events-none" />
         ) : null}
 
         <div
-          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 ${MARKER_SIZE[tone]} ${MARKER_COLOR[kind]} ${MARKER_GLOW[tone]}`}
+          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-125 ${
+            isActive
+              ? "h-4 w-4 border-2 border-white bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.85)] scale-110"
+              : tone === "match"
+              ? "h-3.5 w-3.5 border border-white/80 bg-[var(--accent-main)] shadow-sm"
+              : "h-3 w-3 border border-stone-800 bg-[var(--accent-main)]/80 opacity-80"
+          }`}
           title={`${label} · ${kind === "anticretico" ? "Anticrético" : kind === "rent" ? "Alquiler" : kind === "buy" ? "Venta" : "Alquiler / Venta"}`}
-        >
-          <div className="h-1 w-1 rounded-full bg-[var(--color-ivory)] md:h-1.5 md:w-1.5" />
-        </div>
+        />
       </div>
     </Marker>
   );
@@ -173,24 +202,21 @@ const ClusterPin = memo(function ClusterPin({
   onClick,
 }: ClusterPinProps) {
   const isRentOnly = hasRent && !hasBuy;
-  const isHybrid = hasRent && hasBuy;
 
   const bgStyle = hasSelected
-    ? "border-[var(--color-ivory)] bg-[var(--accent-hover)] text-[#1a1410] shadow-[0_0_20px_rgba(216,170,113,0.8)]"
+    ? "border-2 border-white bg-gradient-to-r from-amber-400 to-amber-600 text-stone-950 font-black shadow-[0_0_28px_rgba(251,191,36,0.9)] ring-4 ring-amber-400/40 scale-110 z-30"
     : hasActive
-    ? "border-[var(--color-ivory)] bg-[var(--color-teal-deep)] text-[var(--color-ivory)] shadow-[0_0_16px_rgba(47,111,115,0.7)] ring-2 ring-[var(--accent-main)]"
+    ? "border-2 border-amber-400 bg-[#221812]/95 text-amber-300 font-extrabold shadow-[0_0_18px_rgba(216,170,113,0.7)] ring-2 ring-amber-400/40 scale-105 z-20"
     : isRentOnly
-    ? "border-[var(--color-ivory)] bg-[var(--color-teal-deep)] text-[var(--color-ivory)] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
-    : isHybrid
-    ? "border-[var(--color-ivory)] bg-[var(--accent-main)] text-[var(--color-ivory)] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
-    : "border-[var(--color-chocolate)] bg-[var(--accent-hover)] text-[var(--color-chocolate)] dark:border-[var(--color-ivory)] dark:text-[var(--color-ivory)] shadow-[0_4px_16px_rgba(0,0,0,0.5)]";
+    ? "border border-teal-500/60 bg-[#111C1D]/90 text-teal-200 shadow-[0_4px_16px_rgba(0,0,0,0.5)] backdrop-blur-md"
+    : "border border-[var(--accent-main)]/50 bg-[#16110D]/90 text-[#F5EBE1] shadow-[0_6px_20px_rgba(0,0,0,0.6)] backdrop-blur-md";
 
   const sizeStyle =
-    totalUnits >= 30
-      ? "h-11 min-w-11 px-2.5 text-xs font-black ring-4 ring-[var(--accent-hover)]/30"
+    totalUnits >= 50
+      ? "h-11 w-11 min-w-[44px] text-xs font-black"
       : totalUnits >= 10
-      ? "h-9 min-w-9 px-2 text-xs font-black ring-3 ring-[var(--accent-hover)]/25"
-      : "h-8 min-w-8 px-1.5 text-[11px] font-bold ring-2 ring-[var(--accent-hover)]/20";
+      ? "h-9.5 w-9.5 min-w-[38px] text-xs font-bold"
+      : "h-8 w-8 min-w-[32px] text-[11px] font-bold";
 
   return (
     <Marker
@@ -202,22 +228,15 @@ const ClusterPin = memo(function ClusterPin({
       }}
     >
       <div className="relative flex items-center justify-center cursor-pointer group">
-        {hasSelected || hasActive ? (
-          <span className="absolute inset-0 rounded-full animate-ping bg-[var(--accent-hover)]/40 pointer-events-none" />
-        ) : null}
+        {(hasSelected || hasActive) && (
+          <span className="absolute inset-0 rounded-full animate-ping bg-amber-400/40 pointer-events-none" />
+        )}
 
         <div
-          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full border-[2.5px] transition-all duration-300 group-hover:scale-115 group-hover:shadow-[0_0_24px_rgba(216,170,113,0.8)] ${sizeStyle} ${bgStyle}`}
-          title={`${totalUnits} unidades en ${pointCount} edificios cercanos · Clic para acercar`}
+          className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 group-hover:scale-115 group-hover:border-amber-400 group-hover:shadow-[0_0_20px_rgba(216,170,113,0.8)] ${sizeStyle} ${bgStyle}`}
+          title={`${totalUnits} unidades en esta zona · Clic para acercar`}
         >
-          {hasBuilding || totalUnits >= 4 ? (
-            <div className="flex items-center gap-0.5">
-              <Building2 size={12} className="shrink-0 stroke-[2.5]" />
-              <span>{totalUnits}</span>
-            </div>
-          ) : (
-            <span>+{totalUnits}</span>
-          )}
+          <span className="tabular-nums tracking-tight">{totalUnits}</span>
         </div>
       </div>
     </Marker>
@@ -431,11 +450,11 @@ function MapCanvas({
     return features;
   }, [properties, highlightedSet, matchedSet, selectedId, selectedBuildingKey]);
 
-  // Build Supercluster spatial index with tighter radius so buildings separate into towers
+  // Agrupación espacial estética: agrupa limpiamente en zonas a vista de ciudad sin encimarse
   const supercluster = useMemo(() => {
     const sc = new Supercluster<BuildingPointProps, ClusterAccumulatedProps>({
-      radius: 30, // Lowered from 48 so towers separate clearly
-      maxZoom: 14, // Lowered from 15 so from zoom 14+ buildings emerge
+      radius: 65, // Radio armónico para evitar racimos encimados
+      maxZoom: 16, // Los edificios individuales emergen con elegancia a nivel calle
       map: (props) => ({
         totalUnits: props.unitCount,
         hasSelected: props.hasSelected ? 1 : 0,
