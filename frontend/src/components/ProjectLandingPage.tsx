@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { Property } from "../types";
-import { X, MapPin, Building2, Calendar, ShieldCheck, CheckCircle2, TrendingUp, ArrowRight, Download, MessageCircle } from "lucide-react";
+import { X, MapPin, CheckCircle2, ArrowRight, Download, MessageCircle } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function ProjectLandingPage({ property, onClose }: Props) {
-  // Use property details if available, or fallback to ONA Residences hardcoded info for now as requested
+  // Use property details if available, or fallback to ONA Residences hardcoded info for now
   const isOna = property.title?.toLowerCase().includes("ona");
   
   const entrega = isOna ? "Junio 2028" : "Diciembre 2025";
@@ -19,12 +19,13 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
   const precioDesde = isOna ? "40.375" : "55.000";
 
   const images = property.images && property.images.length > 0 ? property.images : [
-    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
     "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80"
   ];
   
   const mainImg = images[0];
+  const accentColor = "#c2a059";
 
   const handleContact = (tipo: string) => {
     recordLeadEvent({
@@ -40,180 +41,167 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 50 }}
-      transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="fixed inset-0 z-[100] bg-[#1a1311] overflow-y-auto font-sans text-[#f4efe8]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+      className="fixed inset-0 z-[100] bg-white overflow-hidden flex flex-col md:flex-row font-sans text-stone-900"
     >
-        {/* Sticky Header / Close */}
-        <div className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-[110] bg-gradient-to-b from-[#1a1311]/80 to-transparent backdrop-blur-sm pointer-events-none">
-          <div className="flex items-center gap-2 pointer-events-auto">
-             <span className="font-black text-xl tracking-widest text-[#d4af37] uppercase">{property.title}</span>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur rounded-full text-white pointer-events-auto transition-colors"
-          >
-            <X size={24} />
-          </button>
+      {/* Global Close Button */}
+      <button 
+        onClick={onClose}
+        className="fixed top-6 right-6 z-[120] p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full text-stone-900 shadow-lg border border-stone-200 transition-all hover:scale-105"
+        aria-label="Cerrar"
+      >
+        <X size={24} />
+      </button>
+
+      {/* Left Side: Fixed Hero (Desktop) / Normal Hero (Mobile) */}
+      <div className="w-full md:w-1/2 h-[50vh] md:h-screen relative flex-shrink-0">
+        <div className="absolute inset-0">
+          <img src={mainImg} alt={property.title} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/30" />
         </div>
-
-        {/* 1. Hero Section (Atención) */}
-        <section className="relative h-[85vh] w-full flex items-end pb-24 px-6 md:px-12 bg-black">
-          <div className="absolute inset-0">
-             <img src={mainImg} alt={property.title} className="w-full h-full object-cover opacity-60" />
-             <div className="absolute inset-0 bg-gradient-to-t from-[#1a1311] via-[#1a1311]/40 to-transparent" />
-          </div>
-          <div className="relative z-10 max-w-4xl w-full">
-            <span className="inline-block px-3 py-1 mb-4 border border-[#d4af37] text-[#d4af37] text-xs font-black tracking-[0.2em] uppercase rounded-full bg-black/40 backdrop-blur">
-              Lanzamiento Preventa
-            </span>
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] mb-6">
-              Tu nuevo estilo de vida en <br/><span className="text-[#d4af37]">{property.zone || "Equipetrol"}</span>.
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-sm md:text-base font-medium text-stone-300 mb-8">
-               <div className="flex items-center gap-2">
-                 <Building2 className="text-[#d4af37]" size={20}/>
-                 <span>{constructora}</span>
-               </div>
-               <div className="flex items-center gap-2">
-                 <Calendar className="text-[#d4af37]" size={20}/>
-                 <span>Entrega: {entrega}</span>
-               </div>
-               <div className="flex items-center gap-2">
-                 <MapPin className="text-[#d4af37]" size={20}/>
-                 <span>{property.city}</span>
-               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-               <button onClick={() => handleContact("Precios")} className="bg-[#d4af37] text-[#1a1311] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#e0bc4b] transition-colors flex items-center justify-center gap-2">
-                 Ver Precios y Disponibilidad <ArrowRight size={20} />
-               </button>
-               <button onClick={() => handleContact("Brochure")} className="bg-white/10 text-white backdrop-blur px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-colors border border-white/20 flex items-center justify-center gap-2">
-                 <Download size={20} /> Descargar Brochure
-               </button>
-            </div>
-          </div>
-        </section>
-
-        {/* 2. Barra de Urgencia (Interés) */}
-        <div className="bg-[#b45309] text-white py-4 px-6 relative z-20 shadow-xl flex items-center justify-center">
-           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 max-w-6xl w-full text-sm md:text-base font-bold uppercase tracking-wider">
-              <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-amber-200"/> Excelente Oportunidad de Inversión</span>
-              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/40" />
-              <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-amber-200"/> Unidades desde USD {precioDesde}</span>
-              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/40" />
-              <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-amber-200"/> Alta Plusvalía Asegurada</span>
-           </div>
+        
+        {/* Floating Content on Left Image */}
+        <div className="absolute bottom-10 left-10 right-10 text-white">
+          <p className="text-xs tracking-[0.3em] uppercase mb-4 opacity-90 font-semibold" style={{ color: accentColor }}>
+            Lanzamiento Preventa
+          </p>
+          <h1 className="text-4xl md:text-6xl font-serif font-light leading-tight">
+            {property.title}
+          </h1>
+          <p className="mt-2 text-lg opacity-90 font-light flex items-center gap-2">
+            <MapPin size={18} /> {property.zone || "Equipetrol"}, {property.city}
+          </p>
         </div>
+      </div>
 
-        {/* 3. Beneficios y Amenidades (Deseo) */}
-        <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black mb-4">Amenidades de Primer Nivel</h2>
-            <p className="text-stone-400 max-w-2xl mx-auto text-lg">Diseñado para brindarte confort, seguridad y experiencias únicas sin salir de casa.</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { label: "Piscina Infinita", icon: "🏊‍♂️" },
-              { label: "Coworking", icon: "💻" },
-              { label: "Gimnasio Equipado", icon: "🏋️‍♂️" },
-              { label: "Churrasqueras", icon: "🥩" },
-              { label: "Salón de Eventos", icon: "🎉" },
-              { label: "Seguridad 24/7", icon: "🛡️" },
-              { label: "Parqueo Subterráneo", icon: "🚗" },
-              { label: "Lobby de Lujo", icon: "✨" }
-            ].map((amenity, i) => (
-              <div key={i} className="bg-[#241b18] p-6 rounded-2xl border border-white/5 text-center hover:border-[#d4af37]/30 transition-colors">
-                <div className="text-4xl mb-4 opacity-80">{amenity.icon}</div>
-                <h3 className="font-bold text-stone-200">{amenity.label}</h3>
+      {/* Right Side: Scrollable Content */}
+      <div className="w-full md:w-1/2 h-[50vh] md:h-screen overflow-y-auto bg-[#faf9f7]">
+        <div className="max-w-2xl mx-auto px-8 py-16 md:px-16 md:py-24">
+          
+          {/* Intro & Summary */}
+          <div className="mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-800 mb-6 leading-snug">
+              Una nueva dimensión de lujo y exclusividad.
+            </h2>
+            <p className="text-stone-600 text-lg leading-relaxed mb-8 font-light">
+              Descubre un estilo de vida superior donde el diseño arquitectónico se encuentra con la comodidad absoluta. Espacios pensados para inspirar tus días.
+            </p>
+
+            <div className="grid grid-cols-2 gap-y-8 gap-x-4 py-8 border-y border-stone-200">
+              <div>
+                <p className="text-xs text-stone-400 uppercase tracking-widest mb-1">Precio Desde</p>
+                <p className="text-xl font-serif text-stone-800">USD {precioDesde}</p>
               </div>
-            ))}
+              <div>
+                <p className="text-xs text-stone-400 uppercase tracking-widest mb-1">Entrega</p>
+                <p className="text-xl font-serif text-stone-800">{entrega}</p>
+              </div>
+              <div>
+                <p className="text-xs text-stone-400 uppercase tracking-widest mb-1">Constructora</p>
+                <p className="text-xl font-serif text-stone-800">{constructora}</p>
+              </div>
+              <div>
+                <p className="text-xs text-stone-400 uppercase tracking-widest mb-1">Ubicación</p>
+                <p className="text-xl font-serif text-stone-800">{property.zone || "Equipetrol"}</p>
+              </div>
+            </div>
           </div>
-        </section>
 
-        {/* 4. Tipologías y Precios */}
-        <section className="py-24 px-6 md:px-12 bg-[#0c0908]">
-           <div className="max-w-6xl mx-auto">
-             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div>
-                  <h2 className="text-3xl md:text-5xl font-black mb-4">Unidades Disponibles</h2>
-                  <p className="text-stone-400 max-w-2xl text-lg">Elige el espacio perfecto para ti o tu próxima inversión.</p>
-                </div>
-             </div>
+          {/* Primary CTA */}
+          <div className="bg-white p-8 border border-stone-200 shadow-sm mb-16 text-center">
+            <h3 className="font-serif text-2xl text-stone-800 mb-2">Registra tu Interés</h3>
+            <p className="text-stone-500 mb-8 font-light text-sm">Obtén acceso prioritario a planos, lista de precios y disponibilidad.</p>
+            
+            <button 
+              onClick={() => handleContact("Información General")} 
+              className="w-full py-4 text-white uppercase tracking-widest text-sm font-semibold transition-colors duration-300 hover:bg-stone-800 flex items-center justify-center gap-3"
+              style={{ backgroundColor: accentColor }}
+            >
+              <MessageCircle size={18} /> Solicitar Información
+            </button>
+            <button 
+              onClick={() => handleContact("Brochure")} 
+              className="w-full mt-4 py-4 text-stone-600 uppercase tracking-widest text-sm font-semibold border border-stone-300 transition-colors duration-300 hover:bg-stone-50 flex items-center justify-center gap-3"
+            >
+              <Download size={18} /> Descargar Brochure
+            </button>
+          </div>
 
-             <div className="grid md:grid-cols-3 gap-8">
-                {/* Mock Tipologias */}
-                {[
-                  { name: "Monoambiente", m2: "35", price: "40.375" },
-                  { name: "1 Dormitorio", m2: "52", price: "59.500" },
-                  { name: "2 Dormitorios", m2: "75", price: "85.200" }
-                ].map((tipo, i) => (
-                  <div key={i} className="bg-[#1a1311] rounded-3xl overflow-hidden border border-white/10 flex flex-col">
-                    <div className="h-48 bg-stone-800 relative">
-                       <img src={images[i % images.length]} className="w-full h-full object-cover opacity-80" alt={tipo.name} />
-                       <div className="absolute top-4 left-4 bg-black/60 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider">
-                         {tipo.name}
-                       </div>
-                    </div>
-                    <div className="p-6 flex-1 flex flex-col">
-                      <div className="flex justify-between items-end mb-6">
-                        <div>
-                          <p className="text-stone-400 text-sm mb-1">Superficie aprox.</p>
-                          <p className="text-2xl font-bold text-white">{tipo.m2} m²</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-stone-400 text-sm mb-1">Desde</p>
-                          <p className="text-2xl font-black text-[#d4af37]">USD {tipo.price}</p>
-                        </div>
-                      </div>
-                      <button onClick={() => handleContact(`Cotizar ${tipo.name}`)} className="mt-auto w-full py-3 rounded-xl border border-[#d4af37] text-[#d4af37] font-bold hover:bg-[#d4af37] hover:text-[#1a1311] transition-colors">
-                        Cotizar esta unidad
-                      </button>
-                    </div>
+          {/* Amenities */}
+          <div className="mb-16">
+            <p className="text-xs text-stone-400 uppercase tracking-[0.2em] mb-8 text-center" style={{ color: accentColor }}>Amenidades Exclusivas</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {[
+                { label: "Piscina Infinita", desc: "Vistas panorámicas" },
+                { label: "Coworking", desc: "Espacio ejecutivo" },
+                { label: "Gimnasio", desc: "Equipamiento premium" },
+                { label: "Lobby 24/7", desc: "Recepción de lujo" },
+                { label: "Churrasqueras", desc: "Áreas sociales" },
+                { label: "Seguridad", desc: "Acceso controlado" }
+              ].map((amenity, i) => (
+                <div key={i} className="flex gap-4 p-4 bg-white border border-stone-100 shadow-sm">
+                  <div className="mt-1">
+                    <CheckCircle2 size={20} style={{ color: accentColor }} className="opacity-70" />
                   </div>
-                ))}
-             </div>
-           </div>
-        </section>
+                  <div>
+                    <h4 className="font-serif text-stone-800 text-lg">{amenity.label}</h4>
+                    <p className="text-stone-500 text-sm font-light mt-1">{amenity.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {/* 5. Inversión (Lógica) & Cierre */}
-        <section className="py-24 px-6 md:px-12 max-w-5xl mx-auto text-center">
-           <h2 className="text-3xl md:text-5xl font-black mb-8">¿Por qué invertir en {property.title}?</h2>
-           <div className="grid md:grid-cols-3 gap-6 mb-16">
-              <div className="p-8 bg-[#241b18] rounded-3xl border border-white/5">
-                 <TrendingUp className="text-[#d4af37] mx-auto mb-4" size={40} />
-                 <h3 className="text-xl font-bold mb-2">Alta Rentabilidad</h3>
-                 <p className="text-stone-400 text-sm">Ubicación estratégica ideal para alquileres tradicionales o Airbnb, asegurando un flujo constante.</p>
-              </div>
-              <div className="p-8 bg-[#241b18] rounded-3xl border border-white/5">
-                 <ShieldCheck className="text-[#d4af37] mx-auto mb-4" size={40} />
-                 <h3 className="text-xl font-bold mb-2">Respaldo Seguro</h3>
-                 <p className="text-stone-400 text-sm">Proyecto desarrollado por {constructora}, con trayectoria y entregas garantizadas.</p>
-              </div>
-              <div className="p-8 bg-[#241b18] rounded-3xl border border-white/5">
-                 <MapPin className="text-[#d4af37] mx-auto mb-4" size={40} />
-                 <h3 className="text-xl font-bold mb-2">Plusvalía</h3>
-                 <p className="text-stone-400 text-sm">Zona en constante crecimiento comercial y residencial, aumentando el valor de tu inmueble.</p>
-              </div>
-           </div>
+          {/* Typography Grid */}
+          <div className="mb-16">
+            <p className="text-xs text-stone-400 uppercase tracking-[0.2em] mb-8 text-center" style={{ color: accentColor }}>Tipologías</p>
+            <div className="space-y-4">
+              {[
+                { name: "Monoambiente", m2: "35", price: "40.375" },
+                { name: "1 Dormitorio", m2: "52", price: "59.500" },
+                { name: "2 Dormitorios", m2: "75", price: "85.200" }
+              ].map((tipo, i) => (
+                <div key={i} className="flex justify-between items-center p-6 bg-white border border-stone-200 hover:border-[#c2a059] transition-colors cursor-pointer" onClick={() => handleContact(`Cotizar ${tipo.name}`)}>
+                  <div>
+                    <h4 className="font-serif text-lg text-stone-800">{tipo.name}</h4>
+                    <p className="text-stone-500 text-sm">{tipo.m2} m² aprox.</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-stone-400 uppercase tracking-wider mb-1">Desde</p>
+                    <p className="font-serif text-lg text-stone-800">USD {tipo.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-           <div className="bg-gradient-to-br from-[#d4af37] to-[#b45309] rounded-3xl p-8 md:p-12 text-[#1a1311] relative overflow-hidden shadow-2xl">
-              <div className="relative z-10 max-w-2xl mx-auto text-center">
-                <h2 className="text-3xl md:text-4xl font-black mb-4">¿Listo para asegurar tu unidad?</h2>
-                <p className="text-[#1a1311]/80 font-medium mb-8 text-lg">Contáctanos hoy mismo y descubre los planes de financiamiento directo que tenemos para ti.</p>
-                <button 
-                  onClick={() => handleContact("Cierre CTA")}
-                  className="bg-[#1a1311] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-black transition-colors flex items-center justify-center gap-2 w-full md:w-auto mx-auto shadow-xl"
-                >
-                  <MessageCircle size={20} /> Hablar con un Asesor
-                </button>
-                <p className="text-sm font-bold opacity-60 mt-4 text-center">Sin compromiso, atención inmediata.</p>
-              </div>
-           </div>
-        </section>
+          {/* Secondary Images Grid */}
+          {images.length > 1 && (
+            <div className="grid grid-cols-2 gap-4 mb-16">
+              {images.slice(1, 3).map((img, idx) => (
+                <div key={idx} className="aspect-square bg-stone-200">
+                  <img src={img} alt={`Vista ${idx + 2}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
 
+          {/* Footer CTA */}
+          <div className="text-center pt-8 border-t border-stone-200 pb-12">
+            <h2 className="text-2xl font-serif text-stone-800 mb-6">Asegura tu inversión hoy</h2>
+            <button 
+              onClick={() => handleContact("Asesoramiento Inversión")} 
+              className="inline-flex items-center gap-2 px-8 py-3 text-stone-900 border border-stone-900 hover:bg-stone-900 hover:text-white transition-colors duration-300 font-medium tracking-wide text-sm uppercase"
+            >
+              Hablar con un Asesor <ArrowRight size={16} />
+            </button>
+          </div>
+
+        </div>
+      </div>
     </motion.div>
   );
 }
