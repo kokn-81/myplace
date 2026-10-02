@@ -52,6 +52,7 @@ import {
 
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
 import type { BuildingGroupData } from "../components/MapCanvas";
+import ProjectLandingPage from "../components/ProjectLandingPage";
 
 const MAPBOX_TOKEN =
   process.env.VITE_MAPBOX_TOKEN ||
@@ -417,14 +418,7 @@ const normalizeOfferOperation = (operation?: string) => {
 };
 
 const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => {
-  if (!op || op === "Vender") return true;
-  if (op === "Anticrético") {
-    return (
-      normalizeOfferOperation(p.operation) === "anticretico" ||
-      (p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico") ?? false) ||
-      (p.title + " " + (p.description || "")).toLowerCase().includes("anticr")
-    );
-  }
+  if (!op) return true;
   if (op === "Alquilar") {
     return (
       normalizeOfferOperation(p.operation) === "rent" ||
@@ -443,7 +437,6 @@ const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => 
 
 const getOperationIntent = (op: GuidedOperation): SearchIntent => {
   if (op === "Alquilar") return "rent";
-  if (op === "Anticrético") return "anticretico";
   if (op === "Comprar") return "buy";
   return null;
 };
@@ -1117,13 +1110,7 @@ export default function MapPage() {
     setSelectedBuildingGroup(null);
     setCurrentIndex(0);
 
-    if (option === "Anticrético") {
-      setActiveSearchIntent("anticretico");
-      const anticreticoIds = properties
-        .filter((p) => propertyMatchesOperation(p, "Anticrético"))
-        .map((p) => p.id);
-      setAiFilteredIds(anticreticoIds.length > 0 ? anticreticoIds : []);
-    } else if (option === "Alquilar") {
+    if (option === "Alquilar") {
       setActiveSearchIntent("rent");
       const rentalIds = properties
         .filter((p) => propertyMatchesOperation(p, "Alquilar"))
@@ -1666,16 +1653,11 @@ export default function MapPage() {
     // Check operation if both rent and buy exist
     const hasRent = units.some((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent"));
     const hasBuy = units.some((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy"));
-    const hasAnticretico = units.some((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico"));
-    const opCount = [hasRent, hasBuy, hasAnticretico].filter(Boolean).length;
+    const opCount = [hasRent, hasBuy].filter(Boolean).length;
     if (opCount > 1) {
       if (hasRent) {
         const count = units.filter((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent")).length;
         chips.push({ id: "op-rent", label: "Alquiler", count });
-      }
-      if (hasAnticretico) {
-        const count = units.filter((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico")).length;
-        chips.push({ id: "op-anticretico", label: "Anticrético", count });
       }
       if (hasBuy) {
         const count = units.filter((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy")).length;
@@ -1722,9 +1704,6 @@ export default function MapPage() {
 
     if (selectedBuildingSubfilter === "op-rent") {
       return units.filter((p) => normalizeOfferOperation(p.operation) === "rent" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "rent"));
-    }
-    if (selectedBuildingSubfilter === "op-anticretico") {
-      return units.filter((p) => normalizeOfferOperation(p.operation) === "anticretico" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "anticretico"));
     }
     if (selectedBuildingSubfilter === "op-buy") {
       return units.filter((p) => normalizeOfferOperation(p.operation) === "buy" || p.offers?.some((o) => normalizeOfferOperation(o.operation) === "buy"));
@@ -2721,6 +2700,9 @@ export default function MapPage() {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA */}
       <AnimatePresence>
         {selectedProperty && (
+          isProjectType(selectedProperty.type) ? (
+            <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
+          ) : (
           <motion.div
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -4178,6 +4160,7 @@ export default function MapPage() {
 
             </div>
           </motion.div>
+          )
         )}
       </AnimatePresence>
 
@@ -4248,7 +4231,7 @@ export default function MapPage() {
               </p>
 
               <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-6">
-                Nos alegra tenerte aquí. Tienes acceso libre e ilimitado a todo nuestro catálogo de inmuebles exclusivos directamente sobre el mapa interactivo. Explora opciones en venta, alquiler y anticrético, y consúltanos ante cualquier duda.
+                Nos alegra tenerte aquí. Tienes acceso libre e ilimitado a todo nuestro catálogo de inmuebles exclusivos directamente sobre el mapa interactivo. Explora opciones en venta y alquiler, y consúltanos ante cualquier duda.
               </p>
 
               <div className="flex flex-col gap-2.5">

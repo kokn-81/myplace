@@ -1,0 +1,12 @@
+﻿with open("frontend/src/guidedSearch.ts", "r", encoding="utf-8") as f: content = f.read()
+import re
+content = re.sub(r"if \(operation === .Vender.\) return .sell.;\n\s*", "", content)
+content = re.sub(r"if \(operation === .Anticrético.\) return \[\.\.\.GUIDED_ANTICRETICO_PROPERTY_TYPES\];\n\s*", "", content)
+content = re.sub(r"if \(operation === .Anticrético.\) return GUIDED_ANTICRETICO_BUDGET_OPTIONS;\n\s*", "", content)
+content = re.sub(r"if \(operation === .Anticrético.\) return .¿Qué buscas en anticrético\?.;\n\s*", "", content)
+content = content.replace("operation === \"Comprar\" || operation === \"Anticrético\"", "operation === \"Comprar\"")
+content = content.replace("operation === \"Comprar\" || operation === \"Alquilar\" || operation === \"Anticrético\" || operation === \"Vender\"", "operation === \"Comprar\" || operation === \"Alquilar\"")
+content = re.sub(r"\} else if \(operation === .Anticrético.\) \{[\s\S]*?\} else if \(operation === .Comprar.\)", "} else if (operation === \"Comprar\")", content)
+content = re.sub(r"export const GUIDED_ANTICRETICO_PROPERTY_TYPES = \[[\s\S]*?\] as const;\n", "", content)
+content = re.sub(r"export const GUIDED_ANTICRETICO_BUDGET_OPTIONS = \[[^\]]*\] as const;\n", "", content)
+with open("frontend/src/guidedSearch.ts", "w", encoding="utf-8") as f: f.write(content)

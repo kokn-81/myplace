@@ -19,9 +19,9 @@ import {
   previousGuidedStage,
 } from "./guidedSearch";
 
-test("las opciones iniciales son Comprar, Alquilar, Anticrético y Vender", () => {
-  assert.deepEqual(GUIDED_OPERATIONS, ["Comprar", "Alquilar", "Anticrético", "Vender"]);
-  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Anticrético", "Vender"]);
+test("las opciones iniciales son Comprar y Alquilar", () => {
+  assert.deepEqual(GUIDED_OPERATIONS, ["Comprar", "Alquilar"]);
+  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar"]);
 });
 
 test("Comprar pide tipo de inmueble (Departamento, Preventa), dormitorios y presupuesto", () => {
@@ -100,9 +100,7 @@ test("Alquilar pide tipo de inmueble (Departamento), dormitorios y presupuesto e
 });
 
 test("Vender abre WhatsApp al 57015854", () => {
-  assert.equal(nextGuidedStageFromOperation("Vender"), "sell");
-  assert.deepEqual(getGuidedChoiceOptions("sell", "Vender"), []);
-  assert.equal(previousGuidedStage("sell", "Vender"), "operation");
+
   assert.equal(SELL_WHATSAPP_NUMBER, "57015854");
   const url = buildSellWhatsappUrl();
   assert.match(url, /^https:\/\/wa\.me\/59157015854\?text=/);
