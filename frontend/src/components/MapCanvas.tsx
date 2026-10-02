@@ -233,7 +233,7 @@ const ClusterPin = memo(function ClusterPin({
           className={`relative z-10 flex cursor-pointer items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 group-hover:border-[var(--accent-main)] ${sizeStyle} ${bgStyle}`}
           title={`${totalUnits} unidades en esta zona · Clic para acercar`}
         >
-          <span className="tabular-nums tracking-tight">{totalUnits}</span>
+          <span className="tabular-nums tracking-tight">+{totalUnits}</span>
         </div>
       </div>
     </Marker>
