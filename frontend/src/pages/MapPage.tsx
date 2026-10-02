@@ -552,6 +552,27 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
+  // Parse direct links (e.g. ?proyecto=ona)
+  useEffect(() => {
+    if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
+    
+    const params = new URLSearchParams(window.location.search);
+    const proyecto = params.get("proyecto") || params.get("project") || params.get("p");
+    
+    if (proyecto && !selectedProperty) {
+      const target = properties.find(
+        (p) => p.id === proyecto || (p.title && p.title.toLowerCase().includes(proyecto.toLowerCase()))
+      );
+      if (target) {
+        setTimeout(() => {
+          selectProperty(target);
+          hasSearchInteractionRef.current = true;
+        }, 400);
+      }
+    }
+  }, [properties, selectedProperty, selectProperty]);
+
+
   // Al salir de las fotos / cerrar modal, el mapa queda enfocado en la ubicación exacta del depa
   const closePropertyDetail = useCallback(() => {
     const target = selectedProperty || lastViewedProperty;

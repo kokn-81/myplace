@@ -18,7 +18,13 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
   const precioDesde = isOna ? "40.375" : "55.000";
 
   // Expand fallback images to cover different sections of the landing page
-  const defaultImages = [
+  const defaultImages = isOna ? [
+    "/ona/fachada.jpg", // 0: Fachada / Intro
+    "/ona/living.jpg", // 1: Inversión / Detalles
+    "/ona/piscina.jpg", // 2: Amenidades
+    "/ona/gym.jpg", // 3: Tipologías
+    "/ona/churrasquera.jpg", // 4: Plan de Pagos
+  ] : [
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80", // 0: Fachada / Intro
     "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80", // 1: Inversión / Detalles
     "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200&q=80", // 2: Amenidades
@@ -26,8 +32,8 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
     "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80", // 4: Plan de Pagos
   ];
 
-  const images = property.images && property.images.length >= 5 
-    ? property.images 
+  const images = (isOna || (property.images && property.images.length >= 5))
+    ? (isOna ? defaultImages : property.images)
     : [...(property.images || []), ...defaultImages].slice(0, 5);
   
   const [activeImage, setActiveImage] = useState(images[0]);
