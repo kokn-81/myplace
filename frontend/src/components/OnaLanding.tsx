@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
+  AlertCircle,
+  ArrowRight,
   Building2,
+  Calculator,
   Car,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  DollarSign,
   MapPin,
   MessageCircle,
+  Percent,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -146,15 +151,79 @@ const TYPOLOGIES_DATA = [
   },
 ];
 
+type SimTypologyKey = "32" | "54" | "92";
+type SimPlanKey = "contado" | "plan60" | "plan40";
+
+interface SimulationConfig {
+  title: string;
+  shortName: string;
+  areaM2: number;
+  contado: { initial: number; total: number };
+  plan60: { initial: number; total: number };
+  plan40: { initial: number; total: number };
+  marketValueAtDelivery: number; // calculated at $1,600 USD/m2
+  phase2ProjectedCost: number;   // calculated at $1,380 USD/m2
+  rentMonthlyMin: number;
+  rentMonthlyMax: number;
+  yieldRange: string;
+}
+
+const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
+  "32": {
+    title: "1 Dormitorio Master",
+    shortName: "1 Dorm (32,3 m²)",
+    areaM2: 32.3,
+    contado: { initial: 40375, total: 40375 },
+    plan60: { initial: 25194, total: 41990 },
+    plan40: { initial: 17442, total: 43605 },
+    marketValueAtDelivery: 51680,
+    phase2ProjectedCost: 44574,
+    rentMonthlyMin: 450,
+    rentMonthlyMax: 520,
+    yieldRange: "13,3% – 15,4%",
+  },
+  "54": {
+    title: "2 Dormitorios Confort",
+    shortName: "2 Dorm (54,1 m²)",
+    areaM2: 54.14,
+    contado: { initial: 67675, total: 67675 },
+    plan60: { initial: 42229, total: 70382 },
+    plan40: { initial: 29235, total: 73089 },
+    marketValueAtDelivery: 86624,
+    phase2ProjectedCost: 74713,
+    rentMonthlyMin: 650,
+    rentMonthlyMax: 750,
+    yieldRange: "11,5% – 13,3%",
+  },
+  "92": {
+    title: "2 Dormitorios con Balcón Suite",
+    shortName: "2 Dorm Suite (92 m²)",
+    areaM2: 92.0,
+    contado: { initial: 115000, total: 115000 },
+    plan60: { initial: 71760, total: 119600 },
+    plan40: { initial: 49680, total: 124200 },
+    marketValueAtDelivery: 147200,
+    phase2ProjectedCost: 126960,
+    rentMonthlyMin: 950,
+    rentMonthlyMax: 1150,
+    yieldRange: "10,0% – 12,0%",
+  },
+};
+
 export default function OnaLanding({ property, onClose }: Props) {
   const [activeImage, setActiveImage] = useState("/ona/fachada-dia.jpg");
   const [activeLabel, setActiveLabel] = useState("Fachada");
   const [amenityIndex, setAmenityIndex] = useState(0);
 
+  // Estados del Simulador de Inversión en Tiempo Real
+  const [simTypology, setSimTypology] = useState<SimTypologyKey>("32");
+  const [simPlan, setSimPlan] = useState<SimPlanKey>("contado");
+
   const introRef = useRef<HTMLElement>(null);
   const placeRef = useRef<HTMLElement>(null);
   const amenitiesRef = useRef<HTMLElement>(null);
   const typesRef = useRef<HTMLElement>(null);
+  const investorRef = useRef<HTMLElement>(null);
   const payRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -163,7 +232,8 @@ export default function OnaLanding({ property, onClose }: Props) {
       lugar: { src: "/ona/ubicacion.jpg", label: "Ubicación" },
       amenidades: { src: "/ona/piscina.jpg", label: "Amenidades" },
       tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
-      pago: { src: "/ona/fachada-atardecer.jpg", label: "Inversión" },
+      inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
+      pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
     };
 
     const observer = new IntersectionObserver(
@@ -176,10 +246,10 @@ export default function OnaLanding({ property, onClose }: Props) {
         setActiveImage(scene.src);
         setActiveLabel(scene.label);
       },
-      { threshold: [0.25, 0.55] }
+      { threshold: [0.22, 0.5] }
     );
 
-    [introRef, placeRef, amenitiesRef, typesRef, payRef].forEach((ref) => {
+    [introRef, placeRef, amenitiesRef, typesRef, investorRef, payRef].forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -220,6 +290,12 @@ export default function OnaLanding({ property, onClose }: Props) {
   };
 
   const currentSlide = AMENITY_SLIDES[amenityIndex];
+
+  // Métricas del simulador interactivo
+  const activeSim = SIMULATION_CONFIG[simTypology];
+  const activeSimPlanData = activeSim[simPlan];
+  const simNetCapitalGain = activeSim.marketValueAtDelivery - activeSimPlanData.total;
+  const simPhase2Diff = activeSim.phase2ProjectedCost - activeSim.contado.total;
 
   return (
     <motion.div
@@ -274,7 +350,7 @@ export default function OnaLanding({ property, onClose }: Props) {
         </div>
       </div>
 
-      {/* PANEL DERECHO: Contenido Editorial con Párrafos Cuadrados (Justificados) */}
+      {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
       <div className="relative min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
 
@@ -283,7 +359,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="flex items-center gap-2">
               <Sparkles size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Experiencia Residencial
+                Experiencia Residencial & Preventa
               </p>
             </div>
 
@@ -308,7 +384,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
-                    Preventa en Marcha
+                    Preventa en Marcha · 1.ª Fase
                   </p>
                   <p className="text-sm font-medium text-stone-800">
                     Más de 16 unidades de esta primera fase ya han sido reservadas.
@@ -323,15 +399,15 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="mt-7 flex flex-wrap gap-3">
               <button
                 onClick={() => {
-                  placeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  investorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
                 className="bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
               >
-                Explorar el Proyecto
+                Ver Tesis de Inversión
               </button>
               <button
                 onClick={() =>
-                  reserve("Hola, quiero recibir la carpeta digital y disponibilidad actual de ONA Residences.")
+                  reserve("Hola, quiero recibir la carpeta digital con planos y disponibilidad de ONA Residences.")
                 }
                 className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 transition-all hover:border-stone-900 hover:bg-stone-50 active:scale-95"
               >
@@ -345,7 +421,8 @@ export default function OnaLanding({ property, onClose }: Props) {
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
-              <a href="#pago" className="hover:text-stone-950 transition-colors">Plusvalía & Formas de Pago</a>
+              <a href="#inversion" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Rentabilidad & Simulador</a>
+              <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
             </nav>
           </section>
 
@@ -411,7 +488,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 3. AMENIDADES & ÁREAS SOCIALES (CARRUSEL REALISTA Y TEXTOS JUSTIFICADOS) */}
+          {/* 3. AMENIDADES & ÁREAS SOCIALES */}
           <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <Building2 size={14} className="text-[#9a7b45]" />
@@ -481,7 +558,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   {currentSlide.description}
                 </p>
 
-                {/* Miniaturas interactivas para saltar directo a cualquier amenidad */}
+                {/* Miniaturas interactivas */}
                 <div className="mt-6 flex items-center gap-1.5 overflow-x-auto pb-2 pt-1 scrollbar-none">
                   {AMENITY_SLIDES.map((slide, idx) => (
                     <button
@@ -503,7 +580,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 4. TIPOLOGÍAS RESIDENCIALES: CONCEPTO, INCLUSIONES Y PRECIO INICIAL */}
+          {/* 4. TIPOLOGÍAS RESIDENCIALES: PLANOS, INCLUSIONES Y PRECIO INICIAL */}
           <section id="tipologias" ref={typesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <Sparkles size={14} className="text-[#9a7b45]" />
@@ -602,35 +679,286 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 5. FORMAS DE PAGO & PLUSVALÍA */}
-          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+          {/* 5. NUEVA SECCIÓN: TESIS DEL INVERSOR, RENTABILIDAD & SIMULADOR EN TIEMPO REAL */}
+          <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura Financiera & Plusvalía
+                Tesis de Inversión & Análisis Financiero
               </p>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Plusvalía asegurada desde el primer metro cuadrado.
+              La matemática del dinero: Por qué invertir aquí es la decisión más lógica.
             </h2>
+            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Los inversores experimentados no compran promesas vacías: compran <strong>asimetría positiva de valor</strong>.
+              ONA Residences combina precio de entrada en 1.ª fase, ubicación corporativa de alta demanda y rentabilidad neta en dólares muy por encima del promedio del mercado.
+            </p>
 
-            {/* BANNER DE PLUSVALÍA COMPARATIVA CON EL MERCADO */}
-            <div className="mt-6 rounded-2xl border-2 border-[#9a7b45]/40 bg-gradient-to-br from-[#f8f5ee] to-white p-6 shadow-md">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <span className="inline-block rounded-full bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#816127]">
-                    Comparativa de Mercado Real
-                  </span>
-                  <p className="mt-2 font-serif text-xl font-normal text-stone-900">
-                    Av. Los Cusis hoy cotiza a <strong className="text-[#816127]">$1.600 USD / m²</strong>
+            {/* BLOQUE A: EL ANCLAJE ESTRATÉGICO EQUIPETROL VS LOS CUSIS */}
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
+                  Anclaje de Valor Comparativo
+                </span>
+              </div>
+              <h3 className="mt-2 font-serif text-2xl text-stone-900">
+                A 4 minutos de Equipetrol, pero con 35% de descuento por m².
+              </h3>
+              <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                Equipetrol es el referente corporativo de Santa Cruz, pero sus precios de preventa hoy ya están saturados entre $1.850 y $2.200 USD/m², lo que achica el margen de retorno del comprador. Av. Los Cusis ofrece el mismo perfil ejecutivo y gastronómico con una entrada incomparablemente más ventajosa.
+              </p>
+
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {/* Equipetrol */}
+                <div className="rounded-xl border border-stone-200 bg-stone-50/70 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    Equipetrol (Zona Saturada)
                   </p>
-                  <p className="mt-1 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Al ingresar en preventa en ONA desde <strong>$1.250 USD / m²</strong>, capturas de forma directa hasta un <strong>28% de plusvalía y ganancia de capital</strong> proyectada antes de la entrega.
+                  <p className="mt-2 font-serif text-2xl text-stone-700">
+                    $1.850 – $2.200 <span className="text-xs font-sans text-stone-500">USD/m²</span>
                   </p>
+                  <ul className="mt-3 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• Entrada mínima 1 dorm: <strong>$65.000 – $75.000 USD</strong></li>
+                    <li>• Retorno anual por alquiler: <strong>6% – 8% anual</strong></li>
+                    <li>• Plusvalía futura: Margen reducido por precio de partida elevado</li>
+                  </ul>
+                </div>
+
+                {/* ONA en Los Cusis */}
+                <div className="rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-4 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-[#9a7b45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
+                    Ventaja ONA
+                  </div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
+                    ONA · Av. Los Cusis (1.ª Fase)
+                  </p>
+                  <p className="mt-2 font-serif text-2xl text-stone-900 font-medium">
+                    $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-xs text-stone-800 font-light">
+                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900">Desde USD 40.375</strong></li>
+                    <li>• Retorno anual proyectado: <strong className="text-[#816127]">13,3% – 15,4% en USD</strong></li>
+                    <li>• Plusvalía directa proyectada: <strong className="text-stone-900">+28% a la entrega ($1.600/m²)</strong></li>
+                  </ul>
                 </div>
               </div>
             </div>
+
+            {/* BLOQUE B: AVERSIÓN A LA PÉRDIDA - EL COSTO DE DUDAR */}
+            <div className="mt-8 rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-xl">
+              <div className="flex items-center gap-2">
+                <AlertCircle size={16} className="text-[#e8d5a8]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
+                  Ventana de Oportunidad Limitada
+                </span>
+              </div>
+              <h3 className="mt-2 font-serif text-2xl text-white">
+                El costo real de esperar a la Fase 2: Pagarás miles de dólares más.
+              </h3>
+              <p className="mt-2 text-xs text-stone-300 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                Los proyectos inmobiliarios serios se valorizan por etapas. El precio de <strong>$1.250 USD/m²</strong> pertenece de forma exclusiva a la 1.ª fase de preventa. En la siguiente actualización de precios (Fase 2), la lista base proyectada se elevará a <strong>$1.380 USD/m²</strong>.
+              </p>
+
+              <div className="mt-5 rounded-xl border border-white/15 bg-white/5 p-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-center sm:text-left">
+                  <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
+                    <p className="text-[11px] uppercase tracking-wider text-stone-400">1 Dormitorio (32 m²)</p>
+                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 4.199</p>
+                  </div>
+                  <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
+                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios (54 m²)</p>
+                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 7.038</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios Suite (92 m²)</p>
+                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 11.960</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-4 text-xs text-[#e8d5a8] font-light [text-align:justify] [text-justify:inter-word]">
+                Reserva hoy con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el piso mínimo histórico del proyecto. Dejar pasar esta fase significa pagar ese sobreprecio por exactamente el mismo departamento.
+              </p>
+            </div>
+
+            {/* BLOQUE C: SIMULADOR INTERACTIVO DE INVERSIÓN Y CASHFLOW */}
+            <div className="mt-8 rounded-2xl border-2 border-[#9a7b45]/60 bg-white p-6 shadow-xl">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Calculator size={18} className="text-[#9a7b45]" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#816127]">
+                    Simulador Financiero en Tiempo Real
+                  </span>
+                </div>
+                <span className="rounded-full bg-[#f6f2ea] px-3 py-0.5 text-[10px] font-semibold text-[#816127]">
+                  Fase 1
+                </span>
+              </div>
+
+              <h3 className="mt-2 font-serif text-2xl text-stone-900">
+                Calcula tu ganancia neta y retorno de alquiler.
+              </h3>
+              <p className="mt-1.5 text-xs text-stone-600 font-light [text-align:justify] [text-justify:inter-word]">
+                Elige la tipología y tu plan de pago para visualizar la plusvalía estimada antes de la entrega y el flujo de caja proyectado mensual.
+              </p>
+
+              {/* Selector de Tipología */}
+              <div className="mt-5">
+                <label className="text-[11px] uppercase tracking-wider font-semibold text-stone-400 block mb-2">
+                  1. Selecciona la Tipología:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {(["32", "54", "92"] as SimTypologyKey[]).map((key) => {
+                    const item = SIMULATION_CONFIG[key];
+                    const isSelected = simTypology === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setSimTypology(key)}
+                        className={`rounded-xl border p-3 text-left transition-all ${
+                          isSelected
+                            ? "border-stone-900 bg-stone-900 text-white shadow-md"
+                            : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-400"
+                        }`}
+                      >
+                        <p className={`text-xs font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                          {item.shortName}
+                        </p>
+                        <p className="mt-1 text-[11px] font-light opacity-80">
+                          Desde USD {formatOnaUsd(item.contado.total)}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Selector de Plan de Pago */}
+              <div className="mt-5">
+                <label className="text-[11px] uppercase tracking-wider font-semibold text-stone-400 block mb-2">
+                  2. Selecciona la Modalidad de Pago:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {[
+                    { key: "contado", label: "Al Contado", desc: "$1.250 USD/m²" },
+                    { key: "plan60", label: "60% Inicial / 40%", desc: "$1.300 USD/m²" },
+                    { key: "plan40", label: "40% Inicial / 60%", desc: "$1.350 USD/m²" },
+                  ].map((p) => {
+                    const isSelected = simPlan === p.key;
+                    return (
+                      <button
+                        key={p.key}
+                        onClick={() => setSimPlan(p.key as SimPlanKey)}
+                        className={`rounded-xl border p-2.5 text-center transition-all ${
+                          isSelected
+                            ? "border-[#9a7b45] bg-[#fbf9f4] text-[#816127] ring-1 ring-[#9a7b45]"
+                            : "border-stone-200 bg-white text-stone-600 hover:border-stone-300"
+                        }`}
+                      >
+                        <p className="text-xs font-semibold">{p.label}</p>
+                        <p className="text-[10px] text-stone-500 mt-0.5">{p.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* TABLERO DE RESULTADOS EN VIVO */}
+              <div className="mt-6 rounded-xl border border-stone-200 bg-stone-50 p-5">
+                <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3">
+                  Resultados Proyectados para {activeSim.title}:
+                </p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
+                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                      Desembolso Inicial Requerido
+                    </p>
+                    <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
+                      USD {formatOnaUsd(activeSimPlanData.initial)}
+                    </p>
+                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
+                      Costo total unidad: USD {formatOnaUsd(activeSimPlanData.total)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
+                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                      Valor a la Entrega ($1.600/m²)
+                    </p>
+                    <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
+                      USD {formatOnaUsd(activeSim.marketValueAtDelivery)}
+                    </p>
+                    <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
+                      Plusvalía neta: +USD {formatOnaUsd(simNetCapitalGain)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
+                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                      Alquiler Mensual Estimado
+                    </p>
+                    <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
+                      ${activeSim.rentMonthlyMin} – ${activeSim.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
+                    </p>
+                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
+                      En alquiler amoblado / corporativo
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
+                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                      Rentabilidad Anual Estimada
+                    </p>
+                    <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
+                      {activeSim.yieldRange}
+                    </p>
+                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
+                      Retorno en dólares libre de inflación
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <p className="text-xs text-stone-600 font-light text-center sm:text-left">
+                    Congela estos números de 1.ª fase con tu reserva de <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
+                  </p>
+                  <button
+                    onClick={() =>
+                      reserve(
+                        `Hola, utilicé el simulador de ONA. Quiero reservar la tipología ${activeSim.title} (${activeSim.areaM2} m²) en modalidad ${simPlan === "contado" ? "Al Contado" : simPlan === "plan60" ? "60% Inicial" : "40% Inicial"} con ganancia de capital estimada de USD ${formatOnaUsd(simNetCapitalGain)}. Por favor indíquenme qué pisos siguen disponibles.`
+                      )
+                    }
+                    className="w-full sm:w-auto bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-[#9a7b45] active:scale-95 shadow-md shrink-0"
+                  >
+                    Congelar Esta Unidad
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+          {/* 6. FORMAS DE PAGO & PLUSVALÍA (ESTRUCTURA Y PARQUEOS) */}
+          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={14} className="text-[#9a7b45]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                Estructura de Compra
+              </p>
+            </div>
+
+            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
+              Planes de pago flexibles adaptados a tu estrategia.
+            </h2>
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para Junio 2028.
+            </p>
 
             {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA */}
             <div className="mt-6 space-y-4">
@@ -724,7 +1052,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 6. CIERRE DE CONVERSIÓN & LLAMADO A LA ACCIÓN FINAL */}
+          {/* 7. CIERRE DE CONVERSIÓN & LLAMADO A LA ACCIÓN FINAL */}
           <section className="mt-20 border-t border-stone-200 pt-12 text-center">
             <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
             <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
