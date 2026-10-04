@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
+  MessageCircle,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -15,7 +16,6 @@ import {
 import { recordLeadEvent } from "../leadTracking";
 import {
   ONA_ADDRESS,
-  ONA_BROCHURE_URL,
   ONA_BUILDER,
   ONA_DELIVERY,
   ONA_RESERVE_USD,
@@ -32,66 +32,66 @@ interface Props {
 const AMENITY_SLIDES = [
   {
     src: "/ona/piscina.jpg",
-    category: "Relax & Bienestar",
-    title: "Piscina Tipo Playa con Solarium",
+    category: "Piscina",
+    title: "Piscina Tipo Playa",
     description:
-      "Un espejo de agua cristalina concebido como una playa privada. Aguas templadas, solarium perimetral y palmeras para transformar tus fines de semana en una experiencia de resort sin salir de tu hogar.",
+      "Piscina con ingreso suave tipo playa y palmeras en el entorno. Un espacio amplio y relajante para refrescarte y disfrutar los días de sol con total comodidad dentro de tu propio edificio.",
   },
   {
     src: "/ona/hidromasaje.jpg",
-    category: "Hidroterapia",
-    title: "Hidromasaje Integrado",
+    category: "Hidromasaje",
+    title: "Hidromasaje en Piscina",
     description:
-      "Sector de hidroterapia con hidrojets integrados dentro de la piscina principal. El rincón predilecto para desconectar de la rutina al atardecer bajo el cielo abierto de Santa Cruz.",
+      "Sector de hidromasaje integrado dentro de la piscina principal. El rincón pensado para desconectar de la rutina y relajarte al aire libre al terminar la jornada.",
   },
   {
     src: "/ona/reposeras.jpg",
     category: "Exteriores",
-    title: "Deck & Reposeras Tropicales",
+    title: "Deck con Reposeras",
     description:
-      "Espacios de contemplación y descanso diseñados con calidez de madera tratada y vegetación biofílica, ideales para la lectura, el bronceado o un café matutino.",
+      "Área de descanso al aire libre junto a la piscina con deck y reposeras, rodeada de vegetación, ideal para tomar sol, leer o compartir una tarde tranquila.",
   },
   {
     src: "/ona/sauna.jpg",
-    category: "Spa Privado",
-    title: "Sauna Seco & Circuito Wellness",
+    category: "Sauna",
+    title: "Sauna Seco",
     description:
-      "Un sauna completamente equipado con revestimiento en madera noble. Diseñado para purificar el cuerpo, relajar la musculatura y reactivar la energía al finalizar cada jornada.",
+      "Sauna seco completamente equipado con revestimiento en madera natural. Diseñado para relajarte, descontracturar el cuerpo y renovar energías sin salir de casa.",
   },
   {
     src: "/ona/gym.jpg",
     category: "Fitness",
-    title: "Gimnasio Panorámico de Alto Rendimiento",
+    title: "Gimnasio Equipado",
     description:
-      "Área fitness luminosa con máquinas cardiovasculares y musculación de primera línea. Entrena a tu propio ritmo con vista abierta y climatización integral.",
+      "Área de entrenamiento climatizada con máquinas de cardio y fuerza de primera línea. Todo lo necesario para mantener tu rutina activa de forma cómoda y segura.",
   },
   {
     src: "/ona/churrasquera.jpg",
-    category: "Gastronomía",
-    title: "Sky Churrasqueras Gourmet",
+    category: "Churrasqueras",
+    title: "Churrasqueras Equipadas",
     description:
-      "Dos estaciones parrilleras profesionales con mesones de apoyo, mobiliario para comensales y el equipamiento necesario para ser el mejor anfitrión de asados y eventos familiares.",
+      "Dos churrasqueras en el área social con mesón de apoyo y espacio para mesas, preparadas para ser el punto de encuentro en almuerzos y asados familiares de fin de semana.",
   },
   {
     src: "/ona/fogata.jpg",
-    category: "Social Lounge",
-    title: "Lounge con Fogata al Aire Libre",
+    category: "Área Social",
+    title: "Área Social con Fogata",
     description:
-      "Atmósfera íntima al aire libre con fogonero central. El escenario ideal para disfrutar de buenas conversaciones, vino y veladas inolvidables bajo las estrellas.",
+      "Espacio exterior al aire libre con fogonero central y asientos integrados, ideal para disfrutar de conversaciones y veladas agradables por la noche.",
   },
   {
     src: "/ona/salon.jpg",
-    category: "Trabajo & Eventos",
-    title: "Salón Social & Coworking Ejecutivo",
+    category: "Coworking & Eventos",
+    title: "Salón de Reuniones y Coworking",
     description:
-      "Ambiente polivalente climatizado con wifi de alta velocidad, mobiliario ergonómico y baño propio para reuniones de negocios, home office de alto nivel o celebraciones privadas.",
+      "Ambiente polivalente climatizado y equipado para trabajar concentrado, coordinar reuniones de negocios o festejar ocasiones especiales con comodidad.",
   },
   {
     src: "/ona/lobby.jpg",
-    category: "Acceso & Seguridad",
-    title: "Lobby Monumental de Doble Altura",
+    category: "Acceso",
+    title: "Lobby de Doble Altura con Seguridad",
     description:
-      "Una imponente recepción con diseño de autor, iluminación escénica, control de acceso digital inteligente y seguridad 24/7 que proyecta prestigio y distinción a tus invitados.",
+      "Recepción amoblada e iluminada con control de acceso y seguridad permanente para brindarte tranquilidad a ti y una bienvenida de primer nivel a tus visitas.",
   },
 ];
 
@@ -102,7 +102,8 @@ const TYPOLOGIES_DATA = [
     area: "32,30 m²",
     image: "/ona/tipo-32.jpg",
     cashPrice: 40375,
-    tagline: "Máxima rentabilidad para inversores o vivienda práctica.",
+    tagline:
+      "Excelente distribución para vivienda práctica o inversión de alta demanda de alquiler en Santa Cruz.",
     reservedCopy: "Más de 8 unidades de esta tipología ya reservadas",
     highlights: [
       "Living-comedor integrado con excelente entrada de luz",
@@ -117,7 +118,8 @@ const TYPOLOGIES_DATA = [
     area: "54,14 m²",
     image: "/ona/tipo-54.jpg",
     cashPrice: 67675,
-    tagline: "Distribución funcional para parejas o un ambiente extra de trabajo.",
+    tagline:
+      "Espacios versátiles para familias jóvenes, parejas o profesionales que requieren un ambiente extra de trabajo.",
     reservedCopy: "Gran demanda: unidades en pisos intermedios ya asignadas",
     highlights: [
       "2 habitaciones independientes con amplios closets empotrados",
@@ -132,7 +134,8 @@ const TYPOLOGIES_DATA = [
     area: "92,00 m²",
     image: "/ona/tipo-92.jpg",
     cashPrice: 115000,
-    tagline: "La tipología insignia: amplitud total, balcón terraza y suites.",
+    tagline:
+      "La tipología más amplia de ONA Residences, con balcón terraza y habitaciones diseñadas en suite.",
     reservedCopy: "Unidades exclusivas con reservas activas de 1.ª fase",
     highlights: [
       "86,5 m² propios interiores + 5,55 m² de terraza balcón panorámica",
@@ -257,8 +260,8 @@ export default function OnaLanding({ property, onClose }: Props) {
           <h1 className="mt-3 font-serif text-4xl font-light tracking-wide leading-none md:text-6xl">
             ONA
           </h1>
-          <p className="mt-3 max-w-sm text-sm font-light text-white/90 md:text-base leading-relaxed">
-            Eleva tu vida en equilibrio y armonía. Un santuario urbano en Los Cusis.
+          <p className="mt-3 max-w-sm text-sm font-light text-white/90 md:text-base leading-relaxed [text-align:justify] [text-justify:inter-word]">
+            Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en Av. Los Cusis.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-white/80 font-light">
             <span>Constructora {ONA_BUILDER}</span>
@@ -271,7 +274,7 @@ export default function OnaLanding({ property, onClose }: Props) {
         </div>
       </div>
 
-      {/* PANEL DERECHO: Contenido de Alto Impacto Editorial y Persuasivo */}
+      {/* PANEL DERECHO: Contenido Editorial con Párrafos Cuadrados (Justificados) */}
       <div className="relative min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
 
@@ -291,7 +294,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               </span>
             </h2>
 
-            <p className="mt-5 text-[15px] font-light leading-relaxed text-stone-600 md:text-base">
+            <p className="mt-5 text-[15px] font-light leading-relaxed text-stone-600 md:text-base [text-align:justify] [text-justify:inter-word]">
               ONA Residences nace como un refugio de arquitectura contemporánea que combina biofilia,
               líneas orgánicas y luz natural en una de las zonas más serenas y cotizadas de Santa Cruz.
               Un proyecto concebido por <strong>{ONA_BUILDER}</strong> para quienes entienden que el verdadero
@@ -312,8 +315,8 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5">
-                La oportunidad de ingresar en 1.ª fase asegura la máxima plusvalía acumulada antes de cada actualización de listas de precios.
+              <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
+                La oportunidad de ingresar en 1.ª fase asegura la máxima plusvalía acumulada antes de cada actualización de listas de precios del proyecto.
               </p>
             </div>
 
@@ -326,13 +329,15 @@ export default function OnaLanding({ property, onClose }: Props) {
               >
                 Explorar el Proyecto
               </button>
-              <a
-                href={ONA_BROCHURE_URL}
-                download
-                className="inline-flex items-center border border-stone-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 transition-all hover:border-stone-900 hover:bg-stone-50"
+              <button
+                onClick={() =>
+                  reserve("Hola, quiero recibir la carpeta digital y disponibilidad actual de ONA Residences.")
+                }
+                className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 transition-all hover:border-stone-900 hover:bg-stone-50 active:scale-95"
               >
-                Descargar Brochure
-              </a>
+                <MessageCircle size={15} className="text-[#9a7b45]" />
+                Solicitar Carpeta Digital
+              </button>
             </div>
 
             {/* Accesos rápidos de navegación */}
@@ -345,7 +350,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD (ARRIBA COMO FUE SOLICITADO) */}
+          {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD */}
           <section id="lugar" ref={placeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <MapPin size={14} className="text-[#9a7b45]" />
@@ -358,9 +363,9 @@ export default function OnaLanding({ property, onClose }: Props) {
               Av. Los Cusis: Calma residencial y conectividad total.
             </h2>
 
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600">
+            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
               Ubicado estratégicamente sobre <strong>Av. Los Cusis, entre Banzer y Beni</strong>.
-              Este cuadrante combina el encanto de un vecindario consolidado, arbolado y tranquilo, con un acceso inmediato a las principales arterias de Santa Cruz.
+              Este cuadrante combina el encanto de un vecindario consolidado, arbolado y tranquilo, con un acceso inmediato a las principales arterias viales y comerciales de Santa Cruz.
             </p>
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
@@ -373,20 +378,20 @@ export default function OnaLanding({ property, onClose }: Props) {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="border-l-2 border-[#9a7b45] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Conectividad 360°</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5">
-                      Acceso rápido hacia el 2.º y 3.er Anillo, Equipetrol y el centro financiero.
+                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
+                      Acceso directo hacia el 2.º y 3.er Anillo, Equipetrol y los distritos empresariales.
                     </p>
                   </div>
                   <div className="border-l-2 border-[#9a7b45] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Entorno Gastronómico</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5">
-                      A minutos de los mejores restaurantes, cafés de especialidad y supermercados.
+                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
+                      A minutos de restaurantes de autor, cafés de especialidad, colegios y supermercados.
                     </p>
                   </div>
                   <div className="border-l-2 border-[#9a7b45] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Plusvalía en Alza</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5">
-                      Zona consolidada con alta demanda sostenida de alquiler residencial y temporal.
+                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
+                      Zona residencial consolidada con alta demanda permanente de alquiler y valorización.
                     </p>
                   </div>
                 </div>
@@ -406,22 +411,22 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 3. AMENIDADES & ÁREAS SOCIALES EN FORMATO CARRUSEL PERSUASIVO */}
+          {/* 3. AMENIDADES & ÁREAS SOCIALES (CARRUSEL REALISTA Y TEXTOS JUSTIFICADOS) */}
           <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <Building2 size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Áreas Sociales & Bienestar
+                Áreas Sociales & Comodidades
               </p>
             </div>
 
             <div className="mt-2 flex items-baseline justify-between gap-4">
               <h2 className="font-serif text-3xl font-light text-stone-900 md:text-4xl">
-                Un resort privado dentro de tu propio edificio.
+                Espacios pensados para disfrutar cada día.
               </h2>
             </div>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600">
-              Espacios pensados para que cada día se sienta como una pausa de vacaciones.
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Áreas comunes diseñadas para brindar comodidad, descanso y encuentros agradables con amigos y familia dentro del propio edificio.
             </p>
 
             {/* CARRUSEL INTERACTIVO */}
@@ -467,12 +472,12 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
               </div>
 
-              {/* Texto persuasivo de la amenidad activa */}
+              {/* Texto persuasivo y justificado de la amenidad activa */}
               <div className="p-6">
                 <h3 className="font-serif text-2xl text-stone-900">
                   {currentSlide.title}
                 </h3>
-                <p className="mt-2 text-sm font-light leading-relaxed text-stone-600">
+                <p className="mt-2 text-sm font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                   {currentSlide.description}
                 </p>
 
@@ -510,8 +515,8 @@ export default function OnaLanding({ property, onClose }: Props) {
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
               Diseño de autor a la medida de tu momento.
             </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600">
-              Espacios concebidos para maximizar la superficie útil, la luminosidad y el confort sensorial.
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Espacios concebidos para optimizar cada metro cuadrado, garantizando excelente iluminación natural, circulación fluida y confort para el día a día.
             </p>
 
             <div className="mt-8 space-y-10">
@@ -541,7 +546,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                       </p>
                     </div>
 
-                    <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed">
+                    <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
                       {tipo.tagline}
                     </p>
 
@@ -559,7 +564,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                         {tipo.highlights.map((h, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
-                            <span>{h}</span>
+                            <span className="[text-align:justify] [text-justify:inter-word]">{h}</span>
                           </li>
                         ))}
                       </ul>
@@ -597,7 +602,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 5. FORMAS DE PAGO & PLUSVALÍA (AL FINAL, CONCISO Y DE ALTO IMPACTO) */}
+          {/* 5. FORMAS DE PAGO & PLUSVALÍA */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#9a7b45]" />
@@ -620,7 +625,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   <p className="mt-2 font-serif text-xl font-normal text-stone-900">
                     Av. Los Cusis hoy cotiza a <strong className="text-[#816127]">$1.600 USD / m²</strong>
                   </p>
-                  <p className="mt-1 text-xs text-stone-600 font-light leading-relaxed">
+                  <p className="mt-1 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
                     Al ingresar en preventa en ONA desde <strong>$1.250 USD / m²</strong>, capturas de forma directa hasta un <strong>28% de plusvalía y ganancia de capital</strong> proyectada antes de la entrega.
                   </p>
                 </div>
@@ -634,7 +639,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
-                      Máxima Rentabilidad
+                      Mayor Descuento
                     </span>
                     <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
                   </div>
@@ -644,8 +649,8 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Exclusiva:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200">
+                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
                     Accedes al valor por m² más bajo de todo el proyecto. Ahorras miles de dólares respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en 2028.
                   </p>
                 </div>
@@ -666,8 +671,8 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Exclusiva:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                     El balance perfecto entre liquidez y rendimiento. Congelas tu unidad con un precio por metro cuadrado muy por debajo del promedio del mercado y pagas el 40% restante recién cuando la obra esté 100% finalizada.
                   </p>
                 </div>
@@ -688,15 +693,15 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Exclusiva:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                     El menor desembolso de entrada para ingresar a un edificio de categoría en Los Cusis. Te permite asegurar y congelar tu propiedad hoy, mientras cancelas el 60% en Junio 2028.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE (SOLO PRECIO INICIAL) */}
+            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE */}
             <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-700">
@@ -712,7 +717,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </p>
                 </div>
               </div>
-              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5">
+              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
                 Disponibilidad en Planta Baja y Subsuelo con opciones de estacionamiento simple y doble. Cada parqueo incluye su propia baulera privada independiente.
               </p>
             </div>
@@ -725,7 +730,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
               Asegura tu unidad al valor de 1.ª fase.
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm font-light text-stone-600 leading-relaxed">
+            <p className="mx-auto mt-3 max-w-md text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
               Reserva hoy tu departamento con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el precio
               antes de la siguiente escala de preventa.
             </p>
