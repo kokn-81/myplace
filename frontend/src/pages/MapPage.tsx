@@ -262,6 +262,24 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   );
 };
 
+export const isOnaProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  return (
+    String(p.id) === "5" ||
+    Boolean(p.title && p.title.toLowerCase().includes("ona")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona"))
+  );
+};
+
+export const isTargetOna = (p: Property, query: string): boolean => {
+  if (!query) return false;
+  const q = query.trim().toLowerCase();
+  if (q === "ona" || q === "5") {
+    return isOnaProperty(p);
+  }
+  return String(p.id).toLowerCase() === q || Boolean(p.title && p.title.toLowerCase().includes(q));
+};
+
 export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   if (!cityName) return true;
   const normTarget = normalizeGeoText(cityName);
@@ -522,10 +540,34 @@ export default function MapPage() {
     }
   }, []);
 
-  const selectProperty = useCallback(async (property: Property) => {
+  const selectProperty = useCallback(async (property: Property, options?: { skipHistoryPush?: boolean }) => {
     setSelectedProperty(property);
     setLastViewedProperty(property);
     focusPropertyLocation(property, 16.2);
+
+    if (typeof window !== "undefined") {
+      const isOna = isOnaProperty(property);
+      const url = new URL(window.location.href);
+      const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
+
+      if (isOna) {
+        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== "ona") {
+          url.searchParams.set("proyecto", "ona");
+          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
+          window.history.pushState({ modal: "ona", propertyId: property.id }, "", targetUrl);
+        }
+      } else if (currentParam) {
+        url.searchParams.delete("proyecto");
+        url.searchParams.delete("project");
+        url.searchParams.delete("p");
+        const cleanSearch = url.searchParams.toString();
+        const targetUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
+        if (!options?.skipHistoryPush) {
+          window.history.replaceState(null, "", targetUrl || "/");
+        }
+      }
+    }
+
     if (property.detailsLoaded) return;
 
     try {
@@ -552,7 +594,7 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. ?proyecto=ona)
+  // Parse direct links (e.g. ?proyecto=ona) al entrar a la web
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
     
@@ -560,18 +602,43 @@ export default function MapPage() {
     const proyecto = params.get("proyecto") || params.get("project") || params.get("p");
     
     if (proyecto && !selectedProperty) {
-      const target = properties.find(
-        (p) => p.id === proyecto || (p.title && p.title.toLowerCase().includes(proyecto.toLowerCase()))
-      );
+      const target = properties.find((p) => isTargetOna(p, proyecto));
       if (target) {
         setTimeout(() => {
-          selectProperty(target);
+          selectProperty(target, { skipHistoryPush: true });
           hasSearchInteractionRef.current = true;
-        }, 400);
+          window.history.replaceState({ modal: "direct_ona", propertyId: target.id }, "", window.location.href);
+        }, 300);
       }
     }
   }, [properties, selectedProperty, selectProperty]);
 
+  // Sincronización con navegación Atrás / Adelante del navegador
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const proyecto = params.get("proyecto") || params.get("project") || params.get("p");
+
+      if (!proyecto) {
+        setSelectedProperty((current) => {
+          if (current) {
+            focusPropertyLocation(current, 16.2);
+          }
+          return null;
+        });
+      } else {
+        const target = properties.find((p) => isTargetOna(p, proyecto));
+        if (target) {
+          selectProperty(target, { skipHistoryPush: true });
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [properties, focusPropertyLocation, selectProperty]);
 
   // Al salir de las fotos / cerrar modal, el mapa queda enfocado en la ubicación exacta del depa
   const closePropertyDetail = useCallback(() => {
@@ -580,6 +647,24 @@ export default function MapPage() {
       focusPropertyLocation(target, 16.2);
     }
     setSelectedProperty(null);
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
+
+      if (hasProjectParam) {
+        if (window.history.state?.modal === "ona") {
+          window.history.back();
+        } else {
+          url.searchParams.delete("proyecto");
+          url.searchParams.delete("project");
+          url.searchParams.delete("p");
+          const cleanSearch = url.searchParams.toString();
+          const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
+          window.history.replaceState(null, "", cleanUrl || "/");
+        }
+      }
+    }
   }, [selectedProperty, lastViewedProperty, focusPropertyLocation]);
 
   // Al pasar el mouse en computadora: vuela suavemente al inmueble y resalta su pin

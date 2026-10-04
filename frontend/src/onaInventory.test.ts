@@ -15,7 +15,7 @@ test("la tabla de ONA es la 1.a fase, sin precios inventados", () => {
   );
   assert.ok(ONA_PARKINGS.filter((spot) => spot.kind === "simple").every((spot) => spot.price === 15000));
   assert.ok(ONA_PARKINGS.filter((spot) => spot.kind === "doble").every((spot) => spot.price === 22000 && spot.status === "disponible"));
-  assert.equal(ONA_RESERVE_USD, 1000);
+  assert.equal(ONA_RESERVE_USD, 2000);
   assert.equal(ONA_DELIVERY, "Junio 2028");
   assert.equal(ONA_BUILDER, "Palacios Antunez");
 
