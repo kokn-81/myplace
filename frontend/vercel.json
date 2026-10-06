@@ -5,6 +5,10 @@
       "destination": "/api/c/:slug"
     },
     {
+      "source": "/ona",
+      "destination": "/api/ona-og"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

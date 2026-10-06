@@ -594,12 +594,13 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. ?proyecto=ona) al entrar a la web
+  // Parse direct links (e.g. ?proyecto=ona o /ona) al entrar a la web
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
     
     const params = new URLSearchParams(window.location.search);
-    const proyecto = params.get("proyecto") || params.get("project") || params.get("p");
+    const isOnaPath = window.location.pathname.toLowerCase().startsWith("/ona");
+    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetOna(p, proyecto));
@@ -612,6 +613,15 @@ export default function MapPage() {
       }
     }
   }, [properties, selectedProperty, selectProperty]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (selectedProperty && isOnaProperty(selectedProperty)) {
+      document.title = "ONA Residences · Preventa en Los Cusis | N.I.A";
+    } else {
+      document.title = "N.I.A — Encuentra tu próximo hogar";
+    }
+  }, [selectedProperty]);
 
   // Sincronización con navegación Atrás / Adelante del navegador
   useEffect(() => {
@@ -1946,6 +1956,32 @@ export default function MapPage() {
   };
 
   const handleShare = async (property?: Property | null) => {
+    const targetProp = property || selectedProperty;
+    if (targetProp && isOnaProperty(targetProp)) {
+      const shareUrl = `${window.location.origin}/?proyecto=ona`;
+      const shareText = "Departamentos de 1 y 2 dormitorios en Los Cusis desde USD 40.375. Conoce ONA Residences:";
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        try {
+          await navigator.share({
+            title: "ONA Residences · Preventa en Los Cusis",
+            text: shareText,
+            url: shareUrl,
+          });
+          return;
+        } catch (error) {
+          if ((error as DOMException)?.name === "AbortError") return;
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        setShareHint("Enlace copiado");
+        setTimeout(() => setShareHint(""), 2500);
+      } catch {
+        setShareHint("Error al copiar");
+      }
+      return;
+    }
+
     const draft = currentLeadContext(property);
     const event = await recordLeadEvent({
       action: "share",

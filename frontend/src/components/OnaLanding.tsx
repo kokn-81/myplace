@@ -6,6 +6,7 @@ import {
   Building2,
   Calculator,
   Car,
+  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -13,6 +14,7 @@ import {
   MapPin,
   MessageCircle,
   Percent,
+  Share2,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -227,6 +229,35 @@ export default function OnaLanding({ property, onClose }: Props) {
   // Estados del Simulador de Inversión en Tiempo Real
   const [simTypology, setSimTypology] = useState<SimTypologyKey>("32");
   const [simPlan, setSimPlan] = useState<SimPlanKey>("contado");
+  const [shareFeedback, setShareFeedback] = useState(false);
+
+  const handleShareOna = async () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
+    const shareUrl = `${origin}/?proyecto=ona`;
+    const shareTitle = "ONA Residences · Preventa en Los Cusis";
+    const shareText = "Departamentos de 1 y 2 dormitorios en Los Cusis desde USD 40.375. Conoce ONA Residences:";
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        if ((err as DOMException)?.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      setShareFeedback(true);
+      setTimeout(() => setShareFeedback(false), 2500);
+    } catch {
+      // fallback
+    }
+  };
 
   const introRef = useRef<HTMLElement>(null);
   const placeRef = useRef<HTMLElement>(null);
@@ -314,15 +345,36 @@ export default function OnaLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 md:flex-row"
     >
-      {/* Boton Cerrar Flotante */}
-      <button
-        onClick={onClose}
-        className="fixed right-4 top-4 z-[120] rounded-full border border-stone-200 bg-white/95 p-3 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 md:right-7 md:top-7"
-        aria-label="Cerrar"
-        title="Volver a NIA"
-      >
-        <X size={22} />
-      </button>
+      {/* Botones Flotantes: Compartir y Cerrar */}
+      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
+        <button
+          onClick={handleShareOna}
+          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95"
+          aria-label="Compartir"
+          title="Compartir ONA Residences"
+        >
+          {shareFeedback ? (
+            <>
+              <Check size={18} className="text-emerald-600" />
+              <span className="text-[11px] font-semibold text-emerald-700">¡Copiado!</span>
+            </>
+          ) : (
+            <>
+              <Share2 size={18} />
+              <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
+            </>
+          )}
+        </button>
+
+        <button
+          onClick={onClose}
+          className="rounded-full border border-stone-200 bg-white/95 p-3 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95"
+          aria-label="Cerrar"
+          title="Volver a NIA"
+        >
+          <X size={20} />
+        </button>
+      </div>
 
       {/* PANEL IZQUIERDO: Fotografía Inmersiva Dinámica */}
       <div className="relative h-[32vh] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
@@ -1058,14 +1110,34 @@ export default function OnaLanding({ property, onClose }: Props) {
           </p>
         </div>
 
-        <button
-          onClick={() =>
-            closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-          }
-          className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
-        >
-          Reservar Ahora
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShareOna}
+            className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
+            title="Compartir ONA Residences"
+          >
+            {shareFeedback ? (
+              <>
+                <Check size={14} className="text-emerald-600" />
+                <span className="text-emerald-700">¡Copiado!</span>
+              </>
+            ) : (
+              <>
+                <Share2 size={14} />
+                <span className="hidden sm:inline">Compartir</span>
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={() =>
+              closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+            }
+            className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
+          >
+            Reservar Ahora
+          </button>
+        </div>
       </div>
     </motion.div>
   );

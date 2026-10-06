@@ -251,10 +251,11 @@ def render_context_html(payload: dict) -> str:
     ref = payload.get("property_ref")
     summary_bits = [bit for bit in (operacion, zona, presupuesto) if bit]
     description = " · ".join(summary_bits) or "Consulta de inmueble en NIA"
-    og_image_tag = (
-        f'<meta property="og:image" content="{html.escape(image, quote=True)}" />'
-        if image else ""
-    )
+    preview_image = image or "https://nia-web.com/ona/og-ona.jpg"
+    og_image_tag = f"""<meta property="og:image" content="{html.escape(preview_image, quote=True)}" />
+  <meta property="og:image:secure_url" content="{html.escape(preview_image, quote=True)}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="{html.escape(preview_image, quote=True)}" />"""
     photo_html = (
         f'<img src="{html.escape(image, quote=True)}" alt="{html.escape(title)}" style="width:100%;border-radius:16px;margin:0 0 1.25rem;" />'
         if image else ""

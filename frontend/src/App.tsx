@@ -59,6 +59,7 @@ export default function App() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<MapPage />} />
+          <Route path="/ona" element={<MapPage />} />
           <Route path="/c/:slug" element={<ContextPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/nia-metrics" element={<NiaMetricsDashboard />} />
