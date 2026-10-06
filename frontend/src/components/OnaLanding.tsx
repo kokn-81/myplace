@@ -226,6 +226,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const typesRef = useRef<HTMLElement>(null);
   const payRef = useRef<HTMLElement>(null);
   const investorRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
@@ -235,6 +236,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
       pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
       inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
+      cierre: { src: "/ona/fachada-dia.jpg", label: "Reserva 1.ª Fase" },
     };
 
     const observer = new IntersectionObserver(
@@ -250,7 +252,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       { threshold: [0.22, 0.5] }
     );
 
-    [introRef, placeRef, amenitiesRef, typesRef, payRef, investorRef].forEach((ref) => {
+    [introRef, placeRef, amenitiesRef, typesRef, payRef, investorRef, closeRef].forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -393,25 +395,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               </p>
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button
-                onClick={() => {
-                  payRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
-              >
-                Ver Planes de Pago
-              </button>
-              <button
-                onClick={() => {
-                  investorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 transition-all hover:border-stone-900 hover:bg-stone-50 active:scale-95"
-              >
-                <TrendingUp size={15} className="text-[#9a7b45]" />
-                Rentabilidad & Simulador
-              </button>
-            </div>
+
 
             {/* Accesos rápidos de navegación */}
             <nav className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
@@ -644,30 +628,14 @@ export default function OnaLanding({ property, onClose }: Props) {
                       </ul>
                     </div>
 
-                    {/* Precio inicial y CTA */}
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-stone-100 pt-5">
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">
-                          Precio inicial de preventa
-                        </p>
-                        <p className="font-serif text-2xl font-medium text-stone-900">
-                          Desde USD {formatOnaUsd(tipo.cashPrice)}
-                        </p>
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          reserve(
-                            `Me interesa consultar disponibilidad para la tipología ${tipo.title} (${tipo.area}) con precio desde USD ${formatOnaUsd(
-                              tipo.cashPrice
-                            )}.`,
-                            tipo.cashPrice
-                          )
-                        }
-                        className="bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-sm transition-all hover:bg-[#9a7b45] active:scale-95"
-                      >
-                        Consultar Disponibilidad
-                      </button>
+                    {/* Precio inicial */}
+                    <div className="mt-6 border-t border-stone-100 pt-5">
+                      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">
+                        Precio inicial de preventa
+                      </p>
+                      <p className="font-serif text-2xl font-medium text-stone-900">
+                        Desde USD {formatOnaUsd(tipo.cashPrice)}
+                      </p>
                     </div>
                   </div>
                 </article>
@@ -1049,7 +1017,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
 
           {/* 7. CIERRE DE CONVERSIÓN & LLAMADO A LA ACCIÓN FINAL */}
-          <section className="mt-20 border-t border-stone-200 pt-12 text-center">
+          <section id="cierre" ref={closeRef} className="scroll-mt-6 mt-20 border-t border-stone-200 pt-12 text-center">
             <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
             <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
               Asegura tu unidad al valor de 1.ª fase.
@@ -1094,7 +1062,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
         <button
           onClick={() =>
-            reserve("Quiero reservar una unidad en ONA Residences con USD " + formatOnaUsd(ONA_RESERVE_USD))
+            closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
           }
           className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
         >
