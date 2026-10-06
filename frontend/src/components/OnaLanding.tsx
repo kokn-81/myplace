@@ -39,9 +39,9 @@ const AMENITY_SLIDES = [
   {
     src: "/ona/piscina.jpg",
     category: "Piscina",
-    title: "Piscina Tipo Playa",
+    title: "Piscina",
     description:
-      "Piscina con ingreso suave tipo playa y palmeras en el entorno. Un espacio amplio y relajante para refrescarte y disfrutar los días de sol con total comodidad dentro de tu propio edificio.",
+      "Piscina amplia con ingreso suave y palmeras en el entorno. Un espacio relajante para refrescarte y disfrutar los días de sol con total comodidad dentro de tu propio edificio.",
   },
   {
     src: "/ona/hidromasaje.jpg",
@@ -55,7 +55,7 @@ const AMENITY_SLIDES = [
     category: "Exteriores",
     title: "Deck con Reposeras",
     description:
-      "Área de descanso al aire libre junto a la piscina con deck y reposeras, rodeada de vegetación, ideal para tomar sol, leer o compartir una tarde tranquila.",
+      "Área de descanso al aire libre junto a la piscina con deck y reposeras, ideal para tomar sol, leer o compartir una tarde tranquila.",
   },
   {
     src: "/ona/sauna.jpg",
@@ -166,6 +166,8 @@ interface SimulationConfig {
   gainAtDelivery: number;        // calculated vs contado
   rentMonthlyMin: number;
   rentMonthlyMax: number;
+  rentMonthlyBsMin: number;
+  rentMonthlyBsMax: number;
   yieldRange: string;
 }
 
@@ -179,9 +181,11 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan40: { initial: 17442, total: 43605 },
     marketValueAtDelivery: 51680,
     gainAtDelivery: 11305,
-    rentMonthlyMin: 450,
-    rentMonthlyMax: 520,
-    yieldRange: "13,3% – 15,4%",
+    rentMonthlyMin: 350,
+    rentMonthlyMax: 375,
+    rentMonthlyBsMin: 4200,
+    rentMonthlyBsMax: 4500,
+    yieldRange: "10,4% – 11,1%",
   },
   "54": {
     title: "2 Dormitorios Confort",
@@ -192,9 +196,11 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan40: { initial: 29235, total: 73089 },
     marketValueAtDelivery: 86624,
     gainAtDelivery: 18949,
-    rentMonthlyMin: 650,
-    rentMonthlyMax: 750,
-    yieldRange: "11,5% – 13,3%",
+    rentMonthlyMin: 520,
+    rentMonthlyMax: 560,
+    rentMonthlyBsMin: 6240,
+    rentMonthlyBsMax: 6720,
+    yieldRange: "9,2% – 9,9%",
   },
   "92": {
     title: "2 Dormitorios con Balcón Suite",
@@ -205,9 +211,11 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan40: { initial: 49680, total: 124200 },
     marketValueAtDelivery: 147200,
     gainAtDelivery: 32200,
-    rentMonthlyMin: 950,
-    rentMonthlyMax: 1150,
-    yieldRange: "10,0% – 12,0%",
+    rentMonthlyMin: 750,
+    rentMonthlyMax: 830,
+    rentMonthlyBsMin: 9000,
+    rentMonthlyBsMax: 9960,
+    yieldRange: "7,8% – 8,7%",
   },
 };
 
@@ -574,7 +582,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               Un proyecto, distintas formas de vivirlo.
             </h2>
             <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En ONA Residences podés elegir el departamento según el espacio que realmente necesitás: opciones de 1 y 2 dormitorios concebidas para optimizar cada metro cuadrado, con excelente iluminación natural y terminaciones de primera.
+              En ONA Residences podés elegir el departamento según el espacio que realmente necesitás: opciones de 1 y 2 dormitorios concebidas para optimizar cada metro cuadrado y terminaciones de primera.
             </p>
 
             <div className="mt-8 space-y-10">
@@ -776,43 +784,30 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </span>
               </div>
               <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                Ubicación estratégica con un valor de entrada preferencial.
+                A 4 minutos de Equipetrol, con todos los beneficios de {ONA_ZONE}.
               </h3>
               <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                A pocos minutos de los principales centros corporativos y gastronómicos de la ciudad, {ONA_ZONE} ofrece un entorno residencial tranquilo, arbolado y de alta conectividad. Mientras que en zonas corporativas vecinas los valores de preventa rondan entre $1.850 y $2.200 USD/m², ONA Residences te permite ingresar en 1.ª fase desde $1.250 USD/m², otorgándote un margen de plusvalía y retorno sustancialmente mayor.
+                Disfruta de la cercanía inmediata a los centros gastronómicos, comerciales y empresariales más vibrantes de Santa Cruz, con la serenidad, arboledas y conectividad de un entorno residencial consolidado. ONA Residences te permite asegurar un valor de preventa preferencial en 1.ª fase con un alto potencial de plusvalía y retorno.
               </p>
 
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Referencia zona corporativa vecina */}
-                <div className="rounded-xl border border-stone-200 bg-stone-50/70 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                    Referencia en Zona Corporativa Vecina
-                  </p>
-                  <p className="mt-2 font-serif text-2xl text-stone-700">
-                    $1.850 – $2.200 <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                  </p>
-                  <ul className="mt-3 space-y-1.5 text-xs text-stone-600 font-light">
-                    <li>• Entrada mínima 1 dorm: <strong>$65.000 – $75.000 USD</strong></li>
-                    <li>• Retorno anual por alquiler: <strong>6% – 8% anual</strong></li>
-                    <li>• Plusvalía futura: Margen acotado por precio de partida elevado</li>
-                  </ul>
-                </div>
-
+              <div className="mt-5">
                 {/* ONA en Los Cusis */}
-                <div className="rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-4 shadow-sm relative overflow-hidden">
+                <div className="rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 shadow-sm relative overflow-hidden">
                   <div className="absolute top-0 right-0 bg-[#9a7b45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
-                    Ventaja ONA
+                    Ventaja Preventa
                   </div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
-                    ONA · {ONA_ZONE} (1.ª Fase)
-                  </p>
-                  <p className="mt-2 font-serif text-2xl text-stone-900 font-medium">
-                    $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                  </p>
-                  <ul className="mt-3 space-y-1.5 text-xs text-stone-800 font-light">
-                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900">Desde USD 40.375</strong></li>
-                    <li>• Retorno anual proyectado: <strong className="text-[#816127]">11,5% – 15,4% en USD</strong></li>
-                    <li>• Plusvalía a la entrega: <strong className="text-stone-900">+28% proyectado ($1.600/m²)</strong></li>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
+                      ONA Residences · {ONA_ZONE} (1.ª Fase)
+                    </p>
+                    <p className="font-serif text-2xl text-stone-900 font-medium">
+                      $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
+                    </p>
+                  </div>
+                  <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#9a7b45]/20 pt-3">
+                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900 block mt-0.5">Desde USD 40.375</strong></li>
+                    <li>• Retorno anual por alquiler: <strong className="text-[#816127] block mt-0.5">10,4% – 11,1% en USD</strong></li>
+                    <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+28% ($1.600 USD/m²)</strong></li>
                   </ul>
                 </div>
               </div>
@@ -978,8 +973,11 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
                       ${activeSim.rentMonthlyMin} – ${activeSim.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
                     </p>
-                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
-                      En alquiler amoblado / corporativo
+                    <p className="text-[11px] font-medium text-stone-700 mt-0.5">
+                      Bs {activeSim.rentMonthlyBsMin.toLocaleString("es-BO")} – {activeSim.rentMonthlyBsMax.toLocaleString("es-BO")}
+                    </p>
+                    <p className="text-[10px] text-stone-400 mt-0.5 font-light">
+                      TC referencial: 12 Bs/USD
                     </p>
                   </div>
 
