@@ -1950,6 +1950,11 @@ export default function MapPage() {
     });
     setIsRecordingLead(false);
     if (event) {
+      if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+        if (contactDraft.propertyRef === 5 || isOnaProperty(selectedProperty)) {
+          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+        }
+      }
       openContactWhatsapp(event, contactDraft);
     }
     setContactDraft(null);

@@ -311,6 +311,11 @@ export default function OnaLanding({ property, onClose }: Props) {
       presupuesto: budget ? `USD ${formatOnaUsd(budget)}` : `desde USD 40.375`,
     }).catch(() => {});
 
+    // Meta Pixel: registrar evento Lead únicamente al abrir WhatsApp / reserva
+    if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+      (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+    }
+
     const text = `Hola, vengo de N.I.A. Quiero información para reservar en ONA Residences (${ONA_ZONE}) con USD ${formatOnaUsd(
       ONA_RESERVE_USD
     )}. ${detail}`;
@@ -1096,49 +1101,59 @@ export default function OnaLanding({ property, onClose }: Props) {
         </div>
       </div>
 
-      {/* BARRA INFERIOR FLOTANTE DE CONVERSIÓN RÁPIDA */}
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
-        <div>
-          <p className="text-xs text-stone-600">
-            Reserva con{" "}
-            <span className="font-semibold text-stone-900">
-              USD {formatOnaUsd(ONA_RESERVE_USD)}
-            </span>
-          </p>
-          <p className="text-[10px] text-[#9a7b45] font-medium hidden sm:block">
-            Congela el precio de preventa hoy
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleShareOna}
-            className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
-            title="Compartir ONA Residences"
+      {/* BARRA INFERIOR FLOTANTE DE CONVERSIÓN RÁPIDA (se oculta al llegar al bloque de cierre para no duplicar botones) */}
+      <AnimatePresence>
+        {activeLabel !== "Reserva 1.ª Fase" && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]"
           >
-            {shareFeedback ? (
-              <>
-                <Check size={14} className="text-emerald-600" />
-                <span className="text-emerald-700">¡Copiado!</span>
-              </>
-            ) : (
-              <>
-                <Share2 size={14} />
-                <span className="hidden sm:inline">Compartir</span>
-              </>
-            )}
-          </button>
+            <div>
+              <p className="text-xs text-stone-600">
+                Reserva con{" "}
+                <span className="font-semibold text-stone-900">
+                  USD {formatOnaUsd(ONA_RESERVE_USD)}
+                </span>
+              </p>
+              <p className="text-[10px] text-[#9a7b45] font-medium hidden sm:block">
+                Congela el precio de preventa hoy
+              </p>
+            </div>
 
-          <button
-            onClick={() =>
-              closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-            }
-            className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
-          >
-            Reservar Ahora
-          </button>
-        </div>
-      </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleShareOna}
+                className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
+                title="Compartir ONA Residences"
+              >
+                {shareFeedback ? (
+                  <>
+                    <Check size={14} className="text-emerald-600" />
+                    <span className="text-emerald-700">¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 size={14} />
+                    <span className="hidden sm:inline">Compartir</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() =>
+                  closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
+              >
+                Reservar Ahora
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
