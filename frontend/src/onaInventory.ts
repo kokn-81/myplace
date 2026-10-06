@@ -27,7 +27,8 @@ export type OnaParking = {
 };
 
 export const ONA_RESERVE_USD = 2000;
-export const ONA_ADDRESS = "Av. Los Cusis, entre Banzer y Beni";
+export const ONA_ZONE = "Los Cusis";
+export const ONA_ADDRESS = "Av. Los Cusis";
 export const ONA_DELIVERY = "Junio 2028";
 export const ONA_BUILDER = "Palacios Antunez";
 export const ONA_BROCHURE_URL = "/ona/brochure.pdf";

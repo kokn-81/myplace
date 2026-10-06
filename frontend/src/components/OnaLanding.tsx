@@ -24,6 +24,7 @@ import {
   ONA_BUILDER,
   ONA_DELIVERY,
   ONA_RESERVE_USD,
+  ONA_ZONE,
   formatOnaUsd,
 } from "../onaInventory";
 import type { Property } from "../types";
@@ -162,7 +163,7 @@ interface SimulationConfig {
   plan60: { initial: number; total: number };
   plan40: { initial: number; total: number };
   marketValueAtDelivery: number; // calculated at $1,600 USD/m2
-  phase2ProjectedCost: number;   // calculated at $1,380 USD/m2
+  gainAtDelivery: number;        // calculated vs contado
   rentMonthlyMin: number;
   rentMonthlyMax: number;
   yieldRange: string;
@@ -177,7 +178,7 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan60: { initial: 25194, total: 41990 },
     plan40: { initial: 17442, total: 43605 },
     marketValueAtDelivery: 51680,
-    phase2ProjectedCost: 44574,
+    gainAtDelivery: 11305,
     rentMonthlyMin: 450,
     rentMonthlyMax: 520,
     yieldRange: "13,3% – 15,4%",
@@ -190,7 +191,7 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan60: { initial: 42229, total: 70382 },
     plan40: { initial: 29235, total: 73089 },
     marketValueAtDelivery: 86624,
-    phase2ProjectedCost: 74713,
+    gainAtDelivery: 18949,
     rentMonthlyMin: 650,
     rentMonthlyMax: 750,
     yieldRange: "11,5% – 13,3%",
@@ -203,7 +204,7 @@ const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
     plan60: { initial: 71760, total: 119600 },
     plan40: { initial: 49680, total: 124200 },
     marketValueAtDelivery: 147200,
-    phase2ProjectedCost: 126960,
+    gainAtDelivery: 32200,
     rentMonthlyMin: 950,
     rentMonthlyMax: 1150,
     yieldRange: "10,0% – 12,0%",
@@ -223,8 +224,8 @@ export default function OnaLanding({ property, onClose }: Props) {
   const placeRef = useRef<HTMLElement>(null);
   const amenitiesRef = useRef<HTMLElement>(null);
   const typesRef = useRef<HTMLElement>(null);
-  const investorRef = useRef<HTMLElement>(null);
   const payRef = useRef<HTMLElement>(null);
+  const investorRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
@@ -232,8 +233,8 @@ export default function OnaLanding({ property, onClose }: Props) {
       lugar: { src: "/ona/ubicacion.jpg", label: "Ubicación" },
       amenidades: { src: "/ona/piscina.jpg", label: "Amenidades" },
       tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
-      inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
       pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
+      inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
     };
 
     const observer = new IntersectionObserver(
@@ -249,7 +250,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       { threshold: [0.22, 0.5] }
     );
 
-    [introRef, placeRef, amenitiesRef, typesRef, investorRef, payRef].forEach((ref) => {
+    [introRef, placeRef, amenitiesRef, typesRef, payRef, investorRef].forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -265,11 +266,11 @@ export default function OnaLanding({ property, onClose }: Props) {
       action: "contact_tap",
       propertyRef: property.id,
       operacion: "Preventa",
-      zona: property.zone || ONA_ADDRESS,
+      zona: property.zone || ONA_ZONE,
       presupuesto: budget ? `USD ${formatOnaUsd(budget)}` : `desde USD 40.375`,
     }).catch(() => {});
 
-    const text = `Hola, vengo de N.I.A. Quiero información para reservar en ONA Residences (${ONA_ADDRESS}) con USD ${formatOnaUsd(
+    const text = `Hola, vengo de N.I.A. Quiero información para reservar en ONA Residences (${ONA_ZONE}) con USD ${formatOnaUsd(
       ONA_RESERVE_USD
     )}. ${detail}`;
     window.open(
@@ -295,7 +296,6 @@ export default function OnaLanding({ property, onClose }: Props) {
   const activeSim = SIMULATION_CONFIG[simTypology];
   const activeSimPlanData = activeSim[simPlan];
   const simNetCapitalGain = activeSim.marketValueAtDelivery - activeSimPlanData.total;
-  const simPhase2Diff = activeSim.phase2ProjectedCost - activeSim.contado.total;
 
   return (
     <motion.div
@@ -337,7 +337,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             ONA
           </h1>
           <p className="mt-3 max-w-sm text-sm font-light text-white/90 md:text-base leading-relaxed [text-align:justify] [text-justify:inter-word]">
-            Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en Av. Los Cusis.
+            Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en {ONA_ZONE}.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-white/80 font-light">
             <span>Constructora {ONA_BUILDER}</span>
@@ -345,7 +345,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <span>Entrega {ONA_DELIVERY}</span>
           </div>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-[#e8d5a8]">
-            <MapPin size={13} /> {ONA_ADDRESS}
+            <MapPin size={13} /> {ONA_ZONE}
           </p>
         </div>
       </div>
@@ -364,17 +364,14 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Hay lugares donde vives. <br />
+              Viví ONA. <br />
               <span className="italic font-normal text-[#9a7b45]">
-                ONA te da una nueva forma de vivir.
+                Un proyecto pensado para elevar tu forma de vivir.
               </span>
             </h2>
 
             <p className="mt-5 text-[15px] font-light leading-relaxed text-stone-600 md:text-base [text-align:justify] [text-justify:inter-word]">
-              ONA Residences nace como un refugio de arquitectura contemporánea que combina biofilia,
-              líneas orgánicas y luz natural en una de las zonas más serenas y cotizadas de Santa Cruz.
-              Un proyecto concebido por <strong>{ONA_BUILDER}</strong> para quienes entienden que el verdadero
-              lujo cotidiano reside en despertar con calma, respirar bienestar y tener todo al alcance.
+              ONA Residences reúne arquitectura contemporánea, diseño biofílico y ambientes pensados para combinar comodidad, bienestar y estilo en una de las zonas más serenas y cotizadas de Santa Cruz: <strong>{ONA_ZONE}</strong>. Un proyecto concebido por <strong>{ONA_BUILDER}</strong> para quienes entienden que el verdadero confort reside en despertar con calma, disfrutar áreas sociales completas y asegurar una sólida inversión patrimonial.
             </p>
 
             <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm">
@@ -399,20 +396,20 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="mt-7 flex flex-wrap gap-3">
               <button
                 onClick={() => {
-                  investorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  payRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
                 className="bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
               >
-                Ver Tesis de Inversión
+                Ver Planes de Pago
               </button>
               <button
-                onClick={() =>
-                  reserve("Hola, quiero recibir la carpeta digital con planos y disponibilidad de ONA Residences.")
-                }
+                onClick={() => {
+                  investorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
                 className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 transition-all hover:border-stone-900 hover:bg-stone-50 active:scale-95"
               >
-                <MessageCircle size={15} className="text-[#9a7b45]" />
-                Solicitar Carpeta Digital
+                <TrendingUp size={15} className="text-[#9a7b45]" />
+                Rentabilidad & Simulador
               </button>
             </div>
 
@@ -421,8 +418,8 @@ export default function OnaLanding({ property, onClose }: Props) {
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
-              <a href="#inversion" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Rentabilidad & Simulador</a>
               <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
+              <a href="#inversion" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Rentabilidad & Simulador</a>
             </nav>
           </section>
 
@@ -437,18 +434,18 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Av. Los Cusis: Calma residencial y conectividad total.
+              Los Cusis: Calma residencial y conectividad total.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Ubicado estratégicamente sobre <strong>Av. Los Cusis, entre Banzer y Beni</strong>.
-              Este cuadrante combina el encanto de un vecindario consolidado, arbolado y tranquilo, con un acceso inmediato a las principales arterias viales y comerciales de Santa Cruz.
+              Ubicado estratégicamente sobre <strong>{ONA_ADDRESS}</strong>, en el tradicional cuadrante residencial de <strong>{ONA_ZONE}</strong> (entre Banzer y Beni).
+              Combina el encanto de un vecindario arbolado y tranquilo con un acceso inmediato a las principales arterias comerciales y empresariales de Santa Cruz.
             </p>
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
               <img
                 src="/ona/ubicacion.jpg"
-                alt="Mapa de ubicación de ONA Residences en Av. Los Cusis"
+                alt="Mapa de ubicación de ONA Residences en Los Cusis"
                 className="w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
               />
               <div className="p-5">
@@ -590,10 +587,10 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Diseño de autor a la medida de tu momento.
+              Un proyecto, distintas formas de vivirlo.
             </h2>
             <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Espacios concebidos para optimizar cada metro cuadrado, garantizando excelente iluminación natural, circulación fluida y confort para el día a día.
+              En ONA Residences podés elegir el departamento según el espacio que realmente necesitás: opciones de 1 y 2 dormitorios concebidas para optimizar cada metro cuadrado, con excelente iluminación natural y terminaciones de primera.
             </p>
 
             <div className="mt-8 space-y-10">
@@ -679,42 +676,149 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 5. NUEVA SECCIÓN: TESIS DEL INVERSOR, RENTABILIDAD & SIMULADOR EN TIEMPO REAL */}
-          <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+          {/* 5. FORMAS DE PAGO & ESTRUCTURA DE COMPRA (ANTES DEL SIMULADOR) */}
+          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Tesis de Inversión & Análisis Financiero
+                Estructura de Compra
               </p>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              La matemática del dinero: Por qué invertir aquí es la decisión más lógica.
+              Planes de pago flexibles adaptados a tu estrategia.
             </h2>
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Los inversores experimentados no compran promesas vacías: compran <strong>asimetría positiva de valor</strong>.
-              ONA Residences combina precio de entrada en 1.ª fase, ubicación corporativa de alta demanda y rentabilidad neta en dólares muy por encima del promedio del mercado.
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {ONA_DELIVERY}.
             </p>
 
-            {/* BLOQUE A: EL ANCLAJE ESTRATÉGICO EQUIPETROL VS LOS CUSIS */}
+            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA */}
+            <div className="mt-6 space-y-4">
+              {/* Opción 1: Contado */}
+              <div className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
+                      Mayor Descuento
+                    </span>
+                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.250 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
+                    Accedes al valor por m² más bajo de todo el proyecto. Ahorras miles de dólares respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en {ONA_DELIVERY}.
+                  </p>
+                </div>
+              </div>
+
+              {/* Opción 2: 60% inicial */}
+              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Equilibrio Financiero
+                    </span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 60% + Saldo contra Entrega (40%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">$1.300 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
+                  </div>
+                </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    El balance perfecto entre liquidez y rendimiento. Congelas tu unidad con un precio por metro cuadrado muy por debajo del promedio del mercado y pagas el 40% restante recién cuando la obra esté 100% finalizada.
+                  </p>
+                </div>
+              </div>
+
+              {/* Opción 3: 40% inicial */}
+              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Entrada Cómoda
+                    </span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 40% + Saldo contra Entrega (60%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">$1.350 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
+                  </div>
+                </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    El menor desembolso de entrada para ingresar a un edificio de categoría en {ONA_ZONE}. Te permite asegurar y congelar tu propiedad hoy, mientras cancelas el 60% en {ONA_DELIVERY}.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE */}
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-700">
+                  <Car size={20} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                    Estacionamiento & Almacenamiento
+                  </p>
+                  <p className="font-serif text-lg text-stone-900">
+                    Parqueos cubiertos con baulera individual desde{" "}
+                    <strong className="text-[#9a7b45]">USD 15.000</strong>
+                  </p>
+                </div>
+              </div>
+              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
+                Disponibilidad en Planta Baja y Subsuelo con opciones de estacionamiento simple y doble. Cada parqueo incluye su propia baulera privada independiente.
+              </p>
+            </div>
+          </section>
+
+
+          {/* 6. RENTABILIDAD & PLUSVALÍA (CON SIMULADOR EN TIEMPO REAL) */}
+          <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={14} className="text-[#9a7b45]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                Rentabilidad & Plusvalía
+              </p>
+            </div>
+
+            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
+              Por qué invertir en ONA Residences es tu mejor decisión.
+            </h2>
+            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Una inversión inteligente combina precio de entrada en 1.ª fase, ubicación residencial de alta demanda de alquiler y una sólida tasa de revalorización en dólares.
+            </p>
+
+            {/* BLOQUE A: VALOR COMPARATIVO */}
             <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
-                  Anclaje de Valor Comparativo
+                  Anclaje de Valor
                 </span>
               </div>
               <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                A 4 minutos de Equipetrol, pero con 35% de descuento por m².
+                Ubicación estratégica con un valor de entrada preferencial.
               </h3>
               <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Equipetrol es el referente corporativo de Santa Cruz, pero sus precios de preventa hoy ya están saturados entre $1.850 y $2.200 USD/m², lo que achica el margen de retorno del comprador. Av. Los Cusis ofrece el mismo perfil ejecutivo y gastronómico con una entrada incomparablemente más ventajosa.
+                A pocos minutos de los principales centros corporativos y gastronómicos de la ciudad, {ONA_ZONE} ofrece un entorno residencial tranquilo, arbolado y de alta conectividad. Mientras que en zonas corporativas vecinas los valores de preventa rondan entre $1.850 y $2.200 USD/m², ONA Residences te permite ingresar en 1.ª fase desde $1.250 USD/m², otorgándote un margen de plusvalía y retorno sustancialmente mayor.
               </p>
 
               <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Equipetrol */}
+                {/* Referencia zona corporativa vecina */}
                 <div className="rounded-xl border border-stone-200 bg-stone-50/70 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                    Equipetrol (Zona Saturada)
+                    Referencia en Zona Corporativa Vecina
                   </p>
                   <p className="mt-2 font-serif text-2xl text-stone-700">
                     $1.850 – $2.200 <span className="text-xs font-sans text-stone-500">USD/m²</span>
@@ -722,7 +826,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   <ul className="mt-3 space-y-1.5 text-xs text-stone-600 font-light">
                     <li>• Entrada mínima 1 dorm: <strong>$65.000 – $75.000 USD</strong></li>
                     <li>• Retorno anual por alquiler: <strong>6% – 8% anual</strong></li>
-                    <li>• Plusvalía futura: Margen reducido por precio de partida elevado</li>
+                    <li>• Plusvalía futura: Margen acotado por precio de partida elevado</li>
                   </ul>
                 </div>
 
@@ -732,57 +836,57 @@ export default function OnaLanding({ property, onClose }: Props) {
                     Ventaja ONA
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
-                    ONA · Av. Los Cusis (1.ª Fase)
+                    ONA · {ONA_ZONE} (1.ª Fase)
                   </p>
                   <p className="mt-2 font-serif text-2xl text-stone-900 font-medium">
                     $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
                   </p>
                   <ul className="mt-3 space-y-1.5 text-xs text-stone-800 font-light">
                     <li>• Entrada mínima 1 dorm: <strong className="text-stone-900">Desde USD 40.375</strong></li>
-                    <li>• Retorno anual proyectado: <strong className="text-[#816127]">13,3% – 15,4% en USD</strong></li>
-                    <li>• Plusvalía directa proyectada: <strong className="text-stone-900">+28% a la entrega ($1.600/m²)</strong></li>
+                    <li>• Retorno anual proyectado: <strong className="text-[#816127]">11,5% – 15,4% en USD</strong></li>
+                    <li>• Plusvalía a la entrega: <strong className="text-stone-900">+28% proyectado ($1.600/m²)</strong></li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* BLOQUE B: AVERSIÓN A LA PÉRDIDA - EL COSTO DE DUDAR */}
+            {/* BLOQUE B: OPORTUNIDAD DE PREVENTA - PISO HISTÓRICO */}
             <div className="mt-8 rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-xl">
               <div className="flex items-center gap-2">
                 <AlertCircle size={16} className="text-[#e8d5a8]" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
-                  Ventana de Oportunidad Limitada
+                  Oportunidad de Preventa · 1.ª Fase
                 </span>
               </div>
               <h3 className="mt-2 font-serif text-2xl text-white">
-                El costo real de esperar a la Fase 2: Pagarás miles de dólares más.
+                Asegura el piso de preventa antes de futuras actualizaciones de valor.
               </h3>
               <p className="mt-2 text-xs text-stone-300 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Los proyectos inmobiliarios serios se valorizan por etapas. El precio de <strong>$1.250 USD/m²</strong> pertenece de forma exclusiva a la 1.ª fase de preventa. En la siguiente actualización de precios (Fase 2), la lista base proyectada se elevará a <strong>$1.380 USD/m²</strong>.
+                Los desarrollos inmobiliarios serios escalonan sus listas de precios conforme avanza la obra. Ingresar hoy al valor base de <strong>$1.250 USD/m²</strong> asegura la máxima plusvalía acumulada frente al valor referencial de entrega de <strong>$1.600 USD/m²</strong> en {ONA_DELIVERY}.
               </p>
 
               <div className="mt-5 rounded-xl border border-white/15 bg-white/5 p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-center sm:text-left">
                   <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
-                    <p className="text-[11px] uppercase tracking-wider text-stone-400">1 Dormitorio (32 m²)</p>
-                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 4.199</p>
+                    <p className="text-[11px] uppercase tracking-wider text-stone-400">1 Dormitorio (32,3 m²)</p>
+                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 11.305</p>
                   </div>
                   <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
-                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios (54 m²)</p>
-                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 7.038</p>
+                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios (54,1 m²)</p>
+                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 18.949</p>
                   </div>
                   <div>
                     <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios Suite (92 m²)</p>
-                    <p className="mt-1 text-sm text-stone-200">Incremento en Fase 2:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 11.960</p>
+                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
+                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 32.200</p>
                   </div>
                 </div>
               </div>
 
               <p className="mt-4 text-xs text-[#e8d5a8] font-light [text-align:justify] [text-justify:inter-word]">
-                Reserva hoy con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el piso mínimo histórico del proyecto. Dejar pasar esta fase significa pagar ese sobreprecio por exactamente el mismo departamento.
+                Reserva hoy con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el precio de 1.ª fase antes de la primera actualización de lista del proyecto.
               </p>
             </div>
 
@@ -944,114 +1048,6 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 6. FORMAS DE PAGO & PLUSVALÍA (ESTRUCTURA Y PARQUEOS) */}
-          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura de Compra
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Planes de pago flexibles adaptados a tu estrategia.
-            </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para Junio 2028.
-            </p>
-
-            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA */}
-            <div className="mt-6 space-y-4">
-              {/* Opción 1: Contado */}
-              <div className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
-                      Mayor Descuento
-                    </span>
-                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.250 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Accedes al valor por m² más bajo de todo el proyecto. Ahorras miles de dólares respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en 2028.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 2: 60% inicial */}
-              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Equilibrio Financiero
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 60% + Saldo contra Entrega (40%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.300 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El balance perfecto entre liquidez y rendimiento. Congelas tu unidad con un precio por metro cuadrado muy por debajo del promedio del mercado y pagas el 40% restante recién cuando la obra esté 100% finalizada.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 3: 40% inicial */}
-              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Entrada Cómoda
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 40% + Saldo contra Entrega (60%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.350 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El menor desembolso de entrada para ingresar a un edificio de categoría en Los Cusis. Te permite asegurar y congelar tu propiedad hoy, mientras cancelas el 60% en Junio 2028.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE */}
-            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-700">
-                  <Car size={20} />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">
-                    Estacionamiento & Almacenamiento
-                  </p>
-                  <p className="font-serif text-lg text-stone-900">
-                    Parqueos cubiertos con baulera individual desde{" "}
-                    <strong className="text-[#9a7b45]">USD 15.000</strong>
-                  </p>
-                </div>
-              </div>
-              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                Disponibilidad en Planta Baja y Subsuelo con opciones de estacionamiento simple y doble. Cada parqueo incluye su propia baulera privada independiente.
-              </p>
-            </div>
-          </section>
-
-
           {/* 7. CIERRE DE CONVERSIÓN & LLAMADO A LA ACCIÓN FINAL */}
           <section className="mt-20 border-t border-stone-200 pt-12 text-center">
             <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
@@ -1075,7 +1071,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <p className="mt-8 text-[11px] leading-relaxed text-stone-400">
-              Constructora {ONA_BUILDER} · Entrega programada {ONA_DELIVERY} · Av. Los Cusis, entre Banzer y Beni. Las imágenes y renders son de carácter arquitectónico referencial.
+              Constructora {ONA_BUILDER} · Entrega programada {ONA_DELIVERY} · {ONA_ZONE}. Las imágenes y renders son de carácter arquitectónico referencial.
             </p>
           </section>
 
