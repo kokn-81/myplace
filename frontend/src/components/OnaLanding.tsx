@@ -311,9 +311,16 @@ export default function OnaLanding({ property, onClose }: Props) {
       presupuesto: budget ? `USD ${formatOnaUsd(budget)}` : `desde USD 40.375`,
     }).catch(() => {});
 
-    // Meta Pixel: registrar evento Lead únicamente al abrir WhatsApp / reserva
-    if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-      (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+    // Meta Pixel: disparar evento Lead antes de abrir WhatsApp
+    if (typeof window !== "undefined") {
+      try {
+        const fbqFn = (window as any).fbq || (globalThis as any).fbq;
+        if (typeof fbqFn === "function") {
+          fbqFn("track", "Lead", { content_name: "Ona Residences" });
+        }
+      } catch (err) {
+        console.warn("Meta Pixel Lead error:", err);
+      }
     }
 
     const text = `Hola, vengo de N.I.A. Quiero información para reservar en ONA Residences (${ONA_ZONE}) con USD ${formatOnaUsd(
@@ -1144,7 +1151,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
               <button
                 onClick={() =>
-                  closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  reserve("Quiero información inmediata para reservar mi unidad de 1.ª fase en ONA Residences.")
                 }
                 className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
               >
