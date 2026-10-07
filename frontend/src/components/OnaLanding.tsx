@@ -18,7 +18,6 @@ import {
   ShieldCheck,
   Sparkles,
   TrendingUp,
-  X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
 import {
@@ -34,7 +33,7 @@ import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
 
 interface Props {
   property: Property;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const AMENITY_SLIDES = [
@@ -358,7 +357,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 md:flex-row"
     >
-      {/* Botones Flotantes: Compartir y Cerrar */}
+      {/* Botón Flotante: Compartir */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button
           onClick={handleShareOna}
@@ -377,15 +376,6 @@ export default function OnaLanding({ property, onClose }: Props) {
               <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
             </>
           )}
-        </button>
-
-        <button
-          onClick={onClose}
-          className="rounded-full border border-stone-200 bg-white/95 p-3 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95"
-          aria-label="Cerrar"
-          title="Volver a NIA"
-        >
-          <X size={20} />
         </button>
       </div>
 
