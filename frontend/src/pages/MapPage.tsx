@@ -219,49 +219,6 @@ export const QUICK_FILTER_OPTIONS = [
   },
 ] as const;
 
-const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (!list || list.length <= 1) return list;
-  // Opción 1: Departamento de La Riviera (Ref #4 o complejo La Riviera)
-  const riviera = list.find(
-    (p) =>
-      String(p.id) === "4" ||
-      String(p.complejoId) === "3" ||
-      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
-      (p.title && p.title.toLowerCase().includes("riviera"))
-  );
-  // Opción 2: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
-  const ona = list.find(
-    (p) =>
-      String(p.id) === "5" ||
-      (p.title && p.title.toLowerCase().includes("ona residences")) ||
-      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences"))
-  );
-
-  const priorityItems: Property[] = [];
-  if (riviera) priorityItems.push(riviera);
-  if (ona && String(ona.id) !== String(riviera?.id)) priorityItems.push(ona);
-
-  if (priorityItems.length === 0) return list;
-
-  const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
-  const remaining = list.filter((p) => !prioritySet.has(String(p.id)));
-  return [...priorityItems, ...remaining];
-};
-
-export const isPromotedProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  return (
-    String(p.id) === "4" ||
-    String(p.id) === "5" ||
-    Boolean((p as any).destacado) ||
-    Boolean((p as any).promocion) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
-    Boolean(p.title && p.title.toLowerCase().includes("riviera")) ||
-    Boolean(p.title && p.title.toLowerCase().includes("ona residences")) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences"))
-  );
-};
-
 export const isOnaProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   return (
@@ -280,6 +237,48 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   return String(p.id).toLowerCase() === q || Boolean(p.title && p.title.toLowerCase().includes(q));
 };
 
+const prioritizeRecommended = (list: Property[]): Property[] => {
+  if (!list || list.length <= 1) return list;
+  // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
+  const ona = list.find(
+    (p) =>
+      String(p.id) === "5" ||
+      isOnaProperty(p)
+  );
+  // Opción 2: Departamento de La Riviera (Ref #4 o complejo La Riviera)
+  const riviera = list.find(
+    (p) =>
+      String(p.id) === "4" ||
+      String(p.complejoId) === "3" ||
+      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
+      (p.title && p.title.toLowerCase().includes("riviera"))
+  );
+
+  const priorityItems: Property[] = [];
+  if (ona) priorityItems.push(ona);
+  if (riviera && String(riviera.id) !== String(ona?.id)) priorityItems.push(riviera);
+
+  if (priorityItems.length === 0) return list;
+
+  const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
+  const remaining = list.filter((p) => !prioritySet.has(String(p.id)));
+  return [...priorityItems, ...remaining];
+};
+
+export const isPromotedProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  return (
+    String(p.id) === "5" ||
+    String(p.id) === "4" ||
+    Boolean((p as any).destacado) ||
+    Boolean((p as any).promocion) ||
+    Boolean(p.title && p.title.toLowerCase().includes("ona residences")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
+    Boolean(p.title && p.title.toLowerCase().includes("riviera"))
+  );
+};
+
 export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   if (!cityName) return true;
   const normTarget = normalizeGeoText(cityName);
@@ -289,7 +288,7 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v8";
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v9";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -524,6 +523,7 @@ export default function MapPage() {
   const hoverFocusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedBuildingGroup, setSelectedBuildingGroup] = useState<BuildingGroupData | null>(null);
   const [selectedBuildingSubfilter, setSelectedBuildingSubfilter] = useState<string>("all");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const hasSearchInteractionRef = useRef(false);
 
   // Mueve la cámara del mapa suavemente a la ubicación exacta de un inmueble
@@ -635,6 +635,9 @@ export default function MapPage() {
         setSelectedProperty((current) => {
           if (current) {
             focusPropertyLocation(current, 16.2);
+            if (isOnaProperty(current)) {
+              setCurrentIndex(0);
+            }
           }
           return null;
         });
@@ -655,6 +658,9 @@ export default function MapPage() {
     const target = selectedProperty || lastViewedProperty;
     if (target) {
       focusPropertyLocation(target, 16.2);
+      if (isOnaProperty(target)) {
+        setCurrentIndex(0);
+      }
     }
     setSelectedProperty(null);
 
@@ -1721,7 +1727,6 @@ export default function MapPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedProperty, selectedMediaCount, closePropertyDetail]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
   const carouselSwipeStartX = useRef<number | null>(null);
   const isCompactCarouselViewport = () => {
     if (typeof window === "undefined") return false;
