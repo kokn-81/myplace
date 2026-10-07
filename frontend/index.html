@@ -41,6 +41,11 @@
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '1656618562720762');
       fbq('track', 'PageView');
+      window.trackOnaLead = function() {
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', {content_name: 'Ona Residences'});
+        }
+      };
     </script>
     <!-- End Meta Pixel Code -->
   </head>

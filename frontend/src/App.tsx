@@ -1,7 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-const MapPage = lazy(() => import("./pages/MapPage"));
+import MapPage from "./pages/MapPage";
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NiaMetricsDashboard = lazy(() => import("./pages/NiaMetricsDashboard"));
 const AdminCatalogDashboard = lazy(() => import("./pages/AdminCatalogDashboard"));

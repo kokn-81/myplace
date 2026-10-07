@@ -314,9 +314,10 @@ export default function OnaLanding({ property, onClose }: Props) {
     // Meta Pixel: disparar evento Lead antes de abrir WhatsApp
     if (typeof window !== "undefined") {
       try {
-        const fbqFn = (window as any).fbq || (globalThis as any).fbq;
-        if (typeof fbqFn === "function") {
-          fbqFn("track", "Lead", { content_name: "Ona Residences" });
+        if (typeof (window as any).trackOnaLead === "function") {
+          (window as any).trackOnaLead();
+        } else if (typeof (window as any).fbq === "function") {
+          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
         }
       } catch (err) {
         console.warn("Meta Pixel Lead error:", err);
@@ -1063,11 +1064,14 @@ export default function OnaLanding({ property, onClose }: Props) {
                     Congela estos números de 1.ª fase con tu reserva de <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
                   </p>
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+                        (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+                      }
                       reserve(
                         `Hola, utilicé el simulador de ONA. Quiero reservar la tipología ${activeSim.title} (${activeSim.areaM2} m²) en modalidad ${simPlan === "contado" ? "Al Contado" : simPlan === "plan60" ? "60% Inicial" : "40% Inicial"} con ganancia de capital estimada de USD ${formatOnaUsd(simNetCapitalGain)}. Por favor indíquenme qué pisos siguen disponibles.`
-                      )
-                    }
+                      );
+                    }}
                     className="w-full sm:w-auto bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-[#9a7b45] active:scale-95 shadow-md shrink-0"
                   >
                     Congelar Esta Unidad
@@ -1091,9 +1095,12 @@ export default function OnaLanding({ property, onClose }: Props) {
 
             <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
               <button
-                onClick={() =>
-                  reserve("Quiero que un asesor me presente las unidades disponibles de 1.ª fase y me ayude a elegir.")
-                }
+                onClick={() => {
+                  if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+                    (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+                  }
+                  reserve("Quiero que un asesor me presente las unidades disponibles de 1.ª fase y me ayude a elegir.");
+                }}
                 className="bg-stone-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95"
               >
                 Reservar con USD {formatOnaUsd(ONA_RESERVE_USD)}
