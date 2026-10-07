@@ -1151,7 +1151,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
               <button
                 onClick={() =>
-                  reserve("Quiero información inmediata para reservar mi unidad de 1.ª fase en ONA Residences.")
+                  closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
                 }
                 className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
               >
