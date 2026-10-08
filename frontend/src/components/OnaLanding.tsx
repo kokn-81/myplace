@@ -301,7 +301,7 @@ export default function OnaLanding({ property, onClose }: Props) {
     (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") ||
     CONTACT_WHATSAPP_NUMBER;
 
-  const reserve = (detail: string, budget?: number) => {
+  const reserve = (messageText: string, budget?: number) => {
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: property.id,
@@ -323,11 +323,8 @@ export default function OnaLanding({ property, onClose }: Props) {
       }
     }
 
-    const text = `Hola, vengo de N.I.A. Quiero información para reservar en ONA Residences (${ONA_ZONE}) con USD ${formatOnaUsd(
-      ONA_RESERVE_USD
-    )}. ${detail}`;
     window.open(
-      `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+      `https://wa.me/${phone}?text=${encodeURIComponent(messageText)}`,
       "_blank",
       "noopener,noreferrer"
     );
@@ -1058,8 +1055,10 @@ export default function OnaLanding({ property, onClose }: Props) {
                       if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
                         (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
                       }
+                      const planLabel = simPlan === "contado" ? "Al Contado" : simPlan === "plan60" ? "60% Inicial" : "40% Inicial";
                       reserve(
-                        `Hola, utilicé el simulador de ONA. Quiero reservar la tipología ${activeSim.title} (${activeSim.areaM2} m²) en modalidad ${simPlan === "contado" ? "Al Contado" : simPlan === "plan60" ? "60% Inicial" : "40% Inicial"} con ganancia de capital estimada de USD ${formatOnaUsd(simNetCapitalGain)}. Por favor indíquenme qué pisos siguen disponibles.`
+                        `Hola, vengo directo para reservar en ONA: tipología ${activeSim.title} (${activeSim.areaM2} m²), precio USD ${formatOnaUsd(activeSimPlanData.total)}, modalidad ${planLabel}. ¿Qué pisos tienen disponibles?`,
+                        activeSimPlanData.total
                       );
                     }}
                     className="w-full sm:w-auto bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-[#9a7b45] active:scale-95 shadow-md shrink-0"
@@ -1089,7 +1088,10 @@ export default function OnaLanding({ property, onClose }: Props) {
                   if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
                     (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
                   }
-                  reserve("Quiero que un asesor me presente las unidades disponibles de 1.ª fase y me ayude a elegir.");
+                  reserve(
+                    `Hola, vengo directo para reservar en ONA con USD ${formatOnaUsd(ONA_RESERVE_USD)}. ¿Qué pisos tienen disponibles?`,
+                    ONA_RESERVE_USD
+                  );
                 }}
                 className="bg-stone-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95"
               >
