@@ -352,7 +352,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 md:flex-row"
+      className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
       {/* Botón Flotante: Compartir */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
@@ -376,8 +376,8 @@ export default function OnaLanding({ property, onClose }: Props) {
         </button>
       </div>
 
-      {/* PANEL IZQUIERDO: Fotografía Inmersiva Dinámica */}
-      <div className="relative h-[32vh] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
+      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica */}
+      <div className="relative h-[40vh] min-h-[290px] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
         <AnimatePresence mode="popLayout">
           <motion.img
             key={activeImage}
@@ -413,7 +413,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       </div>
 
       {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
-      <div className="relative min-h-0 flex-1 overflow-y-auto">
+      <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
 
           {/* 1. HERO / VIVÍ ONA: EXPERIENCIA Y ESTILO DE VIDA */}
