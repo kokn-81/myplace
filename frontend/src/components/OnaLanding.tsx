@@ -162,89 +162,92 @@ const TYPOLOGIES_DATA = [
   },
 ];
 
-type SimTypologyKey = "32" | "54" | "92";
-type SimPlanKey = "contado" | "plan60" | "plan40";
-
-interface SimulationConfig {
-  title: string;
+interface AmbienteOption {
+  id: string;
+  name: string;
   shortName: string;
+  rooms: number;
   areaM2: number;
-  contado: { initial: number; total: number };
-  plan60: { initial: number; total: number };
-  plan40: { initial: number; total: number };
-  marketValueAtDelivery: number; // calculated at $1,600 USD/m2
-  gainAtDelivery: number;        // calculated vs contado
-  rentMonthlyMin: number;
-  rentMonthlyMax: number;
-  rentMonthlyBsMin: number;
-  rentMonthlyBsMax: number;
+  balconyM2: number | null;
+  view: string;
+  basePrice: number;
+  rentMin: number;
+  rentMax: number;
   yieldRange: string;
+  matchUnit: (u: OnaUnit) => boolean;
 }
 
-const SIMULATION_CONFIG: Record<SimTypologyKey, SimulationConfig> = {
-  "32": {
-    title: "1 Dormitorio Master",
-    shortName: "1 Dorm (32,3 m²)",
+const AMBIENTE_OPTIONS: AmbienteOption[] = [
+  {
+    id: "1D-32",
+    name: "1 Dormitorio Master",
+    shortName: "1 Dorm · 32,3 m²",
+    rooms: 1,
     areaM2: 32.3,
-    contado: { initial: 40375, total: 40375 },
-    plan60: { initial: 25194, total: 41990 },
-    plan40: { initial: 17442, total: 43605 },
-    marketValueAtDelivery: 51680,
-    gainAtDelivery: 11305,
-    rentMonthlyMin: 350,
-    rentMonthlyMax: 375,
-    rentMonthlyBsMin: 4200,
-    rentMonthlyBsMax: 4500,
+    balconyM2: null,
+    view: "Vista Lateral (Este / Oeste)",
+    basePrice: 40375,
+    rentMin: 350,
+    rentMax: 375,
     yieldRange: "10,4% – 11,1%",
+    matchUnit: (u) => u.rooms === 1 && (u.tipo === "3" || u.tipo === "4"),
   },
-  "54": {
-    title: "2 Dormitorios Confort",
-    shortName: "2 Dorm (54,1 m²)",
+  {
+    id: "2D-54",
+    name: "2 Dormitorios Confort",
+    shortName: "2 Dorms · 54,1 m²",
+    rooms: 2,
     areaM2: 54.14,
-    contado: { initial: 67675, total: 67675 },
-    plan60: { initial: 42229, total: 70382 },
-    plan40: { initial: 29235, total: 73089 },
-    marketValueAtDelivery: 86624,
-    gainAtDelivery: 18949,
-    rentMonthlyMin: 520,
-    rentMonthlyMax: 560,
-    rentMonthlyBsMin: 6240,
-    rentMonthlyBsMax: 6720,
+    balconyM2: null,
+    view: "Vista Lateral (Tipo 1)",
+    basePrice: 67675,
+    rentMin: 520,
+    rentMax: 560,
     yieldRange: "9,2% – 9,9%",
+    matchUnit: (u) => u.rooms === 2 && u.tipo === "1",
   },
-  "92": {
-    title: "2 Dormitorios con Balcón Suite",
-    shortName: "2 Dorm Suite (92 m²)",
+  {
+    id: "2D-92-cusis",
+    name: "2 Dorms Suite Frontal",
+    shortName: "2 Dorms Suite · 92 m² (Frontal)",
+    rooms: 2,
     areaM2: 92.0,
-    contado: { initial: 115000, total: 115000 },
-    plan60: { initial: 71760, total: 119600 },
-    plan40: { initial: 49680, total: 124200 },
-    marketValueAtDelivery: 147200,
-    gainAtDelivery: 32200,
-    rentMonthlyMin: 750,
-    rentMonthlyMax: 830,
-    rentMonthlyBsMin: 9000,
-    rentMonthlyBsMax: 9960,
+    balconyM2: 5.55,
+    view: "Vista Av. Los Cusis (Tipo 2)",
+    basePrice: 115000,
+    rentMin: 750,
+    rentMax: 830,
     yieldRange: "7,8% – 8,7%",
+    matchUnit: (u) => u.rooms === 2 && u.tipo === "2",
   },
-};
+  {
+    id: "2D-92-post",
+    name: "2 Dorms Suite Posterior",
+    shortName: "2 Dorms Suite · 92 m² (Posterior)",
+    rooms: 2,
+    areaM2: 92.05,
+    balconyM2: 5.55,
+    view: "Vista Posterior (Tipo 5)",
+    basePrice: 114142,
+    rentMin: 750,
+    rentMax: 830,
+    yieldRange: "7,8% – 8,7%",
+    matchUnit: (u) => u.rooms === 2 && u.tipo === "5",
+  },
+];
 
 export default function OnaLanding({ property, onClose }: Props) {
   const [activeImage, setActiveImage] = useState("/ona/fachada-dia.jpg");
   const [activeLabel, setActiveLabel] = useState("Fachada");
   const [amenityIndex, setAmenityIndex] = useState(0);
 
-  // Estados del Simulador de Inversión en Tiempo Real
-  const [simTypology, setSimTypology] = useState<SimTypologyKey>("32");
-  const [simPlan, setSimPlan] = useState<SimPlanKey>("contado");
-  const [shareFeedback, setShareFeedback] = useState(false);
+  // Estados del Flujo Paso a Paso (Ambiente -> Piso disponible -> Precio & Ganancia):
+  const [selectedAmbId, setSelectedAmbId] = useState<string>("1D-32");
+  const [selectedFloor, setSelectedFloor] = useState<number>(2);
+  const [selectedPlan, setSelectedPlan] = useState<"contado" | "plan60" | "plan40">("contado");
 
-  // Estados de Inventario y Disponibilidad en Tiempo Real
+  const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<OnaUnit[]>(ONA_UNITS);
-  const [invFilterRooms, setInvFilterRooms] = useState<number | "all">("all");
-  const [invFilterFloorRange, setInvFilterFloorRange] = useState<"all" | "low" | "mid" | "high">("all");
-  const [invOnlyAvailable, setInvOnlyAvailable] = useState<boolean>(true);
-  const [selectedUnitForDetail, setSelectedUnitForDetail] = useState<OnaUnit | null>(null);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
 
   useEffect(() => {
@@ -280,30 +283,105 @@ export default function OnaLanding({ property, onClose }: Props) {
   const availableUnitsCount = units.filter((u) => u.status === "disponible").length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
 
-  const filteredUnits = useMemo(() => {
-    return units.filter((u) => {
-      if (invOnlyAvailable && u.status !== "disponible") return false;
-      if (invFilterRooms !== "all" && u.rooms !== invFilterRooms) return false;
-      if (invFilterFloorRange === "low" && (u.floor < 1 || u.floor > 4)) return false;
-      if (invFilterFloorRange === "mid" && (u.floor < 5 || u.floor > 8)) return false;
-      if (invFilterFloorRange === "high" && (u.floor < 9 || u.floor > 12)) return false;
-      return true;
-    });
-  }, [units, invOnlyAvailable, invFilterRooms, invFilterFloorRange]);
+  const currentAmbiente = useMemo(() => {
+    return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
+  }, [selectedAmbId]);
 
-  const unitsByFloor = useMemo(() => {
-    const map = new Map<number, OnaUnit[]>();
-    for (const u of filteredUnits) {
-      const list = map.get(u.floor) || [];
-      list.push(u);
-      map.set(u.floor, list);
+  // Pisos existentes para este ambiente ordenados de menor a mayor
+  const floorsForAmbiente = useMemo(() => {
+    const floorNums = Array.from(
+      new Set(units.filter((u) => currentAmbiente.matchUnit(u)).map((u) => u.floor))
+    ).sort((a, b) => a - b);
+
+    return floorNums.map((floor) => {
+      const unitsOnFloor = units.filter((u) => currentAmbiente.matchUnit(u) && u.floor === floor);
+      const availableUnits = unitsOnFloor.filter((u) => u.status === "disponible");
+      const isAvailable = availableUnits.length > 0;
+      return {
+        floor,
+        isAvailable,
+        availableCount: availableUnits.length,
+        totalCount: unitsOnFloor.length,
+        unit: isAvailable ? availableUnits[0] : unitsOnFloor[0],
+      };
+    });
+  }, [units, currentAmbiente]);
+
+  // Si el piso seleccionado actual no está disponible para este ambiente, auto-seleccionar el primer piso disponible
+  useEffect(() => {
+    const currentFloorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
+    if (!currentFloorItem || !currentFloorItem.isAvailable) {
+      const firstAvailable = floorsForAmbiente.find((f) => f.isAvailable);
+      if (firstAvailable) {
+        setSelectedFloor(firstAvailable.floor);
+      } else if (floorsForAmbiente.length > 0) {
+        setSelectedFloor(floorsForAmbiente[0].floor);
+      }
     }
-    const sortedFloors = Array.from(map.keys()).sort((a, b) => b - a);
-    return sortedFloors.map((floor) => ({
-      floor,
-      units: (map.get(floor) || []).sort((a, b) => a.tipo.localeCompare(b.tipo)),
-    }));
-  }, [filteredUnits]);
+  }, [floorsForAmbiente, selectedFloor]);
+
+  const handleSelectAmbiente = (ambId: string) => {
+    setSelectedAmbId(ambId);
+    const amb = AMBIENTE_OPTIONS.find((a) => a.id === ambId);
+    if (amb) {
+      const matchingUnitsOnFloor = units.filter(
+        (u) => amb.matchUnit(u) && u.floor === selectedFloor && u.status === "disponible"
+      );
+      if (matchingUnitsOnFloor.length === 0) {
+        const firstAvail = units.find((u) => amb.matchUnit(u) && u.status === "disponible");
+        if (firstAvail) {
+          setSelectedFloor(firstAvail.floor);
+        }
+      }
+    }
+  };
+
+  // Unidad activa para el piso seleccionado
+  const activeUnit = useMemo(() => {
+    const floorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
+    return floorItem?.unit || null;
+  }, [floorsForAmbiente, selectedFloor]);
+
+  // Cálculos financieros para la unidad activa
+  const activeFinancials = useMemo(() => {
+    if (!activeUnit) return null;
+
+    let totalPrice = activeUnit.cash;
+    let initialPayment = activeUnit.cash;
+    let balancePayment = 0;
+    let pricePerM2 = activeUnit.cashPerM2;
+
+    if (selectedPlan === "plan60") {
+      totalPrice = activeUnit.plan60.total;
+      initialPayment = activeUnit.plan60.initial;
+      balancePayment = activeUnit.plan60.total - activeUnit.plan60.initial;
+      pricePerM2 = activeUnit.plan60.perM2;
+    } else if (selectedPlan === "plan40") {
+      totalPrice = activeUnit.plan40.total;
+      initialPayment = activeUnit.plan40.initial;
+      balancePayment = activeUnit.plan40.total - activeUnit.plan40.initial;
+      pricePerM2 = activeUnit.plan40.perM2;
+    }
+
+    const marketValueAtDelivery = Math.round(activeUnit.totalM2 * 1600);
+    const capitalGain = marketValueAtDelivery - totalPrice;
+    const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
+
+    return {
+      totalPrice,
+      initialPayment,
+      balancePayment,
+      pricePerM2,
+      marketValueAtDelivery,
+      capitalGain,
+      gainPercentage,
+      rentMonthlyMin: currentAmbiente.rentMin,
+      rentMonthlyMax: currentAmbiente.rentMax,
+      rentMonthlyBsMin: currentAmbiente.rentMin * 12,
+      rentMonthlyBsMax: currentAmbiente.rentMax * 12,
+      yieldRange: currentAmbiente.yieldRange,
+    };
+  }, [activeUnit, selectedPlan, currentAmbiente]);
 
   const handleShareOna = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
@@ -419,10 +497,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
   const currentSlide = AMENITY_SLIDES[amenityIndex];
 
-  // Métricas del simulador interactivo
-  const activeSim = SIMULATION_CONFIG[simTypology];
-  const activeSimPlanData = activeSim[simPlan];
-  const simNetCapitalGain = activeSim.marketValueAtDelivery - activeSimPlanData.total;
+
 
   return (
     <motion.div
@@ -983,174 +1058,12 @@ export default function OnaLanding({ property, onClose }: Props) {
               </p>
             </div>
 
-            {/* BLOQUE C: SIMULADOR INTERACTIVO DE INVERSIÓN Y CASHFLOW */}
-            <div className="mt-8 rounded-2xl border-2 border-[#9a7b45]/60 bg-white p-6 shadow-xl">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Calculator size={18} className="text-[#9a7b45]" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#816127]">
-                    Simulador Financiero en Tiempo Real
-                  </span>
-                </div>
-                <span className="rounded-full bg-[#f6f2ea] px-3 py-0.5 text-[10px] font-semibold text-[#816127]">
-                  Fase 1
-                </span>
-              </div>
-
-              <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                Calcula tu ganancia neta y retorno de alquiler.
-              </h3>
-              <p className="mt-1.5 text-xs text-stone-600 font-light [text-align:justify] [text-justify:inter-word]">
-                Elige la tipología y tu plan de pago para visualizar la plusvalía estimada antes de la entrega y el flujo de caja proyectado mensual.
-              </p>
-
-              {/* Selector de Tipología */}
-              <div className="mt-5">
-                <label className="text-[11px] uppercase tracking-wider font-semibold text-stone-400 block mb-2">
-                  1. Selecciona la Tipología:
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {(["32", "54", "92"] as SimTypologyKey[]).map((key) => {
-                    const item = SIMULATION_CONFIG[key];
-                    const isSelected = simTypology === key;
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => setSimTypology(key)}
-                        className={`rounded-xl border p-3 text-left transition-all ${
-                          isSelected
-                            ? "border-stone-900 bg-stone-900 text-white shadow-md"
-                            : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-400"
-                        }`}
-                      >
-                        <p className={`text-xs font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                          {item.shortName}
-                        </p>
-                        <p className="mt-1 text-[11px] font-light opacity-80">
-                          Desde USD {formatOnaUsd(item.contado.total)}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Selector de Plan de Pago */}
-              <div className="mt-5">
-                <label className="text-[11px] uppercase tracking-wider font-semibold text-stone-400 block mb-2">
-                  2. Selecciona la Modalidad de Pago:
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {[
-                    { key: "contado", label: "Al Contado", desc: "$1.250 USD/m²" },
-                    { key: "plan60", label: "60% Inicial / 40%", desc: "$1.300 USD/m²" },
-                    { key: "plan40", label: "40% Inicial / 60%", desc: "$1.350 USD/m²" },
-                  ].map((p) => {
-                    const isSelected = simPlan === p.key;
-                    return (
-                      <button
-                        key={p.key}
-                        onClick={() => setSimPlan(p.key as SimPlanKey)}
-                        className={`rounded-xl border p-2.5 text-center transition-all ${
-                          isSelected
-                            ? "border-[#9a7b45] bg-[#fbf9f4] text-[#816127] ring-1 ring-[#9a7b45]"
-                            : "border-stone-200 bg-white text-stone-600 hover:border-stone-300"
-                        }`}
-                      >
-                        <p className="text-xs font-semibold">{p.label}</p>
-                        <p className="text-[10px] text-stone-500 mt-0.5">{p.desc}</p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* TABLERO DE RESULTADOS EN VIVO */}
-              <div className="mt-6 rounded-xl border border-stone-200 bg-stone-50 p-5">
-                <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3">
-                  Resultados Proyectados para {activeSim.title}:
-                </p>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Desembolso Inicial Requerido
-                    </p>
-                    <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
-                      USD {formatOnaUsd(activeSimPlanData.initial)}
-                    </p>
-                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
-                      Costo total unidad: USD {formatOnaUsd(activeSimPlanData.total)}
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Valor a la Entrega ($1.600/m²)
-                    </p>
-                    <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
-                      USD {formatOnaUsd(activeSim.marketValueAtDelivery)}
-                    </p>
-                    <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
-                      Plusvalía neta: +USD {formatOnaUsd(simNetCapitalGain)}
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Alquiler Mensual Estimado
-                    </p>
-                    <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
-                      ${activeSim.rentMonthlyMin} – ${activeSim.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
-                    </p>
-                    <p className="text-[11px] font-medium text-stone-700 mt-0.5">
-                      Bs {activeSim.rentMonthlyBsMin.toLocaleString("es-BO")} – {activeSim.rentMonthlyBsMax.toLocaleString("es-BO")}
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-0.5 font-light">
-                      TC referencial: 12 Bs/USD
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg bg-white p-3.5 border border-stone-200/80">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Rentabilidad Anual Estimada
-                    </p>
-                    <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
-                      {activeSim.yieldRange}
-                    </p>
-                    <p className="text-[11px] text-stone-500 mt-0.5 font-light">
-                      Retorno en dólares libre de inflación
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <p className="text-xs text-stone-600 font-light text-center sm:text-left">
-                    Congela estos números de 1.ª fase con tu reserva de <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
-                  </p>
-                  <button
-                    onClick={() => {
-                      if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-                        (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-                      }
-                      const planLabel = simPlan === "contado" ? "Al Contado" : simPlan === "plan60" ? "60% Inicial" : "40% Inicial";
-                      reserve(
-                        `Hola, vengo directo para reservar en ONA: tipología ${activeSim.title} (${activeSim.areaM2} m²), precio USD ${formatOnaUsd(activeSimPlanData.total)}, modalidad ${planLabel}. ¿Qué pisos tienen disponibles?`,
-                        activeSimPlanData.total
-                      );
-                    }}
-                    className="w-full sm:w-auto bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-[#9a7b45] active:scale-95 shadow-md shrink-0"
-                  >
-                    Congelar Esta Unidad
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
+            </section>
 
 
-          {/* 7. DISPONIBILIDAD EN TIEMPO REAL · UNIDADES DE 1.ª FASE */}
+          {/* 7. DISPONIBILIDAD & SIMULADOR EN TIEMPO REAL · UNIDADES DE 1.ª FASE */}
           <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+            {/* Cabecera con sincronización en vivo y link a Google Sheets */}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Layers size={14} className="text-[#9a7b45]" />
@@ -1159,7 +1072,6 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </p>
               </div>
 
-              {/* Botón sincronizar / enlace planilla */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleRefreshInventory}
@@ -1184,211 +1096,314 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Disponibilidad de Departamentos.
+              Disponibilidad y Proyección de Ganancia.
             </h2>
             <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Consulta en tiempo real el estado de cada departamento por piso, vista y plan de pago. Toca cualquier unidad disponible para ver sus opciones financieras o reservarla de inmediato con USD {formatOnaUsd(ONA_RESERVE_USD)}.
+              Elige el ambiente de tu interés y selecciona el piso disponible en la torre para conocer su precio exacto de preventa y la rentabilidad estimada.
             </p>
 
-            {/* BARRA DE RESUMEN DE VENTAS */}
-            <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl border border-stone-200 bg-white p-3 sm:p-4 text-center shadow-sm">
-              <div className="border-r border-stone-100 pr-2">
-                <p className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold text-stone-400">Total Unidades</p>
-                <p className="font-serif text-xl sm:text-2xl font-light text-stone-900 mt-0.5">{totalUnitsCount}</p>
-                <p className="text-[10px] text-stone-400 font-light">12 pisos</p>
+            {/* Resumen compacto de unidades de 1.ª fase */}
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] px-4 py-3 text-xs">
+              <div className="flex items-center gap-3 text-stone-700">
+                <span className="font-semibold text-stone-900">{totalUnitsCount} departamentos</span>
+                <span className="text-stone-300">·</span>
+                <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  {availableUnitsCount} disponibles
+                </span>
+                <span className="text-stone-300">·</span>
+                <span className="text-stone-500">{soldUnitsCount} vendidos</span>
               </div>
-              <div className="border-r border-stone-100 pr-2">
-                <p className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold text-emerald-700 flex items-center justify-center gap-1">
-                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Disponibles
-                </p>
-                <p className="font-serif text-xl sm:text-2xl font-semibold text-emerald-700 mt-0.5">{availableUnitsCount}</p>
-                <p className="text-[10px] text-emerald-600 font-light">Listas para reservar</p>
-              </div>
-              <div>
-                <p className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold text-stone-500">Vendidas / Reserv.</p>
-                <p className="font-serif text-xl sm:text-2xl font-light text-stone-700 mt-0.5">{soldUnitsCount}</p>
-                <p className="text-[10px] text-stone-400 font-light">1.ª Fase activa</p>
-              </div>
+              <span className="text-[11px] text-[#816127] font-semibold bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full">
+                Torre de 12 pisos
+              </span>
             </div>
 
-            {/* FILTROS INTERACTIVOS */}
-            <div className="mt-6 space-y-3 rounded-2xl border border-stone-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
-              {/* Filtro por Tipología / Dormitorios */}
-              <div>
-                <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-2">
-                  Tipología & Dormitorios:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { id: "all", label: `Todas (${units.length})` },
-                    { id: 1, label: `1 Dorm · 32,3 m² (${units.filter(u => u.rooms === 1).length})` },
-                    { id: 2, label: `2 Dorms · 54 a 92 m² (${units.filter(u => u.rooms === 2).length})` },
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setInvFilterRooms(tab.id as any)}
-                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-                        invFilterRooms === tab.id
-                          ? "bg-stone-900 text-white shadow-sm"
-                          : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-50"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
+            {/* PASO 1: SELECCIONA EL TIPO DE AMBIENTE */}
+            <div className="mt-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">1</span>
+                <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                  Elige tu tipo de ambiente:
+                </h3>
               </div>
 
-              {/* Filtro por Nivel de Piso */}
-              <div className="pt-2 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mr-1">
-                    Nivel:
-                  </span>
-                  {[
-                    { id: "all", label: "Todos los Pisos" },
-                    { id: "low", label: "Pisos 1-4" },
-                    { id: "mid", label: "Pisos 5-8" },
-                    { id: "high", label: "Pisos 9-12" },
-                  ].map((rng) => (
-                    <button
-                      key={rng.id}
-                      onClick={() => setInvFilterFloorRange(rng.id as any)}
-                      className={`rounded-full px-2.5 py-1 text-[11px] transition-all ${
-                        invFilterFloorRange === rng.id
-                          ? "bg-[#9a7b45] text-white font-semibold shadow-xs"
-                          : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                      }`}
-                    >
-                      {rng.label}
-                    </button>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {AMBIENTE_OPTIONS.map((amb) => {
+                  const isSelected = selectedAmbId === amb.id;
+                  const matchingUnits = units.filter((u) => amb.matchUnit(u));
+                  const availCount = matchingUnits.filter((u) => u.status === "disponible").length;
 
-                {/* Switch Solo Disponibles */}
-                <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-stone-700">
-                  <input
-                    type="checkbox"
-                    checked={invOnlyAvailable}
-                    onChange={(e) => setInvOnlyAvailable(e.target.checked)}
-                    className="h-4 w-4 rounded border-stone-300 text-[#9a7b45] focus:ring-[#9a7b45]"
-                  />
-                  <span className="font-medium">Solo disponibles ({availableUnitsCount})</span>
-                </label>
-              </div>
-            </div>
-
-            {/* GRILLA INTERACTIVA POR PISOS (TORRE DEPARTAMENTAL) */}
-            <div className="mt-6 space-y-4">
-              {unitsByFloor.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-stone-300 p-8 text-center bg-white/40">
-                  <p className="text-sm text-stone-500 font-light">
-                    No hay unidades con los filtros seleccionados.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setInvFilterRooms("all");
-                      setInvFilterFloorRange("all");
-                      setInvOnlyAvailable(false);
-                    }}
-                    className="mt-2 text-xs font-semibold text-[#9a7b45] hover:underline"
-                  >
-                    Restablecer filtros
-                  </button>
-                </div>
-              ) : (
-                unitsByFloor.map(({ floor, units: floorUnits }) => {
-                  const floorAvailable = floorUnits.filter(u => u.status === "disponible").length;
                   return (
-                    <div key={floor} className="rounded-2xl border border-stone-200 bg-white overflow-hidden shadow-xs">
-                      {/* Cabecera del Piso */}
-                      <div className="flex items-center justify-between border-b border-stone-100 bg-[#fbf9f4] px-4 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-serif text-base font-semibold text-stone-900">
-                            Piso {floor}
-                          </span>
-                          <span className="text-[11px] text-stone-400 font-light">
-                            · {floorUnits.length} {floorUnits.length === 1 ? "unidad" : "unidades"}
-                          </span>
+                    <button
+                      key={amb.id}
+                      onClick={() => handleSelectAmbiente(amb.id)}
+                      className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#9a7b45]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                            {amb.name}
+                          </p>
+                          <p className={`text-xs mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
+                            {amb.areaM2} m² {amb.balconyM2 ? `(Balcón ${amb.balconyM2} m²)` : ""} · {amb.view}
+                          </p>
                         </div>
-                        <span className={`text-[10px] font-semibold uppercase tracking-wider rounded-full px-2.5 py-0.5 ${
-                          floorAvailable > 0
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-stone-100 text-stone-400"
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                          availCount > 0
+                            ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : isSelected ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-400"
                         }`}>
-                          {floorAvailable > 0 ? `${floorAvailable} disponible${floorAvailable > 1 ? "s" : ""}` : "Agotado"}
+                          {availCount > 0 ? `${availCount} disponibles` : "Agotado"}
                         </span>
                       </div>
 
-                      {/* Tarjetas de unidades de este piso */}
-                      <div className="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        {floorUnits.map((u) => {
-                          const isDisp = u.status === "disponible";
-                          return (
-                            <div
-                              key={`${u.floor}-${u.tipo}`}
-                              onClick={() => isDisp && setSelectedUnitForDetail(u)}
-                              className={`rounded-xl border p-3.5 transition-all ${
-                                isDisp
-                                  ? "border-stone-200 bg-white hover:border-[#9a7b45] hover:shadow-md cursor-pointer active:scale-[0.99]"
-                                  : "border-stone-100 bg-stone-50/60 opacity-60 cursor-default"
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="font-serif text-sm font-semibold text-stone-900">
-                                      TIPO {u.tipo}
-                                    </span>
-                                    <span className="text-[10px] rounded bg-stone-100 px-1.5 py-0.5 font-medium text-stone-600">
-                                      {u.rooms} dorm{u.rooms > 1 ? "s" : ""}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-stone-500 font-light mt-0.5">
-                                    {u.totalM2} m² {u.balconyM2 ? `(balcón ${u.balconyM2} m²)` : ""}
-                                  </p>
-                                </div>
-
-                                <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                                  isDisp
-                                    ? "bg-emerald-100 text-emerald-800"
-                                    : "bg-stone-200 text-stone-600"
-                                }`}>
-                                  {isDisp ? "● Disponible" : "Vendido"}
-                                </span>
-                              </div>
-
-                              <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
-                                <span className="text-[10px] text-stone-400 font-light truncate max-w-[130px]">
-                                  {u.view}
-                                </span>
-                                <div className="text-right">
-                                  <span className="text-[9px] text-stone-400 block font-light leading-none">Al Contado:</span>
-                                  <span className={`font-serif text-sm font-semibold ${isDisp ? "text-stone-900" : "text-stone-400 line-through"}`}>
-                                    USD {formatOnaUsd(u.cash)}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {isDisp && (
-                                <div className="mt-2.5 pt-2 border-t border-stone-50 flex items-center justify-between text-[11px] text-[#9a7b45] font-semibold">
-                                  <span className="text-[10px] text-stone-500 font-light">
-                                    Plan 60%: USD {formatOnaUsd(u.plan60.initial)} inicial
-                                  </span>
-                                  <span className="hover:underline flex items-center gap-0.5">
-                                    Ver plan <ArrowRight size={11} />
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                      <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+                        <span className={isSelected ? "text-stone-400 font-light" : "text-stone-500 font-light"}>
+                          Preventa desde:
+                        </span>
+                        <span className={`font-serif text-sm font-semibold ${isSelected ? "text-white" : "text-stone-900"}`}>
+                          USD {formatOnaUsd(amb.basePrice)}
+                        </span>
                       </div>
-                    </div>
+                    </button>
                   );
-                })
-              )}
+                })}
+              </div>
             </div>
+
+            {/* PASO 2: SELECCIONA EL PISO DISPONIBLE */}
+            <div className="mt-8">
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">2</span>
+                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                    Pisos disponibles para {currentAmbiente.shortName}:
+                  </h3>
+                </div>
+                <span className="text-[11px] text-stone-400 font-light">
+                  Toca un piso disponible
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {floorsForAmbiente.map(({ floor, isAvailable, unit }) => {
+                  const isSelected = selectedFloor === floor;
+
+                  if (!isAvailable) {
+                    return (
+                      <div
+                        key={floor}
+                        className="rounded-xl border border-stone-200/60 bg-stone-100/70 px-3 py-2 text-center text-xs text-stone-400 line-through select-none cursor-not-allowed opacity-50"
+                        title={`Piso ${floor}: Agotado para esta tipología`}
+                      >
+                        Piso {floor} · Vendido
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <button
+                      key={floor}
+                      onClick={() => setSelectedFloor(floor)}
+                      className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
+                        isSelected
+                          ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span className="font-serif text-sm">Piso {floor}</span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      </div>
+                      <p className={`text-[10px] mt-0.5 font-light ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
+                        USD {formatOnaUsd(unit.cash)}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PASO 3: PRECIO EXACTO, MODALIDAD DE PAGO Y CÁLCULO DE GANANCIA */}
+            {activeUnit && activeFinancials && (
+              <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">3</span>
+                  <h3 className="text-xs uppercase tracking-wider font-semibold text-[#816127]">
+                    Precio oficial y proyección de ganancia:
+                  </h3>
+                </div>
+
+                {/* Encabezado de la Unidad Seleccionada */}
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#9a7b45]/20 pb-4">
+                  <div>
+                    <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
+                      Piso {activeUnit.floor} · TIPO {activeUnit.tipo}
+                    </span>
+                    <h4 className="mt-2 font-serif text-2xl font-semibold text-stone-900">
+                      {currentAmbiente.name}
+                    </h4>
+                    <p className="text-xs text-stone-600 font-light mt-0.5">
+                      Superficie: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} · {activeUnit.view}
+                    </p>
+                  </div>
+
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Disponible para Reserva
+                  </span>
+                </div>
+
+                {/* Selector de Modalidad de Pago */}
+                <div className="mt-5">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">
+                    Elige la modalidad de pago para este piso:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {[
+                      {
+                        key: "contado",
+                        label: "Al Contado",
+                        total: activeUnit.cash,
+                        perM2: activeUnit.cashPerM2,
+                        detail: "100% al inicio · Máximo ahorro",
+                      },
+                      {
+                        key: "plan60",
+                        label: "60% Inicial",
+                        total: activeUnit.plan60.total,
+                        perM2: activeUnit.plan60.perM2,
+                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan60.initial)}`,
+                      },
+                      {
+                        key: "plan40",
+                        label: "40% Inicial",
+                        total: activeUnit.plan40.total,
+                        perM2: activeUnit.plan40.perM2,
+                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan40.initial)}`,
+                      },
+                    ].map((plan) => {
+                      const isSelected = selectedPlan === plan.key;
+                      return (
+                        <button
+                          key={plan.key}
+                          onClick={() => setSelectedPlan(plan.key as any)}
+                          className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                            isSelected
+                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
+                              : "border-stone-200 bg-white/70 text-stone-600 hover:border-stone-300"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
+                            <span className="text-[10px] font-semibold text-[#816127]">$${plan.perM2} USD/m²</span>
+                          </div>
+                          <p className="mt-1 font-serif text-lg font-bold text-stone-900">
+                            USD {formatOnaUsd(plan.total)}
+                          </p>
+                          <p className="text-[11px] text-stone-500 font-light mt-0.5">{plan.detail}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* CÁLCULO DE GANANCIA / TABLERO DE RENDIMIENTO FINANCIERO */}
+                <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3 flex items-center gap-1.5">
+                    <TrendingUp size={14} className="text-[#9a7b45]" />
+                    Proyección de Ganancia & Rentabilidad (Entrega {ONA_DELIVERY}):
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* Tarjeta 1: Valor a la Entrega */}
+                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
+                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
+                        Valor Estimado a la Entrega ($1.600 USD/m²)
+                      </p>
+                      <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
+                        USD {formatOnaUsd(activeFinancials.marketValueAtDelivery)}
+                      </p>
+                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
+                        Valor de mercado terminado para departamentos en {ONA_ZONE}
+                      </p>
+                    </div>
+
+                    {/* Tarjeta 2: Ganancia Neta (Plusvalía) */}
+                    <div className="rounded-xl bg-emerald-50/70 p-3.5 border border-emerald-200">
+                      <p className="text-[10px] uppercase tracking-wider text-emerald-800 font-semibold">
+                        Ganancia Estimada de Preventa (Plusvalía)
+                      </p>
+                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
+                        +USD {formatOnaUsd(activeFinancials.capitalGain)}
+                      </p>
+                      <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
+                        +{activeFinancials.gainPercentage}% de valorización sobre tu precio de compra
+                      </p>
+                    </div>
+
+                    {/* Tarjeta 3: Alquiler Mensual */}
+                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
+                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
+                        Alquiler Mensual Estimado
+                      </p>
+                      <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
+                        ${activeFinancials.rentMonthlyMin} – ${activeFinancials.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
+                      </p>
+                      <p className="text-[11px] text-stone-600 font-light mt-0.5">
+                        Bs {activeFinancials.rentMonthlyBsMin.toLocaleString("es-BO")} – {activeFinancials.rentMonthlyBsMax.toLocaleString("es-BO")}/mes (TC 12)
+                      </p>
+                    </div>
+
+                    {/* Tarjeta 4: Rentabilidad Anual */}
+                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
+                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
+                        Rentabilidad Anual Estimada
+                      </p>
+                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
+                        {activeFinancials.yieldRange}
+                      </p>
+                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
+                        Retorno en dólares libre de inflación por alquiler tradicional o corporativo
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* BOTÓN DIRECTO DE RESERVA */}
+                  <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs text-stone-700 font-medium text-center sm:text-left">
+                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
+                      </p>
+                      <p className="text-[11px] text-stone-400 font-light text-center sm:text-left">
+                        Firma y desembolso inicial coordinado directamente con la constructora.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+                          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
+                        }
+                        const planLabel = selectedPlan === "contado" ? "Al Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial";
+                        reserve(
+                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²), precio USD ${formatOnaUsd(activeFinancials.totalPrice)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD 2.000?`,
+                          activeFinancials.totalPrice
+                        );
+                      }}
+                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0"
+                    >
+                      Reservar Piso {activeUnit.floor} con USD {formatOnaUsd(ONA_RESERVE_USD)}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
 
 
@@ -1479,112 +1494,6 @@ export default function OnaLanding({ property, onClose }: Props) {
               </button>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-      {/* MODAL DETALLE DE DEPARTAMENTO Y RESERVA */}
-      <AnimatePresence>
-        {selectedUnitForDetail && (
-          <div className="fixed inset-0 z-[130] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              className="w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-[#fbf9f4] border border-stone-200 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
-                    Piso {selectedUnitForDetail.floor} · TIPO {selectedUnitForDetail.tipo}
-                  </span>
-                  <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                    Departamento de {selectedUnitForDetail.rooms} {selectedUnitForDetail.rooms === 1 ? "Dormitorio" : "Dormitorios"}
-                  </h3>
-                  <p className="text-xs text-stone-500 font-light mt-1">
-                    Superficie total: <strong>{selectedUnitForDetail.totalM2} m²</strong> {selectedUnitForDetail.balconyM2 ? `(Interior ${selectedUnitForDetail.interiorM2} m² + Balcón ${selectedUnitForDetail.balconyM2} m²)` : ""} · {selectedUnitForDetail.view}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedUnitForDetail(null)}
-                  className="rounded-full bg-white p-2 text-stone-400 hover:text-stone-800 border border-stone-200 shadow-xs"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Planes de Pago para esta unidad */}
-              <div className="mt-5 space-y-2.5">
-                <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400">
-                  Modalidades de Pago Oficiales:
-                </p>
-
-                {/* 1. Contado */}
-                <div className="rounded-xl border-2 border-[#9a7b45] bg-white p-3.5 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45]">1. Al Contado (100%)</span>
-                      <p className="text-xs text-stone-500 font-light">Máximo descuento de 1.ª fase</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-serif text-lg font-bold text-stone-900">USD {formatOnaUsd(selectedUnitForDetail.cash)}</p>
-                      <p className="text-[10px] text-stone-400 font-light">${selectedUnitForDetail.cashPerM2} USD/m²</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. Plan 60% */}
-                <div className="rounded-xl border border-stone-200 bg-white p-3.5 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700">2. Plan 60% Inicial</span>
-                      <p className="text-xs text-stone-500 font-light">Saldo (40%) contra entrega</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-serif text-base font-semibold text-stone-900">USD {formatOnaUsd(selectedUnitForDetail.plan60.total)}</p>
-                      <p className="text-[10px] text-[#9a7b45] font-semibold">Inicial: USD {formatOnaUsd(selectedUnitForDetail.plan60.initial)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 3. Plan 40% */}
-                <div className="rounded-xl border border-stone-200 bg-white p-3.5 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700">3. Plan 40% Inicial</span>
-                      <p className="text-xs text-stone-500 font-light">Saldo (60%) contra entrega</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-serif text-base font-semibold text-stone-900">USD {formatOnaUsd(selectedUnitForDetail.plan40.total)}</p>
-                      <p className="text-[10px] text-[#9a7b45] font-semibold">Inicial: USD {formatOnaUsd(selectedUnitForDetail.plan40.initial)}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botón Reservar Esta Unidad */}
-              <div className="mt-6 pt-4 border-t border-stone-200">
-                <button
-                  onClick={() => {
-                    const u = selectedUnitForDetail;
-                    if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-                      (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-                    }
-                    reserve(
-                      `Hola, vengo directo para reservar en ONA: Piso ${u.floor} - Tipo ${u.tipo} (${u.rooms} dorm, ${u.totalM2} m²), precio USD ${formatOnaUsd(u.cash)}, modalidad Al Contado. ¿Sigue disponible para reservar con USD 2.000?`,
-                      u.cash
-                    );
-                    setSelectedUnitForDetail(null);
-                  }}
-                  className="w-full rounded-xl bg-stone-900 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center flex items-center justify-center gap-2"
-                >
-                  <MessageCircle size={16} />
-                  <span>Reservar Piso {selectedUnitForDetail.floor} · Tipo {selectedUnitForDetail.tipo}</span>
-                </button>
-                <p className="mt-2 text-[10px] text-center text-stone-400 font-light">
-                  Se reserva con USD {formatOnaUsd(ONA_RESERVE_USD)} · Sin trámites complicados
-                </p>
-              </div>
-            </motion.div>
-          </div>
         )}
       </AnimatePresence>
     </motion.div>
