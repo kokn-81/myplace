@@ -5,8 +5,8 @@ import { ONA_BUILDER, ONA_DELIVERY, ONA_PARKINGS, ONA_RESERVE_USD, ONA_UNITS, fo
 
 test("la tabla de ONA es la 1.a fase, sin precios inventados", () => {
   assert.equal(ONA_UNITS.length, 54);
-  assert.equal(ONA_UNITS.filter((unit) => unit.status === "disponible").length, 32);
-  assert.equal(ONA_UNITS.filter((unit) => unit.status === "vendido").length, 22);
+  assert.equal(ONA_UNITS.filter((unit) => unit.status === "disponible").length, 27);
+  assert.equal(ONA_UNITS.filter((unit) => unit.status === "vendido").length, 27);
   assert.equal(ONA_PARKINGS.length, 26);
   assert.equal(ONA_PARKINGS.filter((spot) => spot.status === "disponible").length, 22);
   assert.deepEqual(
