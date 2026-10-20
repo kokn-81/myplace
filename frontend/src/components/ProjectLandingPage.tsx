@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import OnaLanding from "./OnaLanding";
+import EurodesignLanding from "./EurodesignLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -13,6 +14,16 @@ interface Props {
 export default function ProjectLandingPage({ property, onClose }: Props) {
   if (property.title?.toLowerCase().includes("ona")) {
     return <OnaLanding property={property} onClose={onClose} />;
+  }
+
+  const isEurodesign =
+    property.id === "eurodesign" ||
+    String(property.id) === "1816" ||
+    Boolean(property.title?.toLowerCase().includes("eurodesign")) ||
+    Boolean(property.complejoNombre?.toLowerCase().includes("eurodesign"));
+
+  if (isEurodesign) {
+    return <EurodesignLanding property={property} onClose={onClose} />;
   }
 
   const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;

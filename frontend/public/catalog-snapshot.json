@@ -228204,22 +228204,22 @@
   {
     "ciudad": "Santa Cruz de la Sierra",
     "superficie_m2": 84.3,
-    "fecha_entrega": null,
+    "fecha_entrega": "Junio 2027",
     "agente_id": "5",
     "lat": -17.7664938,
     "zona": "Equipetrol",
-    "avance_obra": null,
+    "avance_obra": 100,
     "complejo_id": null,
-    "titulo": "Depto 2 Dorm. · Torre Eurodesign Equipetrol",
+    "titulo": "Preventa Exclusiva · Tower Eurodesign Equipetrol",
     "lng": -63.19734389999999,
     "direccion": "Equipetrol",
-    "fase_obra": null,
+    "fase_obra": "Obra Gruesa Loza Piso 18",
     "id": 1816,
     "operacion": "Venta",
     "piso": null,
     "subtipo_comercial": null,
-    "precio_usd": 125208,
-    "tipo_inmueble": "Departamento",
+    "precio_usd": 71780,
+    "tipo_inmueble": "Proyecto (preventa)",
     "amoblado": false,
     "descripcion": "Exclusivo departamento en venta en Equipetrol, diseñado para brindar máxima comodidad, iluminación natural y una experiencia residencial superior en una de las zonas con mayor demanda de Santa Cruz.\n\nDistribución & Espacios:\n• Superficie propia: 84.3 m² con distribución eficiente\n• 2 dormitorios confortables (incluye suite principal con baño privado)\n• 1 baño(s) con grifería y sanitarios de calidad\n• Living-comedor luminoso con ventanales amplios y ventilación cruzada\n• Cocina equipada con cajonería alta/baja y mesones funcionales\n\nEquipamiento & Confort:\n• Cajonería empotrada y roperos terminados\n• Opción a garaje o estacionamiento para visitas en el entorno\n\nÁreas Comunes & Entorno:\n• Amenidades y servicios: Piscina\n• Ubicación estratégica en Equipetrol, con acceso inmediato a cafeterías, centros comerciales y transporte\n\nContacto & Asesoría:\n• Asesor comercial exclusivo: Alejandro Coca (+591 57015854) · Gestión Inmobiliaria N.I.A.\n• Gestión en alianza con CENTURY 21 Azzero (Red Century 21 Bolivia)",
     "moneda": "$ (USD)",
@@ -228243,7 +228243,7 @@
     "banos": 1,
     "baulera": false,
     "datos_especificos_json": "{\"c21_id\": \"114039\", \"c21_url\": \"https://c21.com.bo/propiedad/114039_departamento-en-venta-torre-eurodesign-equipetrol-calle-enrique-finot\", \"inmobiliaria\": \"Century 21\", \"oficina\": \"CENTURY 21 Azzero\", \"asesor_nombre\": \"Ariel Mauricio Hubsch Rozenman\", \"asesor_telefono\": \"+591 69147715\", \"asesor_whatsapp\": \"+59169147715\", \"parqueos\": 0, \"precio_original\": \"125208\", \"moneda_original\": \"USD\", \"titulo_original_c21\": \"DEPARTAMENTO EN VENTA | TORRE EURODESIGN Equipetrol | Calle Enrique Finot\"}",
-    "imagenes": "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/3p3A4Fmu/uploads/78/propiedades/114039/6a3eab273e29b.jpg, https://cdn.21online.lat/bolivia/cache/awsTest1/rc/5O53zsNZ/uploads/78/propiedades/114039/69fe2ad63c873.jpg, https://cdn.21online.lat/bolivia/cache/awsTest1/rc/zekMtRsX/uploads/78/propiedades/114039/69fe2ada67a07.jpg, https://cdn.21online.lat/bolivia/cache/awsTest1/rc/8n2z9ZRY/uploads/78/propiedades/114039/69fe2ae12efc7.jpg, https://cdn.21online.lat/bolivia/cache/awsTest1/rc/qEwIOz8B/uploads/78/propiedades/114039/69fe2ade4a19c.jpg",
+    "imagenes": "/eurodesign/fachada-principal.jpg, /eurodesign/page-07.jpg, /eurodesign/arte-ubicacion.jpg, /eurodesign/page-08.jpg, /eurodesign/page-09.jpg, /eurodesign/page-10.jpg, /eurodesign/page-11.jpg",
     "ofertas": [
       {
         "id": "4940",
@@ -228282,21 +228282,27 @@
       "whatsapp": "59157015854"
     },
     "images": [
-      "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/3p3A4Fmu/uploads/78/propiedades/114039/6a3eab273e29b.jpg",
-      "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/5O53zsNZ/uploads/78/propiedades/114039/69fe2ad63c873.jpg",
-      "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/zekMtRsX/uploads/78/propiedades/114039/69fe2ada67a07.jpg",
-      "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/8n2z9ZRY/uploads/78/propiedades/114039/69fe2ae12efc7.jpg",
-      "https://cdn.21online.lat/bolivia/cache/awsTest1/rc/qEwIOz8B/uploads/78/propiedades/114039/69fe2ade4a19c.jpg"
+      "/eurodesign/fachada-principal.jpg",
+      "/eurodesign/page-07.jpg",
+      "/eurodesign/arte-ubicacion.jpg",
+      "/eurodesign/page-08.jpg",
+      "/eurodesign/page-09.jpg",
+      "/eurodesign/page-10.jpg",
+      "/eurodesign/page-11.jpg"
     ],
     "unidades_proyecto": [],
     "mensaje_urgencia": null,
-    "total_unidades": null,
-    "unidades_disponibles": null,
+    "total_unidades": 114,
+    "unidades_disponibles": 38,
     "pisos": null,
-    "reserva_usd": null,
+    "reserva_usd": 2000,
     "precio_m2_desde": null,
     "brochure_url": null,
-    "planes_pago": null,
+    "planes_pago": [
+      "Al contado .480 USD/m²",
+      "En cuotas .580 USD/m² (40% inicial)",
+      "Parqueos cubiertos USD 12.500"
+    ],
     "detalle_completo": true,
     "agente_nombre": "Alejandro Coca",
     "agente_whatsapp": "59157015854",
@@ -228310,7 +228316,7 @@
     "captador_nombre": "Ariel Mauricio Hubsch Rozenman",
     "captador_whatsapp": "59169147715",
     "captador_oficina": "CENTURY 21 Azzero",
-    "complejo_nombre": null
+    "complejo_nombre": "Tower Eurodesign"
   },
   {
     "ciudad": "Santa Cruz de la Sierra",

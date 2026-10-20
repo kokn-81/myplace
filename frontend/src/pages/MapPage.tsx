@@ -228,24 +228,82 @@ export const isOnaProperty = (p: Property | null | undefined): boolean => {
   );
 };
 
+export const isEurodesignProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  return (
+    String(p.id) === "1816" ||
+    String(p.id).toLowerCase() === "eurodesign" ||
+    Boolean(p.title && p.title.toLowerCase().includes("eurodesign")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("eurodesign"))
+  );
+};
+
+export const SYNTHETIC_EURODESIGN_PROPERTY: Property = {
+  id: "1816",
+  title: "Tower Eurodesign · Equipetrol Norte",
+  price: 71780,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7664938,
+  lng: -63.1973439,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Torre residencial de 18 pisos en Equipetrol Norte a pasos de Av. San Martín. Departamentos de 1 y 2 dormitorios y locales comerciales en PB. Rooftop Piso 18 con vista 360°, piscina panorámica y amenidades de categoría superior.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad"],
+  images: [
+    "/eurodesign/fachada-principal.jpg",
+    "/eurodesign/page-07.jpg",
+    "/eurodesign/page-08.jpg",
+    "/eurodesign/page-09.jpg",
+    "/eurodesign/page-10.jpg",
+    "/eurodesign/page-11.jpg",
+    "/eurodesign/arte-ubicacion.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "Tower Eurodesign",
+  ocupacion: "Disponible",
+  superficieM2: 48.5,
+  amoblado: false,
+  fechaEntrega: "Junio 2027",
+  avanceObra: 100,
+  faseObra: "Obra Gruesa Loza Piso 18",
+  totalUnidades: 114,
+  unidadesDisponibles: 38,
+  reservaUsd: 2000,
+  planesPago: "Al contado $1.480/m² o cuotas $1.580/m² (40% inicial)",
+};
+
 export const isTargetOna = (p: Property, query: string): boolean => {
   if (!query) return false;
   const q = query.trim().toLowerCase();
   if (q === "ona" || q === "5") {
     return isOnaProperty(p);
   }
+  if (q === "eurodesign" || q === "tower-eurodesign" || q === "tower_eurodesign" || q === "1816") {
+    return isEurodesignProperty(p);
+  }
   return String(p.id).toLowerCase() === q || Boolean(p.title && p.title.toLowerCase().includes(q));
 };
+
+export const isTargetProject = isTargetOna;
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
   if (!list || list.length <= 1) return list;
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
-  const ona = list.find(
-    (p) =>
-      String(p.id) === "5" ||
-      isOnaProperty(p)
-  );
-  // Opción 2: Departamento de La Riviera (Ref #4 o complejo La Riviera)
+  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
+  // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
+  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p));
+  // Opción 3: Departamento de La Riviera (Ref #4 o complejo La Riviera)
   const riviera = list.find(
     (p) =>
       String(p.id) === "4" ||
@@ -256,7 +314,12 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
 
   const priorityItems: Property[] = [];
   if (ona) priorityItems.push(ona);
-  if (riviera && String(riviera.id) !== String(ona?.id)) priorityItems.push(riviera);
+  if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
+    priorityItems.push(eurodesign);
+  }
+  if (riviera && !priorityItems.some((p) => String(p.id) === String(riviera.id))) {
+    priorityItems.push(riviera);
+  }
 
   if (priorityItems.length === 0) return list;
 
@@ -269,11 +332,14 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   return (
     String(p.id) === "5" ||
+    String(p.id) === "1816" ||
     String(p.id) === "4" ||
     Boolean((p as any).destacado) ||
     Boolean((p as any).promocion) ||
     Boolean(p.title && p.title.toLowerCase().includes("ona residences")) ||
     Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences")) ||
+    Boolean(p.title && p.title.toLowerCase().includes("eurodesign")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("eurodesign")) ||
     Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
     Boolean(p.title && p.title.toLowerCase().includes("riviera"))
   );
@@ -547,6 +613,7 @@ export default function MapPage() {
 
     if (typeof window !== "undefined") {
       const isOna = isOnaProperty(property);
+      const isEuro = isEurodesignProperty(property);
       const url = new URL(window.location.href);
       const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
 
@@ -555,6 +622,12 @@ export default function MapPage() {
           url.searchParams.set("proyecto", "ona");
           const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
           window.history.pushState({ modal: "ona", propertyId: property.id }, "", targetUrl);
+        }
+      } else if (isEuro) {
+        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== "eurodesign") {
+          url.searchParams.set("proyecto", "eurodesign");
+          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
+          window.history.pushState({ modal: "eurodesign", propertyId: property.id }, "", targetUrl);
         }
       } else if (currentParam) {
         url.searchParams.delete("proyecto");
@@ -594,21 +667,28 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. ?proyecto=ona o /ona) al entrar a la web
+  // Parse direct links (e.g. ?proyecto=ona o ?proyecto=eurodesign) al entrar a la web
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
     
     const params = new URLSearchParams(window.location.search);
     const isOnaPath = window.location.pathname.toLowerCase().startsWith("/ona");
-    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : null);
+    const isEuroPath = window.location.pathname.toLowerCase().startsWith("/eurodesign");
+    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : null);
     
     if (proyecto && !selectedProperty) {
-      const target = properties.find((p) => isTargetOna(p, proyecto));
+      const target = properties.find((p) => isTargetProject(p, proyecto));
       if (target) {
         setTimeout(() => {
           selectProperty(target, { skipHistoryPush: true });
           hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: "direct_ona", propertyId: target.id }, "", window.location.href);
+          window.history.replaceState({ modal: `direct_${proyecto}`, propertyId: target.id }, "", window.location.href);
+        }, 300);
+      } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
+        setTimeout(() => {
+          selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
+          hasSearchInteractionRef.current = true;
+          window.history.replaceState({ modal: "direct_eurodesign", propertyId: "1816" }, "", window.location.href);
         }, 300);
       }
     }
@@ -618,6 +698,8 @@ export default function MapPage() {
     if (typeof document === "undefined") return;
     if (selectedProperty && isOnaProperty(selectedProperty)) {
       document.title = "ONA Residences · Preventa en Los Cusis | N.I.A";
+    } else if (selectedProperty && isEurodesignProperty(selectedProperty)) {
+      document.title = "Tower Eurodesign · Preventa en Equipetrol | N.I.A";
     } else {
       document.title = "N.I.A — Encuentra tu próximo hogar";
     }
@@ -635,16 +717,18 @@ export default function MapPage() {
         setSelectedProperty((current) => {
           if (current) {
             focusPropertyLocation(current, 16.2);
-            if (isOnaProperty(current)) {
+            if (isOnaProperty(current) || isEurodesignProperty(current)) {
               setCurrentIndex(0);
             }
           }
           return null;
         });
       } else {
-        const target = properties.find((p) => isTargetOna(p, proyecto));
+        const target = properties.find((p) => isTargetProject(p, proyecto));
         if (target) {
           selectProperty(target, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
+          selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
         }
       }
     };
@@ -658,7 +742,7 @@ export default function MapPage() {
     const target = selectedProperty || lastViewedProperty;
     if (target) {
       focusPropertyLocation(target, 16.2);
-      if (isOnaProperty(target)) {
+      if (isOnaProperty(target) || isEurodesignProperty(target)) {
         setCurrentIndex(0);
       }
     }
@@ -669,7 +753,7 @@ export default function MapPage() {
       const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
 
       if (hasProjectParam) {
-        if (window.history.state?.modal === "ona") {
+        if (window.history.state?.modal === "ona" || window.history.state?.modal === "eurodesign") {
           window.history.back();
         } else {
           url.searchParams.delete("proyecto");
@@ -2852,7 +2936,7 @@ export default function MapPage() {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA */}
       <AnimatePresence>
         {selectedProperty && (
-          isProjectType(selectedProperty.type) ? (
+          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div
