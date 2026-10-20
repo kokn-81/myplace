@@ -127,6 +127,85 @@ app.get(["/eurodesign", "/api/eurodesign-og"], (req, res) => {
   res.send(html);
 });
 
+app.get(["/domus", "/domus-black", "/domus-gold", "/domus-onix", "/domus-insignia", "/domus-luxury", "/domus-tower", "/domus-infinity"], (req, res) => {
+  const ua = req.headers["user-agent"] || "";
+  const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|applebot|curl|wget|bingbot|googlebot/i.test(
+    ua
+  );
+
+  const pathKey = req.path.replace(/^\//, "");
+  const projKey = pathKey === "domus" ? "domus-black" : pathKey;
+
+  const metaMap: Record<string, { title: string; desc: string; img: string }> = {
+    "domus-black": {
+      title: "DOMUS Black · Preventa Exclusiva en Equipetrol Norte",
+      desc: "Departamentos monoambientes y 1-2 dormitorios en Equipetrol Norte (Plaza Italia) desde USD 44.500. Alborada Group Bolivia.",
+      img: "https://nia-web.com/domus/domus-black-fachada.jpg",
+    },
+    "domus-gold": {
+      title: "DOMUS Gold · Preventa de Lujo en Equipetrol",
+      desc: "Monoambientes y departamentos de 1 y 2 dormitorios en Equipetrol (San Martín) desde USD 42.600 con hasta 30% de plusvalía.",
+      img: "https://nia-web.com/domus/domus-gold-fachada.jpg",
+    },
+    "domus-onix": {
+      title: "DOMUS Onix · Preventa en Radial 23 / Sirari",
+      desc: "Departamentos en preventa desde USD 45.900 en Radial 23 (Barrio Sirari). Arquitectura premium y amenidades de primer nivel.",
+      img: "https://nia-web.com/domus/domus-onix-fachada.jpg",
+    },
+    "domus-insignia": {
+      title: "DOMUS Insignia · Preventa en Equipetrol",
+      desc: "Departamentos de 1 y 2 dormitorios en Equipetrol Norte desde USD 65.500. Entrega 2026 y 2027.",
+      img: "https://nia-web.com/domus/domus-insignia-fachada.jpg",
+    },
+    "domus-luxury": {
+      title: "DOMUS Luxury · Unidades Exclusivas en Equipetrol",
+      desc: "Departamentos de alto estándar en Equipetrol Norte desde USD 75.300. Entrega Noviembre 2026.",
+      img: "https://nia-web.com/domus/domus-luxury-fachada.jpg",
+    },
+  };
+
+  const projectMeta = metaMap[projKey] || metaMap["domus-black"];
+  const targetUrl = `/?proyecto=${projKey}`;
+
+  if (!isBot) {
+    res.redirect(307, targetUrl);
+    return;
+  }
+
+  const html = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${projectMeta.title}</title>
+  <meta name="description" content="${projectMeta.desc}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Colección DOMUS · N.I.A" />
+  <meta property="og:url" content="https://nia-web.com${targetUrl}" />
+  <meta property="og:title" content="${projectMeta.title}" />
+  <meta property="og:description" content="${projectMeta.desc}" />
+  <meta property="og:image" content="${projectMeta.img}" />
+  <meta property="og:image:secure_url" content="${projectMeta.img}" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="${projectMeta.title}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${projectMeta.title}" />
+  <meta name="twitter:description" content="${projectMeta.desc}" />
+  <meta name="twitter:image" content="${projectMeta.img}" />
+  <meta http-equiv="refresh" content="0; url=${targetUrl}" />
+</head>
+<body style="background:#0b0d11;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <p>Cargando ${projectMeta.title}...</p>
+  <script>window.location.replace("${targetUrl}");</script>
+</body>
+</html>`;
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 // API Routes
 app.post("/api/ask-gemini", async (req, res) => {
   try {
