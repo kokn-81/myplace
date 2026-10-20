@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  AlertCircle,
   Building2,
   Calendar,
   Check,
@@ -17,9 +16,7 @@ import {
   MessageCircle,
   RefreshCw,
   Share2,
-  ShieldCheck,
   Sparkles,
-  Sun,
   TrendingUp,
   X,
 } from "lucide-react";
@@ -41,53 +38,75 @@ interface Props {
 
 const HERO_IMAGES = [
   { src: "/garden_zen/fachada.jpg", label: "Fachada Principal" },
-  { src: "/garden_zen/terraza.jpg", label: "Rooftop & Piscina Sinfín" },
+  { src: "/garden_zen/amenities/amenity_piscina.jpg", label: "Piscina Infinita Piso 16" },
+  { src: "/garden_zen/amenities/amenity_lobby.jpg", label: "Lobby Zen" },
   { src: "/garden_zen/ubicacion.jpg", label: "Ubicación Satelital" },
-  { src: "/garden_zen/info_adicional.jpg", label: "Concepto & Amenities" },
+  { src: "/garden_zen/amenities/amenity_cowork.jpg", label: "Co-Work Nōka" },
 ];
 
 const AMENITY_SLIDES = [
   {
-    src: "/garden_zen/terraza.jpg",
+    src: "/garden_zen/amenities/amenity_piscina.jpg",
     category: "Rooftop Piso 16",
-    title: "Piscina Sinfín & Deck Panorámico",
+    title: "Piscina Infinita & Deck Panorámico",
     description:
-      "Ubicada en el piso 16 con vista abierta hacia Equipetrol Norte. Un oasis de descanso con solárium, reposeras y horizonte verde para desconectar de la rutina diaria.",
+      "Ubicada en el rooftop del piso 16 con vista abierta hacia Equipetrol Norte. Un oasis de descanso con solárium, reposeras y horizonte panorámico para desconectar de la rutina diaria.",
   },
   {
-    src: "/garden_zen/info_adicional.jpg",
+    src: "/garden_zen/amenities/amenity_sauna.jpg",
     category: "Wellness & Relax",
     title: "Sauna Seco & Sauna Vapor",
     description:
-      "Circuito completo de relajación con sauna seco y húmedo diseñado para renovar energías y promover el bienestar físico y mental sin salir del edificio.",
+      "Circuito completo de relajación con vistas panorámicas hacia la ciudad, diseñado para renovar energías y promover el bienestar físico y mental sin salir del edificio.",
   },
   {
-    src: "/garden_zen/fachada.jpg",
-    category: "Fitness",
-    title: "Gimnasio & Espacio de Calistenia",
+    src: "/garden_zen/amenities/amenity_gimnasio.jpg",
+    category: "Fitness & Cardio",
+    title: "Gimnasio Tecnológico",
     description:
-      "Área de entrenamiento climatizada con equipamiento inteligente y zona exterior de calistenia, adaptada tanto a rutinas aeróbicas como de fuerza funcional.",
+      "Área de fitness climatizada equipada con máquinas de cardio y fuerza de última generación, acompañada de ventanales de piso a techo con vistas despejadas.",
   },
   {
-    src: "/garden_zen/terraza.jpg",
-    category: "Gastronomía",
-    title: "Doble Churrasquera Gourmet Techada",
+    src: "/garden_zen/amenities/amenity_cowork.jpg",
+    category: "Business & Networking",
+    title: "Co-Work Nōka",
     description:
-      "Dos estaciones independientes de parrilla con mesones de granito, mobiliario de comedor y vista panorámica, ideales para asados familiares y reuniones sociales.",
+      "Espacio de trabajo colaborativo y business lounge climatizado con conectividad de fibra óptica de alta velocidad, iluminación natural y puestos ergonómicos.",
   },
   {
-    src: "/garden_zen/info_adicional.jpg",
-    category: "Negocios & Social",
-    title: "Espacio Co-Work & Salón Multiuso",
+    src: "/garden_zen/amenities/amenity_salon.jpg",
+    category: "Social & Eventos",
+    title: "Salón Haku (Uso Múltiple)",
     description:
-      "Ambiente de trabajo colaborativo con conectividad de alta velocidad, iluminación natural y sala polivalente para eventos y presentaciones privadas.",
+      "Ambiente social climatizado con barra gourmet, cocina de apoyo, celosías de madera natural y mobiliario para eventos y celebraciones privadas.",
   },
   {
-    src: "/garden_zen/fachada.jpg",
-    category: "Sostenibilidad",
-    title: "Paneles Solares & Recolección Pluvial",
+    src: "/garden_zen/amenities/amenity_churrasquera_enso.jpg",
+    category: "Gastronomía Rooftop",
+    title: "Churrasquera Ensō",
     description:
-      "Sistema de generación fotovoltaica que reduce el 60% del consumo energético y el 50% del costo de expensas en áreas comunes, junto a recolección de agua pluvial para riego.",
+      "Estación de parrilla gourmet techada con mesón de granito blanco, leñero integrado y área de comedor al aire libre con vista a los jardines flotantes.",
+  },
+  {
+    src: "/garden_zen/amenities/amenity_churrasquera_koen.jpg",
+    category: "Gastronomía & Lounge",
+    title: "Churrasquera Kōen & Lounge",
+    description:
+      "Segunda estación de parrilla panorámica con living social climatizado, cava de vinos empotrada y vista privilegiada del atardecer de Santa Cruz.",
+  },
+  {
+    src: "/garden_zen/amenities/amenity_calistenia_petspa.jpg",
+    category: "Aire Libre & Mascotas",
+    title: "Calistenia & Pet Spa",
+    description:
+      "Sector de entrenamiento funcional y calistenia al aire libre rodeado de vegetación, junto a una estación dedicada para el baño y cuidado de mascotas.",
+  },
+  {
+    src: "/garden_zen/amenities/amenity_lobby.jpg",
+    category: "Acceso & Seguridad",
+    title: "Lobby Zen con Seguridad 24/7",
+    description:
+      "Imponente recepción de ingreso con jardín zen interior, muro curvo de madera natural, control de acceso automatizado y doble ascensor de alta velocidad.",
   },
 ];
 
@@ -389,7 +408,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       perM2 = activeUnit.initial30PerM2;
     }
 
-    // Plusvalía estimada: Valor comercial terminado en Equipetrol Norte estimado a $2.050 USD/m²
     const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2050);
     const capitalGain = Math.max(0, marketValueAtDelivery - totalPrice);
     const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
@@ -467,8 +485,29 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
-      {/* Botón Flotante: Compartir y Cerrar */}
+      {/* Botones Flotantes Superiores: Brochure, Compartir y Cerrar */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
+        <a
+          href="/garden_zen/presentacion_garden_zen.pdf"
+          download="Presentacion_Garden_Zen.pdf"
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => {
+            recordLeadEvent({
+              action: "brochure_download",
+              propertyRef: "garden-zen",
+              operacion: "Preventa",
+              zona: GARDEN_ZEN_CONFIG.zone,
+            }).catch(() => {});
+          }}
+          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          title="Descargar Brochure Oficial en PDF"
+          aria-label="Descargar Brochure"
+        >
+          <Download size={18} className="text-stone-700" />
+          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Brochure</span>
+        </a>
+
         <button
           onClick={handleShare}
           className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
@@ -477,12 +516,12 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         >
           {shareFeedback ? (
             <>
-              <Check size={18} className="text-emerald-600" />
-              <span className="text-[11px] font-semibold text-emerald-700">¡Copiado!</span>
+              <Check size={18} className="text-[#235C43]" />
+              <span className="text-[11px] font-semibold text-[#235C43]">¡Copiado!</span>
             </>
           ) : (
             <>
-              <Share2 size={18} />
+              <Share2 size={18} className="text-stone-700" />
               <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
             </>
           )}
@@ -500,7 +539,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica (ESTILO ONA) */}
+      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica con verde botánico */}
       <div className="relative h-[40vh] min-h-[290px] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
         <AnimatePresence mode="popLayout">
           <motion.img
@@ -516,7 +555,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30" />
         <div className="absolute bottom-6 left-6 right-16 text-white md:bottom-10 md:left-10">
-          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
+          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#9FE1C3] backdrop-blur-md border border-white/10">
             Preventa en Obra Fina · {activeLabel}
           </span>
           <h1 className="mt-3 font-serif text-4xl font-light tracking-wide leading-none md:text-6xl">
@@ -530,28 +569,28 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <span>·</span>
             <span>Entrega {GARDEN_ZEN_CONFIG.delivery}</span>
           </div>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#e8d5a8]">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#9FE1C3]">
             <MapPin size={13} /> {GARDEN_ZEN_CONFIG.address}
           </p>
         </div>
       </div>
 
-      {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor (ESTILO ONA) */}
+      {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
       <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
 
           {/* 1. HERO / VIVÍ GARDEN ZEN: EXPERIENCIA Y ESTILO DE VIDA */}
           <section id="intro" ref={introRef} className="scroll-mt-6">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Leaf size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Experiencia Residencial Eco-Lujo
               </p>
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
               Viví Garden Zen. <br />
-              <span className="italic font-normal text-[#9a7b45]">
+              <span className="italic font-normal text-[#235C43]">
                 Un proyecto pensado para vivir en calma y consciencia.
               </span>
             </h2>
@@ -562,11 +601,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
             <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#235C43]/10 text-[#235C43]">
                   <TrendingUp size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
+                  <p className="text-xs uppercase tracking-wider font-semibold text-[#235C43]">
                     Preventa en Marcha · Obra Fina
                   </p>
                   <p className="text-sm font-medium text-stone-800">
@@ -579,14 +618,14 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               </p>
             </div>
 
-            {/* Accesos rápidos de navegación estilo ONA */}
+            {/* Accesos rápidos de navegación */}
             <nav className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
               <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
               <a href="#inversion" className="hover:text-stone-950 transition-colors">Rentabilidad</a>
-              <a href="#disponibilidad" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
+              <a href="#disponibilidad" className="text-[#235C43] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
             </nav>
           </section>
 
@@ -594,8 +633,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD */}
           <section id="lugar" ref={placeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <MapPin size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Ubicación Insuperable
               </p>
             </div>
@@ -616,19 +655,19 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               />
               <div className="p-5">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
+                  <div className="border-l-2 border-[#235C43] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Polo Corporativo</p>
                     <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
                       A 3 minutos de Torre Platinum, Green Tower y los principales bancos del país.
                     </p>
                   </div>
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
+                  <div className="border-l-2 border-[#235C43] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Ventura Mall & Gastronomía</p>
                     <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
                       A pasos del boulevard de restaurantes, cafés de autor, cines y servicios esenciales.
                     </p>
                   </div>
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
+                  <div className="border-l-2 border-[#235C43] pl-3">
                     <p className="text-xs font-semibold text-stone-900">Entorno Arbolado</p>
                     <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
                       Calle serena y residencial fuera del congestionamiento vehicular de las avenidas troncales.
@@ -641,7 +680,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     href="https://maps.google.com/?q=-17.7615,-63.1972"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#9a7b45] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#235C43] hover:underline"
                   >
                     <MapPin size={13} /> Ver ubicación en Google Maps
                   </a>
@@ -651,11 +690,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 3. AMENIDADES & ÁREAS SOCIALES (CARRUSEL ESTILO ONA) */}
+          {/* 3. AMENIDADES & ÁREAS SOCIALES (FOTOS REALES EXTRAÍDAS DEL BROCHURE) */}
           <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <Building2 size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Building2 size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Áreas Sociales & Bienestar
               </p>
             </div>
@@ -669,7 +708,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               Diseñadas para maximizar el relax, la convivencia y la desconexión total dentro de tu propio edificio con vistas panorámicas de 360°.
             </p>
 
-            {/* CARRUSEL INTERACTIVO */}
+            {/* CARRUSEL INTERACTIVO CON FOTOS OFICIALES */}
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-xl">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-900 sm:aspect-[16/9]">
                 <AnimatePresence mode="wait">
@@ -689,21 +728,21 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 <div className="absolute inset-0 flex items-center justify-between p-3 pointer-events-none">
                   <button
                     onClick={prevAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#235C43] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                     aria-label="Anterior amenidad"
                   >
                     <ChevronLeft size={22} />
                   </button>
                   <button
                     onClick={nextAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#235C43] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                     aria-label="Siguiente amenidad"
                   >
                     <ChevronRight size={22} />
                   </button>
                 </div>
 
-                <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[#e8d5a8] backdrop-blur-md">
+                <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[#9FE1C3] backdrop-blur-md">
                   {currentSlide.category}
                 </div>
 
@@ -729,7 +768,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       onClick={() => setAmenityIndex(idx)}
                       className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-all cursor-pointer ${
                         idx === amenityIndex
-                          ? "border-[#9a7b45] scale-105 shadow-md ring-2 ring-[#9a7b45]/30"
+                          ? "border-[#235C43] scale-105 shadow-md ring-2 ring-[#235C43]/30"
                           : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                       title={slide.title}
@@ -746,8 +785,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           {/* 4. TIPOLOGÍAS RESIDENCIALES: PLANOS REALES, METRAJES Y DETALLES */}
           <section id="tipologias" ref={typesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Sparkles size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Distribución Arquitectónica
               </p>
             </div>
@@ -789,7 +828,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       <h3 className="font-serif text-2xl font-normal text-stone-900">
                         {tipo.title}
                       </h3>
-                      <p className="text-sm font-semibold uppercase tracking-wider text-[#9a7b45]">
+                      <p className="text-sm font-semibold uppercase tracking-wider text-[#235C43]">
                         {tipo.models}
                       </p>
                     </div>
@@ -798,7 +837,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       {tipo.tagline}
                     </p>
 
-                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-md bg-[#f6f2ea] px-3 py-1 text-xs font-medium text-[#87652c]">
+                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-md bg-[#EAF4EF] px-3 py-1 text-xs font-medium text-[#1A4D36]">
                       <CheckCircle2 size={13} /> {tipo.reservedCopy}
                     </div>
 
@@ -809,7 +848,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       <ul className="mt-2.5 space-y-2 text-xs font-light text-stone-700">
                         {tipo.highlights.map((h, i) => (
                           <li key={i} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#235C43]" />
                             <span className="[text-align:justify] [text-justify:inter-word]">{h}</span>
                           </li>
                         ))}
@@ -826,10 +865,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] uppercase tracking-widest text-[#9a7b45] font-semibold">
+                        <p className="text-[10px] uppercase tracking-widest text-[#235C43] font-semibold">
                           Rendimiento Anual
                         </p>
-                        <p className="text-sm font-bold text-emerald-700">
+                        <p className="text-sm font-bold text-[#1A4D36]">
                           {tipo.yieldRange}
                         </p>
                       </div>
@@ -844,8 +883,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           {/* 5. FORMAS DE PAGO & ESTRUCTURA DE COMPRA */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <TrendingUp size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Estructura de Compra
               </p>
             </div>
@@ -862,18 +901,18 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               <div className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
+                    <span className="rounded-full bg-[#9FE1C3]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#9FE1C3] border border-[#9FE1C3]/30">
                       Mayor Descuento
                     </span>
                     <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.750 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
+                    <p className="font-serif text-2xl font-light text-[#9FE1C3]">$1.750 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
                     <p className="text-[11px] text-stone-400">vs $2.050 en la zona</p>
                   </div>
                 </div>
                 <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="text-xs uppercase tracking-wider text-[#9FE1C3] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
                     Aseguras el valor por m² más competitivo de todo Equipetrol Norte. Ahorras miles de dólares en comparación con planes diferidos y capitalizas la máxima plusvalía neta al recibir llaves en {GARDEN_ZEN_CONFIG.delivery}.
                   </p>
@@ -895,7 +934,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="text-xs uppercase tracking-wider text-[#235C43] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                     Desembolso inicial que congela el precio con descuento sobre lista, cancelando el 30% final recién al recibir el departamento terminado.
                   </p>
@@ -917,7 +956,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="text-xs uppercase tracking-wider text-[#235C43] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                     El desembolso de entrada más accesible para asegurar tu unidad en Equipetrol Norte con solo el 30% de cuota inicial, pagando el 70% contra entrega.
                   </p>
@@ -930,8 +969,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           {/* 6. RENTABILIDAD & PLUSVALÍA EN EQUIPETROL NORTE */}
           <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <TrendingUp size={14} className="text-[#235C43]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                 Rentabilidad & Sostenibilidad
               </p>
             </div>
@@ -945,7 +984,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
             <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
+                <span className="rounded-full bg-[#235C43]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#1A4D36]">
                   Diferencial Energético Único
                 </span>
               </div>
@@ -956,21 +995,21 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 Mientras los edificios convencionales sufren constantes incrementos de tarifas de luz comunal y expensas elevadas, Garden Zen utiliza energía solar fotovoltaica para iluminar áreas comunes, ascensores y bombas, convirtiéndose en el edificio más competitivo para inquilinos y propietarios.
               </p>
 
-              <div className="mt-5 rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-[#9a7b45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
+              <div className="mt-5 rounded-xl border-2 border-[#235C43] bg-[#F4F8F5] p-5 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-[#235C43] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
                   Plusvalía Zen
                 </div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#1A4D36]">
                     Garden Zen · Equipetrol Norte (Obra Fina)
                   </p>
                   <p className="font-serif text-2xl text-stone-900 font-medium">
                     $1.750 <span className="text-xs font-sans text-stone-500">USD/m²</span>
                   </p>
                 </div>
-                <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#9a7b45]/20 pt-3">
+                <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#235C43]/20 pt-3">
                   <li>• Entrada monoambiente: <strong className="text-stone-900 block mt-0.5">Desde USD 56.210</strong></li>
-                  <li>• Retorno anual por renta: <strong className="text-[#816127] block mt-0.5">10,2% – 11,4% en USD</strong></li>
+                  <li>• Retorno anual por renta: <strong className="text-[#1A4D36] block mt-0.5">10,2% – 11,4% en USD</strong></li>
                   <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+17% ($2.050 USD/m²)</strong></li>
                 </ul>
               </div>
@@ -982,8 +1021,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <Layers size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                <Layers size={14} className="text-[#235C43]" />
+                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#235C43]">
                   Inventario & Disponibilidad Oficial
                 </p>
               </div>
@@ -995,14 +1034,14 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   title="Actualizar disponibilidad desde Google Sheets"
                   className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 active:scale-95 disabled:opacity-50 shadow-xs cursor-pointer"
                 >
-                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
+                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#235C43]" : ""} />
                   <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar"}</span>
                 </button>
                 <a
                   href={GARDEN_ZEN_CONFIG.sheetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[11px] text-[#9a7b45] hover:underline"
+                  className="flex items-center gap-1 text-[11px] text-[#235C43] hover:underline"
                   title="Ver planilla oficial en Google Sheets"
                 >
                   <span>Google Sheets</span>
@@ -1019,18 +1058,18 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             </p>
 
             {/* Resumen de unidades en vivo */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] px-4 py-3 text-xs">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#F4F8F5] px-4 py-3 text-xs">
               <div className="flex items-center gap-3 text-stone-700">
                 <span className="font-semibold text-stone-900">{totalUnitsCount} departamentos</span>
                 <span className="text-stone-300">·</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-semibold text-[#235C43] flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#235C43] animate-pulse" />
                   {availableUnitsCount} disponibles
                 </span>
                 <span className="text-stone-300">·</span>
                 <span className="text-stone-500">{soldUnitsCount} vendidos</span>
               </div>
-              <span className="text-[11px] text-[#816127] font-semibold bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] text-[#1A4D36] font-semibold bg-[#235C43]/10 px-2.5 py-0.5 rounded-full">
                 Torre de 13 pisos de vivienda
               </span>
             </div>
@@ -1056,13 +1095,13 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       onClick={() => setSelectedAmbId(amb.id)}
                       className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
                         isSelected
-                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
+                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#235C43]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#235C43] hover:shadow-xs"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#9FE1C3]" : "text-stone-900"}`}>
                             {amb.name}
                           </p>
                           <p className={`text-xs mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
@@ -1071,7 +1110,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         </div>
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                           availCount > 0
-                            ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            ? isSelected ? "bg-[#235C43]/40 text-[#9FE1C3] border border-[#235C43]/50" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
                             : isSelected ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-400"
                         }`}>
                           {availCount > 0 ? `${availCount} disponibles` : "Agotado"}
@@ -1128,13 +1167,13 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       onClick={() => setSelectedFloor(floor)}
                       className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
                         isSelected
-                          ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
+                          ? "border-[#235C43] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#235C43]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#235C43] hover:bg-stone-50 shadow-xs"
                       }`}
                     >
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="font-serif text-sm">Piso {floor}</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#235C43] animate-pulse" />
                       </div>
                       <p className={`text-[10px] mt-0.5 font-light ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
                         USD {formatGardenZenUsd(unit.cashTotal)}
@@ -1147,17 +1186,17 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
             {/* PASO 3: PRECIO EXACTO, MODALIDAD DE PAGO Y CÁLCULO DE GANANCIA */}
             {activeUnit && activeFinancials && (
-              <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
+              <div className="mt-8 rounded-3xl border-2 border-[#235C43] bg-[#F4F8F5] p-5 sm:p-7 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">3</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-[#816127]">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#235C43] text-[10px] font-bold text-white">3</span>
+                  <h3 className="text-xs uppercase tracking-wider font-semibold text-[#1A4D36]">
                     Precio oficial y proyección de ganancia:
                   </h3>
                 </div>
 
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#9a7b45]/20 pb-4">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#235C43]/20 pb-4">
                   <div>
-                    <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
+                    <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#9FE1C3]">
                       Unidad {activeUnit.unitNumber} · Piso {activeUnit.floor}
                     </span>
                     <h4 className="mt-2 font-serif text-2xl font-semibold text-stone-900">
@@ -1168,8 +1207,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     </p>
                   </div>
 
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="rounded-full bg-[#EAF4EF] px-3 py-1 text-xs font-semibold text-[#1A4D36] border border-[#235C43]/30 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#235C43] animate-pulse" />
                     Disponible para Reserva
                   </span>
                 </div>
@@ -1210,13 +1249,13 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                           onClick={() => setSelectedPlan(plan.key as any)}
                           className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
                             isSelected
-                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
+                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#235C43]"
                               : "border-stone-200 bg-white/70 text-stone-600 hover:border-stone-300"
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
-                            <span className="text-[10px] font-semibold text-[#816127]">${plan.perM2} USD/m²</span>
+                            <span className="text-[10px] font-semibold text-[#235C43]">${plan.perM2} USD/m²</span>
                           </div>
                           <p className="mt-1 font-serif text-lg font-bold text-stone-900">
                             USD {formatGardenZenUsd(plan.total)}
@@ -1231,16 +1270,16 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 {/* TABLERO DE RENDIMIENTO FINANCIERO */}
                 <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
                   <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3 flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-[#9a7b45]" />
+                    <TrendingUp size={14} className="text-[#235C43]" />
                     Proyección de Ganancia & Rentabilidad (Entrega {GARDEN_ZEN_CONFIG.delivery}):
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
+                    <div className="rounded-xl bg-[#F4F8F5] p-3.5 border border-stone-200/80">
                       <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
                         Valor Estimado a la Entrega ($2.050 USD/m²)
                       </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
+                      <p className="mt-1 font-serif text-2xl font-bold text-[#1A4D36]">
                         USD {formatGardenZenUsd(activeFinancials.marketValueAtDelivery)}
                       </p>
                       <p className="text-[11px] text-stone-500 font-light mt-0.5">
@@ -1304,7 +1343,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                           activeFinancials.totalPrice
                         );
                       }}
-                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0 cursor-pointer"
+                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#235C43] active:scale-95 text-center shrink-0 cursor-pointer"
                     >
                       Reservar Unidad por WhatsApp
                     </button>
@@ -1312,36 +1351,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 </div>
               </div>
             )}
-          </section>
-
-          {/* 8. DESCARGA DEL BROCHURE OFICIAL */}
-          <section className="mt-16 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#9a7b45]/15 text-[#9a7b45]">
-                  <Download size={22} />
-                </div>
-                <div>
-                  <h4 className="font-serif text-lg text-stone-900">
-                    Brochure & Presentación Oficial de Garden Zen
-                  </h4>
-                  <p className="text-xs text-stone-500 font-light">
-                    Descarga el documento comercial con plantas arquitectónicas y especificaciones de obra fina.
-                  </p>
-                </div>
-              </div>
-
-              <a
-                href="/garden_zen/presentacion_garden_zen.pdf"
-                download="Presentacion_Garden_Zen.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-stone-900 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#9a7b45]"
-              >
-                <Download size={14} />
-                <span>Descargar PDF</span>
-              </a>
-            </div>
           </section>
 
         </div>
@@ -1355,7 +1364,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               <button
                 type="button"
                 onClick={() => setZoomPlanImage(null)}
-                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white hover:bg-[#9a7b45] transition cursor-pointer"
+                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white hover:bg-[#235C43] transition cursor-pointer"
               >
                 <X size={20} />
               </button>
