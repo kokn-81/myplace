@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { X } from "lucide-react";
 import OnaLanding from "./OnaLanding";
 import EurodesignLanding from "./EurodesignLanding";
+import DomusLanding from "./DomusLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -24,6 +25,15 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isEurodesign) {
     return <EurodesignLanding property={property} onClose={onClose} />;
+  }
+
+  const isDomus =
+    Boolean(property.id && String(property.id).toLowerCase().includes("domus")) ||
+    Boolean(property.title && property.title.toLowerCase().includes("domus")) ||
+    Boolean(property.complejoNombre && property.complejoNombre.toLowerCase().includes("domus"));
+
+  if (isDomus) {
+    return <DomusLanding property={property} onClose={onClose} />;
   }
 
   const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;

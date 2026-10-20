@@ -1,5 +1,338 @@
 [
   {
+    "id": "domus-black",
+    "titulo": "DOMUS BLACK · Equipetrol Norte",
+    "precio": 45602,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.7625,
+    "lng": -63.195,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Arquitectura sobria y contemporánea en Equipetrol Norte. Monoambientes, 1, 2 y 3 dormitorios. Rooftop con piscina de mármol negro, lounge social y churrasqueras.",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "coworking",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_black/arte_principal.jpg, /domus/domus_black/arte_secundario.jpg, /domus/domus_black/brochure_p01.jpg",
+    "images": [
+      "/domus/domus_black/arte_principal.jpg",
+      "/domus/domus_black/arte_secundario.jpg",
+      "/domus/domus_black/brochure_p01.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS BLACK",
+    "ocupacion": "Disponible",
+    "superficie_m2": 47.3,
+    "fecha_entrega": "Preventa Etapa 2",
+    "avance_obra": 60,
+    "fase_obra": "En Construcción",
+    "total_unidades": 141,
+    "unidades_disponibles": 24,
+    "reserva_usd": 1500,
+    "planes_pago": "Contado $1.510/m² o cuotas $1.610/m² (40% inicial)",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 45602,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-gold",
+    "titulo": "DOMUS GOLD · Equipetrol San Martín",
+    "precio": 53454,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.765,
+    "lng": -63.193,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Lujo residencial con acabados dorados a pasos de Av. San Martín en Equipetrol. Piscina infinity, sky bar, spa y residencias premium.",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "spa",
+      "coworking",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_gold/fachada_01.jpg, /domus/domus_gold/fachada_02.jpg, /domus/domus_gold/arte_01.jpg",
+    "images": [
+      "/domus/domus_gold/fachada_01.jpg",
+      "/domus/domus_gold/fachada_02.jpg",
+      "/domus/domus_gold/arte_01.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS GOLD",
+    "ocupacion": "Disponible",
+    "superficie_m2": 49.55,
+    "fecha_entrega": "Preventa Etapa 2",
+    "avance_obra": 55,
+    "fase_obra": "En Construcción",
+    "total_unidades": 170,
+    "unidades_disponibles": 29,
+    "reserva_usd": 1500,
+    "planes_pago": "Contado $1.510/m² o cuotas $1.610/m² (40% inicial)",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 53454,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-onix",
+    "titulo": "DOMUS ONIX · Av. Radial 23 & Sirari",
+    "precio": 46647,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.769,
+    "lng": -63.1995,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "21 pisos de diseño vanguardista sobre Av. Radial 23 y Los Claveles. Piscina curva sinfín en Piso 21, club house en Piso 3 y cafetería en PB.",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "cafeteria",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_onix/lobby_cafeteria.jpg, /domus/domus_onix/lamina_01.jpg, /domus/domus_onix/lamina_04.jpg",
+    "images": [
+      "/domus/domus_onix/lobby_cafeteria.jpg",
+      "/domus/domus_onix/lamina_01.jpg",
+      "/domus/domus_onix/lamina_04.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS ONIX",
+    "ocupacion": "Disponible",
+    "superficie_m2": 45.1,
+    "fecha_entrega": "Preventa Etapa 2 (21 pisos)",
+    "avance_obra": 50,
+    "fase_obra": "En Construcción",
+    "total_unidades": 156,
+    "unidades_disponibles": 14,
+    "reserva_usd": 1500,
+    "planes_pago": "Contado $1.460/m² o cuotas $1.560/m² (40% inicial)",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 46647,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-insignia",
+    "titulo": "DOMUS INSIGNIA · Plaza Italia",
+    "precio": 39060,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.7685,
+    "lng": -63.194,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Exclusividad frente a Plaza Italia y a pasos del Hotel Los Tajibos en Equipetrol. Entregas Febrero 2026 y 2027. Piscina con vista panorámica y churrasqueras.",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_insignia/arte_01.jpg, /domus/domus_insignia/arte_02.jpg, /domus/domus_insignia/brochure_p01.jpg",
+    "images": [
+      "/domus/domus_insignia/arte_01.jpg",
+      "/domus/domus_insignia/arte_02.jpg",
+      "/domus/domus_insignia/brochure_p01.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS INSIGNIA",
+    "ocupacion": "Disponible",
+    "superficie_m2": 43.14,
+    "fecha_entrega": "Febrero 2026 / 2027",
+    "avance_obra": 75,
+    "fase_obra": "Obra Fina / Acabados",
+    "total_unidades": 76,
+    "unidades_disponibles": 15,
+    "reserva_usd": 1500,
+    "planes_pago": "Contado $1.440/m² o cuotas $1.490/m² (40% inicial)",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 39060,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-luxury",
+    "titulo": "DOMUS LUXURY · Zona Norte Las Brisas",
+    "precio": 42050,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Norte",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.755,
+    "lng": -63.181,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Residencias boutique sobre Av. Radial 27 entre 3er y 4to Anillo, a minutos de Las Brisas Mall. Entrega Noviembre 2026.",
+    "amenities": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_luxury/arte_01.jpg, /domus/domus_luxury/arte_02.jpg, /domus/domus_luxury/brochure_p01.jpg",
+    "images": [
+      "/domus/domus_luxury/arte_01.jpg",
+      "/domus/domus_luxury/arte_02.jpg",
+      "/domus/domus_luxury/brochure_p01.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS LUXURY",
+    "ocupacion": "Disponible",
+    "superficie_m2": 45,
+    "fecha_entrega": "Noviembre 2026",
+    "avance_obra": 70,
+    "fase_obra": "En Construcción",
+    "total_unidades": 83,
+    "unidades_disponibles": 2,
+    "reserva_usd": 1500,
+    "planes_pago": "Contado $1.450/m² o cuotas $1.475/m² (40% inicial)",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 42050,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-tower",
+    "titulo": "DOMUS TOWER · Equipetrol Norte",
+    "precio": 48500,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.761,
+    "lng": -63.198,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Torre de 17 pisos con arquitectura icónica sobre el Canal Isuto en Equipetrol Norte. Rooftop sky bar, coworking y amenidades panorámicas.",
+    "amenities": [
+      "piscina",
+      "churrasquera",
+      "coworking",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_tower/render_01.jpg, /domus/domus_tower/render_02.jpg, /domus/domus_tower/render_03.jpg",
+    "images": [
+      "/domus/domus_tower/render_01.jpg",
+      "/domus/domus_tower/render_02.jpg",
+      "/domus/domus_tower/render_03.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS TOWER",
+    "ocupacion": "Disponible",
+    "superficie_m2": 46,
+    "fecha_entrega": "Consultar Preventa",
+    "avance_obra": 40,
+    "fase_obra": "En Planos / Preventa",
+    "total_unidades": 95,
+    "unidades_disponibles": 12,
+    "reserva_usd": 1500,
+    "planes_pago": "Preventa desde $1.470/m²",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 48500,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
+    "id": "domus-infinity",
+    "titulo": "DOMUS INFINITY · Los Tajibos",
+    "precio": 49500,
+    "habitaciones": 1,
+    "banos": 1,
+    "zona": "Equipetrol",
+    "ciudad": "Santa Cruz de la Sierra",
+    "lat": -17.7635,
+    "lng": -63.196,
+    "operacion": "Venta",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "descripcion": "Residencias inteligentes y amenidades infinitas en Urb. Los Tajibos, Equipetrol. Piscina sinfín en rooftop y solarium.",
+    "amenities": [
+      "piscina",
+      "churrasquera",
+      "gimnasio",
+      "seguridad"
+    ],
+    "imagenes": "/domus/domus_infinity/arte_01.jpg, /domus/domus_infinity/arte_02.jpg, /domus/domus_infinity/brochure_p01.jpg",
+    "images": [
+      "/domus/domus_infinity/arte_01.jpg",
+      "/domus/domus_infinity/arte_02.jpg",
+      "/domus/domus_infinity/brochure_p01.jpg"
+    ],
+    "moneda": "$ (USD)",
+    "agente_nombre": "Alejandro Coca",
+    "agente_whatsapp": "59157015854",
+    "complejo_nombre": "DOMUS INFINITY",
+    "ocupacion": "Disponible",
+    "superficie_m2": 47,
+    "fecha_entrega": "Consultar Preventa",
+    "avance_obra": 40,
+    "fase_obra": "En Planos / Preventa",
+    "total_unidades": 88,
+    "unidades_disponibles": 15,
+    "reserva_usd": 1500,
+    "planes_pago": "Preventa desde $1.480/m²",
+    "ofertas": [
+      {
+        "operacion": "Venta",
+        "precio": 49500,
+        "moneda": "$ (USD)",
+        "estado": "Publicado"
+      }
+    ]
+  },
+  {
     "ciudad": "Santa Cruz de la Sierra",
     "superficie_m2": 204.26,
     "fecha_entrega": null,

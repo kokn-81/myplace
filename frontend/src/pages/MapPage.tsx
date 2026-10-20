@@ -283,6 +283,321 @@ export const SYNTHETIC_EURODESIGN_PROPERTY: Property = {
   planesPago: "Al contado $1.480/m² o cuotas $1.580/m² (40% inicial)",
 };
 
+export const SYNTHETIC_DOMUS_BLACK_PROPERTY: Property = {
+  id: "domus-black",
+  title: "DOMUS BLACK · Equipetrol Norte",
+  price: 45602,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol Norte",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7625,
+  lng: -63.1950,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Arquitectura sobria y contemporánea en Equipetrol Norte. Monoambientes, 1, 2 y 3 dormitorios. Rooftop con piscina de mármol negro, lounge social y churrasqueras.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad"],
+  images: [
+    "/domus/domus_black/arte_principal.jpg",
+    "/domus/domus_black/arte_secundario.jpg",
+    "/domus/domus_black/brochure_p01.jpg",
+    "/domus/domus_black/brochure_p02.jpg",
+    "/domus/domus_black/brochure_p03.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS BLACK",
+  ocupacion: "Disponible",
+  superficieM2: 47.3,
+  amoblado: false,
+  fechaEntrega: "Preventa Etapa 2",
+  avanceObra: 60,
+  faseObra: "En Construcción",
+  totalUnidades: 141,
+  unidadesDisponibles: 24,
+  reservaUsd: 1500,
+  planesPago: "Contado $1.510/m² o cuotas $1.610/m² (40% inicial)",
+};
+
+export const SYNTHETIC_DOMUS_GOLD_PROPERTY: Property = {
+  id: "domus-gold",
+  title: "DOMUS GOLD · Equipetrol San Martín",
+  price: 53454,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7650,
+  lng: -63.1930,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Lujo residencial con acabados dorados a pasos de Av. San Martín en Equipetrol. Piscina infinity, sky bar, spa y residencias premium.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "spa", "coworking", "seguridad"],
+  images: [
+    "/domus/domus_gold/fachada_01.jpg",
+    "/domus/domus_gold/fachada_02.jpg",
+    "/domus/domus_gold/arte_01.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS GOLD",
+  ocupacion: "Disponible",
+  superficieM2: 49.55,
+  amoblado: false,
+  fechaEntrega: "Preventa Etapa 2",
+  avanceObra: 55,
+  faseObra: "En Construcción",
+  totalUnidades: 170,
+  unidadesDisponibles: 29,
+  reservaUsd: 1500,
+  planesPago: "Contado $1.510/m² o cuotas $1.610/m² (40% inicial)",
+};
+
+export const SYNTHETIC_DOMUS_ONIX_PROPERTY: Property = {
+  id: "domus-onix",
+  title: "DOMUS ONIX · Av. Radial 23 & Sirari",
+  price: 46647,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Sirari / Equipetrol",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7690,
+  lng: -63.1995,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "21 pisos de diseño vanguardista sobre Av. Radial 23 y Los Claveles. Piscina curva sinfín en Piso 21, club house en Piso 3 y cafetería en PB.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "cafeteria", "seguridad"],
+  images: [
+    "/domus/domus_onix/lobby_cafeteria.jpg",
+    "/domus/domus_onix/lamina_01.jpg",
+    "/domus/domus_onix/lamina_04.jpg",
+    "/domus/domus_onix/lamina_05.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS ONIX",
+  ocupacion: "Disponible",
+  superficieM2: 45.1,
+  amoblado: false,
+  fechaEntrega: "Preventa Etapa 2 (21 pisos)",
+  avanceObra: 50,
+  faseObra: "En Construcción",
+  totalUnidades: 156,
+  unidadesDisponibles: 14,
+  reservaUsd: 1500,
+  planesPago: "Contado $1.460/m² o cuotas $1.560/m² (40% inicial)",
+};
+
+export const SYNTHETIC_DOMUS_INSIGNIA_PROPERTY: Property = {
+  id: "domus-insignia",
+  title: "DOMUS INSIGNIA · Plaza Italia",
+  price: 39060,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol / Los Tajibos",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7685,
+  lng: -63.1940,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Exclusividad frente a Plaza Italia y a pasos del Hotel Los Tajibos en Equipetrol. Entregas Febrero 2026 y 2027. Piscina con vista panorámica y churrasqueras.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "seguridad"],
+  images: [
+    "/domus/domus_insignia/arte_01.jpg",
+    "/domus/domus_insignia/arte_02.jpg",
+    "/domus/domus_insignia/brochure_p01.jpg",
+    "/domus/domus_insignia/brochure_p02.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS INSIGNIA",
+  ocupacion: "Disponible",
+  superficieM2: 43.14,
+  amoblado: false,
+  fechaEntrega: "Febrero 2026 / 2027",
+  avanceObra: 75,
+  faseObra: "Obra Fina / Acabados",
+  totalUnidades: 76,
+  unidadesDisponibles: 15,
+  reservaUsd: 1500,
+  planesPago: "Contado $1.440/m² o cuotas $1.490/m² (40% inicial)",
+};
+
+export const SYNTHETIC_DOMUS_LUXURY_PROPERTY: Property = {
+  id: "domus-luxury",
+  title: "DOMUS LUXURY · Zona Norte Las Brisas",
+  price: 42050,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Radial 27 / Las Brisas",
+  city: "Santa Cruz de la Sierra",
+  zone: "Norte",
+  lat: -17.7550,
+  lng: -63.1810,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Residencias boutique sobre Av. Radial 27 entre 3er y 4to Anillo, a minutos de Las Brisas Mall. Entrega Noviembre 2026.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "seguridad"],
+  images: [
+    "/domus/domus_luxury/arte_01.jpg",
+    "/domus/domus_luxury/arte_02.jpg",
+    "/domus/domus_luxury/brochure_p01.jpg",
+    "/domus/domus_luxury/brochure_p02.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS LUXURY",
+  ocupacion: "Disponible",
+  superficieM2: 45.0,
+  amoblado: false,
+  fechaEntrega: "Noviembre 2026",
+  avanceObra: 70,
+  faseObra: "En Construcción",
+  totalUnidades: 83,
+  unidadesDisponibles: 2,
+  reservaUsd: 1500,
+  planesPago: "Contado $1.450/m² o cuotas $1.475/m² (40% inicial)",
+};
+
+export const SYNTHETIC_DOMUS_TOWER_PROPERTY: Property = {
+  id: "domus-tower",
+  title: "DOMUS TOWER · Equipetrol Norte",
+  price: 48500,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol Norte / Canal Isuto",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7610,
+  lng: -63.1980,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Torre de 17 pisos con arquitectura icónica sobre el Canal Isuto en Equipetrol Norte. Rooftop sky bar, coworking y amenidades panorámicas.",
+  amenities: ["piscina", "churrasquera", "coworking", "seguridad"],
+  images: [
+    "/domus/domus_tower/render_01.jpg",
+    "/domus/domus_tower/render_02.jpg",
+    "/domus/domus_tower/render_03.jpg",
+    "/domus/domus_tower/brochure_p01.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS TOWER",
+  ocupacion: "Disponible",
+  superficieM2: 46.0,
+  amoblado: false,
+  fechaEntrega: "Consultar Preventa",
+  avanceObra: 40,
+  faseObra: "En Planos / Preventa",
+  totalUnidades: 95,
+  unidadesDisponibles: 12,
+  reservaUsd: 1500,
+  planesPago: "Preventa desde $1.470/m²",
+};
+
+export const SYNTHETIC_DOMUS_INFINITY_PROPERTY: Property = {
+  id: "domus-infinity",
+  title: "DOMUS INFINITY · Los Tajibos",
+  price: 49500,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Urb. Los Tajibos",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7635,
+  lng: -63.1960,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Residencias inteligentes y amenidades infinitas en Urb. Los Tajibos, Equipetrol. Piscina sinfín en rooftop y solarium.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "seguridad"],
+  images: [
+    "/domus/domus_infinity/arte_01.jpg",
+    "/domus/domus_infinity/arte_02.jpg",
+    "/domus/domus_infinity/brochure_p01.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "DOMUS INFINITY",
+  ocupacion: "Disponible",
+  superficieM2: 47.0,
+  amoblado: false,
+  fechaEntrega: "Consultar Preventa",
+  avanceObra: 40,
+  faseObra: "En Planos / Preventa",
+  totalUnidades: 88,
+  unidadesDisponibles: 15,
+  reservaUsd: 1500,
+  planesPago: "Preventa desde $1.480/m²",
+};
+
+export const SYNTHETIC_DOMUS_PROPERTIES: Property[] = [
+  SYNTHETIC_DOMUS_BLACK_PROPERTY,
+  SYNTHETIC_DOMUS_GOLD_PROPERTY,
+  SYNTHETIC_DOMUS_ONIX_PROPERTY,
+  SYNTHETIC_DOMUS_INSIGNIA_PROPERTY,
+  SYNTHETIC_DOMUS_LUXURY_PROPERTY,
+  SYNTHETIC_DOMUS_TOWER_PROPERTY,
+  SYNTHETIC_DOMUS_INFINITY_PROPERTY,
+];
+
+export const isDomusProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || "").toLowerCase();
+  const sCmp = String(p.complejoNombre || "").toLowerCase();
+  return (
+    sId.startsWith("domus") ||
+    sTitle.includes("domus") ||
+    sCmp.includes("domus")
+  );
+};
+
 export const isTargetOna = (p: Property, query: string): boolean => {
   if (!query) return false;
   const q = query.trim().toLowerCase();
@@ -292,6 +607,19 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (q === "eurodesign" || q === "tower-eurodesign" || q === "tower_eurodesign" || q === "1816") {
     return isEurodesignProperty(p);
   }
+  if (
+    q.includes("domus") ||
+    q.startsWith("domus-") ||
+    ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(q)
+  ) {
+    if (isDomusProperty(p)) {
+      if (q === "domus") return true;
+      const sId = String(p.id).toLowerCase();
+      const sTitle = String(p.title || "").toLowerCase();
+      const cleanQ = q.replace(/^domus[-_\s]*/, "");
+      return sId.includes(cleanQ) || sTitle.includes(cleanQ);
+    }
+  }
   return String(p.id).toLowerCase() === q || Boolean(p.title && p.title.toLowerCase().includes(q));
 };
 
@@ -299,11 +627,11 @@ export const isTargetProject = isTargetOna;
 
 export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  if (isOnaProperty(p) || isEurodesignProperty(p)) return true;
+  if (isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p)) return true;
   const typeStr = (p.type || "").toLowerCase();
   const titleStr = (p.title || "").toLowerCase();
   const descStr = (p.description || "").toLowerCase();
-  const tagStr = (p.projectTag || "").toLowerCase();
+  const tagStr = ((p as any).projectTag || "").toLowerCase();
   return (
     typeStr.includes("preventa") ||
     typeStr.includes("proyecto") ||
@@ -318,12 +646,29 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (!list || list.length <= 1) return list;
+  if (!list || list.length === 0) return SYNTHETIC_DOMUS_PROPERTIES;
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
   const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
   // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
-  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p));
-  // Opción 3: Departamento de La Riviera (Ref #4 o complejo La Riviera)
+  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p)) || SYNTHETIC_EURODESIGN_PROPERTY;
+
+  const priorityItems: Property[] = [];
+  if (ona) priorityItems.push(ona);
+  if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
+    priorityItems.push(eurodesign);
+  }
+
+  // Opción 3 a 9: Proyectos de la marca DOMUS
+  for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
+    const existing = list.find((p) => String(p.id) === String(domusProp.id));
+    if (existing && !priorityItems.some((p) => String(p.id) === String(existing.id))) {
+      priorityItems.push(existing);
+    } else if (!priorityItems.some((p) => String(p.id) === String(domusProp.id))) {
+      priorityItems.push(domusProp);
+    }
+  }
+
+  // Opción 10: Departamento de La Riviera (Ref #4 o complejo La Riviera)
   const riviera = list.find(
     (p) =>
       String(p.id) === "4" ||
@@ -331,17 +676,9 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
       (p.title && p.title.toLowerCase().includes("riviera"))
   );
-
-  const priorityItems: Property[] = [];
-  if (ona) priorityItems.push(ona);
-  if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
-    priorityItems.push(eurodesign);
-  }
   if (riviera && !priorityItems.some((p) => String(p.id) === String(riviera.id))) {
     priorityItems.push(riviera);
   }
-
-  if (priorityItems.length === 0) return list;
 
   const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
   const remaining = list.filter((p) => !prioritySet.has(String(p.id)));
@@ -350,6 +687,7 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
 
 export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
+  if (isDomusProperty(p)) return true;
   return (
     String(p.id) === "5" ||
     String(p.id) === "1816" ||
@@ -637,6 +975,7 @@ export default function MapPage() {
     if (typeof window !== "undefined") {
       const isOna = isOnaProperty(property);
       const isEuro = isEurodesignProperty(property);
+      const isDom = isDomusProperty(property);
       const url = new URL(window.location.href);
       const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
 
@@ -651,6 +990,13 @@ export default function MapPage() {
           url.searchParams.set("proyecto", "eurodesign");
           const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
           window.history.pushState({ modal: "eurodesign", propertyId: property.id }, "", targetUrl);
+        }
+      } else if (isDom) {
+        const domId = String(property.id).toLowerCase();
+        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== domId) {
+          url.searchParams.set("proyecto", domId);
+          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
+          window.history.pushState({ modal: domId, propertyId: property.id }, "", targetUrl);
         }
       } else if (currentParam) {
         url.searchParams.delete("proyecto");
@@ -690,14 +1036,15 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. ?proyecto=ona o ?proyecto=eurodesign) al entrar a la web
+  // Parse direct links (e.g. ?proyecto=ona o ?proyecto=eurodesign o ?proyecto=domus-black) al entrar a la web
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
     
     const params = new URLSearchParams(window.location.search);
     const isOnaPath = window.location.pathname.toLowerCase().startsWith("/ona");
     const isEuroPath = window.location.pathname.toLowerCase().startsWith("/eurodesign");
-    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : null);
+    const isDomusPath = window.location.pathname.toLowerCase().startsWith("/domus");
+    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -713,6 +1060,16 @@ export default function MapPage() {
           hasSearchInteractionRef.current = true;
           window.history.replaceState({ modal: "direct_eurodesign", propertyId: "1816" }, "", window.location.href);
         }, 300);
+      } else if (
+        proyecto.toLowerCase().includes("domus") ||
+        ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
+      ) {
+        const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
+        setTimeout(() => {
+          selectProperty(domTarget, { skipHistoryPush: true });
+          hasSearchInteractionRef.current = true;
+          window.history.replaceState({ modal: `direct_${domTarget.id}`, propertyId: domTarget.id }, "", window.location.href);
+        }, 300);
       }
     }
   }, [properties, selectedProperty, selectProperty]);
@@ -723,6 +1080,8 @@ export default function MapPage() {
       document.title = "ONA Residences · Preventa en Los Cusis | N.I.A";
     } else if (selectedProperty && isEurodesignProperty(selectedProperty)) {
       document.title = "Tower Eurodesign · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isDomusProperty(selectedProperty)) {
+      document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
       document.title = "N.I.A — Encuentra tu próximo hogar";
     }
@@ -740,7 +1099,7 @@ export default function MapPage() {
         setSelectedProperty((current) => {
           if (current) {
             focusPropertyLocation(current, 16.2);
-            if (isOnaProperty(current) || isEurodesignProperty(current)) {
+            if (isOnaProperty(current) || isEurodesignProperty(current) || isDomusProperty(current)) {
               setCurrentIndex(0);
             }
           }
@@ -752,6 +1111,12 @@ export default function MapPage() {
           selectProperty(target, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
           selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
+        } else if (
+          proyecto.toLowerCase().includes("domus") ||
+          ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
+        ) {
+          const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
+          selectProperty(domTarget, { skipHistoryPush: true });
         }
       }
     };
@@ -765,7 +1130,7 @@ export default function MapPage() {
     const target = selectedProperty || lastViewedProperty;
     if (target) {
       focusPropertyLocation(target, 16.2);
-      if (isOnaProperty(target) || isEurodesignProperty(target)) {
+      if (isOnaProperty(target) || isEurodesignProperty(target) || isDomusProperty(target)) {
         setCurrentIndex(0);
       }
     }
@@ -776,7 +1141,11 @@ export default function MapPage() {
       const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
 
       if (hasProjectParam) {
-        if (window.history.state?.modal === "ona" || window.history.state?.modal === "eurodesign") {
+        if (
+          window.history.state?.modal === "ona" ||
+          window.history.state?.modal === "eurodesign" ||
+          String(window.history.state?.modal || "").startsWith("domus")
+        ) {
           window.history.back();
         } else {
           url.searchParams.delete("proyecto");
@@ -788,6 +1157,7 @@ export default function MapPage() {
         }
       }
     }
+
   }, [selectedProperty, lastViewedProperty, focusPropertyLocation]);
 
   // Al pasar el mouse en computadora: vuela suavemente al inmueble y resalta su pin
@@ -1836,11 +2206,11 @@ export default function MapPage() {
   }, [exactProperties, suggestedProperties, showSuggested]);
 
   const mapCanvasProperties = useMemo(() => {
-    if (isGuidedActive || hasActiveResults || guidedOperation === "Proyectos") {
+    if (isGuidedActive || hasActiveResults) {
       return filteredProperties;
     }
     return properties;
-  }, [isGuidedActive, hasActiveResults, guidedOperation, filteredProperties, properties]);
+  }, [isGuidedActive, hasActiveResults, filteredProperties, properties]);
 
   const isSuggestedProperty = (prop: Property) =>
     suggestedProperties.some((sp) => sp.id === prop.id) && !exactProperties.some((ep) => ep.id === prop.id);
@@ -3046,7 +3416,7 @@ export default function MapPage() {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA */}
       <AnimatePresence>
         {selectedProperty && (
-          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty)) ? (
+          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty) || isDomusProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div
