@@ -220,7 +220,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   }, [selectedUnit, financialSummary]);
 
   return (
-    <div className="relative min-h-screen bg-[#0A1310] text-[#E4EBE7] font-sans antialiased selection:bg-[#10B981] selection:text-black">
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#0A1310] text-[#E4EBE7] font-sans antialiased selection:bg-[#10B981] selection:text-black">
       {/* HEADER BAR */}
       <header className="sticky top-0 z-40 border-b border-[#1A2D25] bg-[#0A1310]/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">

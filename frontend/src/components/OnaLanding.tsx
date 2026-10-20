@@ -1,19 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  AlertCircle,
-  ArrowRight,
   Building2,
-  Calculator,
-  Car,
+  Calendar,
   Check,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  DollarSign,
+  Download,
   ExternalLink,
+  Eye,
+  FileText,
   Layers,
   MapPin,
+  Maximize2,
   MessageCircle,
   Percent,
   RefreshCw,
@@ -26,16 +25,15 @@ import {
 import { recordLeadEvent } from "../leadTracking";
 import {
   ONA_ADDRESS,
+  ONA_BROCHURE_URL,
   ONA_BUILDER,
   ONA_DELIVERY,
   ONA_RESERVE_USD,
-  ONA_SHEETS_CSV_URL,
   ONA_UNITS,
   ONA_ZONE,
   OnaUnit,
   fetchOnaLiveUnits,
   formatOnaUsd,
-  parseOnaCsvText,
 } from "../onaInventory";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -45,34 +43,42 @@ interface Props {
   onClose?: () => void;
 }
 
-const AMENITY_SLIDES = [
+const HERO_IMAGES = [
+  { src: "/ona/fachada-dia.jpg", label: "Fachada de Día" },
+  { src: "/ona/fachada-atardecer.jpg", label: "Fachada Atardecer" },
+  { src: "/ona/fachada-noche.jpg", label: "Fachada Nocturna" },
+  { src: "/ona/lobby.jpg", label: "Lobby de Ingreso" },
+  { src: "/ona/piscina.jpg", label: "Piscina & Deck" },
+];
+
+const AMENITY_ITEMS = [
   {
     src: "/ona/piscina.jpg",
     category: "Piscina",
-    title: "Piscina",
+    title: "Piscina con Área de Playa",
     description:
       "Piscina amplia con ingreso suave y palmeras en el entorno. Un espacio relajante para refrescarte y disfrutar los días de sol con total comodidad dentro de tu propio edificio.",
   },
   {
     src: "/ona/hidromasaje.jpg",
-    category: "Hidromasaje",
+    category: "Wellness",
     title: "Hidromasaje en Piscina",
     description:
       "Sector de hidromasaje integrado dentro de la piscina principal. El rincón pensado para desconectar de la rutina y relajarte al aire libre al terminar la jornada.",
   },
   {
     src: "/ona/reposeras.jpg",
-    category: "Exteriores",
+    category: "Solarium",
     title: "Deck con Reposeras",
     description:
       "Área de descanso al aire libre junto a la piscina con deck y reposeras, ideal para tomar sol, leer o compartir una tarde tranquila.",
   },
   {
     src: "/ona/sauna.jpg",
-    category: "Sauna",
+    category: "Relax",
     title: "Sauna Seco",
     description:
-      "Sauna seco completamente equipado con revestimiento en madera natural. Diseñado para relajarte, descontracturar el cuerpo y renovar energías sin salir de casa.",
+      "Sauna seco completamente equipado con revestimiento en madera natural. Diseñado para descontracturar el cuerpo y renovar energías sin salir de casa.",
   },
   {
     src: "/ona/gym.jpg",
@@ -83,10 +89,10 @@ const AMENITY_SLIDES = [
   },
   {
     src: "/ona/churrasquera.jpg",
-    category: "Churrasqueras",
+    category: "Gastronomía",
     title: "Churrasqueras Equipadas",
     description:
-      "Dos churrasqueras en el área social con mesón de apoyo y espacio para mesas, preparadas para ser el punto de encuentro en almuerzos y asados familiares de fin de semana.",
+      "Dos churrasqueras en el área social con mesón de apoyo y espacio para mesas, preparadas para ser el punto de encuentro en almuerzos y asados familiares.",
   },
   {
     src: "/ona/fogata.jpg",
@@ -100,84 +106,34 @@ const AMENITY_SLIDES = [
     category: "Coworking & Eventos",
     title: "Salón de Reuniones y Coworking",
     description:
-      "Ambiente polivalente climatizado y equipado para trabajar concentrado, coordinar reuniones de negocios o festejar ocasiones especiales con comodidad.",
+      "Ambiente polivalente climatizado y equipado para trabajar concentrado, coordinar reuniones de negocios o festejar ocasiones especiales.",
   },
   {
     src: "/ona/lobby.jpg",
-    category: "Acceso",
-    title: "Lobby de Doble Altura con Seguridad",
+    category: "Acceso & Seguridad",
+    title: "Lobby de Doble Altura con Seguridad 24/7",
     description:
-      "Recepción amoblada e iluminada con control de acceso y seguridad permanente para brindarte tranquilidad a ti y una bienvenida de primer nivel a tus visitas.",
+      "Recepción amoblada e iluminada con control de acceso y seguridad permanente para brindarte tranquilidad y una bienvenida de primer nivel.",
   },
 ];
 
-const TYPOLOGIES_DATA = [
-  {
-    id: "32",
-    title: "1 Dormitorio Master",
-    area: "32,30 m²",
-    image: "/ona/tipo-32.jpg",
-    cashPrice: 40375,
-    tagline:
-      "Excelente distribución para vivienda práctica o inversión de alta demanda de alquiler en Santa Cruz.",
-    reservedCopy: "Más de 8 unidades de esta tipología ya reservadas",
-    highlights: [
-      "Living-comedor integrado con excelente entrada de luz",
-      "Cocina de diseño con cajonería y mesón de granito",
-      "Dormitorio independiente con ropero empotrado a medida",
-      "Baño completo con box de vidrio y grifería monocomando",
-    ],
-  },
-  {
-    id: "54",
-    title: "2 Dormitorios Confort",
-    area: "54,14 m²",
-    image: "/ona/tipo-54.jpg",
-    cashPrice: 67675,
-    tagline:
-      "Espacios versátiles para familias jóvenes, parejas o profesionales que requieren un ambiente extra de trabajo.",
-    reservedCopy: "Gran demanda: unidades en pisos intermedios ya asignadas",
-    highlights: [
-      "2 habitaciones independientes con amplios closets empotrados",
-      "Living social amplio con circulación optimizada",
-      "Cocina americana moderna con barra desayunadora",
-      "Ideal para familias jóvenes o alquiler ejecutivo corporativo",
-    ],
-  },
-  {
-    id: "92",
-    title: "2 Dormitorios con Balcón Suite",
-    area: "92,00 m²",
-    image: "/ona/tipo-92.jpg",
-    cashPrice: 115000,
-    tagline:
-      "La tipología más amplia de ONA Residences, con balcón terraza y habitaciones diseñadas en suite.",
-    reservedCopy: "Unidades exclusivas con reservas activas de 1.ª fase",
-    highlights: [
-      "86,5 m² propios interiores + 5,55 m² de terraza balcón panorámica",
-      "Vista frontal privilegiada hacia Av. Los Cusis",
-      "Dormitorios máster en suite con vestidor privado",
-      "El estándar residencial más exclusivo de ONA Residences",
-    ],
-  },
-];
-
-interface AmbienteOption {
+interface TypologyConfig {
   id: string;
   name: string;
   shortName: string;
   rooms: number;
   areaM2: number;
   balconyM2: number | null;
+  planImage: string;
   view: string;
-  basePrice: number;
   rentMin: number;
   rentMax: number;
   yieldRange: string;
   matchUnit: (u: OnaUnit) => boolean;
+  highlights: string[];
 }
 
-const AMBIENTE_OPTIONS: AmbienteOption[] = [
+const TYPOLOGY_CONFIGS: TypologyConfig[] = [
   {
     id: "1D-32",
     name: "1 Dormitorio Master",
@@ -185,12 +141,18 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rooms: 1,
     areaM2: 32.3,
     balconyM2: null,
+    planImage: "/ona/tipo-32.jpg",
     view: "Vista Lateral (Este / Oeste)",
-    basePrice: 40375,
     rentMin: 350,
     rentMax: 375,
     yieldRange: "10,4% – 11,1%",
     matchUnit: (u) => u.rooms === 1 && (u.tipo === "3" || u.tipo === "4"),
+    highlights: [
+      "Living-comedor integrado con excelente iluminación natural",
+      "Cocina de diseño con cajonería y mesón de granito",
+      "Dormitorio independiente con ropero empotrado a medida",
+      "Alta demanda de alquiler en Santa Cruz con excelente rentabilidad",
+    ],
   },
   {
     id: "2D-54",
@@ -199,26 +161,38 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rooms: 2,
     areaM2: 54.14,
     balconyM2: null,
+    planImage: "/ona/tipo-54.jpg",
     view: "Vista Lateral (Tipo 1)",
-    basePrice: 67675,
     rentMin: 520,
     rentMax: 560,
     yieldRange: "9,2% – 9,9%",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "1",
+    highlights: [
+      "2 habitaciones independientes con amplios closets empotrados",
+      "Living social amplio con circulación optimizada",
+      "Cocina americana moderna con barra desayunadora",
+      "Ideal para familias jóvenes o alquiler ejecutivo corporativo",
+    ],
   },
   {
     id: "2D-92-cusis",
-    name: "2 Dorms Suite Frontal",
+    name: "2 Dorms Suite Frontal (Av. Los Cusis)",
     shortName: "2 Dorms Suite · 92 m² (Frontal)",
     rooms: 2,
     areaM2: 92.0,
     balconyM2: 5.55,
-    view: "Vista Av. Los Cusis (Tipo 2)",
-    basePrice: 115000,
+    planImage: "/ona/tipo-92.jpg",
+    view: "Vista Frontal Av. Los Cusis (Tipo 2)",
     rentMin: 750,
     rentMax: 830,
     yieldRange: "7,8% – 8,7%",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "2",
+    highlights: [
+      "86,5 m² interiores + 5,55 m² de terraza balcón panorámica",
+      "Vista frontal privilegiada hacia Av. Los Cusis",
+      "Dormitorio máster en suite con vestidor privado",
+      "El estándar residencial más exclusivo de ONA Residences",
+    ],
   },
   {
     id: "2D-92-post",
@@ -227,1275 +201,1060 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rooms: 2,
     areaM2: 92.05,
     balconyM2: 5.55,
-    view: "Vista Posterior (Tipo 5)",
-    basePrice: 114142,
+    planImage: "/ona/tipo-92.jpg",
+    view: "Vista Posterior Tranquila (Tipo 5)",
     rentMin: 750,
     rentMax: 830,
     yieldRange: "7,8% – 8,7%",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "5",
+    highlights: [
+      "86,5 m² interiores + balcón terraza privado hacia patio interior",
+      "Orientación silenciosa protegida de ruidos viales",
+      "Habitaciones amplias con baño en suite y baño de visitas",
+      "Excelente relación precio/metro cuadrado en suite",
+    ],
   },
 ];
 
+type PaymentPlan = "cash" | "plan60" | "plan40";
+
 export default function OnaLanding({ property, onClose }: Props) {
-  const [activeImage, setActiveImage] = useState("/ona/fachada-dia.jpg");
-  const [activeLabel, setActiveLabel] = useState("Fachada");
-  const [amenityIndex, setAmenityIndex] = useState(0);
-
-  // Estados del Flujo Paso a Paso (Ambiente -> Piso disponible -> Precio & Ganancia):
-  const [selectedAmbId, setSelectedAmbId] = useState<string>("1D-32");
-  const [selectedFloor, setSelectedFloor] = useState<number>(2);
-  const [selectedPlan, setSelectedPlan] = useState<"contado" | "plan60" | "plan40">("contado");
-
-  const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<OnaUnit[]>(ONA_UNITS);
-  const [isRefreshingInv, setIsRefreshingInv] = useState(false);
+  const [loadingUnits, setLoadingUnits] = useState(false);
+  const [activeTab, setActiveTab] = useState<"selector" | "amenities" | "planos" | "ubicacion">("selector");
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
 
+  // Selector Step State
+  const [selectedTypologyId, setSelectedTypologyId] = useState<string>("1D-32");
+  const [selectedFloor, setSelectedFloor] = useState<number | null>(2);
+  const [selectedUnit, setSelectedUnit] = useState<OnaUnit | null>(null);
+  const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("cash");
+
+  // Modal Plan Viewer
+  const [zoomPlanImage, setZoomPlanImage] = useState<string | null>(null);
+  const [shareFeedback, setShareFeedback] = useState(false);
+
+  // Load live units on mount
   useEffect(() => {
-    fetchOnaLiveUnits().then((res) => {
-      if (res.units && res.units.length > 0) {
-        setUnits(res.units);
+    let cancelled = false;
+    async function loadLive() {
+      setLoadingUnits(true);
+      try {
+        const live = await fetchOnaLiveUnits();
+        if (!cancelled && live.length > 0) {
+          setUnits(live);
+        }
+      } finally {
+        if (!cancelled) setLoadingUnits(false);
       }
-    });
+    }
+    loadLive();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleRefreshInventory = async () => {
-    setIsRefreshingInv(true);
-    try {
-      const res = await fetch(ONA_SHEETS_CSV_URL + "&_t=" + Date.now());
-      if (res.ok) {
-        const text = await res.text();
-        const parsed = parseOnaCsvText(text);
-        if (parsed.length > 0) {
-          setUnits(parsed);
-          try {
-            window.localStorage.setItem("ona.live_inventory_cache.v1", JSON.stringify({ time: Date.now(), units: parsed }));
-          } catch {}
-        }
-      }
-    } catch (err) {
-      console.warn("Error refreshing ONA inventory:", err);
-    } finally {
-      setIsRefreshingInv(false);
-    }
-  };
+  // Active Typology Config
+  const activeTypology = useMemo(() => {
+    return TYPOLOGY_CONFIGS.find((t) => t.id === selectedTypologyId) || TYPOLOGY_CONFIGS[0];
+  }, [selectedTypologyId]);
 
-  const totalUnitsCount = units.length;
-  const availableUnitsCount = units.filter((u) => u.status === "disponible").length;
-  const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
+  // Units matching active typology
+  const unitsOfTypology = useMemo(() => {
+    return units.filter(activeTypology.matchUnit);
+  }, [units, activeTypology]);
 
-  const currentAmbiente = useMemo(() => {
-    return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
-  }, [selectedAmbId]);
+  // Available floors for active typology
+  const availableFloors = useMemo(() => {
+    const floorSet = new Set<number>();
+    unitsOfTypology.forEach((u) => floorSet.add(u.floor));
+    return Array.from(floorSet).sort((a, b) => a - b);
+  }, [unitsOfTypology]);
 
-  // Pisos existentes para este ambiente ordenados de menor a mayor
-  const floorsForAmbiente = useMemo(() => {
-    const floorNums = Array.from(
-      new Set(units.filter((u) => currentAmbiente.matchUnit(u)).map((u) => u.floor))
-    ).sort((a, b) => a - b);
-
-    return floorNums.map((floor) => {
-      const unitsOnFloor = units.filter((u) => currentAmbiente.matchUnit(u) && u.floor === floor);
-      const availableUnits = unitsOnFloor.filter((u) => u.status === "disponible");
-      const isAvailable = availableUnits.length > 0;
-      return {
-        floor,
-        isAvailable,
-        availableCount: availableUnits.length,
-        totalCount: unitsOnFloor.length,
-        unit: isAvailable ? availableUnits[0] : unitsOnFloor[0],
-      };
-    });
-  }, [units, currentAmbiente]);
-
-  // Si el piso seleccionado actual no está disponible para este ambiente, auto-seleccionar el primer piso disponible
+  // Ensure selected floor is valid when typology changes
   useEffect(() => {
-    const currentFloorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
-    if (!currentFloorItem || !currentFloorItem.isAvailable) {
-      const firstAvailable = floorsForAmbiente.find((f) => f.isAvailable);
-      if (firstAvailable) {
-        setSelectedFloor(firstAvailable.floor);
-      } else if (floorsForAmbiente.length > 0) {
-        setSelectedFloor(floorsForAmbiente[0].floor);
-      }
-    }
-  }, [floorsForAmbiente, selectedFloor]);
-
-  const handleSelectAmbiente = (ambId: string) => {
-    setSelectedAmbId(ambId);
-    const amb = AMBIENTE_OPTIONS.find((a) => a.id === ambId);
-    if (amb) {
-      const matchingUnitsOnFloor = units.filter(
-        (u) => amb.matchUnit(u) && u.floor === selectedFloor && u.status === "disponible"
+    if (selectedFloor === null || !availableFloors.includes(selectedFloor)) {
+      const firstAvailableFloor = availableFloors.find((f) =>
+        unitsOfTypology.some((u) => u.floor === f && u.status === "disponible")
       );
-      if (matchingUnitsOnFloor.length === 0) {
-        const firstAvail = units.find((u) => amb.matchUnit(u) && u.status === "disponible");
-        if (firstAvail) {
-          setSelectedFloor(firstAvail.floor);
-        }
-      }
+      setSelectedFloor(firstAvailableFloor ?? availableFloors[0] ?? 2);
     }
-  };
+  }, [availableFloors, unitsOfTypology, selectedFloor]);
 
-  // Unidad activa para el piso seleccionado
-  const activeUnit = useMemo(() => {
-    const floorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
-    return floorItem?.unit || null;
-  }, [floorsForAmbiente, selectedFloor]);
+  // Units on current floor
+  const unitsOnFloor = useMemo(() => {
+    if (selectedFloor === null) return [];
+    return unitsOfTypology.filter((u) => u.floor === selectedFloor);
+  }, [unitsOfTypology, selectedFloor]);
 
-  // Cálculos financieros para la unidad activa
-  const activeFinancials = useMemo(() => {
-    if (!activeUnit) return null;
+  // Auto-select first available unit on floor or fallback
+  useEffect(() => {
+    if (unitsOnFloor.length === 0) {
+      setSelectedUnit(null);
+      return;
+    }
+    const currentUnitStillValid = unitsOnFloor.find(
+      (u) => selectedUnit && u.floor === selectedUnit.floor && u.tipo === selectedUnit.tipo
+    );
+    if (currentUnitStillValid) {
+      setSelectedUnit(currentUnitStillValid);
+    } else {
+      const disp = unitsOnFloor.find((u) => u.status === "disponible");
+      setSelectedUnit(disp || unitsOnFloor[0]);
+    }
+  }, [unitsOnFloor]);
 
-    let totalPrice = activeUnit.cash;
-    let initialPayment = activeUnit.cash;
-    let balancePayment = 0;
-    let pricePerM2 = activeUnit.cashPerM2;
+  // Financial calculations
+  const financialSummary = useMemo(() => {
+    if (!selectedUnit) return null;
 
-    if (selectedPlan === "plan60") {
-      totalPrice = activeUnit.plan60.total;
-      initialPayment = activeUnit.plan60.initial;
-      balancePayment = activeUnit.plan60.total - activeUnit.plan60.initial;
-      pricePerM2 = activeUnit.plan60.perM2;
-    } else if (selectedPlan === "plan40") {
-      totalPrice = activeUnit.plan40.total;
-      initialPayment = activeUnit.plan40.initial;
-      balancePayment = activeUnit.plan40.total - activeUnit.plan40.initial;
-      pricePerM2 = activeUnit.plan40.perM2;
+    let price = selectedUnit.cash;
+    let initialPayment = selectedUnit.cash;
+    let planLabel = "100% Contado (Máximo Descuento)";
+    let saldoContraEntrega = 0;
+
+    if (paymentPlan === "plan60") {
+      price = selectedUnit.plan60.total;
+      initialPayment = selectedUnit.plan60.initial;
+      saldoContraEntrega = Math.max(0, price - initialPayment);
+      planLabel = "Plan 60% Inicial / 40% Contra Entrega";
+    } else if (paymentPlan === "plan40") {
+      price = selectedUnit.plan40.total;
+      initialPayment = selectedUnit.plan40.initial;
+      saldoContraEntrega = Math.max(0, price - initialPayment);
+      planLabel = "Plan 40% Inicial / 60% Contra Entrega";
     }
 
-    const marketValueAtDelivery = Math.round(activeUnit.totalM2 * 1600);
-    const capitalGain = marketValueAtDelivery - totalPrice;
-    const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
+    const maxPlanTotal = selectedUnit.plan40.total;
+    const ahorroContado = Math.max(0, maxPlanTotal - selectedUnit.cash);
 
     return {
-      totalPrice,
+      price,
       initialPayment,
-      balancePayment,
-      pricePerM2,
-      marketValueAtDelivery,
-      capitalGain,
-      gainPercentage,
-      rentMonthlyMin: currentAmbiente.rentMin,
-      rentMonthlyMax: currentAmbiente.rentMax,
-      rentMonthlyBsMin: currentAmbiente.rentMin * 12,
-      rentMonthlyBsMax: currentAmbiente.rentMax * 12,
-      yieldRange: currentAmbiente.yieldRange,
+      saldoContraEntrega,
+      planLabel,
+      ahorroContado,
+      reserveUsd: ONA_RESERVE_USD,
+      cashPrice: selectedUnit.cash,
     };
-  }, [activeUnit, selectedPlan, currentAmbiente]);
+  }, [selectedUnit, paymentPlan]);
 
-  const handleShareOna = async () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
-    const shareUrl = `${origin}/?proyecto=ona`;
-    const shareTitle = "ONA Residences · Preventa en Los Cusis";
-    const shareText = "Departamentos de 1 y 2 dormitorios en Los Cusis desde USD 40.375. Conoce ONA Residences:";
-
-    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-      try {
-        await navigator.share({
-          title: shareTitle,
-          text: shareText,
-          url: shareUrl,
-        });
-        return;
-      } catch (err) {
-        if ((err as DOMException)?.name === "AbortError") return;
-      }
+  // WhatsApp reservation link
+  const whatsappUrl = useMemo(() => {
+    const phone = CONTACT_WHATSAPP_NUMBER || "59157015854";
+    if (!selectedUnit || !financialSummary) {
+      const text = `Hola, quiero consultar sobre disponibilidad en ONA Residences (${ONA_ZONE}).`;
+      return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
     }
+    const text = `Hola, vengo directo para reservar en ONA Residences la Unidad Piso ${selectedUnit.floor} - Tipo ${selectedUnit.tipo} (${activeTypology.name}) de ${selectedUnit.totalM2} m² (${selectedUnit.view}) con modalidad ${financialSummary.planLabel} (Precio: $${formatOnaUsd(financialSummary.price)} USD - Reserva: $${formatOnaUsd(ONA_RESERVE_USD)} USD). ¿Con quién puedo coordinar la reserva formal?`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+  }, [selectedUnit, activeTypology, financialSummary]);
 
-    try {
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      setShareFeedback(true);
-      setTimeout(() => setShareFeedback(false), 2500);
-    } catch {
-      // fallback
+  const handleShare = () => {
+    recordLeadEvent({
+      action: "share_project",
+      propertyRef: "ona",
+      operacion: "Preventa",
+      zona: ONA_ZONE,
+    }).catch(() => {});
+    const url = window.location.origin + window.location.pathname + "?proyecto=ona";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        setShareFeedback(true);
+        setTimeout(() => setShareFeedback(false), 2500);
+      });
     }
   };
 
-  const introRef = useRef<HTMLElement>(null);
-  const placeRef = useRef<HTMLElement>(null);
-  const amenitiesRef = useRef<HTMLElement>(null);
-  const typesRef = useRef<HTMLElement>(null);
-  const payRef = useRef<HTMLElement>(null);
-  const investorRef = useRef<HTMLElement>(null);
-  const disponibilidadRef = useRef<HTMLElement>(null);
-  const closeRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const scenes: Record<string, { src: string; label: string }> = {
-      intro: { src: "/ona/fachada-dia.jpg", label: "Fachada" },
-      lugar: { src: "/ona/ubicacion.jpg", label: "Ubicación" },
-      amenidades: { src: "/ona/piscina.jpg", label: "Amenidades" },
-      tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
-      pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
-      inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
-      disponibilidad: { src: "/ona/fachada-atardecer.jpg", label: "Disponibilidad" },
-      cierre: { src: "/ona/fachada-dia.jpg", label: "Reserva 1.ª Fase" },
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const scene = visible ? scenes[visible.target.id] : undefined;
-        if (!scene) return;
-        setActiveImage(scene.src);
-        setActiveLabel(scene.label);
-      },
-      { threshold: [0.22, 0.5] }
-    );
-
-    [introRef, placeRef, amenitiesRef, typesRef, payRef, investorRef, disponibilidadRef, closeRef].forEach((ref) => {
-      if (ref.current) observer.observe(ref.current);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const phone =
-    (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") ||
-    CONTACT_WHATSAPP_NUMBER;
-
-  const reserve = (messageText: string, budget?: number) => {
+  const handleTrackLead = (source: string) => {
     recordLeadEvent({
       action: "contact_tap",
-      propertyRef: property.id,
+      propertyRef: "ona",
       operacion: "Preventa",
-      zona: property.zone || ONA_ZONE,
-      presupuesto: budget ? `USD ${formatOnaUsd(budget)}` : `desde USD 40.375`,
+      zona: ONA_ZONE,
+      detalles: `source:${source}|unit:${selectedUnit ? `P${selectedUnit.floor}-T${selectedUnit.tipo}` : "general"}`,
     }).catch(() => {});
-
-    // Meta Pixel: disparar evento Lead antes de abrir WhatsApp
-    if (typeof window !== "undefined") {
-      try {
-        if (typeof (window as any).trackOnaLead === "function") {
-          (window as any).trackOnaLead();
-        } else if (typeof (window as any).fbq === "function") {
-          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-        }
-      } catch (err) {
-        console.warn("Meta Pixel Lead error:", err);
-      }
-    }
-
-    window.open(
-      `https://wa.me/${phone}?text=${encodeURIComponent(messageText)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
   };
-
-  const nextAmenity = () => {
-    setAmenityIndex((prev) => (prev + 1) % AMENITY_SLIDES.length);
-  };
-
-  const prevAmenity = () => {
-    setAmenityIndex(
-      (prev) => (prev - 1 + AMENITY_SLIDES.length) % AMENITY_SLIDES.length
-    );
-  };
-
-  const currentSlide = AMENITY_SLIDES[amenityIndex];
-
-
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
-    >
-      {/* Botón Flotante: Compartir */}
-      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button
-          onClick={handleShareOna}
-          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95"
-          aria-label="Compartir"
-          title="Compartir ONA Residences"
-        >
-          {shareFeedback ? (
-            <>
-              <Check size={18} className="text-emerald-600" />
-              <span className="text-[11px] font-semibold text-emerald-700">¡Copiado!</span>
-            </>
-          ) : (
-            <>
-              <Share2 size={18} />
-              <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica */}
-      <div className="relative h-[40vh] min-h-[290px] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
-        <AnimatePresence mode="popLayout">
-          <motion.img
-            key={activeImage}
-            src={activeImage}
-            alt={`ONA Residences - ${activeLabel}`}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30" />
-        <div className="absolute bottom-6 left-6 right-16 text-white md:bottom-10 md:left-10">
-          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
-            Preventa Exclusiva · 1.ª Fase · {activeLabel}
-          </span>
-          <h1 className="mt-3 font-serif text-4xl font-light tracking-wide leading-none md:text-6xl">
-            ONA
-          </h1>
-          <p className="mt-3 max-w-sm text-sm font-light text-white/90 md:text-base leading-relaxed [text-align:justify] [text-justify:inter-word]">
-            Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en {ONA_ZONE}.
-          </p>
-          <div className="mt-3 flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-white/80 font-light">
-            <span>Constructora {ONA_BUILDER}</span>
-            <span>·</span>
-            <span>Entrega {ONA_DELIVERY}</span>
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#0c0e12] text-stone-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
+      {/* 1. HEADER BAR ESTANDAR */}
+      <header className="sticky top-0 z-40 border-b border-stone-800/80 bg-[#0c0e12]/92 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-800 bg-stone-900 text-stone-300 transition hover:bg-stone-800 hover:text-white"
+                title="Volver al mapa"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#E8C872]">
+                  <Sparkles size={11} /> Preventa 1.ª Fase
+                </span>
+                <span className="text-[11px] font-semibold text-stone-400">
+                  Entrega {ONA_DELIVERY}
+                </span>
+              </div>
+              <h1 className="text-lg font-black tracking-tight text-white sm:text-xl">
+                ONA Residences · {ONA_ZONE}
+              </h1>
+            </div>
           </div>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#e8d5a8]">
-            <MapPin size={13} /> {ONA_ZONE}
-          </p>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-stone-800 bg-stone-900/90 px-3 py-2 text-xs font-semibold text-stone-300 transition hover:bg-stone-800 hover:text-white"
+              title="Compartir enlace de ONA"
+            >
+              {shareFeedback ? (
+                <>
+                  <Check size={14} className="text-emerald-400" />
+                  <span className="text-emerald-400">¡Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 size={14} className="text-[#E8C872]" />
+                  <span>Compartir</span>
+                </>
+              )}
+            </button>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => handleTrackLead("header_cta")}
+              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8942A] px-4 py-2 text-xs font-bold text-black shadow-lg shadow-amber-500/15 transition hover:brightness-110 active:scale-95"
+            >
+              <MessageCircle size={15} />
+              <span className="hidden sm:inline">Reservar Unidad</span>
+              <span className="sm:hidden">Reservar</span>
+            </a>
+
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-800 bg-stone-900 text-stone-300 transition hover:bg-stone-800 hover:text-white"
+                title="Cerrar"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
-      <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
-        <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
-
-          {/* 1. HERO / VIVÍ ONA: EXPERIENCIA Y ESTILO DE VIDA */}
-          <section id="intro" ref={introRef} className="scroll-mt-6">
-            <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Experiencia Residencial & Preventa
-              </p>
-            </div>
-
-            <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Viví ONA. <br />
-              <span className="italic font-normal text-[#9a7b45]">
-                Un proyecto pensado para elevar tu forma de vivir.
-              </span>
-            </h2>
-
-            <p className="mt-5 text-[15px] font-light leading-relaxed text-stone-600 md:text-base [text-align:justify] [text-justify:inter-word]">
-              ONA Residences reúne arquitectura contemporánea, diseño biofílico y ambientes pensados para combinar comodidad, bienestar y estilo en una de las zonas más serenas y cotizadas de Santa Cruz: <strong>{ONA_ZONE}</strong>. Un proyecto concebido por <strong>{ONA_BUILDER}</strong> para quienes entienden que el verdadero confort reside en despertar con calma, disfrutar áreas sociales completas y asegurar una sólida inversión patrimonial.
-            </p>
-
-            <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
-                  <TrendingUp size={20} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
-                    Preventa en Marcha · 1.ª Fase
-                  </p>
-                  <p className="text-sm font-medium text-stone-800">
-                    Más de {soldUnitsCount} unidades de esta primera fase ya han sido reservadas.
-                  </p>
-                </div>
+      {/* 2. HERO SECTION CON SELECTOR DE FOTOGRAFÍA EDITORIAL */}
+      <section className="relative border-b border-stone-800/80 bg-gradient-to-b from-[#13161c] to-[#0c0e12] py-8 sm:py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            {/* Columna Izquierda: Mensaje y Métricas */}
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#E8C872]">
+                <ShieldCheck size={14} />
+                <span>Desarrollado por {ONA_BUILDER}</span>
               </div>
-              <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                La oportunidad de ingresar en 1.ª fase asegura la máxima plusvalía acumulada antes de cada actualización de listas de precios del proyecto.
-              </p>
-            </div>
 
-
-
-            {/* Accesos rápidos de navegación */}
-            <nav className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
-              <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
-              <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
-              <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
-              <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
-              <a href="#inversion" className="hover:text-stone-950 transition-colors">Rentabilidad</a>
-              <a href="#disponibilidad" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
-            </nav>
-          </section>
-
-
-          {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD */}
-          <section id="lugar" ref={placeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Ubicación Insuperable
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Los Cusis: Calma residencial y conectividad total.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Ubicado estratégicamente sobre <strong>{ONA_ADDRESS}</strong>, en el tradicional cuadrante residencial de <strong>{ONA_ZONE}</strong> (entre Banzer y Beni).
-              Combina el encanto de un vecindario arbolado y tranquilo con un acceso inmediato a las principales arterias comerciales y empresariales de Santa Cruz.
-            </p>
-
-            <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
-              <img
-                src="/ona/ubicacion.jpg"
-                alt="Mapa de ubicación de ONA Residences en Los Cusis"
-                className="w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
-              />
-              <div className="p-5">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
-                    <p className="text-xs font-semibold text-stone-900">Conectividad 360°</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
-                      Acceso directo hacia el 2.º y 3.er Anillo, Equipetrol y los distritos empresariales.
-                    </p>
-                  </div>
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
-                    <p className="text-xs font-semibold text-stone-900">Entorno Gastronómico</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
-                      A minutos de restaurantes de autor, cafés de especialidad, colegios y supermercados.
-                    </p>
-                  </div>
-                  <div className="border-l-2 border-[#9a7b45] pl-3">
-                    <p className="text-xs font-semibold text-stone-900">Plusvalía en Alza</p>
-                    <p className="text-[12px] text-stone-500 font-light mt-0.5 [text-align:justify] [text-justify:inter-word]">
-                      Zona residencial consolidada con alta demanda permanente de alquiler y valorización.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 border-t border-stone-100 pt-3 text-right">
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${property.lat || -17.763513},${property.lng || -63.177111}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#9a7b45] hover:underline"
-                  >
-                    <MapPin size={13} /> Ver ubicación en Google Maps
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-
-
-          {/* 3. AMENIDADES & ÁREAS SOCIALES */}
-          <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <Building2 size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Áreas Sociales & Comodidades
-              </p>
-            </div>
-
-            <div className="mt-2 flex items-baseline justify-between gap-4">
-              <h2 className="font-serif text-3xl font-light text-stone-900 md:text-4xl">
-                Espacios pensados para disfrutar cada día.
+              <h2 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-5xl sm:leading-tight">
+                Eleva tu vida en <span className="text-[#E8C872]">equilibrio</span> y armonía.
               </h2>
-            </div>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Áreas comunes diseñadas para brindar comodidad, descanso y encuentros agradables con amigos y familia dentro del propio edificio.
-            </p>
 
-            {/* CARRUSEL INTERACTIVO */}
-            <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-xl">
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-900 sm:aspect-[16/9]">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentSlide.src}
-                    src={currentSlide.src}
-                    alt={currentSlide.title}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="h-full w-full object-cover"
-                  />
-                </AnimatePresence>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-stone-300 sm:text-base">
+                ONA Residences reúne arquitectura contemporánea, diseño biofílico y ambientes pensados para combinar
+                confort, serenidad y plusvalía en una de las zonas residenciales más cotizadas de Santa Cruz:{" "}
+                <strong className="text-white">{ONA_ZONE}</strong>, sobre la tradicional {ONA_ADDRESS}.
+              </p>
 
-                {/* Controles de Navegación del Carrusel */}
-                <div className="absolute inset-0 flex items-center justify-between p-3 pointer-events-none">
-                  <button
-                    onClick={prevAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md"
-                    aria-label="Anterior amenidad"
-                  >
-                    <ChevronLeft size={22} />
-                  </button>
-                  <button
-                    onClick={nextAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md"
-                    aria-label="Siguiente amenidad"
-                  >
-                    <ChevronRight size={22} />
-                  </button>
+              {/* Grid de 4 Métricas Clave */}
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-3.5 backdrop-blur">
+                  <div className="flex items-center gap-2 text-stone-400">
+                    <Calendar size={14} className="text-[#E8C872]" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Entrega</span>
+                  </div>
+                  <p className="mt-1 text-base font-black text-white sm:text-lg">{ONA_DELIVERY}</p>
+                  <p className="text-[10px] text-stone-400">1.ª Fase Preventa</p>
                 </div>
 
-                <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[#e8d5a8] backdrop-blur-md">
-                  {currentSlide.category}
+                <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-3.5 backdrop-blur">
+                  <div className="flex items-center gap-2 text-stone-400">
+                    <TrendingUp size={14} className="text-[#E8C872]" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Desde</span>
+                  </div>
+                  <p className="mt-1 text-base font-black text-emerald-400 sm:text-lg">$40.375 USD</p>
+                  <p className="text-[10px] text-stone-400">Contado 32 m²</p>
                 </div>
 
-                <div className="absolute bottom-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-mono text-white backdrop-blur-md">
-                  {amenityIndex + 1} / {AMENITY_SLIDES.length}
+                <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-3.5 backdrop-blur">
+                  <div className="flex items-center gap-2 text-stone-400">
+                    <Building2 size={14} className="text-[#E8C872]" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Reserva</span>
+                  </div>
+                  <p className="mt-1 text-base font-black text-[#E8C872] sm:text-lg">
+                    ${formatOnaUsd(ONA_RESERVE_USD)} USD
+                  </p>
+                  <p className="text-[10px] text-stone-400">Congela precio oficial</p>
+                </div>
+
+                <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-3.5 backdrop-blur">
+                  <div className="flex items-center gap-2 text-stone-400">
+                    <Layers size={14} className="text-[#E8C872]" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Unidades</span>
+                  </div>
+                  <p className="mt-1 text-base font-black text-white sm:text-lg">
+                    {units.filter((u) => u.status === "disponible").length} / {units.length}
+                  </p>
+                  <p className="text-[10px] text-stone-400">Disponibilidad en vivo</p>
                 </div>
               </div>
+            </div>
 
-              {/* Texto persuasivo y justificado de la amenidad activa */}
-              <div className="p-6">
-                <h3 className="font-serif text-2xl text-stone-900">
-                  {currentSlide.title}
-                </h3>
-                <p className="mt-2 text-sm font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                  {currentSlide.description}
-                </p>
-
-                {/* Miniaturas interactivas */}
-                <div className="mt-6 flex items-center gap-1.5 overflow-x-auto pb-2 pt-1 scrollbar-none">
-                  {AMENITY_SLIDES.map((slide, idx) => (
+            {/* Columna Derecha: Render Principal y Switcher */}
+            <div className="lg:col-span-5">
+              <div className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-950 shadow-2xl">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={HERO_IMAGES[activeHeroIndex].src}
+                      src={HERO_IMAGES[activeHeroIndex].src}
+                      alt={HERO_IMAGES[activeHeroIndex].label}
+                      initial={{ opacity: 0, scale: 1.04 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="h-full w-full object-cover"
+                    />
+                  </AnimatePresence>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white">
+                    <span className="rounded-full bg-black/60 px-3 py-1 font-semibold backdrop-blur border border-white/10">
+                      {HERO_IMAGES[activeHeroIndex].label}
+                    </span>
                     <button
-                      key={slide.title}
-                      onClick={() => setAmenityIndex(idx)}
-                      className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
-                        idx === amenityIndex
-                          ? "border-[#9a7b45] scale-105 shadow-md ring-2 ring-[#9a7b45]/30"
-                          : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                      title={slide.title}
+                      type="button"
+                      onClick={() => setZoomPlanImage(HERO_IMAGES[activeHeroIndex].src)}
+                      className="flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold text-stone-200 backdrop-blur hover:text-white border border-white/10"
                     >
-                      <img src={slide.src} alt={slide.title} className="h-full w-full object-cover" />
+                      <Maximize2 size={12} /> Ampliar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Miniaturas */}
+                <div className="flex gap-2 p-3 overflow-x-auto scrollbar-none bg-[#101217]">
+                  {HERO_IMAGES.map((img, idx) => (
+                    <button
+                      key={img.src}
+                      type="button"
+                      onClick={() => setActiveHeroIndex(idx)}
+                      className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-xl border transition-all ${
+                        activeHeroIndex === idx
+                          ? "border-[#E8C872] ring-2 ring-[#E8C872]/40"
+                          : "border-stone-800 opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={img.src} alt={img.label} className="h-full w-full object-cover" />
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
+      {/* 3. TABS DE NAVEGACION ESTANDAR */}
+      <div className="sticky top-[57px] z-30 border-b border-stone-800 bg-[#0c0e12]/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-2.5 sm:px-6 scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setActiveTab("selector")}
+            className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+              activeTab === "selector"
+                ? "bg-[#D4AF37] text-black shadow-lg shadow-amber-500/20"
+                : "bg-stone-900/90 text-stone-300 hover:bg-stone-800 hover:text-white"
+            }`}
+          >
+            <Layers size={14} />
+            <span>Selector de Unidades</span>
+            <span
+              className={`rounded-full px-1.5 py-0.2 text-[10px] font-black ${
+                activeTab === "selector" ? "bg-black/20 text-black" : "bg-stone-800 text-[#E8C872]"
+              }`}
+            >
+              {units.filter((u) => u.status === "disponible").length} disp.
+            </span>
+          </button>
 
-          {/* 4. TIPOLOGÍAS RESIDENCIALES: PLANOS, INCLUSIONES Y PRECIO INICIAL */}
-          <section id="tipologias" ref={typesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Distribución Arquitectónica
-              </p>
+          <button
+            type="button"
+            onClick={() => setActiveTab("amenities")}
+            className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+              activeTab === "amenities"
+                ? "bg-[#D4AF37] text-black shadow-lg shadow-amber-500/20"
+                : "bg-stone-900/90 text-stone-300 hover:bg-stone-800 hover:text-white"
+            }`}
+          >
+            <Sparkles size={14} />
+            <span>Amenidades & Wellness ({AMENITY_ITEMS.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("planos")}
+            className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+              activeTab === "planos"
+                ? "bg-[#D4AF37] text-black shadow-lg shadow-amber-500/20"
+                : "bg-stone-900/90 text-stone-300 hover:bg-stone-800 hover:text-white"
+            }`}
+          >
+            <FileText size={14} />
+            <span>Planos & Modelos ({TYPOLOGY_CONFIGS.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("ubicacion")}
+            className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+              activeTab === "ubicacion"
+                ? "bg-[#D4AF37] text-black shadow-lg shadow-amber-500/20"
+                : "bg-stone-900/90 text-stone-300 hover:bg-stone-800 hover:text-white"
+            }`}
+          >
+            <MapPin size={14} />
+            <span>Ubicación Estratégica</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 4. CONTENIDO DE LAS SECCIONES */}
+      <main className="mx-auto max-w-7xl px-4 py-8 pb-36 sm:px-6">
+        {/* TAB 1: SELECTOR PROGRESIVO DE 4 PASOS */}
+        {activeTab === "selector" && (
+          <div className="space-y-8">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xl font-black text-white sm:text-2xl">
+                  Disponibilidad en Vivo · Preventa ONA
+                </h3>
+                <p className="text-xs text-stone-400">
+                  Selecciona la tipología, el piso y la unidad para calcular planes de pago y reservar.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-stone-400">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-400" />
+                <span>Disponible</span>
+                <span className="ml-2 flex h-2 w-2 rounded-full bg-rose-500" />
+                <span>Vendido / Reservado</span>
+                {loadingUnits && (
+                  <span className="ml-2 inline-flex items-center gap-1 text-[11px] text-[#E8C872]">
+                    <RefreshCw size={11} className="animate-spin" /> Actualizando
+                  </span>
+                )}
+              </div>
             </div>
 
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Un proyecto, distintas formas de vivirlo.
-            </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En ONA Residences podés elegir el departamento según el espacio que realmente necesitás: opciones de 1 y 2 dormitorios concebidas para optimizar cada metro cuadrado y terminaciones de primera.
-            </p>
+            {/* PASO 1: TIPOLOGÍAS */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#E8C872]">
+                Paso 1: Selecciona la Tipología
+              </p>
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {TYPOLOGY_CONFIGS.map((t) => {
+                  const matching = units.filter(t.matchUnit);
+                  const available = matching.filter((u) => u.status === "disponible");
+                  const minCash = available.length > 0
+                    ? Math.min(...available.map((u) => u.cash))
+                    : matching.length > 0
+                    ? Math.min(...matching.map((u) => u.cash))
+                    : 0;
+                  const isSelected = selectedTypologyId === t.id;
 
-            <div className="mt-8 space-y-10">
-              {TYPOLOGIES_DATA.map((tipo) => (
-                <article
-                  key={tipo.id}
-                  className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md transition-shadow hover:shadow-xl"
-                >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100 sm:aspect-[16/10]">
-                    <img
-                      src={tipo.image}
-                      alt={`Plano renderizado de tipología ${tipo.title}`}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute top-4 left-4 rounded-full bg-stone-900/85 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                      {tipo.area}
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTypologyId(t.id);
+                      }}
+                      className={`relative flex flex-col justify-between rounded-2xl border p-4 text-left transition-all ${
+                        isSelected
+                          ? "border-[#E8C872] bg-gradient-to-br from-amber-500/15 to-transparent shadow-lg shadow-amber-500/10 ring-1 ring-[#E8C872]"
+                          : "border-stone-800 bg-stone-900/60 hover:border-stone-700 hover:bg-stone-900"
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                            {t.rooms} Dormitorio{t.rooms > 1 ? "s" : ""}
+                          </span>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                              available.length > 0
+                                ? "bg-emerald-500/20 text-emerald-300"
+                                : "bg-stone-800 text-stone-500"
+                            }`}
+                          >
+                            {available.length} disp.
+                          </span>
+                        </div>
+                        <h4 className="mt-1 text-sm font-black text-white">{t.name}</h4>
+                        <p className="text-xs text-stone-400">{t.areaM2} m² propios</p>
+                        <p className="mt-2 text-[11px] text-stone-400 line-clamp-1">{t.view}</p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-stone-800/80 flex items-end justify-between">
+                        <div>
+                          <span className="text-[10px] uppercase text-stone-400">Desde</span>
+                          <p className="text-sm font-black text-emerald-400">
+                            ${formatOnaUsd(minCash)} USD
+                          </p>
+                        </div>
+                        <span className="text-[10px] font-semibold text-[#E8C872]">
+                          Rend. {t.yieldRange}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PASO 2: PISOS DISPONIBLES */}
+            <div>
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#E8C872]">
+                  Paso 2: Selecciona el Piso ({activeTypology.name})
+                </p>
+                <span className="text-xs text-stone-400">
+                  {availableFloors.length} pisos con esta tipología
+                </span>
+              </div>
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                {availableFloors.map((floorNum) => {
+                  const floorUnits = unitsOfTypology.filter((u) => u.floor === floorNum);
+                  const hasDisp = floorUnits.some((u) => u.status === "disponible");
+                  const isSelected = selectedFloor === floorNum;
+
+                  return (
+                    <button
+                      key={floorNum}
+                      type="button"
+                      onClick={() => setSelectedFloor(floorNum)}
+                      className={`flex h-14 min-w-[70px] flex-col items-center justify-center rounded-xl border px-3 text-xs font-bold transition-all ${
+                        isSelected
+                          ? "border-[#E8C872] bg-[#D4AF37] text-black shadow-md shadow-amber-500/20"
+                          : hasDisp
+                          ? "border-stone-800 bg-stone-900 text-stone-200 hover:border-stone-700"
+                          : "border-stone-900 bg-stone-950/70 text-stone-600"
+                      }`}
+                    >
+                      <span className="text-sm">Piso {floorNum}</span>
+                      <span className={`text-[10px] ${isSelected ? "text-stone-900" : hasDisp ? "text-emerald-400" : "text-rose-500"}`}>
+                        {hasDisp ? "Disponible" : "Agotado"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PASO 3: UNIDADES DEL PISO SELECCIONADO */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#E8C872]">
+                Paso 3: Selecciona la Unidad en Piso {selectedFloor}
+              </p>
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {unitsOnFloor.map((u) => {
+                  const isDisp = u.status === "disponible";
+                  const isSelected = selectedUnit && selectedUnit.floor === u.floor && selectedUnit.tipo === u.tipo;
+
+                  return (
+                    <button
+                      key={`${u.floor}-${u.tipo}`}
+                      type="button"
+                      disabled={!isDisp}
+                      onClick={() => setSelectedUnit(u)}
+                      className={`flex flex-col justify-between rounded-2xl border p-4 text-left transition-all ${
+                        isSelected
+                          ? "border-[#E8C872] bg-gradient-to-br from-amber-500/20 to-stone-900 shadow-xl ring-2 ring-[#E8C872]"
+                          : isDisp
+                          ? "border-stone-800 bg-stone-900/80 hover:border-stone-700 hover:bg-stone-900"
+                          : "border-stone-900/60 bg-stone-950/50 opacity-40 cursor-not-allowed"
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black uppercase tracking-wide text-white">
+                            Piso {u.floor} · Tipo {u.tipo}
+                          </span>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                              isDisp ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                            }`}
+                          >
+                            {isDisp ? "Disponible" : "Vendido"}
+                          </span>
+                        </div>
+
+                        <div className="mt-2 flex items-baseline gap-2">
+                          <p className="text-xl font-black text-white">
+                            ${formatOnaUsd(u.cash)} USD
+                          </p>
+                          <span className="text-[11px] text-stone-400">Contado</span>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-stone-300">
+                          <div className="rounded-lg bg-black/40 p-2">
+                            <span className="text-[10px] text-stone-400">Superficie Total</span>
+                            <p className="font-bold text-white">{u.totalM2} m²</p>
+                          </div>
+                          <div className="rounded-lg bg-black/40 p-2">
+                            <span className="text-[10px] text-stone-400">Balcón</span>
+                            <p className="font-bold text-white">
+                              {u.balconyM2 ? `${u.balconyM2} m²` : "Sin balcón"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="mt-2 text-[11px] text-stone-400 flex items-center gap-1">
+                          <MapPin size={11} className="text-[#E8C872]" /> {u.view}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between text-xs">
+                        <span className="text-stone-400">Reserva oficial</span>
+                        <span className="font-bold text-[#E8C872]">
+                          ${formatOnaUsd(ONA_RESERVE_USD)} USD
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PASO 4: MODALIDAD DE PAGO & RESUMEN FINANCIERO */}
+            {selectedUnit && financialSummary && (
+              <div className="rounded-3xl border border-stone-800 bg-gradient-to-b from-stone-900 to-[#101217] p-5 sm:p-8">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-stone-800 pb-5">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#E8C872]">
+                      Paso 4: Modalidad de Pago & Resumen de Inversión
+                    </span>
+                    <h4 className="mt-1 text-lg font-black text-white sm:text-2xl">
+                      Unidad Piso {selectedUnit.floor} - Tipo {selectedUnit.tipo} ({activeTypology.name})
+                    </h4>
+                    <p className="text-xs text-stone-400">
+                      Superficie: {selectedUnit.totalM2} m² · {selectedUnit.view}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setZoomPlanImage(activeTypology.planImage)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-700 bg-stone-800 px-3.5 py-1.5 text-xs font-semibold text-stone-200 transition hover:bg-stone-700 hover:text-white"
+                  >
+                    <Eye size={13} />
+                    <span>Ver Plano Arquitectónico</span>
+                  </button>
+                </div>
+
+                {/* Opciones de Modalidad */}
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentPlan("cash")}
+                    className={`rounded-2xl border p-4 text-left transition-all ${
+                      paymentPlan === "cash"
+                        ? "border-[#E8C872] bg-amber-500/15 shadow-lg ring-1 ring-[#E8C872]"
+                        : "border-stone-800 bg-stone-950/60 hover:border-stone-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">100% Contado</span>
+                      <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                        Mejor Precio
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xl font-black text-emerald-400">
+                      ${formatOnaUsd(selectedUnit.cash)} USD
+                    </p>
+                    <p className="mt-1 text-[11px] text-stone-400">
+                      Ahorras ${formatOnaUsd(financialSummary.ahorroContado)} USD vs plan financiado
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentPlan("plan60")}
+                    className={`rounded-2xl border p-4 text-left transition-all ${
+                      paymentPlan === "plan60"
+                        ? "border-[#E8C872] bg-amber-500/15 shadow-lg ring-1 ring-[#E8C872]"
+                        : "border-stone-800 bg-stone-950/60 hover:border-stone-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">Plan 60 / 40</span>
+                      <span className="text-[10px] text-stone-400">Cuotas obra</span>
+                    </div>
+                    <p className="mt-2 text-xl font-black text-white">
+                      ${formatOnaUsd(selectedUnit.plan60.total)} USD
+                    </p>
+                    <p className="mt-1 text-[11px] text-stone-400">
+                      Inicial 60%: ${formatOnaUsd(selectedUnit.plan60.initial)} USD
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentPlan("plan40")}
+                    className={`rounded-2xl border p-4 text-left transition-all ${
+                      paymentPlan === "plan40"
+                        ? "border-[#E8C872] bg-amber-500/15 shadow-lg ring-1 ring-[#E8C872]"
+                        : "border-stone-800 bg-stone-950/60 hover:border-stone-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">Plan 40 / 60</span>
+                      <span className="text-[10px] text-stone-400">Mínima inicial</span>
+                    </div>
+                    <p className="mt-2 text-xl font-black text-white">
+                      ${formatOnaUsd(selectedUnit.plan40.total)} USD
+                    </p>
+                    <p className="mt-1 text-[11px] text-stone-400">
+                      Inicial 40%: ${formatOnaUsd(selectedUnit.plan40.initial)} USD
+                    </p>
+                  </button>
+                </div>
+
+                {/* Desglose Numérico Completo */}
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div className="rounded-xl bg-black/40 p-3.5 border border-stone-800">
+                    <span className="text-[10px] font-semibold uppercase text-stone-400">Precio Total</span>
+                    <p className="mt-1 text-lg font-black text-white">
+                      ${formatOnaUsd(financialSummary.price)} USD
+                    </p>
+                    <p className="text-[10px] text-stone-400">
+                      ${Math.round(financialSummary.price / selectedUnit.totalM2)} USD / m²
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-black/40 p-3.5 border border-stone-800">
+                    <span className="text-[10px] font-semibold uppercase text-[#E8C872]">Monto de Reserva</span>
+                    <p className="mt-1 text-lg font-black text-[#E8C872]">
+                      ${formatOnaUsd(financialSummary.reserveUsd)} USD
+                    </p>
+                    <p className="text-[10px] text-stone-400">A cuenta de la cuota inicial</p>
+                  </div>
+
+                  <div className="rounded-xl bg-black/40 p-3.5 border border-stone-800">
+                    <span className="text-[10px] font-semibold uppercase text-stone-400">Cuota Inicial</span>
+                    <p className="mt-1 text-lg font-black text-white">
+                      ${formatOnaUsd(financialSummary.initialPayment)} USD
+                    </p>
+                    <p className="text-[10px] text-stone-400">Durante el proceso de firma</p>
+                  </div>
+
+                  <div className="rounded-xl bg-black/40 p-3.5 border border-stone-800">
+                    <span className="text-[10px] font-semibold uppercase text-stone-400">Saldo Entrega</span>
+                    <p className="mt-1 text-lg font-black text-white">
+                      ${formatOnaUsd(financialSummary.saldoContraEntrega)} USD
+                    </p>
+                    <p className="text-[10px] text-stone-400">Al recibir llaves ({ONA_DELIVERY})</p>
+                  </div>
+                </div>
+
+                {/* CTA de Reserva directa WhatsApp */}
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent p-4 border border-amber-500/30">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#D4AF37] text-black">
+                      <Sparkles size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-white">
+                        ¿Listo para reservar esta unidad en ONA?
+                      </p>
+                      <p className="text-xs text-stone-300">
+                        Congela el valor de lista y tu piso preferido con $2.000 USD de reserva formal.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-6 md:p-7">
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h3 className="font-serif text-2xl font-normal text-stone-900">
-                        {tipo.title}
-                      </h3>
-                      <p className="text-sm font-semibold uppercase tracking-wider text-[#9a7b45]">
-                        {tipo.area}
-                      </p>
-                    </div>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => handleTrackLead("reservation_box")}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8942A] px-6 py-3 text-sm font-bold text-black shadow-xl shadow-amber-500/20 transition hover:brightness-110 active:scale-95"
+                  >
+                    <MessageCircle size={18} />
+                    <span>Reservar por WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
-                    <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                      {tipo.tagline}
+        {/* TAB 2: AMENIDADES & WELLNESS */}
+        {activeTab === "amenities" && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-black text-white sm:text-2xl">
+                Amenidades & Áreas Sociales
+              </h3>
+              <p className="text-xs text-stone-400">
+                Diseñadas para integrar vida activa, momentos de relajación y espacios de encuentro social de primer nivel.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {AMENITY_ITEMS.map((item) => (
+                <div
+                  key={item.title}
+                  className="group overflow-hidden rounded-2xl border border-stone-800 bg-stone-900/60 shadow-lg transition hover:border-stone-700"
+                >
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-950">
+                    <img
+                      src={item.src}
+                      alt={item.title}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#E8C872] backdrop-blur border border-white/10">
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="p-4">
+                    <h4 className="text-base font-bold text-white">{item.title}</h4>
+                    <p className="mt-2 text-xs leading-relaxed text-stone-300">
+                      {item.description}
                     </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-                    {/* Prueba social positiva */}
-                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-md bg-[#f6f2ea] px-3 py-1 text-xs font-medium text-[#87652c]">
-                      <CheckCircle2 size={13} /> {tipo.reservedCopy}
+        {/* TAB 3: PLANOS & MODELOS ARQUITECTÓNICOS */}
+        {activeTab === "planos" && (
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-xl font-black text-white sm:text-2xl">
+                Planos Arquitectónicos y Distribución
+              </h3>
+              <p className="text-xs text-stone-400">
+                Fichas técnicas de las tipologías de 1 y 2 dormitorios con medidas interiores y terrazas.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {TYPOLOGY_CONFIGS.slice(0, 3).map((t) => (
+                <div
+                  key={t.id}
+                  className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-900/60 shadow-xl flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Imagen del plano con botón de zoom */}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-950 p-4 flex items-center justify-center border-b border-stone-800">
+                      <img
+                        src={t.planImage}
+                        alt={`Plano ${t.name}`}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setZoomPlanImage(t.planImage)}
+                        className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/75 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur border border-white/15 hover:bg-black transition"
+                      >
+                        <Maximize2 size={13} />
+                        <span>Ver Plano Completo</span>
+                      </button>
                     </div>
 
-                    {/* Qué incluye este departamento */}
-                    <div className="mt-5 border-t border-stone-100 pt-4">
-                      <p className="text-xs uppercase tracking-wider font-semibold text-stone-400">
-                        Lo que incluye tu departamento:
-                      </p>
-                      <ul className="mt-2.5 space-y-2 text-xs font-light text-stone-700">
-                        {tipo.highlights.map((h, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
-                            <span className="[text-align:justify] [text-justify:inter-word]">{h}</span>
+                    <div className="p-5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#E8C872]">
+                        {t.rooms} Dormitorio{t.rooms > 1 ? "s" : ""}
+                      </span>
+                      <h4 className="mt-1 text-lg font-black text-white">{t.name}</h4>
+                      <p className="text-xs text-stone-400 font-semibold">{t.areaM2} m² Propios</p>
+                      <p className="mt-2 text-xs text-stone-300">{t.view}</p>
+
+                      <ul className="mt-4 space-y-2 border-t border-stone-800 pt-4">
+                        {t.highlights.map((h, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-stone-300">
+                            <Check size={14} className="text-[#E8C872] shrink-0 mt-0.5" />
+                            <span>{h}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
-
-                    {/* Precio inicial */}
-                    <div className="mt-6 border-t border-stone-100 pt-5">
-                      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">
-                        Precio inicial de preventa
-                      </p>
-                      <p className="font-serif text-2xl font-medium text-stone-900">
-                        Desde USD {formatOnaUsd(tipo.cashPrice)}
-                      </p>
-                    </div>
                   </div>
-                </article>
+
+                  <div className="p-5 pt-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedTypologyId(t.id);
+                        setActiveTab("selector");
+                      }}
+                      className="w-full rounded-xl bg-stone-800 py-2.5 text-xs font-bold text-white transition hover:bg-[#D4AF37] hover:text-black"
+                    >
+                      Ver Disponibilidad y Precios
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
-          </section>
+          </div>
+        )}
 
-
-          {/* 5. FORMAS DE PAGO & ESTRUCTURA DE COMPRA (ANTES DEL SIMULADOR) */}
-          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura de Compra
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Planes de pago flexibles adaptados a tu estrategia.
-            </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {ONA_DELIVERY}.
-            </p>
-
-            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA */}
-            <div className="mt-6 space-y-4">
-              {/* Opción 1: Contado */}
-              <div className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
-                      Mayor Descuento
-                    </span>
-                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.250 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Accedes al valor por m² más bajo de todo el proyecto. Ahorras miles de dólares respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en {ONA_DELIVERY}.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 2: 60% inicial */}
-              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Equilibrio Financiero
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 60% + Saldo contra Entrega (40%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.300 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El balance perfecto entre liquidez y rendimiento. Congelas tu unidad con un precio por metro cuadrado muy por debajo del promedio del mercado y pagas el 40% restante recién cuando la obra esté 100% finalizada.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 3: 40% inicial */}
-              <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Entrada Cómoda
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 40% + Saldo contra Entrega (60%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.350 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El menor desembolso de entrada para ingresar a un edificio de categoría en {ONA_ZONE}. Te permite asegurar y congelar tu propiedad hoy, mientras cancelas el 60% en {ONA_DELIVERY}.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE */}
-            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-700">
-                  <Car size={20} />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">
-                    Estacionamiento & Almacenamiento
-                  </p>
-                  <p className="font-serif text-lg text-stone-900">
-                    Parqueos cubiertos con baulera individual desde{" "}
-                    <strong className="text-[#9a7b45]">USD 15.000</strong>
-                  </p>
-                </div>
-              </div>
-              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                Disponibilidad en Planta Baja y Subsuelo con opciones de estacionamiento simple y doble. Cada parqueo incluye su propia baulera privada independiente.
-              </p>
-            </div>
-          </section>
-
-
-          {/* 6. RENTABILIDAD & PLUSVALÍA (CON SIMULADOR EN TIEMPO REAL) */}
-          <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Rentabilidad & Plusvalía
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Por qué invertir en ONA Residences es tu mejor decisión.
-            </h2>
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Una inversión inteligente combina precio de entrada en 1.ª fase, ubicación residencial de alta demanda de alquiler y una sólida tasa de revalorización en dólares.
-            </p>
-
-            {/* BLOQUE A: VALOR COMPARATIVO */}
-            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
-                  Anclaje de Valor
-                </span>
-              </div>
-              <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                A 4 minutos de Equipetrol, con todos los beneficios de {ONA_ZONE}.
+        {/* TAB 4: UBICACIÓN ESTRATÉGICA & BROCHURE */}
+        {activeTab === "ubicacion" && (
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-xl font-black text-white sm:text-2xl">
+                Ubicación & Entorno · {ONA_ZONE}
               </h3>
-              <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Disfruta de la cercanía inmediata a los centros gastronómicos, comerciales y empresariales más vibrantes de Santa Cruz, con la serenidad, arboledas y conectividad de un entorno residencial consolidado. ONA Residences te permite asegurar un valor de preventa preferencial en 1.ª fase con un alto potencial de plusvalía y retorno.
+              <p className="text-xs text-stone-400">
+                Ubicación privilegiada en {ONA_ADDRESS}, entre el 2.do y 3.er anillo de Santa Cruz de la Sierra.
               </p>
+            </div>
 
-              <div className="mt-5">
-                {/* ONA en Los Cusis */}
-                <div className="rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 shadow-sm relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-[#9a7b45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
-                    Ventaja Preventa
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <div className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-950 shadow-2xl">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-900">
+                    <img
+                      src="/ona/ubicacion.jpg"
+                      alt="Ubicación ONA Residences"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white">
+                      <span className="rounded-full bg-black/70 px-3 py-1 font-semibold backdrop-blur border border-white/10">
+                        📍 {ONA_ADDRESS} · {ONA_ZONE}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
-                      ONA Residences · {ONA_ZONE} (1.ª Fase)
-                    </p>
-                    <p className="font-serif text-2xl text-stone-900 font-medium">
-                      $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                    </p>
-                  </div>
-                  <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#9a7b45]/20 pt-3">
-                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900 block mt-0.5">Desde USD 40.375</strong></li>
-                    <li>• Retorno anual por alquiler: <strong className="text-[#816127] block mt-0.5">10,4% – 11,1% en USD</strong></li>
-                    <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+28% ($1.600 USD/m²)</strong></li>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+                <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+                  <h4 className="text-base font-bold text-white">Conectividad & Calidad de Vida</h4>
+                  <ul className="mt-4 space-y-3 text-xs text-stone-300">
+                    <li className="flex items-start gap-2.5">
+                      <MapPin size={16} className="text-[#E8C872] shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white">Av. Los Cusis:</strong> Corredor residencial sereno y arbolado con acceso ágil hacia la Av. Banzer y Av. Beni.
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <Building2 size={16} className="text-[#E8C872] shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white">Cercanía a todo:</strong> A minutos del Ventura Mall, supermercados, colegios y polos empresariales de Equipetrol.
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <TrendingUp size={16} className="text-[#E8C872] shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white">Plusvalía asegurada:</strong> Inversión en preventa con respaldo de la constructora {ONA_BUILDER}.
+                      </div>
+                    </li>
                   </ul>
                 </div>
-              </div>
-            </div>
 
-            {/* BLOQUE B: OPORTUNIDAD DE PREVENTA - PISO HISTÓRICO */}
-            <div className="mt-8 rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-xl">
-              <div className="flex items-center gap-2">
-                <AlertCircle size={16} className="text-[#e8d5a8]" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
-                  Oportunidad de Preventa · 1.ª Fase
-                </span>
-              </div>
-              <h3 className="mt-2 font-serif text-2xl text-white">
-                Asegura el piso de preventa antes de futuras actualizaciones de valor.
-              </h3>
-              <p className="mt-2 text-xs text-stone-300 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Los desarrollos inmobiliarios serios escalonan sus listas de precios conforme avanza la obra. Ingresar hoy al valor base de <strong>$1.250 USD/m²</strong> asegura la máxima plusvalía acumulada frente al valor referencial de entrega de <strong>$1.600 USD/m²</strong> en {ONA_DELIVERY}.
-              </p>
-
-              <div className="mt-5 rounded-xl border border-white/15 bg-white/5 p-4">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-center sm:text-left">
-                  <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
-                    <p className="text-[11px] uppercase tracking-wider text-stone-400">1 Dormitorio (32,3 m²)</p>
-                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 11.305</p>
-                  </div>
-                  <div className="border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-2">
-                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios (54,1 m²)</p>
-                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 18.949</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wider text-stone-400">2 Dormitorios Suite (92 m²)</p>
-                    <p className="mt-1 text-xs text-stone-300 font-light">Plusvalía a la entrega:</p>
-                    <p className="mt-0.5 font-serif text-lg text-[#e8d5a8] font-semibold">+USD 32.200</p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="mt-4 text-xs text-[#e8d5a8] font-light [text-align:justify] [text-justify:inter-word]">
-                Reserva hoy con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el precio de 1.ª fase antes de la primera actualización de lista del proyecto.
-              </p>
-            </div>
-
-            </section>
-
-
-          {/* 7. DISPONIBILIDAD & SIMULADOR EN TIEMPO REAL · UNIDADES DE 1.ª FASE */}
-          <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            {/* Cabecera con sincronización en vivo y link a Google Sheets */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Layers size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                  Inventario & Disponibilidad Oficial
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleRefreshInventory}
-                  disabled={isRefreshingInv}
-                  title="Actualizar disponibilidad desde Google Sheets"
-                  className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 active:scale-95 disabled:opacity-50 shadow-xs"
-                >
-                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
-                  <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar"}</span>
-                </button>
-                <a
-                  href="https://docs.google.com/spreadsheets/d/14-g7f0tzOYfTX9KejkPa4enDf7pi1Kl2ytZaxB-qH6U/edit?usp=sharing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[11px] text-[#9a7b45] hover:underline"
-                  title="Ver planilla en Google Sheets"
-                >
-                  <span>Google Sheets</span>
-                  <ExternalLink size={12} />
-                </a>
-              </div>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Disponibilidad y Proyección de Ganancia.
-            </h2>
-            <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Elige el ambiente de tu interés y selecciona el piso disponible en la torre para conocer su precio exacto de preventa y la rentabilidad estimada.
-            </p>
-
-            {/* Resumen compacto de unidades de 1.ª fase */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] px-4 py-3 text-xs">
-              <div className="flex items-center gap-3 text-stone-700">
-                <span className="font-semibold text-stone-900">{totalUnitsCount} departamentos</span>
-                <span className="text-stone-300">·</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  {availableUnitsCount} disponibles
-                </span>
-                <span className="text-stone-300">·</span>
-                <span className="text-stone-500">{soldUnitsCount} vendidos</span>
-              </div>
-              <span className="text-[11px] text-[#816127] font-semibold bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full">
-                Torre de 12 pisos
-              </span>
-            </div>
-
-            {/* PASO 1: SELECCIONA EL TIPO DE AMBIENTE */}
-            <div className="mt-8">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">1</span>
-                <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                  Elige tu tipo de ambiente:
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {AMBIENTE_OPTIONS.map((amb) => {
-                  const isSelected = selectedAmbId === amb.id;
-                  const matchingUnits = units.filter((u) => amb.matchUnit(u));
-                  const availCount = matchingUnits.filter((u) => u.status === "disponible").length;
-
-                  return (
-                    <button
-                      key={amb.id}
-                      onClick={() => handleSelectAmbiente(amb.id)}
-                      className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
-                        isSelected
-                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                            {amb.name}
-                          </p>
-                          <p className={`text-xs mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
-                            {amb.areaM2} m² {amb.balconyM2 ? `(Balcón ${amb.balconyM2} m²)` : ""} · {amb.view}
-                          </p>
-                        </div>
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                          availCount > 0
-                            ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : isSelected ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-400"
-                        }`}>
-                          {availCount > 0 ? `${availCount} disponibles` : "Agotado"}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
-                        <span className={isSelected ? "text-stone-400 font-light" : "text-stone-500 font-light"}>
-                          Preventa desde:
-                        </span>
-                        <span className={`font-serif text-sm font-semibold ${isSelected ? "text-white" : "text-stone-900"}`}>
-                          USD {formatOnaUsd(amb.basePrice)}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* PASO 2: SELECCIONA EL PISO DISPONIBLE */}
-            <div className="mt-8">
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">2</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                    Pisos disponibles para {currentAmbiente.shortName}:
-                  </h3>
-                </div>
-                <span className="text-[11px] text-stone-400 font-light">
-                  Toca un piso disponible
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {floorsForAmbiente.map(({ floor, isAvailable, unit }) => {
-                  const isSelected = selectedFloor === floor;
-
-                  if (!isAvailable) {
-                    return (
-                      <div
-                        key={floor}
-                        className="rounded-xl border border-stone-200/60 bg-stone-100/70 px-3 py-2 text-center text-xs text-stone-400 line-through select-none cursor-not-allowed opacity-50"
-                        title={`Piso ${floor}: Agotado para esta tipología`}
-                      >
-                        Piso {floor} · Vendido
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <button
-                      key={floor}
-                      onClick={() => setSelectedFloor(floor)}
-                      className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
-                        isSelected
-                          ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span className="font-serif text-sm">Piso {floor}</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      </div>
-                      <p className={`text-[10px] mt-0.5 font-light ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
-                        USD {formatOnaUsd(unit.cash)}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* PASO 3: PRECIO EXACTO, MODALIDAD DE PAGO Y CÁLCULO DE GANANCIA */}
-            {activeUnit && activeFinancials && (
-              <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">3</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-[#816127]">
-                    Precio oficial y proyección de ganancia:
-                  </h3>
-                </div>
-
-                {/* Encabezado de la Unidad Seleccionada */}
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#9a7b45]/20 pb-4">
-                  <div>
-                    <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
-                      Piso {activeUnit.floor} · TIPO {activeUnit.tipo}
-                    </span>
-                    <h4 className="mt-2 font-serif text-2xl font-semibold text-stone-900">
-                      {currentAmbiente.name}
-                    </h4>
-                    <p className="text-xs text-stone-600 font-light mt-0.5">
-                      Superficie: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} · {activeUnit.view}
-                    </p>
-                  </div>
-
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Disponible para Reserva
-                  </span>
-                </div>
-
-                {/* Selector de Modalidad de Pago */}
-                <div className="mt-5">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">
-                    Elige la modalidad de pago para este piso:
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    {[
-                      {
-                        key: "contado",
-                        label: "Al Contado",
-                        total: activeUnit.cash,
-                        perM2: activeUnit.cashPerM2,
-                        detail: "100% al inicio · Máximo ahorro",
-                      },
-                      {
-                        key: "plan60",
-                        label: "60% Inicial",
-                        total: activeUnit.plan60.total,
-                        perM2: activeUnit.plan60.perM2,
-                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan60.initial)}`,
-                      },
-                      {
-                        key: "plan40",
-                        label: "40% Inicial",
-                        total: activeUnit.plan40.total,
-                        perM2: activeUnit.plan40.perM2,
-                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan40.initial)}`,
-                      },
-                    ].map((plan) => {
-                      const isSelected = selectedPlan === plan.key;
-                      return (
-                        <button
-                          key={plan.key}
-                          onClick={() => setSelectedPlan(plan.key as any)}
-                          className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
-                            isSelected
-                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
-                              : "border-stone-200 bg-white/70 text-stone-600 hover:border-stone-300"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
-                            <span className="text-[10px] font-semibold text-[#816127]">$${plan.perM2} USD/m²</span>
-                          </div>
-                          <p className="mt-1 font-serif text-lg font-bold text-stone-900">
-                            USD {formatOnaUsd(plan.total)}
-                          </p>
-                          <p className="text-[11px] text-stone-500 font-light mt-0.5">{plan.detail}</p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* CÁLCULO DE GANANCIA / TABLERO DE RENDIMIENTO FINANCIERO */}
-                <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
-                  <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3 flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-[#9a7b45]" />
-                    Proyección de Ganancia & Rentabilidad (Entrega {ONA_DELIVERY}):
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    {/* Tarjeta 1: Valor a la Entrega */}
-                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Valor Estimado a la Entrega ($1.600 USD/m²)
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
-                        USD {formatOnaUsd(activeFinancials.marketValueAtDelivery)}
-                      </p>
-                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
-                        Valor de mercado terminado para departamentos en {ONA_ZONE}
-                      </p>
+                {/* Tarjeta de Descarga de Brochure */}
+                <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/15 via-stone-900 to-stone-900 p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#D4AF37] text-black shadow-lg">
+                      <Download size={22} />
                     </div>
-
-                    {/* Tarjeta 2: Ganancia Neta (Plusvalía) */}
-                    <div className="rounded-xl bg-emerald-50/70 p-3.5 border border-emerald-200">
-                      <p className="text-[10px] uppercase tracking-wider text-emerald-800 font-semibold">
-                        Ganancia Estimada de Preventa (Plusvalía)
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
-                        +USD {formatOnaUsd(activeFinancials.capitalGain)}
-                      </p>
-                      <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
-                        +{activeFinancials.gainPercentage}% de valorización sobre tu precio de compra
-                      </p>
-                    </div>
-
-                    {/* Tarjeta 3: Alquiler Mensual */}
-                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Alquiler Mensual Estimado
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
-                        ${activeFinancials.rentMonthlyMin} – ${activeFinancials.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
-                      </p>
-                      <p className="text-[11px] text-stone-600 font-light mt-0.5">
-                        Bs {activeFinancials.rentMonthlyBsMin.toLocaleString("es-BO")} – {activeFinancials.rentMonthlyBsMax.toLocaleString("es-BO")}/mes (TC 12)
-                      </p>
-                    </div>
-
-                    {/* Tarjeta 4: Rentabilidad Anual */}
-                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Rentabilidad Anual Estimada
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
-                        {activeFinancials.yieldRange}
-                      </p>
-                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
-                        Retorno en dólares libre de inflación por alquiler tradicional o corporativo
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* BOTÓN DIRECTO DE RESERVA */}
-                  <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs text-stone-700 font-medium text-center sm:text-left">
-                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
-                      </p>
-                      <p className="text-[11px] text-stone-400 font-light text-center sm:text-left">
-                        Firma y desembolso inicial coordinado directamente con la constructora.
+                      <h5 className="text-base font-black text-white">Brochure Oficial de ONA</h5>
+                      <p className="text-xs text-stone-300">
+                        Descarga la presentación comercial completa con renders y especificaciones.
                       </p>
                     </div>
-
-                    <button
-                      onClick={() => {
-                        if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-                          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-                        }
-                        const planLabel = selectedPlan === "contado" ? "Al Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial";
-                        reserve(
-                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²), precio USD ${formatOnaUsd(activeFinancials.totalPrice)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD 2.000?`,
-                          activeFinancials.totalPrice
-                        );
-                      }}
-                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0"
-                    >
-                      Reservar Piso {activeUnit.floor} con USD {formatOnaUsd(ONA_RESERVE_USD)}
-                    </button>
                   </div>
+
+                  <a
+                    href={ONA_BROCHURE_URL}
+                    download="Brochure_ONA_Residences.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black uppercase tracking-wider text-black transition hover:bg-stone-200"
+                  >
+                    <Download size={15} />
+                    <span>Descargar Brochure PDF (2.4 MB)</span>
+                  </a>
                 </div>
               </div>
-            )}
-          </section>
-
-
-          {/* 8. CIERRE DE CONVERSIÓN & LLAMADO A LA ACCIÓN FINAL */}
-          <section id="cierre" ref={closeRef} className="scroll-mt-6 mt-20 border-t border-stone-200 pt-12 text-center">
-            <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
-            <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Asegura tu unidad al valor de 1.ª fase.
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Reserva hoy tu departamento con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong> y congela el precio
-              antes de la siguiente escala de preventa.
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
-              <button
-                onClick={() => {
-                  if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-                    (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-                  }
-                  reserve(
-                    `Hola, vengo directo para reservar en ONA con USD ${formatOnaUsd(ONA_RESERVE_USD)}. ¿Qué pisos tienen disponibles?`,
-                    ONA_RESERVE_USD
-                  );
-                }}
-                className="bg-stone-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95"
-              >
-                Reservar con USD {formatOnaUsd(ONA_RESERVE_USD)}
-              </button>
             </div>
+          </div>
+        )}
+      </main>
 
-            <p className="mt-8 text-[11px] leading-relaxed text-stone-400">
-              Constructora {ONA_BUILDER} · Entrega programada {ONA_DELIVERY} · {ONA_ZONE}. Las imágenes y renders son de carácter arquitectónico referencial.
-            </p>
-          </section>
-
-        </div>
-      </div>
-
-      {/* BARRA INFERIOR FLOTANTE DE CONVERSIÓN RÁPIDA (se oculta al llegar al bloque de cierre para no duplicar botones) */}
+      {/* 5. MODAL DE ZOOM DE PLANO EN ALTA RESOLUCIÓN */}
       <AnimatePresence>
-        {activeLabel !== "Reserva 1.ª Fase" && (
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]"
-          >
-            <div>
-              <p className="text-xs text-stone-600">
-                Reserva con{" "}
-                <span className="font-semibold text-stone-900">
-                  USD {formatOnaUsd(ONA_RESERVE_USD)}
-                </span>
-              </p>
-              <p className="text-[10px] text-[#9a7b45] font-medium hidden sm:block">
-                Congela el precio de preventa hoy
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
+        {zoomPlanImage && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <div className="relative max-h-[92vh] max-w-5xl w-full overflow-hidden rounded-3xl border border-stone-700 bg-stone-950 p-4">
               <button
-                onClick={handleShareOna}
-                className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
-                title="Compartir ONA Residences"
+                type="button"
+                onClick={() => setZoomPlanImage(null)}
+                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/80 text-white hover:bg-[#D4AF37] hover:text-black transition"
               >
-                {shareFeedback ? (
-                  <>
-                    <Check size={14} className="text-emerald-600" />
-                    <span className="text-emerald-700">¡Copiado!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 size={14} />
-                    <span className="hidden sm:inline">Compartir</span>
-                  </>
-                )}
+                <X size={20} />
               </button>
-
-              <button
-                onClick={() =>
-                  closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-                }
-                className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
-              >
-                Reservar Ahora
-              </button>
+              <div className="max-h-[82vh] overflow-auto flex items-center justify-center p-2">
+                <img
+                  src={zoomPlanImage}
+                  alt="Plano en alta resolución"
+                  className="max-h-[78vh] w-auto object-contain rounded-xl"
+                />
+              </div>
             </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.div>
+
+      {/* 6. BARRA FIJA INFERIOR EN MÓVIL AL SELECCIONAR UNIDAD */}
+      {selectedUnit && financialSummary && activeTab === "selector" && (
+        <div className="fixed bottom-0 left-0 right-0 z-30 sm:hidden border-t border-stone-800 bg-[#0c0e12]/95 px-4 py-3 backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-[#E8C872]">
+                Piso {selectedUnit.floor} · Tipo {selectedUnit.tipo}
+              </p>
+              <p className="text-base font-black text-white">
+                ${formatOnaUsd(financialSummary.price)} USD
+              </p>
+            </div>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => handleTrackLead("mobile_bottom_bar")}
+              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8942A] px-5 py-2.5 text-xs font-bold text-black shadow-lg shadow-amber-500/20 active:scale-95"
+            >
+              <MessageCircle size={15} />
+              <span>Reservar</span>
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
