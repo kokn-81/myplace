@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import OnaLanding from "./OnaLanding";
 import EurodesignLanding from "./EurodesignLanding";
 import DomusLanding from "./DomusLanding";
+import GardenZenLanding from "./GardenZenLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -34,6 +35,16 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isDomus) {
     return <DomusLanding property={property} onClose={onClose} />;
+  }
+
+  const isGardenZen =
+    property.id === "garden-zen" ||
+    Boolean(property.id && String(property.id).toLowerCase().includes("garden-zen")) ||
+    Boolean(property.title && property.title.toLowerCase().includes("garden zen")) ||
+    Boolean(property.complejoNombre && property.complejoNombre.toLowerCase().includes("garden zen"));
+
+  if (isGardenZen) {
+    return <GardenZenLanding property={property} onClose={onClose} />;
   }
 
   const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;

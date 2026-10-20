@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isProjectOrPreventa } from "./pages/MapPage";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isProjectOrPreventa } from "./pages/MapPage";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
 
@@ -31,6 +31,14 @@ test("isEurodesignProperty: reconoce Tower Eurodesign pero no Soho ni alquileres
   assert.equal(isEurodesignProperty(eurodesignSohoRent as Property), false);
 });
 
+test("isGardenZenProperty: reconoce el proyecto Garden Zen en Equipetrol", () => {
+  const gardenZen: Partial<Property> = { id: "garden-zen", title: "GARDEN ZEN · Equipetrol Norte" };
+  assert.equal(isGardenZenProperty(gardenZen as Property), true);
+
+  const randomProperty: Partial<Property> = { id: "999", title: "Casa con amplio jardin y estilo rustico" };
+  assert.equal(isGardenZenProperty(randomProperty as Property), false);
+});
+
 test("isDomusProperty: reconoce los 7 desarrollos DOMUS pero no reventas ni alquileres individuales", () => {
   const domusBlack: Partial<Property> = { id: "domus-black", title: "DOMUS BLACK · Equipetrol Norte" };
   const domusGold: Partial<Property> = { id: "domus-gold", title: "DOMUS GOLD · Equipetrol San Martín" };
@@ -55,7 +63,7 @@ test("isDomusProperty: reconoce los 7 desarrollos DOMUS pero no reventas ni alqu
   assert.equal(isDomusProperty(resaleDomus as Property), false);
 });
 
-test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 9 proyectos registrados", () => {
+test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 10 proyectos registrados", () => {
   const catalog = (catalogSnapshot as any[]).map((raw) => ({
     ...raw,
     title: raw.title || raw.titulo,
@@ -64,12 +72,13 @@ test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 9 proy
   }));
 
   const projects = catalog.filter((p) => isProjectOrPreventa(p));
-  assert.equal(projects.length, 9, `Esperado 9 proyectos registrados pero encontro ${projects.length}`);
+  assert.equal(projects.length, 10, `Esperado 10 proyectos registrados pero encontro ${projects.length}`);
 
   const projectIds = new Set(projects.map((p) => String(p.id)));
   const expectedIds = [
     "5",
     "1816",
+    "garden-zen",
     "domus-black",
     "domus-gold",
     "domus-onix",

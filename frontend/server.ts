@@ -206,6 +206,56 @@ app.get(["/domus", "/domus-black", "/domus-gold", "/domus-onix", "/domus-insigni
   res.send(html);
 });
 
+app.get(["/garden-zen", "/zen", "/api/garden-zen-og"], (req, res) => {
+  const ua = req.headers["user-agent"] || "";
+  const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|applebot|curl|wget|bingbot|googlebot/i.test(
+    ua
+  );
+
+  const title = "Garden Zen · Preventa Eco-Sostenible en Equipetrol Norte";
+  const desc = "Torre eco-sostenible con paneles solares, recolección de agua de lluvia y 50% menos expensas. Departamentos desde USD 56.210. Entrega Marzo 2027.";
+  const img = "https://nia-web.com/garden_zen/fachada.jpg";
+  const targetUrl = "/?proyecto=garden-zen";
+
+  if (!isBot) {
+    res.redirect(307, targetUrl);
+    return;
+  }
+
+  const html = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <meta name="description" content="${desc}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Garden Zen · N.I.A" />
+  <meta property="og:url" content="https://nia-web.com${targetUrl}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:image" content="${img}" />
+  <meta property="og:image:secure_url" content="${img}" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Garden Zen en Equipetrol Norte" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${img}" />
+  <meta http-equiv="refresh" content="0; url=${targetUrl}" />
+</head>
+<body style="background:#0a1310;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <p>Cargando Garden Zen...</p>
+  <script>window.location.replace("${targetUrl}");</script>
+</body>
+</html>`;
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 // API Routes
 app.post("/api/ask-gemini", async (req, res) => {
   try {

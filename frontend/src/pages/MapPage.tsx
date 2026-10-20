@@ -596,6 +596,65 @@ export const SYNTHETIC_DOMUS_PROPERTIES: Property[] = [
   SYNTHETIC_DOMUS_INFINITY_PROPERTY,
 ];
 
+export const SYNTHETIC_GARDEN_ZEN_PROPERTY: Property = {
+  id: "garden-zen",
+  title: "GARDEN ZEN · Equipetrol Norte",
+  price: 56210,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol Norte / Calle Dra. María de Oliveira",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7615,
+  lng: -63.1972,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Torre residencial eco-sostenible de 16 pisos en Equipetrol Norte (Calle Dra. María de Oliveira). Paneles solares (50% menos expensas), riego pluvial automatizado, piscina sinfín en rooftop, gym inteligente, co-work, pet spa y doble churrasquera. Entrega Marzo 2027.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad", "sauna"],
+  images: [
+    "/garden_zen/fachada.jpg",
+    "/garden_zen/terraza.jpg",
+    "/garden_zen/info_adicional.jpg",
+    "/garden_zen/ubicacion.jpg",
+    "/garden_zen/plano_mono_m1.jpg",
+    "/garden_zen/plano_1dorm_b1.jpg",
+    "/garden_zen/plano_2dorm_e2.jpg",
+    "/garden_zen/plano_3dorm_b3.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "GARDEN ZEN",
+  ocupacion: "Disponible",
+  superficieM2: 40.15,
+  amoblado: false,
+  fechaEntrega: "Marzo 2027",
+  avanceObra: 85,
+  faseObra: "Obra Fina",
+  totalUnidades: 61,
+  unidadesDisponibles: 44,
+  reservaUsd: 1500,
+  planesPago: "Reserva con 30%, 70% o 100% Contado con descuento",
+};
+
+export const isGardenZenProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
+  return (
+    sId === "garden-zen" ||
+    sId.startsWith("garden-zen") ||
+    sTitle.includes("garden zen") ||
+    sCmp.includes("garden zen")
+  );
+};
+
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
@@ -625,6 +684,9 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (q === "eurodesign" || q === "tower-eurodesign" || q === "tower_eurodesign" || q === "1816") {
     return isEurodesignProperty(p);
   }
+  if (q === "garden-zen" || q.includes("garden zen") || q === "zen" || q === "garden") {
+    return isGardenZenProperty(p);
+  }
   if (
     q.includes("domus") ||
     q.startsWith("domus-") ||
@@ -645,23 +707,28 @@ export const isTargetProject = isTargetOna;
 
 export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  return isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p);
+  return isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p) || isGardenZenProperty(p);
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (!list || list.length === 0) return SYNTHETIC_DOMUS_PROPERTIES;
+  if (!list || list.length === 0) return [SYNTHETIC_GARDEN_ZEN_PROPERTY, ...SYNTHETIC_DOMUS_PROPERTIES];
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
   const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
   // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
   const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p)) || SYNTHETIC_EURODESIGN_PROPERTY;
+  // Opción 3: Garden Zen (Equipetrol Norte)
+  const gardenZen = list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p)) || SYNTHETIC_GARDEN_ZEN_PROPERTY;
 
   const priorityItems: Property[] = [];
   if (ona) priorityItems.push(ona);
   if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
     priorityItems.push(eurodesign);
   }
+  if (gardenZen && !priorityItems.some((p) => String(p.id) === String(gardenZen.id))) {
+    priorityItems.push(gardenZen);
+  }
 
-  // Opción 3 a 9: Proyectos de la marca DOMUS
+  // Opción 4 a 10: Proyectos de la marca DOMUS
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
     const existing = list.find((p) => String(p.id) === String(domusProp.id));
     if (existing && !priorityItems.some((p) => String(p.id) === String(existing.id))) {
@@ -690,7 +757,7 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
 
 export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  if (isDomusProperty(p) || isOnaProperty(p) || isEurodesignProperty(p)) return true;
+  if (isDomusProperty(p) || isOnaProperty(p) || isEurodesignProperty(p) || isGardenZenProperty(p)) return true;
   return (
     String(p.id) === "4" ||
     Boolean((p as any).destacado) ||
@@ -1041,7 +1108,8 @@ export default function MapPage() {
     const isOnaPath = window.location.pathname.toLowerCase().startsWith("/ona");
     const isEuroPath = window.location.pathname.toLowerCase().startsWith("/eurodesign");
     const isDomusPath = window.location.pathname.toLowerCase().startsWith("/domus");
-    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : null);
+    const isZenPath = window.location.pathname.toLowerCase().startsWith("/garden-zen") || window.location.pathname.toLowerCase().startsWith("/zen");
+    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : isZenPath ? "garden-zen" : null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -1056,6 +1124,12 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
           hasSearchInteractionRef.current = true;
           window.history.replaceState({ modal: "direct_eurodesign", propertyId: "1816" }, "", window.location.href);
+        }, 300);
+      } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
+        setTimeout(() => {
+          selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
+          hasSearchInteractionRef.current = true;
+          window.history.replaceState({ modal: "direct_garden_zen", propertyId: "garden-zen" }, "", window.location.href);
         }, 300);
       } else if (
         proyecto.toLowerCase().includes("domus") ||
@@ -1077,6 +1151,8 @@ export default function MapPage() {
       document.title = "ONA Residences · Preventa en Los Cusis | N.I.A";
     } else if (selectedProperty && isEurodesignProperty(selectedProperty)) {
       document.title = "Tower Eurodesign · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isGardenZenProperty(selectedProperty)) {
+      document.title = "Garden Zen · Preventa Eco-Sostenible en Equipetrol | N.I.A";
     } else if (selectedProperty && isDomusProperty(selectedProperty)) {
       document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
@@ -1096,7 +1172,7 @@ export default function MapPage() {
         setSelectedProperty((current) => {
           if (current) {
             focusPropertyLocation(current, 16.2);
-            if (isOnaProperty(current) || isEurodesignProperty(current) || isDomusProperty(current)) {
+            if (isOnaProperty(current) || isEurodesignProperty(current) || isDomusProperty(current) || isGardenZenProperty(current)) {
               setCurrentIndex(0);
             }
           }
@@ -1108,6 +1184,8 @@ export default function MapPage() {
           selectProperty(target, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
           selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
+          selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
         } else if (
           proyecto.toLowerCase().includes("domus") ||
           ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
@@ -1127,7 +1205,7 @@ export default function MapPage() {
     const target = selectedProperty || lastViewedProperty;
     if (target) {
       focusPropertyLocation(target, 16.2);
-      if (isOnaProperty(target) || isEurodesignProperty(target) || isDomusProperty(target)) {
+      if (isOnaProperty(target) || isEurodesignProperty(target) || isDomusProperty(target) || isGardenZenProperty(target)) {
         setCurrentIndex(0);
       }
     }
@@ -3413,7 +3491,7 @@ export default function MapPage() {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA */}
       <AnimatePresence>
         {selectedProperty && (
-          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty) || isDomusProperty(selectedProperty)) ? (
+          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty) || isDomusProperty(selectedProperty) || isGardenZenProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div
