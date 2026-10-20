@@ -776,7 +776,7 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v9";
+const CATALOG_CACHE_KEY = "nia.catalog.summary.v10";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -788,8 +788,8 @@ const readCachedCatalog = (): Property[] => {
 
     const parsed = JSON.parse(raw);
     const items = Array.isArray(parsed?.items) ? parsed.items : [];
-    // Si la cache tiene menos de 1000 items, es una cache recortada u obsoleta; descartarla
-    if (items.length < 1000) {
+    // Si la cache tiene menos de 800 items, es una cache recortada u obsoleta; descartarla
+    if (items.length < 800) {
       window.localStorage.removeItem(CATALOG_CACHE_KEY);
       return [];
     }
