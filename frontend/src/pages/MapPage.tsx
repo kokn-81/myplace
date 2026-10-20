@@ -221,20 +221,30 @@ export const QUICK_FILTER_OPTIONS = [
 
 export const isOnaProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || (p as any).titulo || "").toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").toLowerCase();
   return (
-    String(p.id) === "5" ||
-    Boolean(p.title && p.title.toLowerCase().includes("ona")) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona"))
+    sId === "5" ||
+    sId === "ona" ||
+    sId.startsWith("ona-") ||
+    sTitle.includes("ona residences preventa") ||
+    (sTitle.includes("ona residences") && sTitle.includes("preventa")) ||
+    (sCmp.includes("ona residences") && sTitle.includes("preventa"))
   );
 };
 
 export const isEurodesignProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || (p as any).titulo || "").toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").toLowerCase();
   return (
-    String(p.id) === "1816" ||
-    String(p.id).toLowerCase() === "eurodesign" ||
-    Boolean(p.title && p.title.toLowerCase().includes("eurodesign")) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("eurodesign"))
+    sId === "1816" ||
+    sId === "eurodesign" ||
+    sId === "tower-eurodesign" ||
+    sTitle.includes("tower eurodesign") ||
+    sCmp.includes("tower eurodesign")
   );
 };
 
@@ -589,12 +599,20 @@ export const SYNTHETIC_DOMUS_PROPERTIES: Property[] = [
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || "").toLowerCase();
-  const sCmp = String(p.complejoNombre || "").toLowerCase();
-  return (
-    sId.startsWith("domus") ||
-    sTitle.includes("domus") ||
-    sCmp.includes("domus")
+  if (sId.startsWith("domus-") || sId === "domus") return true;
+  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
+  const officialDomusNames = [
+    "domus black",
+    "domus gold",
+    "domus onix",
+    "domus insignia",
+    "domus luxury",
+    "domus tower",
+    "domus infinity",
+  ];
+  return officialDomusNames.some(
+    (name) => sTitle.startsWith(name) || sCmp === name || sCmp.startsWith(name)
   );
 };
 
@@ -627,22 +645,7 @@ export const isTargetProject = isTargetOna;
 
 export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  if (isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p)) return true;
-  const typeStr = (p.type || "").toLowerCase();
-  const titleStr = (p.title || "").toLowerCase();
-  const descStr = (p.description || "").toLowerCase();
-  const tagStr = ((p as any).projectTag || "").toLowerCase();
-  return (
-    typeStr.includes("preventa") ||
-    typeStr.includes("proyecto") ||
-    tagStr.includes("preventa") ||
-    tagStr.includes("proyecto") ||
-    titleStr.includes("preventa") ||
-    titleStr.includes("en planos") ||
-    descStr.includes("preventa") ||
-    descStr.includes("en planos") ||
-    Boolean(p.unidadesProyecto && p.unidadesProyecto.length > 0)
-  );
+  return isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p);
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
@@ -687,17 +690,11 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
 
 export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  if (isDomusProperty(p)) return true;
+  if (isDomusProperty(p) || isOnaProperty(p) || isEurodesignProperty(p)) return true;
   return (
-    String(p.id) === "5" ||
-    String(p.id) === "1816" ||
     String(p.id) === "4" ||
     Boolean((p as any).destacado) ||
     Boolean((p as any).promocion) ||
-    Boolean(p.title && p.title.toLowerCase().includes("ona residences")) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("ona residences")) ||
-    Boolean(p.title && p.title.toLowerCase().includes("eurodesign")) ||
-    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("eurodesign")) ||
     Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
     Boolean(p.title && p.title.toLowerCase().includes("riviera"))
   );
