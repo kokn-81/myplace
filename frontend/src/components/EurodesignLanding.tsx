@@ -575,8 +575,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      {/* PANEL IZQUIERDO: RENDER HERO FLOTANTE (DESKTOP) */}
-      <div className="relative hidden w-full md:block md:w-[46%] lg:w-[48%] xl:w-[50%] h-full shrink-0 overflow-hidden bg-black select-none">
+      {/* PANEL IZQUIERDO: RENDER HERO FLOTANTE */}
+      <div className="relative h-[40vh] min-h-[290px] w-full shrink-0 overflow-hidden bg-black select-none md:h-screen md:w-[46%] lg:w-[48%] xl:w-[50%]">
         <AnimatePresence mode="wait">
           <motion.img
             key={activeImage}
