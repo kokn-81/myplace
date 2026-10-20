@@ -297,6 +297,26 @@ export const isTargetOna = (p: Property, query: string): boolean => {
 
 export const isTargetProject = isTargetOna;
 
+export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  if (isOnaProperty(p) || isEurodesignProperty(p)) return true;
+  const typeStr = (p.type || "").toLowerCase();
+  const titleStr = (p.title || "").toLowerCase();
+  const descStr = (p.description || "").toLowerCase();
+  const tagStr = (p.projectTag || "").toLowerCase();
+  return (
+    typeStr.includes("preventa") ||
+    typeStr.includes("proyecto") ||
+    tagStr.includes("preventa") ||
+    tagStr.includes("proyecto") ||
+    titleStr.includes("preventa") ||
+    titleStr.includes("en planos") ||
+    descStr.includes("preventa") ||
+    descStr.includes("en planos") ||
+    Boolean(p.unidadesProyecto && p.unidadesProyecto.length > 0)
+  );
+};
+
 const prioritizeRecommended = (list: Property[]): Property[] => {
   if (!list || list.length <= 1) return list;
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
@@ -502,6 +522,9 @@ const normalizeOfferOperation = (operation?: string) => {
 
 const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => {
   if (!op) return true;
+  if (op === "Proyectos") {
+    return isProjectOrPreventa(p);
+  }
   if (op === "Alquilar") {
     return (
       normalizeOfferOperation(p.operation) === "rent" ||
@@ -520,7 +543,7 @@ const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => 
 
 const getOperationIntent = (op: GuidedOperation): SearchIntent => {
   if (op === "Alquilar") return "rent";
-  if (op === "Comprar") return "buy";
+  if (op === "Comprar" || op === "Proyectos") return "buy";
   return null;
 };
 
@@ -986,13 +1009,19 @@ export default function MapPage() {
     return selectedGuidedChoice === option;
   };
 
-  const searchPlaceholder = isAsking ? "NIA analizando..." : getGuidedSearchPlaceholder(guidedStage, guidedCity, guidedOperation);
+  const searchPlaceholder = isAsking
+    ? "NIA analizando..."
+    : guidedOperation === "Proyectos"
+      ? "Mostrando proyectos en preventa..."
+      : getGuidedSearchPlaceholder(guidedStage, guidedCity, guidedOperation);
   const isGuidedActive = guidedStage !== "operation";
   const isGuidedSearchOpen = isGuidedActive;
-  const hasFinishedAiSearch = aiFilteredIds !== null && !isGuidedActive;
-  const hasActiveResults = hasFinishedAiSearch;
-  const showGuidedChoices = isGuidedActive || (!hasFinishedAiSearch && !aiClarification);
-  const compactSearchLabel = formatCompactSearchLabel({
+  const hasFinishedAiSearch = aiFilteredIds !== null && !isGuidedActive && guidedOperation !== "Proyectos";
+  const hasActiveResults = hasFinishedAiSearch || guidedOperation === "Proyectos";
+  const showGuidedChoices = isGuidedActive || (!hasFinishedAiSearch && !aiClarification) || guidedOperation === "Proyectos";
+  const compactSearchLabel = guidedOperation === "Proyectos"
+    ? "Proyectos en Preventa"
+    : formatCompactSearchLabel({
     operation: guidedOperation,
     propertyType: guidedPropertyType,
     bedrooms: guidedBedrooms,
@@ -1305,7 +1334,43 @@ export default function MapPage() {
     await runNiaSearch(query);
   };
 
+  const handleProjectsDirectFilter = () => {
+    setActiveSearchIntent("buy");
+    setGuidedOperation("Proyectos");
+    setGuidedStage("operation");
+    setGuidedPropertyType("");
+    setGuidedBedrooms("");
+    setGuidedCity("Santa Cruz");
+    setGuidedZones([]);
+    setGuidedBudget("");
+    setShowSuggested(false);
+    setSelectedBuildingGroup(null);
+    setCurrentIndex(0);
+
+    const projectProperties = properties.filter((p) => isProjectOrPreventa(p));
+    const projectIds = projectProperties.map((p) => p.id);
+    setAiFilteredIds(projectIds.length > 0 ? projectIds : []);
+
+    setMapFocus({
+      longitude: -63.188,
+      latitude: -17.764,
+      zoom: 14.5,
+      key: Date.now(),
+      label: "Proyectos en Preventa, Santa Cruz",
+      source: "search",
+    });
+  };
+
   const handleOnboardingOperation = (option: Exclude<GuidedOperation, "">) => {
+    if (option === "Proyectos") {
+      if (guidedOperation === "Proyectos") {
+        resetGuidedSearch();
+        return;
+      }
+      handleProjectsDirectFilter();
+      return;
+    }
+
     setGuidedOperation(option);
     setGuidedPropertyType("");
     setGuidedBedrooms("");
@@ -1332,6 +1397,16 @@ export default function MapPage() {
 
     goToGuidedStage(nextGuidedStageFromOperation(option));
   };
+
+  // Permitir acceso directo a proyectos por URL (e.g. ?filtro=proyectos o ?proyectos)
+  useEffect(() => {
+    if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("filtro") === "proyectos" || params.has("proyectos")) {
+      handleProjectsDirectFilter();
+      hasSearchInteractionRef.current = true;
+    }
+  }, [properties]);
 
   const handlePropertyTypeSelect = (type: string) => {
     const value = type.trim();
@@ -1761,11 +1836,11 @@ export default function MapPage() {
   }, [exactProperties, suggestedProperties, showSuggested]);
 
   const mapCanvasProperties = useMemo(() => {
-    if (isGuidedActive || hasActiveResults) {
+    if (isGuidedActive || hasActiveResults || guidedOperation === "Proyectos") {
       return filteredProperties;
     }
     return properties;
-  }, [isGuidedActive, hasActiveResults, filteredProperties, properties]);
+  }, [isGuidedActive, hasActiveResults, guidedOperation, filteredProperties, properties]);
 
   const isSuggestedProperty = (prop: Property) =>
     suggestedProperties.some((sp) => sp.id === prop.id) && !exactProperties.some((ep) => ep.id === prop.id);
@@ -2284,6 +2359,17 @@ export default function MapPage() {
               className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-[var(--text-main)] outline-none placeholder-[var(--text-muted)] disabled:opacity-50"
             />
 
+            {(guidedStage !== "operation" || guidedOperation === "Proyectos" || aiFilteredIds !== null) && (
+              <button
+                type="button"
+                onClick={resetGuidedSearch}
+                className="p-1.5 text-stone-500 hover:text-red-400 transition-colors"
+                title="Restablecer busqueda"
+              >
+                <X size={15} />
+              </button>
+            )}
+
             <button
               type="submit"
               disabled={isAsking}
@@ -2328,7 +2414,7 @@ export default function MapPage() {
         )}
       </div>
       <div className="nia-mobile-guide-toggle absolute left-4 right-4 top-[4.75rem] z-30 flex flex-col items-center gap-2 md:hidden">
-        {hasActiveResults || aiClarification ? (
+        {!showGuidedChoices ? (
           renderCompactFilter("mobile")
         ) : (
           <>
@@ -2350,7 +2436,19 @@ export default function MapPage() {
                   onClick={() => handleGuidedChoice(option)}
                   className={onboardingButtonClass("mobile", isChoiceSelected(option))}
                 >
-                  {option}
+                  {option === "Proyectos" ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Sparkles size={12} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
+                      <span>Proyectos</span>
+                      {isChoiceSelected(option) && filteredProperties.length > 0 && (
+                        <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
+                          {filteredProperties.length}
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    option
+                  )}
                 </button>
               ))}
               {guidedStage === "zone" && (
@@ -2447,8 +2545,8 @@ export default function MapPage() {
               className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
             />
 
-            {guidedStage !== "operation" && (
-              <button type="button" onClick={resetGuidedSearch} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Cerrar guia">
+            {(guidedStage !== "operation" || guidedOperation === "Proyectos" || aiFilteredIds !== null) && (
+              <button type="button" onClick={resetGuidedSearch} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Restablecer busqueda">
                 <X size={16} />
               </button>
             )}
@@ -2494,7 +2592,19 @@ export default function MapPage() {
                     onClick={() => handleGuidedChoice(option)}
                     className={onboardingButtonClass("desktop", isChoiceSelected(option))}
                   >
-                    {option}
+                    {option === "Proyectos" ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Sparkles size={11} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
+                        <span>Proyectos</span>
+                        {isChoiceSelected(option) && filteredProperties.length > 0 && (
+                          <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
+                            {filteredProperties.length}
+                          </span>
+                        )}
+                      </span>
+                    ) : (
+                      option
+                    )}
                   </button>
                 ))}
                 {guidedStage === "zone" && (
