@@ -110,7 +110,7 @@ const AMENITY_SLIDES = [
       "Planta completa de amenidades en el piso 18 conectando solárium, piscina infinita, parrillas gourmet, gimnasio y lounge climatizado.",
   },
   {
-    src: "/eurodesign/page-32-locales-comerciales.jpg",
+    src: "/eurodesign/amenities/amenity_locales_comerciales.jpg",
     category: "Planta Baja",
     title: "Locales Comerciales & Oficinas en PB",
     description:
