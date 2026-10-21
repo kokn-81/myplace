@@ -183653,7 +183653,7 @@
     "banos": 1,
     "baulera": false,
     "datos_especificos_json": "{\"c21_id\": \"114039\", \"c21_url\": \"https://c21.com.bo/propiedad/114039_departamento-en-venta-torre-eurodesign-equipetrol-calle-enrique-finot\", \"inmobiliaria\": \"Century 21\", \"oficina\": \"CENTURY 21 Azzero\", \"asesor_nombre\": \"Ariel Mauricio Hubsch Rozenman\", \"asesor_telefono\": \"+591 69147715\", \"asesor_whatsapp\": \"+59169147715\", \"parqueos\": 0, \"precio_original\": \"125208\", \"moneda_original\": \"USD\", \"titulo_original_c21\": \"DEPARTAMENTO EN VENTA | TORRE EURODESIGN Equipetrol | Calle Enrique Finot\"}",
-    "imagenes": "/eurodesign/fachada-principal.jpg, /eurodesign/page-07.jpg, /eurodesign/arte-ubicacion.jpg, /eurodesign/page-08.jpg, /eurodesign/page-09.jpg, /eurodesign/page-10.jpg, /eurodesign/page-11.jpg",
+    "imagenes": "/eurodesign/page-01-portada.jpg, /eurodesign/page-07.jpg, /eurodesign/page-05.jpg, /eurodesign/page-08.jpg, /eurodesign/page-09.jpg, /eurodesign/page-10.jpg, /eurodesign/page-11.jpg",
     "ofertas": [
       {
         "id": "4940",
@@ -183692,9 +183692,9 @@
       "whatsapp": "59157015854"
     },
     "images": [
-      "/eurodesign/fachada-principal.jpg",
+      "/eurodesign/page-01-portada.jpg",
       "/eurodesign/page-07.jpg",
-      "/eurodesign/arte-ubicacion.jpg",
+      "/eurodesign/page-05.jpg",
       "/eurodesign/page-08.jpg",
       "/eurodesign/page-09.jpg",
       "/eurodesign/page-10.jpg",

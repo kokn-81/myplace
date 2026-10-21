@@ -45,10 +45,10 @@ interface Props {
 }
 
 const HERO_IMAGES = [
-  { src: "/eurodesign/fachada-principal.jpg", label: "Fachada Principal" },
+  { src: "/eurodesign/page-01-portada.jpg", label: "Fachada Principal" },
   { src: "/eurodesign/amenities/amenity_piscina_skybar.jpg", label: "Piscina Panorámica Piso 18" },
   { src: "/eurodesign/amenities/amenity_lobby_recepcion.jpg", label: "Lobby de Doble Altura" },
-  { src: "/eurodesign/arte-ubicacion.jpg", label: "Ubicación Satelital Equipetrol" },
+  { src: "/eurodesign/page-05.jpg", label: "Ubicación Satelital Equipetrol" },
   { src: "/eurodesign/amenities/amenity_sala_lounge.jpg", label: "Sala Lounge Piso 18" },
 ];
 
@@ -110,7 +110,7 @@ const AMENITY_SLIDES = [
       "Planta completa de amenidades en el piso 18 conectando solárium, piscina infinita, parrillas gourmet, gimnasio y lounge climatizado.",
   },
   {
-    src: "/eurodesign/arte-locales.jpg",
+    src: "/eurodesign/page-32-locales-comerciales.jpg",
     category: "Planta Baja",
     title: "Locales Comerciales & Oficinas en PB",
     description:
@@ -140,7 +140,7 @@ const TYPOLOGIES_DATA: TypologyData[] = [
     rooms: 1,
     title: "1 Dormitorio Confort",
     area: "48,30 – 48,50 m²",
-    image: "/eurodesign/modelo-04-1d-48m2.jpg",
+    image: "/eurodesign/page-14.jpg",
     cashPrice: 71780,
     cuotasPrice: 76630,
     models: "Modelos 4 y 6",
@@ -161,7 +161,7 @@ const TYPOLOGIES_DATA: TypologyData[] = [
     rooms: 1,
     title: "1 Dormitorio Suite con Balcón",
     area: "57,00 m²",
-    image: "/eurodesign/modelo-03-1d-57m2.jpg",
+    image: "/eurodesign/page-13.jpg",
     cashPrice: 84360,
     cuotasPrice: 90060,
     models: "Modelos 3 y 7",
@@ -182,7 +182,7 @@ const TYPOLOGIES_DATA: TypologyData[] = [
     rooms: 2,
     title: "2 Dormitorios Master",
     area: "81,20 – 84,60 m²",
-    image: "/eurodesign/modelo-01-2d-82m2.jpg",
+    image: "/eurodesign/page-11.jpg",
     cashPrice: 120176,
     cuotasPrice: 128296,
     models: "Modelos 1, 2 y 8",
@@ -203,7 +203,7 @@ const TYPOLOGIES_DATA: TypologyData[] = [
     rooms: 1,
     title: "Unidades Piso 4 con Terraza Privada",
     area: "64,00 – 128,50 m²",
-    image: "/eurodesign/arte-modelos.jpg",
+    image: "/eurodesign/page-12.jpg",
     cashPrice: 94720,
     cuotasPrice: 101120,
     models: "Unidades Exclusivas Piso 4",
@@ -224,7 +224,7 @@ const TYPOLOGIES_DATA: TypologyData[] = [
     rooms: 0,
     title: "Locales Comerciales / Oficinas PB",
     area: "123,00 – 129,00 m²",
-    image: "/eurodesign/arte-locales.jpg",
+    image: "/eurodesign/page-32-locales-comerciales.jpg",
     cashPrice: 282900,
     cuotasPrice: 295200,
     models: "Planta Baja Calle Enrique Finot",
@@ -325,7 +325,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
 ];
 
 export default function EurodesignLanding({ property, onClose }: Props) {
-  const [activeImage, setActiveImage] = useState<string>("/eurodesign/fachada-principal.jpg");
+  const [activeImage, setActiveImage] = useState<string>("/eurodesign/page-01-portada.jpg");
   const [activeLabel, setActiveLabel] = useState<string>("Fachada Principal");
   const [amenityIndex, setAmenityIndex] = useState<number>(0);
   const [zoomPlanImage, setZoomPlanImage] = useState<string | null>(null);
@@ -383,13 +383,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
-      intro: { src: "/eurodesign/fachada-principal.jpg", label: "Fachada Principal" },
-      lugar: { src: "/eurodesign/arte-ubicacion.jpg", label: "Ubicación en Equipetrol" },
+      intro: { src: "/eurodesign/page-01-portada.jpg", label: "Fachada Principal" },
+      lugar: { src: "/eurodesign/page-05.jpg", label: "Ubicación en Equipetrol" },
       amenidades: { src: "/eurodesign/amenities/amenity_piscina_dia.jpg", label: "Piso 18 Rooftop & Piscina" },
-      tipologias: { src: "/eurodesign/arte-modelos.jpg", label: "Tipologías Arquitectónicas" },
+      tipologias: { src: "/eurodesign/page-12.jpg", label: "Tipologías Arquitectónicas" },
       pago: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Estructura de Precios & Pagos" },
       inversion: { src: "/eurodesign/amenities/amenity_gimnasio.jpg", label: "Rentabilidad en Equipetrol" },
-      disponibilidad: { src: "/eurodesign/fachada-principal.jpg", label: "Disponibilidad en Vivo" },
+      disponibilidad: { src: "/eurodesign/page-01-portada.jpg", label: "Disponibilidad en Vivo" },
     };
 
     const observer = new IntersectionObserver(
@@ -587,8 +587,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         >
           {shareFeedback ? (
             <>
-              <Check size={18} className="text-[#9a7b45]" />
-              <span className="text-[11px] font-semibold text-[#9a7b45]">¡Copiado!</span>
+              <Check size={18} className="text-[#7b4a2e]" />
+              <span className="text-[11px] font-semibold text-[#7b4a2e]">¡Copiado!</span>
             </>
           ) : (
             <>
@@ -626,7 +626,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30" />
         <div className="absolute bottom-6 left-6 right-16 text-white md:bottom-10 md:left-10">
-          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
+          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#dfc7b0] backdrop-blur-md border border-white/10">
             Preventa en Obra Gruesa · {activeLabel}
           </span>
           <h1 className="mt-3 font-serif text-4xl font-light tracking-wide leading-none md:text-6xl">
@@ -640,9 +640,9 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <span>·</span>
             <span>Entrega {EURODESIGN_DELIVERY}</span>
             <span>·</span>
-            <span className="text-[#e8d5a8]">Obra gruesa al 100%</span>
+            <span className="text-[#dfc7b0]">Obra gruesa al 100%</span>
           </div>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#e8d5a8]">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#dfc7b0]">
             <MapPin size={13} /> {EURODESIGN_ADDRESS}
           </p>
         </div>
@@ -655,15 +655,15 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 1. HERO / VIVÍ TOWER EURODESIGN: EXPERIENCIA Y ESTILO DE VIDA */}
           <section id="intro" ref={introRef} className="scroll-mt-6">
             <div className="flex items-center gap-2">
-              <Building2 size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Building2 size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Arquitectura de Vanguardia Europea
               </p>
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
               Viví Tower Eurodesign. <br />
-              <span className="italic font-normal text-[#9a7b45]">
+              <span className="italic font-normal text-[#7b4a2e]">
                 Un estándar europeo de confort y plusvalía en Equipetrol Norte.
               </span>
             </h2>
@@ -674,11 +674,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
             <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#7b4a2e]/10 text-[#7b4a2e]">
                   <HardHat size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
+                  <p className="text-xs uppercase tracking-wider font-semibold text-[#7b4a2e]">
                     {EURODESIGN_CONSTRUCTION_STATUS}
                   </p>
                   <p className="text-sm font-medium text-stone-800">
@@ -698,7 +698,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
               <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
               <a href="#inversion" className="hover:text-stone-950 transition-colors">Rentabilidad</a>
-              <a href="#disponibilidad" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
+              <a href="#disponibilidad" className="text-[#7b4a2e] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
             </nav>
           </section>
 
@@ -706,8 +706,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD */}
           <section id="lugar" ref={placeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <MapPin size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Ubicación Insuperable
               </p>
             </div>
@@ -721,30 +721,60 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </p>
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
-              <img
-                src="/eurodesign/arte-ubicacion.jpg"
-                alt="Mapa comercial de Equipetrol Norte con Tower Eurodesign"
-                className="h-64 w-full object-cover sm:h-72"
-              />
+              <div className="relative group overflow-hidden bg-stone-100">
+                <img
+                  src="/eurodesign/page-05.jpg"
+                  alt="Mapa de ubicación y centros de conveniencia de Tower Eurodesign en Equipetrol Norte"
+                  className="w-full object-contain max-h-[520px] transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
+                  <a
+                    href="https://www.google.com/maps/place/17%C2%B045'41.4%22S+63%C2%B011'49.9%22W/@-17.7615,-63.197194,17z"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 rounded-full bg-[#4a2c1d] px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white shadow-xl backdrop-blur transition-all hover:bg-[#633a22] hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <MapPin size={14} className="text-[#dfc7b0]" />
+                    <span>Abrir en Google Maps</span>
+                    <ExternalLink size={12} className="opacity-80" />
+                  </a>
+                </div>
+              </div>
               <div className="p-4 sm:p-5">
-                <p className="text-xs uppercase tracking-wider font-semibold text-stone-700">
-                  Todo lo que necesitas a minutos caminando:
-                </p>
-                <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs text-stone-500 font-light">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider font-semibold text-stone-800">
+                      Ubicación Estratégica en Equipetrol Norte:
+                    </p>
+                    <p className="mt-1 text-xs text-stone-600 font-light">
+                      Calle Enrique Finot esq. La Plata / 9 Oeste · A 3 cuadras de Av. San Martín y Mall Ventura
+                    </p>
+                  </div>
+                  <a
+                    href="https://www.google.com/maps/place/17%C2%B045'41.4%22S+63%C2%B011'49.9%22W/@-17.7615,-63.197194,17z"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="sm:hidden flex w-full items-center justify-center gap-2 rounded-xl bg-[#4a2c1d] px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white"
+                  >
+                    <MapPin size={14} className="text-[#dfc7b0]" />
+                    <span>Ver en Google Maps</span>
+                  </a>
+                </div>
+                <div className="mt-3.5 grid grid-cols-2 gap-2 text-xs text-stone-600 font-light border-t border-stone-100 pt-3">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#7b4a2e]" />
                     <span>Ventura Mall & Cines (3 min)</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#7b4a2e]" />
                     <span>Patio Design & Boulevard (2 min)</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#7b4a2e]" />
                     <span>Hoteles Marriott y Los Tajibos</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#7b4a2e]" />
                     <span>Torre Platinum & Green Tower</span>
                   </div>
                 </div>
@@ -756,8 +786,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 3. ÁREAS SOCIALES & AMENIDADES EXCLUSIVAS EN PISO 18 */}
           <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Sparkles size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Áreas Sociales · Piso 18 Rooftop
               </p>
             </div>
@@ -789,21 +819,21 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 <div className="absolute inset-0 flex items-center justify-between p-3 pointer-events-none">
                   <button
                     onClick={prevAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#7b4a2e] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                     aria-label="Anterior amenidad"
                   >
                     <ChevronLeft size={22} />
                   </button>
                   <button
                     onClick={nextAmenity}
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-[#7b4a2e] hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                     aria-label="Siguiente amenidad"
                   >
                     <ChevronRight size={22} />
                   </button>
                 </div>
 
-                <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[#e8d5a8] backdrop-blur-md">
+                <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[#dfc7b0] backdrop-blur-md">
                   {currentSlide.category}
                 </div>
 
@@ -829,7 +859,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       onClick={() => setAmenityIndex(idx)}
                       className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-all cursor-pointer ${
                         idx === amenityIndex
-                          ? "border-[#9a7b45] scale-105 shadow-md ring-2 ring-[#9a7b45]/30"
+                          ? "border-[#7b4a2e] scale-105 shadow-md ring-2 ring-[#7b4a2e]/30"
                           : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                       title={slide.title}
@@ -846,8 +876,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 4. TIPOLOGÍAS RESIDENCIALES: PLANOS REALES, METRAJES Y DETALLES */}
           <section id="tipologias" ref={typesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <Sparkles size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Distribución Arquitectónica
               </p>
             </div>
@@ -889,7 +919,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       <h3 className="font-serif text-2xl font-normal text-stone-900">
                         {tipo.title}
                       </h3>
-                      <p className="text-sm font-semibold uppercase tracking-wider text-[#9a7b45]">
+                      <p className="text-sm font-semibold uppercase tracking-wider text-[#7b4a2e]">
                         {tipo.models}
                       </p>
                     </div>
@@ -898,7 +928,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       {tipo.tagline}
                     </p>
 
-                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-md bg-[#fbf9f4] px-3 py-1 text-xs font-medium text-[#816127] border border-stone-200">
+                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-md bg-[#faf6f0] px-3 py-1 text-xs font-medium text-[#4a2c1d] border border-stone-200">
                       <CheckCircle2 size={13} /> {tipo.statusBadge}
                     </div>
 
@@ -909,7 +939,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       <ul className="mt-2.5 space-y-2 text-xs font-light text-stone-700">
                         {tipo.highlights.map((h, i) => (
                           <li key={i} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#7b4a2e]" />
                             <span className="[text-align:justify] [text-justify:inter-word]">{h}</span>
                           </li>
                         ))}
@@ -926,10 +956,10 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] uppercase tracking-widest text-[#9a7b45] font-semibold">
+                        <p className="text-[10px] uppercase tracking-widest text-[#7b4a2e] font-semibold">
                           Rendimiento Anual
                         </p>
-                        <p className="text-sm font-bold text-[#816127]">
+                        <p className="text-sm font-bold text-[#4a2c1d]">
                           {tipo.yieldRange}
                         </p>
                       </div>
@@ -944,8 +974,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 5. FORMAS DE PAGO & ESTRUCTURA DE COMPRA */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <TrendingUp size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Estructura de Compra
               </p>
             </div>
@@ -962,18 +992,18 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <div className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <span className="rounded-full bg-[#9a7b45]/30 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#9a7b45]/40">
+                    <span className="rounded-full bg-[#7b4a2e]/30 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#dfc7b0] border border-[#7b4a2e]/40">
                       Mayor Descuento
                     </span>
                     <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.480 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
+                    <p className="font-serif text-2xl font-light text-[#dfc7b0]">$1.480 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
                     <p className="text-[11px] text-stone-400">vs $2.100 en la zona</p>
                   </div>
                 </div>
                 <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="text-xs uppercase tracking-wider text-[#dfc7b0] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
                     Aseguras el valor por m² más competitivo de todo Equipetrol Norte ($1.480 USD/m²). Ahorras hasta USD 10.000 frente al plan en cuotas y aseguras el máximo margen de plusvalía con obra gruesa ya terminada en piso 18.
                   </p>
@@ -995,7 +1025,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="text-xs uppercase tracking-wider text-[#7b4a2e] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
                     Desembolso inicial cómodo del 40%, 20% distribuido en cuotas programadas durante la fase de obra fina y 40% final al recibir tus llaves en {EURODESIGN_DELIVERY}.
                   </p>
@@ -1019,8 +1049,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           {/* 6. RENTABILIDAD & PLUSVALÍA EN EQUIPETROL NORTE */}
           <section id="inversion" ref={investorRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+              <TrendingUp size={14} className="text-[#7b4a2e]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                 Rentabilidad & Plusvalía
               </p>
             </div>
@@ -1034,7 +1064,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
             <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#9a7b45]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#816127]">
+                <span className="rounded-full bg-[#7b4a2e]/15 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#4a2c1d]">
                   Diferencial Financiero
                 </span>
               </div>
@@ -1045,21 +1075,21 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 La solidez de tener la obra gruesa al 100% en loza piso 18 elimina el riesgo constructivo. El inversor ingresa en el punto óptimo de valorización, permitiendo vender con alta ganancia a la entrega o generar ingresos por alquiler de hasta USD 1.150 mensuales.
               </p>
 
-              <div className="mt-5 rounded-xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-[#9a7b45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
+              <div className="mt-5 rounded-xl border-2 border-[#7b4a2e] bg-[#faf6f0] p-5 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-[#7b4a2e] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
                   Plusvalía Tower
                 </div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#4a2c1d]">
                     Tower Eurodesign · Equipetrol Norte (Obra Gruesa 100%)
                   </p>
                   <p className="font-serif text-2xl text-stone-900 font-medium">
                     $1.480 <span className="text-xs font-sans text-stone-500">USD/m²</span>
                   </p>
                 </div>
-                <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#9a7b45]/20 pt-3">
+                <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#7b4a2e]/20 pt-3">
                   <li>• Entrada departamento: <strong className="text-stone-900 block mt-0.5">Desde USD 71.780</strong></li>
-                  <li>• Retorno anual por renta: <strong className="text-[#816127] block mt-0.5">10,2% – 11,2% en USD</strong></li>
+                  <li>• Retorno anual por renta: <strong className="text-[#4a2c1d] block mt-0.5">10,2% – 11,2% en USD</strong></li>
                   <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+41% ($2.100 USD/m²)</strong></li>
                 </ul>
               </div>
@@ -1071,8 +1101,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <Layers size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                <Layers size={14} className="text-[#7b4a2e]" />
+                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#7b4a2e]">
                   Inventario & Disponibilidad Oficial
                 </p>
               </div>
@@ -1084,14 +1114,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   title="Actualizar disponibilidad desde Google Sheets"
                   className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 active:scale-95 disabled:opacity-50 shadow-xs cursor-pointer"
                 >
-                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
+                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#7b4a2e]" : ""} />
                   <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar"}</span>
                 </button>
                 <a
                   href={EURODESIGN_SHEETS_CSV_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[11px] text-[#9a7b45] hover:underline"
+                  className="flex items-center gap-1 text-[11px] text-[#7b4a2e] hover:underline"
                   title="Ver planilla oficial en Google Sheets"
                 >
                   <span>Google Sheets</span>
@@ -1108,7 +1138,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </p>
 
             {/* Resumen de unidades en vivo */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] px-4 py-3 text-xs">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#faf6f0] px-4 py-3 text-xs">
               <div className="flex items-center gap-3 text-stone-700">
                 <span className="font-semibold text-stone-900">{totalUnitsCount} unidades</span>
                 <span className="text-stone-300">·</span>
@@ -1125,7 +1155,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </>
                 )}
               </div>
-              <span className="text-[11px] text-[#816127] font-semibold bg-[#9a7b45]/15 px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] text-[#4a2c1d] font-semibold bg-[#7b4a2e]/15 px-2.5 py-0.5 rounded-full">
                 Torre de 18 niveles en Equipetrol
               </span>
             </div>
@@ -1151,13 +1181,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       onClick={() => setSelectedAmbId(amb.id)}
                       className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
                         isSelected
-                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
+                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#7b4a2e]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#7b4a2e] hover:shadow-xs"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#dfc7b0]" : "text-stone-900"}`}>
                             {amb.name}
                           </p>
                           <p className={`text-xs mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
@@ -1166,7 +1196,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         </div>
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                           availCount > 0
-                            ? isSelected ? "bg-[#9a7b45]/40 text-[#e8d5a8] border border-[#9a7b45]/50" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            ? isSelected ? "bg-[#7b4a2e]/40 text-[#dfc7b0] border border-[#7b4a2e]/50" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
                             : isSelected ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-400"
                         }`}>
                           {availCount > 0 ? `${availCount} disponibles` : "Agotado"}
@@ -1224,8 +1254,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       onClick={() => setSelectedFloor(floor)}
                       className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
                         isSelected
-                          ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
+                          ? "border-[#7b4a2e] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#7b4a2e]"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#7b4a2e] hover:bg-stone-50 shadow-xs"
                       }`}
                     >
                       <div className="flex items-center justify-center gap-1.5">
@@ -1243,10 +1273,10 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
             {/* PASO 3: PRECIO EXACTO, MODALIDAD DE PAGO Y CÁLCULO DE GANANCIA */}
             {activeUnit && activeFinancials && (
-              <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
+              <div className="mt-8 rounded-3xl border-2 border-[#7b4a2e] bg-[#faf6f0] p-5 sm:p-7 shadow-xl">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200/70 pb-4">
                   <div>
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#816127]">
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#4a2c1d]">
                       Unidad Seleccionada en {activeUnit.floorLabel}
                     </span>
                     <h4 className="font-serif text-2xl font-bold text-stone-900 mt-0.5">
@@ -1295,13 +1325,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                           onClick={() => setSelectedPlan(plan.key as any)}
                           className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
                             isSelected
-                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
+                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#7b4a2e]"
                               : "border-stone-200 bg-white/70 text-stone-600 hover:border-stone-300"
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
-                            <span className="text-[10px] font-semibold text-[#816127]">${plan.perM2} USD/m²</span>
+                            <span className="text-[10px] font-semibold text-[#4a2c1d]">${plan.perM2} USD/m²</span>
                           </div>
                           <p className="mt-1 font-serif text-lg font-bold text-stone-900">
                             USD {formatEurodesignUsd(plan.total)}
@@ -1316,16 +1346,16 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 {/* TABLERO DE RENDIMIENTO FINANCIERO */}
                 <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
                   <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3 flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-[#9a7b45]" />
+                    <TrendingUp size={14} className="text-[#7b4a2e]" />
                     Proyección de Ganancia & Rentabilidad (Entrega {EURODESIGN_DELIVERY}):
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
+                    <div className="rounded-xl bg-[#faf6f0] p-3.5 border border-stone-200/80">
                       <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
                         Valor Estimado a la Entrega ($2.100 USD/m²)
                       </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
+                      <p className="mt-1 font-serif text-2xl font-bold text-[#4a2c1d]">
                         USD {formatEurodesignUsd(activeFinancials.marketValueAtDelivery)}
                       </p>
                       <p className="text-[11px] text-stone-500 font-light mt-0.5">
@@ -1366,7 +1396,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
                         Rendimiento Anual en Dólares (Yield):
                       </p>
-                      <p className="font-serif text-lg font-bold text-[#816127] mt-0.5">
+                      <p className="font-serif text-lg font-bold text-[#4a2c1d] mt-0.5">
                         {activeFinancials.yieldRange}
                       </p>
                       <p className="text-[11px] text-stone-500 font-light">
@@ -1396,7 +1426,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                           activeFinancials.totalPrice
                         );
                       }}
-                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0 cursor-pointer"
+                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#7b4a2e] active:scale-95 text-center shrink-0 cursor-pointer"
                     >
                       Reservar Unidad por WhatsApp
                     </button>
@@ -1417,7 +1447,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <button
                 type="button"
                 onClick={() => setZoomPlanImage(null)}
-                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white hover:bg-[#9a7b45] transition cursor-pointer"
+                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white hover:bg-[#7b4a2e] transition cursor-pointer"
               >
                 <X size={20} />
               </button>

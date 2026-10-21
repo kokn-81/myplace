@@ -85,7 +85,7 @@ app.get(["/eurodesign", "/api/eurodesign-og"], (req, res) => {
   const title = "Tower Eurodesign · Preventa en Equipetrol";
   const desc =
     "Departamentos y locales comerciales en Preventa en Equipetrol Norte desde $1.480 USD/m². Amenities en Piso 18 con vista 360°, piscina panorámica y coworking. Entrega Junio 2027.";
-  const img = "https://nia-web.com/eurodesign/fachada-principal.jpg";
+  const img = "https://nia-web.com/eurodesign/page-01-portada.jpg";
   const targetUrl = "/?proyecto=eurodesign";
 
   if (!isBot && req.path === "/eurodesign") {
