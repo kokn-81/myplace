@@ -250,11 +250,13 @@ export default function OnaLanding({ property, onClose }: Props) {
   const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<OnaUnit[]>(ONA_UNITS);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
+  const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
 
   useEffect(() => {
     fetchOnaLiveUnits().then((res) => {
       if (res.units && res.units.length > 0) {
         setUnits(res.units);
+        setLastPriceUpdateText("Sincronizado en vivo");
       }
     });
   }, []);
@@ -268,6 +270,8 @@ export default function OnaLanding({ property, onClose }: Props) {
         const parsed = parseOnaCsvText(text);
         if (parsed.length > 0) {
           setUnits(parsed);
+          const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          setLastPriceUpdateText(`Actualizado ${timeStr}`);
           try {
             window.localStorage.setItem("ona.live_inventory_cache.v1", JSON.stringify({ time: Date.now(), units: parsed }));
           } catch {}
@@ -280,8 +284,30 @@ export default function OnaLanding({ property, onClose }: Props) {
     }
   };
 
+  const availableUnits = useMemo(() => units.filter((u) => u.status === "disponible"), [units]);
+
+  const minCashPerM2 = useMemo(() => {
+    if (availableUnits.length === 0) return 1250;
+    return Math.min(...availableUnits.map((u) => u.cashPerM2));
+  }, [availableUnits]);
+
+  const minPlan60PerM2 = useMemo(() => {
+    if (availableUnits.length === 0) return 1300;
+    return Math.min(...availableUnits.map((u) => u.plan60.perM2));
+  }, [availableUnits]);
+
+  const minPlan40PerM2 = useMemo(() => {
+    if (availableUnits.length === 0) return 1350;
+    return Math.min(...availableUnits.map((u) => u.plan40.perM2));
+  }, [availableUnits]);
+
+  const minUnitCashPrice = useMemo(() => {
+    if (availableUnits.length === 0) return 40375;
+    return Math.min(...availableUnits.map((u) => u.cash));
+  }, [availableUnits]);
+
   const totalUnitsCount = units.length;
-  const availableUnitsCount = units.filter((u) => u.status === "disponible").length;
+  const availableUnitsCount = availableUnits.length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
 
   const currentAmbiente = useMemo(() => {
@@ -388,7 +414,7 @@ export default function OnaLanding({ property, onClose }: Props) {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/?proyecto=ona`;
     const shareTitle = "ONA Residences · Preventa en Los Cusis";
-    const shareText = "Departamentos de 1 y 2 dormitorios en Los Cusis desde USD 40.375. Conoce ONA Residences:";
+    const shareText = `Departamentos de 1 y 2 dormitorios en Los Cusis desde USD ${formatOnaUsd(minUnitCashPrice)}. Conoce ONA Residences:`;
 
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
@@ -938,7 +964,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   Tu navegador no soporta la reproducción de video.
                 </video>
               </div>
-              <div className="p-4 sm:p-5 bg-stone-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-white/10">
+              <div className="p-4 sm:p-5 bg-stone-900 text-white flex items-center justify-between gap-3 border-t border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 shrink-0 rounded-full border border-white/20 bg-black p-1 flex items-center justify-center">
                     <img src="/ona/ona-emblem.jpg" alt="Logo Ona" className="h-full w-full object-contain rounded-full" />
@@ -948,39 +974,33 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <p className="text-[10px] text-stone-400">Palacios Antúnez &amp; Archilabs Design</p>
                   </div>
                 </div>
-                <a
-                  href="https://drive.google.com/file/d/1wxoWwNZEk6oROxILewhKtlzVyHMPExA0/view?usp=drivesdk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium text-stone-200 transition-colors hover:bg-white hover:text-stone-950"
-                >
-                  <ExternalLink size={12} />
-                  Ver en Google Drive
-                </a>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#e8d5a8] bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                  Testimonio Oficial
+                </span>
               </div>
             </div>
 
             {/* Métricas de Respaldo */}
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-3xl font-light text-stone-900">+42 Años</p>
+                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">+42 Años</p>
                 <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Trayectoria Profesional</p>
                 <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Arquitectura e ingeniería con formación en Brasil y ejecución en Bolivia.
+                  Arquitectura e ingeniería con formación académica en Brasil y ejercicio en Bolivia desde 1984.
                 </p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-3xl font-light text-stone-900">+100 Obras</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Proyectos Ejecutados</p>
+                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Diversidad Técnica</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Alcance Constructivo</p>
                 <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Edificios residenciales, hospitales, clínicas, naves industriales y viviendas.
+                  Edificios residenciales, hospitales, clínicas de salud, naves industriales y viviendas.
                 </p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-3xl font-light text-stone-900">100%</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Compromiso y Legado</p>
+                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Relevo Generacional</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Compromiso &amp; Legado</p>
                 <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Relevo generacional guiado por más de cuatro décadas de experiencia técnica.
+                  Empresa familiar fundada por arquitectos con continuidad técnica, rigor estructural y visión contemporánea.
                 </p>
               </div>
             </div>
@@ -1000,11 +1020,25 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           {/* 6. FORMAS DE PAGO & ESTRUCTURA DE COMPRA (ANTES DEL SIMULADOR) */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura de Compra
-              </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={14} className="text-[#9a7b45]" />
+                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                  Estructura de Compra
+                </p>
+              </div>
+
+              {/* Botón interactivo para actualizar el m² mínimo */}
+              <button
+                type="button"
+                onClick={handleRefreshInventory}
+                disabled={isRefreshingInv}
+                title="Actualizar precio mínimo por m² e inventario desde planilla"
+                className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 shadow-xs transition-all hover:border-[#9a7b45] hover:bg-stone-50 active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : "text-[#9a7b45]"} />
+                <span>{isRefreshingInv ? "Actualizando..." : "Actualizar precio m²"}</span>
+              </button>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
@@ -1013,6 +1047,35 @@ export default function OnaLanding({ property, onClose }: Props) {
             <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
               Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {ONA_DELIVERY}.
             </p>
+
+            {/* Banner de Precio Mínimo en Vivo */}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-3.5 sm:px-4.5 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/15 text-[#9a7b45]">
+                  <DollarSign size={16} />
+                </span>
+                <div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-xs font-light text-stone-600">Precio base preventa:</span>
+                    <strong className="font-serif text-lg font-medium text-stone-900">
+                      Desde ${formatOnaUsd(minCashPerM2)} USD/m²
+                    </strong>
+                  </div>
+                  <p className="text-[11px] text-stone-500 font-light">
+                    Calculado en vivo sobre {availableUnitsCount} unidades disponibles · {lastPriceUpdateText}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleRefreshInventory}
+                disabled={isRefreshingInv}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#9a7b45] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-[#816127] active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin" : ""} />
+                <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar ahora"}</span>
+              </button>
+            </div>
 
             {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA */}
             <div className="mt-6 space-y-4">
@@ -1026,7 +1089,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.250 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
+                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">${formatOnaUsd(minCashPerM2)} <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
                     <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
                   </div>
                 </div>
@@ -1048,7 +1111,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 60% + Saldo contra Entrega (40%)</h3>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.300 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="font-serif text-2xl font-light text-stone-900">${formatOnaUsd(minPlan60PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
                     <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
                   </div>
                 </div>
@@ -1070,7 +1133,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 40% + Saldo contra Entrega (60%)</h3>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">$1.350 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="font-serif text-2xl font-light text-stone-900">${formatOnaUsd(minPlan40PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
                     <p className="text-[11px] text-stone-400">vs $1.600 en la zona</p>
                   </div>
                 </div>
@@ -1146,12 +1209,23 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <p className="text-xs font-semibold uppercase tracking-wider text-[#816127]">
                       ONA Residences · {ONA_ZONE} (1.ª Fase)
                     </p>
-                    <p className="font-serif text-2xl text-stone-900 font-medium">
-                      $1.250 <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-serif text-2xl text-stone-900 font-medium">
+                        Desde ${formatOnaUsd(minCashPerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleRefreshInventory}
+                        disabled={isRefreshingInv}
+                        title="Actualizar precio m² en tiempo real"
+                        className="rounded-full p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-[#9a7b45] active:scale-95 disabled:opacity-50 cursor-pointer"
+                      >
+                        <RefreshCw size={13} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
+                      </button>
+                    </div>
                   </div>
                   <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#9a7b45]/20 pt-3">
-                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900 block mt-0.5">Desde USD 40.375</strong></li>
+                    <li>• Entrada mínima 1 dorm: <strong className="text-stone-900 block mt-0.5">Desde USD {formatOnaUsd(minUnitCashPrice)}</strong></li>
                     <li>• Retorno anual por alquiler: <strong className="text-[#816127] block mt-0.5">10,4% – 11,1% en USD</strong></li>
                     <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+28% ($1.600 USD/m²)</strong></li>
                   </ul>
@@ -1171,7 +1245,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                 Asegura el piso de preventa antes de futuras actualizaciones de valor.
               </h3>
               <p className="mt-2 text-xs text-stone-300 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Los desarrollos inmobiliarios serios escalonan sus listas de precios conforme avanza la obra. Ingresar hoy al valor base de <strong>$1.250 USD/m²</strong> asegura la máxima plusvalía acumulada frente al valor referencial de entrega de <strong>$1.600 USD/m²</strong> en {ONA_DELIVERY}.
+                Los desarrollos inmobiliarios serios escalonan sus listas de precios conforme avanza la obra. Ingresar hoy al valor base de <strong>${formatOnaUsd(minCashPerM2)} USD/m²</strong> asegura la máxima plusvalía acumulada frente al valor referencial de entrega de <strong>$1.600 USD/m²</strong> en {ONA_DELIVERY}.
               </p>
 
               <div className="mt-5 rounded-xl border border-white/15 bg-white/5 p-4">
