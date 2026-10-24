@@ -834,11 +834,11 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     ];
   }
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
-  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p)) || SYNTHETIC_ONA_PROPERTY;
+  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
   // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
-  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p)) || SYNTHETIC_EURODESIGN_PROPERTY;
+  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p));
   // Opción 3: Garden Zen (Equipetrol Norte)
-  const gardenZen = list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p)) || SYNTHETIC_GARDEN_ZEN_PROPERTY;
+  const gardenZen = list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p));
 
   const priorityItems: Property[] = [];
   if (ona) priorityItems.push(ona);
@@ -854,30 +854,28 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     const existing = list.find((p) => String(p.id) === String(domusProp.id));
     if (existing && !priorityItems.some((p) => String(p.id) === String(existing.id))) {
       priorityItems.push(existing);
-    } else if (!priorityItems.some((p) => String(p.id) === String(domusProp.id))) {
-      priorityItems.push(domusProp);
     }
   }
 
-  // Opción 11: Departamento de La Riviera (Ref #4 o complejo La Riviera)
+  // Opción 11: Departamento de La Riviera (Ref #4 o complejo La Riviera) - Solo si está en list (Venta)
   const riviera = list.find(
     (p) =>
       String(p.id) === "4" ||
       String(p.complejoId) === "3" ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
       (p.title && p.title.toLowerCase().includes("riviera"))
-  ) || SYNTHETIC_RIVIERA_PROPERTY;
+  );
   if (riviera && !priorityItems.some((p) => String(p.id) === String(riviera.id))) {
     priorityItems.push(riviera);
   }
 
-  // Opción 12: Departamento de Swissôtel (Ref #3 o complejo Swissôtel)
+  // Opción 12: Departamento de Swissôtel (Ref #3 o complejo Swissôtel) - Solo si está en list (Venta)
   const swissotel = list.find(
     (p) =>
       String(p.id) === "3" ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("swiss")) ||
       (p.title && p.title.toLowerCase().includes("swiss"))
-  ) || SYNTHETIC_SWISSOTEL_PROPERTY;
+  );
   if (swissotel && !priorityItems.some((p) => String(p.id) === String(swissotel.id))) {
     priorityItems.push(swissotel);
   }
