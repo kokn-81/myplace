@@ -224,14 +224,126 @@ export const isOnaProperty = (p: Property | null | undefined): boolean => {
   const sId = String(p.id).toLowerCase();
   const sTitle = String(p.title || (p as any).titulo || "").toLowerCase();
   const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").toLowerCase();
+
+  // Descartar alquileres o reventas secundarias de terceros en otros edificios
+  if (sId === "1325") return false;
+
   return (
     sId === "5" ||
     sId === "ona" ||
+    sId === "ona-residences" ||
     sId.startsWith("ona-") ||
-    sTitle.includes("ona residences preventa") ||
-    (sTitle.includes("ona residences") && sTitle.includes("preventa")) ||
-    (sCmp.includes("ona residences") && sTitle.includes("preventa"))
+    sTitle.includes("ona residences") ||
+    sCmp.includes("ona residences") ||
+    (sTitle.includes("ona") && (sTitle.includes("cusis") || sTitle.includes("banzer") || sTitle.includes("preventa")))
   );
+};
+
+export const SYNTHETIC_ONA_PROPERTY: Property = {
+  id: "5",
+  title: "ONA Residences · Av. Los Cusis",
+  price: 40375,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Av. Los Cusis / Banzer-Beni",
+  city: "Santa Cruz de la Sierra",
+  zone: "Norte",
+  lat: -17.763513859019525,
+  lng: -63.1771119838858,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Exclusivo proyecto residencial en Av. Los Cusis entre Banzer y Beni. Departamentos de 1 y 2 dormitorios con diseño de vanguardia y excelentes amenidades.",
+  amenities: ["piscina", "gimnasio", "sauna", "churrasquera", "espacios sociales", "seguridad"],
+  images: [
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129555/inmuebles/cbpb0oyzhtztnitsn9kj.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129557/inmuebles/aaxdcbw9vl2lhvkbghrp.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129560/inmuebles/c2wd2clfyuoktq27dizl.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "ONA Residences",
+  ocupacion: "Disponible",
+  superficieM2: 32.3,
+  amoblado: false,
+  fechaEntrega: "Diciembre 2026",
+  totalUnidades: 54,
+  unidadesDisponibles: 38,
+  reservaUsd: 1000,
+  planesPago: "Reserva USD 1.000, Contado con descuento, 40% inicial o 60% inicial",
+};
+
+export const SYNTHETIC_RIVIERA_PROPERTY: Property = {
+  id: "4",
+  title: "Depto 3 Dorm. · La Riviera Equipetrol",
+  price: 330000,
+  rooms: 3,
+  bathrooms: 4,
+  area: "Equipetrol Norte",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol Norte",
+  lat: -17.765691,
+  lng: -63.194784,
+  operation: "Venta",
+  type: "Departamento",
+  description: "Exclusivo departamento de 3 dormitorios en piso 16 de Torre La Riviera & Beauty Plaza en Equipetrol Norte. Vistas panorámicas inigualables, acabados de primer nivel, suite principal con balcón, escritorio, lavandería y 2 parqueos privados.",
+  amenities: ["master suite con balcón privado", "escritorio", "cocina con balcón", "lavandería", "2 parqueos", "1 baulera", "seguridad 24 horas", "Beauty Plaza"],
+  images: [
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129484/inmuebles/cqbdbb2zn53qjywnrq13.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129486/inmuebles/fr0lkd7vmw3zdwibdkbn.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129488/inmuebles/r79k1rr4071uyqswx8j6.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: "3",
+  complejoNombre: "La Riviera & Beauty Plaza",
+  ocupacion: "Disponible",
+  superficieM2: 185.0,
+  amoblado: false,
+};
+
+export const SYNTHETIC_SWISSOTEL_PROPERTY: Property = {
+  id: "3",
+  title: "Depto 1 Dorm. · Swissôtel Santa Cruz",
+  price: 195000,
+  rooms: 1,
+  bathrooms: 2,
+  area: "Canal Isuto / Equipetrol (Swissôtel)",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.745744,
+  lng: -63.195316,
+  operation: "Venta",
+  type: "Departamento",
+  description: "Oportunidad de inversión de lujo: Departamento de 1 dormitorio a estrenar en Swissôtel Santa Cruz, 5to Anillo y Av. La Salle (zona Equipetrol / Canal Isuto). Estándares de hotelería 5 estrellas, alta rentabilidad, piscina, gimnasio y business lounge.",
+  amenities: ["piscina", "churrasquera", "salas de reuniones y eventos", "gimnasio equipado", "cocina equipada", "a estrenar"],
+  images: [
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129422/inmuebles/hvj5qpv5ogtxknsmhjjs.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129425/inmuebles/jm6rqg1bxyjglsmqmdo3.jpg",
+    "https://res.cloudinary.com/dposwsf5f/image/upload/v1790129427/inmuebles/qvo5rejc3z7kkr4s681z.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "Swissôtel Santa Cruz",
+  ocupacion: "Disponible",
+  superficieM2: 52.0,
+  amoblado: true,
 };
 
 export const isEurodesignProperty = (p: Property | null | undefined): boolean => {
@@ -711,9 +823,18 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (!list || list.length === 0) return [SYNTHETIC_GARDEN_ZEN_PROPERTY, ...SYNTHETIC_DOMUS_PROPERTIES];
+  if (!list || list.length === 0) {
+    return [
+      SYNTHETIC_ONA_PROPERTY,
+      SYNTHETIC_EURODESIGN_PROPERTY,
+      SYNTHETIC_GARDEN_ZEN_PROPERTY,
+      ...SYNTHETIC_DOMUS_PROPERTIES,
+      SYNTHETIC_RIVIERA_PROPERTY,
+      SYNTHETIC_SWISSOTEL_PROPERTY,
+    ];
+  }
   // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
-  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
+  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p)) || SYNTHETIC_ONA_PROPERTY;
   // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
   const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p)) || SYNTHETIC_EURODESIGN_PROPERTY;
   // Opción 3: Garden Zen (Equipetrol Norte)
@@ -738,16 +859,27 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     }
   }
 
-  // Opción 10: Departamento de La Riviera (Ref #4 o complejo La Riviera)
+  // Opción 11: Departamento de La Riviera (Ref #4 o complejo La Riviera)
   const riviera = list.find(
     (p) =>
       String(p.id) === "4" ||
       String(p.complejoId) === "3" ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
       (p.title && p.title.toLowerCase().includes("riviera"))
-  );
+  ) || SYNTHETIC_RIVIERA_PROPERTY;
   if (riviera && !priorityItems.some((p) => String(p.id) === String(riviera.id))) {
     priorityItems.push(riviera);
+  }
+
+  // Opción 12: Departamento de Swissôtel (Ref #3 o complejo Swissôtel)
+  const swissotel = list.find(
+    (p) =>
+      String(p.id) === "3" ||
+      (p.complejoNombre && p.complejoNombre.toLowerCase().includes("swiss")) ||
+      (p.title && p.title.toLowerCase().includes("swiss"))
+  ) || SYNTHETIC_SWISSOTEL_PROPERTY;
+  if (swissotel && !priorityItems.some((p) => String(p.id) === String(swissotel.id))) {
+    priorityItems.push(swissotel);
   }
 
   const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
@@ -776,20 +908,23 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.summary.v10";
+const CATALOG_CACHE_KEY = "nia.catalog.curated.v12";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
   if (typeof window === "undefined") return [];
 
   try {
+    // Limpiar claves de caché obsoletas
+    window.localStorage.removeItem("nia.catalog.summary.v10");
+    window.localStorage.removeItem("nia.catalog.summary.v11");
+
     const raw = window.localStorage.getItem(CATALOG_CACHE_KEY);
     if (!raw) return [];
 
     const parsed = JSON.parse(raw);
     const items = Array.isArray(parsed?.items) ? parsed.items : [];
-    // Si la cache tiene menos de 800 items, es una cache recortada u obsoleta; descartarla
-    if (items.length < 800) {
+    if (items.length < 5) {
       window.localStorage.removeItem(CATALOG_CACHE_KEY);
       return [];
     }
@@ -1118,6 +1253,12 @@ export default function MapPage() {
           selectProperty(target, { skipHistoryPush: true });
           hasSearchInteractionRef.current = true;
           window.history.replaceState({ modal: `direct_${proyecto}`, propertyId: target.id }, "", window.location.href);
+        }, 300);
+      } else if (proyecto.toLowerCase().includes("ona") || proyecto === "5") {
+        setTimeout(() => {
+          selectProperty(SYNTHETIC_ONA_PROPERTY, { skipHistoryPush: true });
+          hasSearchInteractionRef.current = true;
+          window.history.replaceState({ modal: "direct_ona", propertyId: "5" }, "", window.location.href);
         }, 300);
       } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
         setTimeout(() => {
@@ -1523,14 +1664,10 @@ export default function MapPage() {
         if (!snapshotResponse.ok) return;
         const snapshotItems = await snapshotResponse.json();
         if (Array.isArray(snapshotItems) && snapshotItems.length > 0 && !cancelled) {
-          setProperties((current) => {
-            // Sincronizar con el snapshot maestro asegurando orden y captadores
-            if (current.length <= snapshotItems.length) {
-              const mapped = prioritizeRecommended(snapshotItems.map(mapApiProperty));
-              writeCachedCatalog(mapped);
-              return mapped;
-            }
-            return prioritizeRecommended(current);
+          setProperties(() => {
+            const mapped = prioritizeRecommended(snapshotItems.map(mapApiProperty));
+            writeCachedCatalog(mapped);
+            return mapped;
           });
         }
       } catch (error) {
@@ -1546,13 +1683,6 @@ export default function MapPage() {
         if (!Array.isArray(backendItems) || backendItems.length === 0 || cancelled) return;
 
         setProperties((current) => {
-          // NUNCA degradar el catalogo maestro (1798 items) con un resumen incompleto de backend
-          if (backendItems.length < current.length) {
-            console.warn(`[Catalog] Ignorando resumen incompleto de backend (${backendItems.length} items vs ${current.length} en catalogo actual).`);
-            return current;
-          }
-
-          // Si el backend tiene volumen completo, mezclar preservando captadores autenticos
           const backendMapped = backendItems.map(mapApiProperty);
           const currentMap = new Map(current.map((item) => [item.id, item]));
           const merged = backendMapped.map((bItem) => {
@@ -1792,8 +1922,10 @@ export default function MapPage() {
     setSelectedBuildingGroup(null);
     setCurrentIndex(0);
 
+    // Filtrar todos los proyectos asegurando prioridad y que ONA esté al frente
     const projectProperties = properties.filter((p) => isProjectOrPreventa(p));
-    const projectIds = projectProperties.map((p) => p.id);
+    const allProjects = prioritizeRecommended(projectProperties).filter((p) => isProjectOrPreventa(p));
+    const projectIds = allProjects.map((p) => p.id);
     setAiFilteredIds(projectIds.length > 0 ? projectIds : []);
 
     setMapFocus({

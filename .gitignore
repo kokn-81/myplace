@@ -12,6 +12,7 @@ backend/*serviceAccount*.json
 *.sqlite
 *.sqlite3
 *.bak
+*.full-backup.json
 backups/
 
 # Dependencies
