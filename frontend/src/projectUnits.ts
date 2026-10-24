@@ -31,7 +31,7 @@ export interface ProjectDetails {
 export const URGENCY_PRESETS = [
   "🔥 ¡Últimas unidades disponibles en Lista Cero!",
   "⚡ 75% Vendido - Precios de lanzamiento hasta fin de mes",
-  "🎯 Reserva tu departamento con solo $2.000 USD",
+  "🎯 Reserva tu departamento con solo $1.000 USD",
   "📈 Alta plusvalía en Av. Los Cusis - Preventa exclusiva",
   "⭐ Entrega garantizada 2028 - Planes de pago flexibles",
 ];

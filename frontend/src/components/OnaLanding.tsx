@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   DollarSign,
+  Download,
   ExternalLink,
   Layers,
   MapPin,
@@ -416,6 +417,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const amenitiesRef = useRef<HTMLElement>(null);
   const typesRef = useRef<HTMLElement>(null);
   const payRef = useRef<HTMLElement>(null);
+  const builderRef = useRef<HTMLElement>(null);
   const investorRef = useRef<HTMLElement>(null);
   const disponibilidadRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLElement>(null);
@@ -426,6 +428,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       lugar: { src: "/ona/ubicacion.jpg", label: "Ubicación" },
       amenidades: { src: "/ona/piscina.jpg", label: "Amenidades" },
       tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
+      constructora: { src: "/ona/fachada-atardecer.jpg", label: "Constructora" },
       pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
       inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
       disponibilidad: { src: "/ona/fachada-atardecer.jpg", label: "Disponibilidad" },
@@ -445,7 +448,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       { threshold: [0.22, 0.5] }
     );
 
-    [introRef, placeRef, amenitiesRef, typesRef, payRef, investorRef, disponibilidadRef, closeRef].forEach((ref) => {
+    [introRef, placeRef, amenitiesRef, typesRef, builderRef, payRef, investorRef, disponibilidadRef, closeRef].forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -506,11 +509,23 @@ export default function OnaLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
-      {/* Botón Flotante: Compartir */}
+      {/* Botones Flotantes: Brochure, Compartir y Cerrar */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
+        <a
+          href="/ona/brochure.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          aria-label="Descargar Brochure"
+          title="Descargar Brochure Oficial en PDF"
+        >
+          <Download size={16} className="text-[#9a7b45]" />
+          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Brochure PDF</span>
+        </a>
+
         <button
           onClick={handleShareOna}
-          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95"
+          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
           aria-label="Compartir"
           title="Compartir ONA Residences"
         >
@@ -521,11 +536,22 @@ export default function OnaLanding({ property, onClose }: Props) {
             </>
           ) : (
             <>
-              <Share2 size={18} />
+              <Share2 size={16} />
               <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
             </>
           )}
         </button>
+
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+            aria-label="Cerrar"
+            title="Cerrar vista"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica */}
@@ -607,6 +633,30 @@ export default function OnaLanding({ property, onClose }: Props) {
               </p>
             </div>
 
+            {/* Accesos rápidos y Brochure */}
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href="/ona/brochure.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-[#9a7b45]/40 bg-[#9a7b45]/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#9a7b45] transition-all hover:bg-[#9a7b45] hover:text-white"
+              >
+                <Download size={14} />
+                Brochure Oficial (PDF)
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("inversion");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-stone-700 transition-all hover:border-stone-400 hover:text-stone-950 shadow-xs"
+              >
+                <Calculator size={14} />
+                Simulador de Rentabilidad
+              </button>
+            </div>
+
 
 
             {/* Accesos rápidos de navegación */}
@@ -614,6 +664,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
+              <a href="#constructora" className="hover:text-stone-950 transition-colors font-semibold text-stone-700">Constructora</a>
               <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
               <a href="#inversion" className="hover:text-stone-950 transition-colors">Rentabilidad</a>
               <a href="#disponibilidad" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
@@ -857,7 +908,97 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
 
-          {/* 5. FORMAS DE PAGO & ESTRUCTURA DE COMPRA (ANTES DEL SIMULADOR) */}
+          {/* 5. RESPALDO CONSTRUCTIVO: PALACIOS ANTÚNEZ */}
+          <section id="constructora" ref={builderRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={14} className="text-[#9a7b45]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                Respaldo Técnico &amp; Trayectoria
+              </p>
+            </div>
+
+            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
+              Constructora Palacios Antúnez
+            </h2>
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Más de cuatro décadas de solidez técnica, arquitectura y rigor en la ejecución. Conoce a los profesionales y la trayectoria familiar detrás de ONA Residences.
+            </p>
+
+            {/* Reproductor de Video Testimonial */}
+            <div className="mt-7 overflow-hidden rounded-2xl border border-stone-200 bg-stone-950 shadow-xl">
+              <div className="relative mx-auto aspect-[9/16] w-full max-h-[500px] bg-black">
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster="/ona/ona-emblem.jpg"
+                  className="h-full w-full object-contain"
+                >
+                  <source src="/ona/video-desarrollador.mp4" type="video/mp4" />
+                  Tu navegador no soporta la reproducción de video.
+                </video>
+              </div>
+              <div className="p-4 sm:p-5 bg-stone-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 shrink-0 rounded-full border border-white/20 bg-black p-1 flex items-center justify-center">
+                    <img src="/ona/ona-emblem.jpg" alt="Logo Ona" className="h-full w-full object-contain rounded-full" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-white">Arq. Palacios · Director Técnico</p>
+                    <p className="text-[10px] text-stone-400">Palacios Antúnez &amp; Archilabs Design</p>
+                  </div>
+                </div>
+                <a
+                  href="https://drive.google.com/file/d/1wxoWwNZEk6oROxILewhKtlzVyHMPExA0/view?usp=drivesdk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium text-stone-200 transition-colors hover:bg-white hover:text-stone-950"
+                >
+                  <ExternalLink size={12} />
+                  Ver en Google Drive
+                </a>
+              </div>
+            </div>
+
+            {/* Métricas de Respaldo */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
+                <p className="font-serif text-3xl font-light text-stone-900">+42 Años</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Trayectoria Profesional</p>
+                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Arquitectura e ingeniería con formación en Brasil y ejecución en Bolivia.
+                </p>
+              </div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
+                <p className="font-serif text-3xl font-light text-stone-900">+100 Obras</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Proyectos Ejecutados</p>
+                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Edificios residenciales, hospitales, clínicas, naves industriales y viviendas.
+                </p>
+              </div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
+                <p className="font-serif text-3xl font-light text-stone-900">100%</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Compromiso y Legado</p>
+                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Relevo generacional guiado por más de cuatro décadas de experiencia técnica.
+                </p>
+              </div>
+            </div>
+
+            {/* Testimonio / Cita del Fundador */}
+            <div className="mt-6 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-5.5 shadow-xs">
+              <p className="font-serif italic text-base md:text-lg text-stone-800 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                “Cada edificio entregado representa una promesa cumplida. El esfuerzo de un gran equipo y la confianza de cientos de familias que creyeron en nosotros. La experiencia nos enseña que la confianza no se pide, se gana: y eso es lo que honramos en ONA.”
+              </p>
+              <div className="mt-3.5 flex items-center justify-between border-t border-[#9a7b45]/20 pt-3 text-xs text-stone-500">
+                <span className="font-medium text-stone-800">Constructora Palacios Antúnez</span>
+                <span className="text-[#9a7b45] font-semibold">Garantía &amp; Seguridad</span>
+              </div>
+            </div>
+          </section>
+
+
+          {/* 6. FORMAS DE PAGO & ESTRUCTURA DE COMPRA (ANTES DEL SIMULADOR) */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#9a7b45]" />
@@ -1392,7 +1533,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                         }
                         const planLabel = selectedPlan === "contado" ? "Al Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial";
                         reserve(
-                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²), precio USD ${formatOnaUsd(activeFinancials.totalPrice)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD 2.000?`,
+                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²), precio USD ${formatOnaUsd(activeFinancials.totalPrice)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD ${formatOnaUsd(ONA_RESERVE_USD)}?`,
                           activeFinancials.totalPrice
                         );
                       }}
@@ -1433,6 +1574,16 @@ export default function OnaLanding({ property, onClose }: Props) {
               >
                 Reservar con USD {formatOnaUsd(ONA_RESERVE_USD)}
               </button>
+
+              <a
+                href="/ona/brochure.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 hover:border-stone-400 active:scale-95"
+              >
+                <Download size={15} className="text-[#9a7b45]" />
+                Descargar Brochure (PDF)
+              </a>
             </div>
 
             <p className="mt-8 text-[11px] leading-relaxed text-stone-400">
