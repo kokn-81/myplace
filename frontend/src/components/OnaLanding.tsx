@@ -29,10 +29,13 @@ import {
   ONA_ADDRESS,
   ONA_BUILDER,
   ONA_DELIVERY,
+  ONA_PARKINGS,
+  ONA_PARKINGS_PDF_URL,
   ONA_RESERVE_USD,
   ONA_SHEETS_CSV_URL,
   ONA_UNITS,
   ONA_ZONE,
+  OnaParking,
   OnaUnit,
   fetchOnaLiveUnits,
   formatOnaUsd,
@@ -309,6 +312,32 @@ export default function OnaLanding({ property, onClose }: Props) {
   const totalUnitsCount = units.length;
   const availableUnitsCount = availableUnits.length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
+
+  // Filtro de Parqueos (Oficial desde PDF de Disponibilidad de Parqueos)
+  const [parkingFilter, setParkingFilter] = useState<"todos" | "Planta baja" | "Subsuelo">("todos");
+
+  const filteredParkings = useMemo(() => {
+    if (parkingFilter === "todos") return ONA_PARKINGS;
+    return ONA_PARKINGS.filter((p) => p.level === parkingFilter);
+  }, [parkingFilter]);
+
+  // Tipologías con precios mínimos y USD/m² actualizados en vivo según unidades disponibles
+  const liveAmbienteOptions = useMemo(() => {
+    return AMBIENTE_OPTIONS.map((amb) => {
+      const matching = units.filter((u) => amb.matchUnit(u));
+      const avail = matching.filter((u) => u.status === "disponible");
+      const availCount = avail.length;
+      const minCash = availCount > 0 ? Math.min(...avail.map((u) => u.cash)) : amb.basePrice;
+      const minPerM2 = availCount > 0 ? Math.min(...avail.map((u) => u.cashPerM2)) : 1250;
+      return {
+        ...amb,
+        availCount,
+        matchingUnits: matching,
+        minCash,
+        minPerM2,
+      };
+    });
+  }, [units]);
 
   const currentAmbiente = useMemo(() => {
     return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
@@ -997,10 +1026,10 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Relevo Generacional</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Compromiso &amp; Legado</p>
+                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Dirección Propia</p>
+                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Garantía de Obra</p>
                 <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Empresa familiar fundada por arquitectos con continuidad técnica, rigor estructural y visión contemporánea.
+                  Supervisión técnica directa de los arquitectos fundadores en obra, garantizando precisión de cálculo, calidad de materiales y entrega en plazo.
                 </p>
               </div>
             </div>
@@ -1146,25 +1175,158 @@ export default function OnaLanding({ property, onClose }: Props) {
               </div>
             </div>
 
-            {/* SECCIÓN PARQUEOS: CONCISA Y BREVE */}
-            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-700">
-                  <Car size={20} />
+            {/* SECCIÓN PARQUEOS: DISPONIBILIDAD OFICIAL EN PLANTA BAJA & SUBSUELO */}
+            <div className="mt-10 rounded-3xl border border-stone-200 bg-white p-6 sm:p-7 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-stone-900 text-[#e8d5a8] shadow-sm">
+                    <Car size={22} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#9a7b45]">
+                      Planilla Oficial de Parqueos
+                    </span>
+                    <h3 className="font-serif text-2xl font-light text-stone-900">
+                      Disponibilidad de Parqueos y Bauleras
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">
-                    Estacionamiento & Almacenamiento
+
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    22 Disponibles · 4 Vendidos
+                  </span>
+                  <a
+                    href={ONA_PARKINGS_PDF_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 transition-all hover:border-[#9a7b45] hover:bg-stone-50"
+                    title="Ver planilla oficial de parqueos en PDF"
+                  >
+                    <Download size={12} className="text-[#9a7b45]" />
+                    <span>PDF Oficial</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-600 font-light">
+                <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-[#9a7b45]/20">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-stone-900 text-sm">Parqueo Simple + Baulera</p>
+                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-600">1 Vehículo</span>
+                  </div>
+                  <p className="text-[#9a7b45] font-serif text-xl font-medium mt-1">USD 15.000</p>
+                  <p className="text-[11px] text-stone-500 mt-1">
+                    Incluye baulera privada independiente de almacenamiento.
                   </p>
-                  <p className="font-serif text-lg text-stone-900">
-                    Parqueos cubiertos con baulera individual desde{" "}
-                    <strong className="text-[#9a7b45]">USD 15.000</strong>
+                </div>
+                <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-[#9a7b45]/20">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-stone-900 text-sm">Parqueo Doble (A y B) + Baulera</p>
+                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-600">2 Vehículos</span>
+                  </div>
+                  <p className="text-[#9a7b45] font-serif text-xl font-medium mt-1">USD 22.000</p>
+                  <p className="text-[11px] text-stone-500 mt-1">
+                    Capacidad para 2 vehículos continuos + baulera privada incluida.
                   </p>
                 </div>
               </div>
-              <p className="mt-2.5 text-xs font-light text-stone-500 leading-relaxed border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                Disponibilidad en Planta Baja y Subsuelo con opciones de estacionamiento simple y doble. Cada parqueo incluye su propia baulera privada independiente.
-              </p>
+
+              {/* Selector de nivel (Todos / Planta Baja / Subsuelo) */}
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-stone-100 border border-stone-200 text-xs font-medium">
+                  <button
+                    type="button"
+                    onClick={() => setParkingFilter("todos")}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      parkingFilter === "todos"
+                        ? "bg-white text-stone-900 font-semibold shadow-xs"
+                        : "text-stone-500 hover:text-stone-900"
+                    }`}
+                  >
+                    Todos (26)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setParkingFilter("Planta baja")}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      parkingFilter === "Planta baja"
+                        ? "bg-white text-stone-900 font-semibold shadow-xs"
+                        : "text-stone-500 hover:text-stone-900"
+                    }`}
+                  >
+                    Planta Baja (10 disp. / 4 vend.)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setParkingFilter("Subsuelo")}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      parkingFilter === "Subsuelo"
+                        ? "bg-white text-stone-900 font-semibold shadow-xs"
+                        : "text-stone-500 hover:text-stone-900"
+                    }`}
+                  >
+                    Subsuelo (12 disp.)
+                  </button>
+                </div>
+
+                <a
+                  href={`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    "Hola, quisiera consultar por la disponibilidad de parqueos con baulera en ONA Residences."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#816127] hover:underline"
+                >
+                  <MessageCircle size={14} className="text-emerald-600" />
+                  <span>Consultar parqueo por WhatsApp</span>
+                </a>
+              </div>
+
+              {/* Grid interactivo de parqueos */}
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                {filteredParkings.map((spot) => {
+                  const isSold = spot.status === "vendido";
+                  const isDouble = spot.kind === "doble";
+
+                  return (
+                    <div
+                      key={`${spot.level}-${spot.code}`}
+                      className={`relative rounded-xl border p-3 transition-all ${
+                        isSold
+                          ? "border-stone-200 bg-stone-100/70 text-stone-400 opacity-60 line-through select-none"
+                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-serif text-sm font-semibold">
+                          Parqueo {spot.code}
+                        </span>
+                        <span
+                          className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
+                            isSold
+                              ? "bg-stone-200 text-stone-500"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
+                        >
+                          {isSold ? "Vendido" : "Disponible"}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center justify-between text-[11px] text-stone-500 font-light">
+                        <span>{spot.level}</span>
+                        <span className="font-medium text-stone-700">{isDouble ? "Doble" : "Simple"}</span>
+                      </div>
+                      <div className="mt-2 pt-1.5 border-t border-stone-100 flex items-center justify-between text-xs">
+                        <span className="text-[10px] text-emerald-700 font-medium">✓ Baulera</span>
+                        <strong className="font-serif text-stone-900">
+                          USD {formatOnaUsd(spot.price)}
+                        </strong>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
 
@@ -1193,10 +1355,10 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </span>
               </div>
               <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                A 4 minutos de Equipetrol, con todos los beneficios de {ONA_ZONE}.
+                A 8 minutos de Equipetrol, con todos los beneficios de {ONA_ZONE}.
               </h3>
               <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Disfruta de la cercanía inmediata a los centros gastronómicos, comerciales y empresariales más vibrantes de Santa Cruz, con la serenidad, arboledas y conectividad de un entorno residencial consolidado. ONA Residences te permite asegurar un valor de preventa preferencial en 1.ª fase con un alto potencial de plusvalía y retorno.
+                Ubicación estratégica con cercanía inmediata a supermercados, restaurantes, cafeterías, centros comerciales, gimnasios y avenidas principales, en un entorno residencial consolidado y con menor riesgo de inundación frente a otras zonas de la ciudad. ONA Residences te permite combinar calidad de vida, alta demanda de alquiler y un valor de preventa preferencial en 1.ª fase con excelente plusvalía.
               </p>
 
               <div className="mt-5">
@@ -1289,13 +1451,14 @@ export default function OnaLanding({ property, onClose }: Props) {
 
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={handleRefreshInventory}
                   disabled={isRefreshingInv}
-                  title="Actualizar disponibilidad desde Google Sheets"
-                  className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 active:scale-95 disabled:opacity-50 shadow-xs"
+                  title="Actualizar disponibilidad y precios por m² desde planilla oficial"
+                  className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 hover:border-[#9a7b45] active:scale-95 disabled:opacity-50 shadow-xs cursor-pointer"
                 >
-                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
-                  <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar"}</span>
+                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : "text-[#9a7b45]"} />
+                  <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar precios y m²"}</span>
                 </button>
                 <a
                   href="https://docs.google.com/spreadsheets/d/14-g7f0tzOYfTX9KejkPa4enDf7pi1Kl2ytZaxB-qH6U/edit?usp=sharing"
@@ -1344,10 +1507,9 @@ export default function OnaLanding({ property, onClose }: Props) {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {AMBIENTE_OPTIONS.map((amb) => {
+                {liveAmbienteOptions.map((amb) => {
                   const isSelected = selectedAmbId === amb.id;
-                  const matchingUnits = units.filter((u) => amb.matchUnit(u));
-                  const availCount = matchingUnits.filter((u) => u.status === "disponible").length;
+                  const availCount = amb.availCount;
 
                   return (
                     <button
@@ -1381,9 +1543,14 @@ export default function OnaLanding({ property, onClose }: Props) {
                         <span className={isSelected ? "text-stone-400 font-light" : "text-stone-500 font-light"}>
                           Preventa desde:
                         </span>
-                        <span className={`font-serif text-sm font-semibold ${isSelected ? "text-white" : "text-stone-900"}`}>
-                          USD {formatOnaUsd(amb.basePrice)}
-                        </span>
+                        <div className="text-right">
+                          <span className={`font-serif text-sm font-semibold ${isSelected ? "text-white" : "text-stone-900"}`}>
+                            USD {formatOnaUsd(amb.minCash)}
+                          </span>
+                          <span className={`block text-[10px] font-medium ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
+                            ${formatOnaUsd(amb.minPerM2)} USD/m²
+                          </span>
+                        </div>
                       </div>
                     </button>
                   );
@@ -1435,8 +1602,11 @@ export default function OnaLanding({ property, onClose }: Props) {
                         <span className="font-serif text-sm">Piso {floor}</span>
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       </div>
-                      <p className={`text-[10px] mt-0.5 font-light ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
+                      <p className={`text-[11px] mt-0.5 font-medium ${isSelected ? "text-white" : "text-stone-900"}`}>
                         USD {formatOnaUsd(unit.cash)}
+                      </p>
+                      <p className={`text-[10px] font-light ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
+                        ${formatOnaUsd(unit.cashPerM2)} USD/m²
                       </p>
                     </button>
                   );
@@ -1464,7 +1634,8 @@ export default function OnaLanding({ property, onClose }: Props) {
                       {currentAmbiente.name}
                     </h4>
                     <p className="text-xs text-stone-600 font-light mt-0.5">
-                      Superficie: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} · {activeUnit.view}
+                      Superficie: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} ·{" "}
+                      <strong className="text-[#816127]">${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²</strong> · {activeUnit.view}
                     </p>
                   </div>
 
@@ -1516,7 +1687,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
-                            <span className="text-[10px] font-semibold text-[#816127]">$${plan.perM2} USD/m²</span>
+                            <span className="text-[10px] font-semibold text-[#816127]">${formatOnaUsd(plan.perM2)} USD/m²</span>
                           </div>
                           <p className="mt-1 font-serif text-lg font-bold text-stone-900">
                             USD {formatOnaUsd(plan.total)}

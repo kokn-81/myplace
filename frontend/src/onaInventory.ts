@@ -32,6 +32,7 @@ export const ONA_ADDRESS = "Av. Los Cusis";
 export const ONA_DELIVERY = "Junio 2028";
 export const ONA_BUILDER = "Palacios Antunez";
 export const ONA_BROCHURE_URL = "/ona/brochure.pdf";
+export const ONA_PARKINGS_PDF_URL = "/ona/parqueos-ona.pdf";
 export const ONA_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/14-g7f0tzOYfTX9KejkPa4enDf7pi1Kl2ytZaxB-qH6U/export?format=csv";
 
 export const ONA_UNITS: OnaUnit[] = [
