@@ -313,25 +313,44 @@ export default function OnaLanding({ property, onClose }: Props) {
   const availableUnitsCount = availableUnits.length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
 
-  // Filtro de Parqueos (Oficial desde PDF de Disponibilidad de Parqueos)
-  const [parkingFilter, setParkingFilter] = useState<"todos" | "Planta baja" | "Subsuelo">("todos");
+  // Selector de Parqueos por Pasos (Solo 2 tipos: Simple 15k y Doble 22k)
+  const [selectedParkingKind, setSelectedParkingKind] = useState<"simple" | "doble">("simple");
+  const [selectedParkingCode, setSelectedParkingCode] = useState<string>("5");
 
-  const filteredParkings = useMemo(() => {
-    if (parkingFilter === "todos") return ONA_PARKINGS;
-    return ONA_PARKINGS.filter((p) => p.level === parkingFilter);
-  }, [parkingFilter]);
+  const availableParkingsForKind = useMemo(() => {
+    return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "disponible");
+  }, [selectedParkingKind]);
+
+  const soldParkingsCountForKind = useMemo(() => {
+    return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "vendido").length;
+  }, [selectedParkingKind]);
+
+  useEffect(() => {
+    if (!availableParkingsForKind.some((p) => p.code === selectedParkingCode)) {
+      if (availableParkingsForKind.length > 0) {
+        setSelectedParkingCode(availableParkingsForKind[0].code);
+      }
+    }
+  }, [availableParkingsForKind, selectedParkingCode]);
+
+  const activeParking = useMemo(() => {
+    return ONA_PARKINGS.find((p) => p.code === selectedParkingCode) || availableParkingsForKind[0] || null;
+  }, [selectedParkingCode, availableParkingsForKind]);
 
   // Tipologías con precios mínimos y USD/m² actualizados en vivo según unidades disponibles
   const liveAmbienteOptions = useMemo(() => {
     return AMBIENTE_OPTIONS.map((amb) => {
       const matching = units.filter((u) => amb.matchUnit(u));
       const avail = matching.filter((u) => u.status === "disponible");
+      const sold = matching.filter((u) => u.status === "vendido");
       const availCount = avail.length;
+      const soldCount = sold.length;
       const minCash = availCount > 0 ? Math.min(...avail.map((u) => u.cash)) : amb.basePrice;
       const minPerM2 = availCount > 0 ? Math.min(...avail.map((u) => u.cashPerM2)) : 1250;
       return {
         ...amb,
         availCount,
+        soldCount,
         matchingUnits: matching,
         minCash,
         minPerM2,
@@ -1175,158 +1194,250 @@ export default function OnaLanding({ property, onClose }: Props) {
               </div>
             </div>
 
-            {/* SECCIÓN PARQUEOS: DISPONIBILIDAD OFICIAL EN PLANTA BAJA & SUBSUELO */}
-            <div className="mt-10 rounded-3xl border border-stone-200 bg-white p-6 sm:p-7 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-stone-900 text-[#e8d5a8] shadow-sm">
-                    <Car size={22} />
+            {/* SECCIÓN PARQUEOS: ELECCIÓN POR PASOS COMPACTA & EFICIENTE */}
+            <div className="mt-8 rounded-3xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-3.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-900 text-[#e8d5a8]">
+                    <Car size={18} />
                   </div>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#9a7b45]">
-                      Planilla Oficial de Parqueos
+                      Estacionamiento & Bauleras
                     </span>
-                    <h3 className="font-serif text-2xl font-light text-stone-900">
-                      Disponibilidad de Parqueos y Bauleras
+                    <h3 className="font-serif text-xl font-light text-stone-900">
+                      Disponibilidad de Parqueos
                     </h3>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    22 Disponibles · 4 Vendidos
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    22 Disponibles
                   </span>
                   <a
                     href={ONA_PARKINGS_PDF_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 transition-all hover:border-[#9a7b45] hover:bg-stone-50"
-                    title="Ver planilla oficial de parqueos en PDF"
+                    className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white px-2.5 py-0.5 text-[11px] font-medium text-stone-600 transition-all hover:border-[#9a7b45] hover:bg-stone-50"
+                    title="Descargar planilla oficial en PDF"
                   >
-                    <Download size={12} className="text-[#9a7b45]" />
-                    <span>PDF Oficial</span>
+                    <Download size={11} className="text-[#9a7b45]" />
+                    <span>PDF</span>
                   </a>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-600 font-light">
-                <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-[#9a7b45]/20">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-stone-900 text-sm">Parqueo Simple + Baulera</p>
-                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-600">1 Vehículo</span>
-                  </div>
-                  <p className="text-[#9a7b45] font-serif text-xl font-medium mt-1">USD 15.000</p>
-                  <p className="text-[11px] text-stone-500 mt-1">
-                    Incluye baulera privada independiente de almacenamiento.
-                  </p>
+              {/* PASO 1: SELECCIONA EL TIPO DE PARQUEO (SOLO 2 OPCIONES: 15k y 22k) */}
+              <div className="mt-5">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-stone-900 text-[9px] font-bold text-white">1</span>
+                  <h4 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                    Elige el tipo de parqueo:
+                  </h4>
                 </div>
-                <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-[#9a7b45]/20">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-stone-900 text-sm">Parqueo Doble (A y B) + Baulera</p>
-                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-600">2 Vehículos</span>
-                  </div>
-                  <p className="text-[#9a7b45] font-serif text-xl font-medium mt-1">USD 22.000</p>
-                  <p className="text-[11px] text-stone-500 mt-1">
-                    Capacidad para 2 vehículos continuos + baulera privada incluida.
-                  </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Opción 1: Simple 15k */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedParkingKind("simple")}
+                    className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                      selectedParkingKind === "simple"
+                        ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
+                        : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className={`font-serif text-base font-semibold ${selectedParkingKind === "simple" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                          Parqueo Simple + Baulera
+                        </p>
+                        <p className={`text-xs mt-0.5 ${selectedParkingKind === "simple" ? "text-stone-300" : "text-stone-500"}`}>
+                          1 vehículo cubierto · Baulera privada incluida
+                        </p>
+                      </div>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        selectedParkingKind === "simple"
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
+                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      }`}>
+                        12 disponibles
+                      </span>
+                    </div>
+
+                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+                      <span className={selectedParkingKind === "simple" ? "text-amber-300/80 text-[11px]" : "text-stone-400 text-[11px]"}>
+                        4 de este tipo ya se vendieron
+                      </span>
+                      <span className={`font-serif text-base font-bold ${selectedParkingKind === "simple" ? "text-white" : "text-stone-900"}`}>
+                        USD 15.000
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Opción 2: Doble 22k */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedParkingKind("doble")}
+                    className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                      selectedParkingKind === "doble"
+                        ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
+                        : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className={`font-serif text-base font-semibold ${selectedParkingKind === "doble" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                          Parqueo Doble (A y B) + Baulera
+                        </p>
+                        <p className={`text-xs mt-0.5 ${selectedParkingKind === "doble" ? "text-stone-300" : "text-stone-500"}`}>
+                          2 vehículos continuos · Baulera privada incluida
+                        </p>
+                      </div>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        selectedParkingKind === "doble"
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
+                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      }`}>
+                        10 disponibles
+                      </span>
+                    </div>
+
+                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+                      <span className={selectedParkingKind === "doble" ? "text-stone-300 text-[11px]" : "text-stone-400 text-[11px]"}>
+                        0 vendidos (todos disponibles)
+                      </span>
+                      <span className={`font-serif text-base font-bold ${selectedParkingKind === "doble" ? "text-white" : "text-stone-900"}`}>
+                        USD 22.000
+                      </span>
+                    </div>
+                  </button>
                 </div>
               </div>
 
-              {/* Selector de nivel (Todos / Planta Baja / Subsuelo) */}
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-stone-100 border border-stone-200 text-xs font-medium">
-                  <button
-                    type="button"
-                    onClick={() => setParkingFilter("todos")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      parkingFilter === "todos"
-                        ? "bg-white text-stone-900 font-semibold shadow-xs"
-                        : "text-stone-500 hover:text-stone-900"
-                    }`}
-                  >
-                    Todos (26)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setParkingFilter("Planta baja")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      parkingFilter === "Planta baja"
-                        ? "bg-white text-stone-900 font-semibold shadow-xs"
-                        : "text-stone-500 hover:text-stone-900"
-                    }`}
-                  >
-                    Planta Baja (10 disp. / 4 vend.)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setParkingFilter("Subsuelo")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      parkingFilter === "Subsuelo"
-                        ? "bg-white text-stone-900 font-semibold shadow-xs"
-                        : "text-stone-500 hover:text-stone-900"
-                    }`}
-                  >
-                    Subsuelo (12 disp.)
-                  </button>
+              {/* PASO 2: ELIGE EL PARQUEO DISPONIBLE */}
+              <div className="mt-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-stone-900 text-[9px] font-bold text-white">2</span>
+                    <h4 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                      Parqueos disponibles ({selectedParkingKind === "simple" ? "USD 15.000" : "USD 22.000"}):
+                    </h4>
+                  </div>
+                  {soldParkingsCountForKind > 0 && (
+                    <span className="text-[11px] font-medium text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
+                      {soldParkingsCountForKind} parqueos de este tipo ya se vendieron (1 al 4)
+                    </span>
+                  )}
                 </div>
 
-                <a
-                  href={`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                    "Hola, quisiera consultar por la disponibilidad de parqueos con baulera en ONA Residences."
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#816127] hover:underline"
-                >
-                  <MessageCircle size={14} className="text-emerald-600" />
-                  <span>Consultar parqueo por WhatsApp</span>
-                </a>
-              </div>
-
-              {/* Grid interactivo de parqueos */}
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                {filteredParkings.map((spot) => {
-                  const isSold = spot.status === "vendido";
-                  const isDouble = spot.kind === "doble";
-
-                  return (
-                    <div
-                      key={`${spot.level}-${spot.code}`}
-                      className={`relative rounded-xl border p-3 transition-all ${
-                        isSold
-                          ? "border-stone-200 bg-stone-100/70 text-stone-400 opacity-60 line-through select-none"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="font-serif text-sm font-semibold">
-                          Parqueo {spot.code}
-                        </span>
-                        <span
-                          className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
-                            isSold
-                              ? "bg-stone-200 text-stone-500"
-                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          }`}
-                        >
-                          {isSold ? "Vendido" : "Disponible"}
-                        </span>
-                      </div>
-                      <div className="mt-1 flex items-center justify-between text-[11px] text-stone-500 font-light">
-                        <span>{spot.level}</span>
-                        <span className="font-medium text-stone-700">{isDouble ? "Doble" : "Simple"}</span>
-                      </div>
-                      <div className="mt-2 pt-1.5 border-t border-stone-100 flex items-center justify-between text-xs">
-                        <span className="text-[10px] text-emerald-700 font-medium">✓ Baulera</span>
-                        <strong className="font-serif text-stone-900">
-                          USD {formatOnaUsd(spot.price)}
-                        </strong>
+                {/* Subgrupos por nivel: Planta Baja y Subsuelo (SOLO DISPONIBLES) */}
+                <div className="space-y-3">
+                  {availableParkingsForKind.filter((p) => p.level === "Planta baja").length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                        Planta Baja ({availableParkingsForKind.filter((p) => p.level === "Planta baja").length} disponibles):
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {availableParkingsForKind
+                          .filter((p) => p.level === "Planta baja")
+                          .map((spot) => {
+                            const isSelected = selectedParkingCode === spot.code;
+                            return (
+                              <button
+                                key={`pb-${spot.code}`}
+                                type="button"
+                                onClick={() => setSelectedParkingCode(spot.code)}
+                                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                                  isSelected
+                                    ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
+                                    : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
+                                }`}
+                              >
+                                <span className="flex items-center gap-1">
+                                  <span>Parqueo {spot.code}</span>
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                </span>
+                              </button>
+                            );
+                          })}
                       </div>
                     </div>
-                  );
-                })}
+                  )}
+
+                  {availableParkingsForKind.filter((p) => p.level === "Subsuelo").length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                        Subsuelo ({availableParkingsForKind.filter((p) => p.level === "Subsuelo").length} disponibles):
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {availableParkingsForKind
+                          .filter((p) => p.level === "Subsuelo")
+                          .map((spot) => {
+                            const isSelected = selectedParkingCode === spot.code;
+                            return (
+                              <button
+                                key={`sub-${spot.code}`}
+                                type="button"
+                                onClick={() => setSelectedParkingCode(spot.code)}
+                                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                                  isSelected
+                                    ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
+                                    : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
+                                }`}
+                              >
+                                <span className="flex items-center gap-1">
+                                  <span>Parqueo {spot.code}</span>
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                </span>
+                              </button>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* BARRA DE ASIGNACIÓN Y CONFIRMACIÓN */}
+              {activeParking && (
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-3.5 sm:p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-900 text-[#e8d5a8]">
+                      <Car size={18} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-serif text-base font-bold text-stone-900">
+                          Parqueo {activeParking.code}
+                        </span>
+                        <span className="rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 border border-emerald-300">
+                          Disponible
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-600 font-light mt-0.5">
+                        {activeParking.level} · Tipo {activeParking.kind === "simple" ? "Simple (1 Vehículo)" : "Doble A y B (2 Vehículos)"} · <strong>USD {formatOnaUsd(activeParking.price)}</strong> (Baulera incluida)
+                      </p>
+                    </div>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                      `Hola, deseo reservar el Parqueo ${activeParking.code} en ${activeParking.level} (${activeParking.kind === "simple" ? "Simple" : "Doble"}, USD ${formatOnaUsd(activeParking.price)} con baulera privada) en ONA Residences. ¿Sigue disponible?`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-stone-900 px-4 py-2 text-xs font-semibold text-[#e8d5a8] shadow-xs transition-all hover:bg-black active:scale-95 cursor-pointer"
+                  >
+                    <MessageCircle size={14} className="text-emerald-400" />
+                    <span>Reservar Parqueo {activeParking.code}</span>
+                  </a>
+                </div>
+              )}
             </div>
           </section>
 
@@ -1510,6 +1621,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                 {liveAmbienteOptions.map((amb) => {
                   const isSelected = selectedAmbId === amb.id;
                   const availCount = amb.availCount;
+                  const soldCount = amb.soldCount;
 
                   return (
                     <button
@@ -1530,13 +1642,20 @@ export default function OnaLanding({ property, onClose }: Props) {
                             {amb.areaM2} m² {amb.balconyM2 ? `(Balcón ${amb.balconyM2} m²)` : ""} · {amb.view}
                           </p>
                         </div>
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                          availCount > 0
-                            ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : isSelected ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-400"
-                        }`}>
-                          {availCount > 0 ? `${availCount} disponibles` : "Agotado"}
-                        </span>
+                        <div className="text-right">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                            availCount > 0
+                              ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : "bg-stone-100 text-stone-400"
+                          }`}>
+                            {availCount} disponibles
+                          </span>
+                          {soldCount > 0 && (
+                            <span className={`block text-[10px] mt-1 ${isSelected ? "text-amber-200/80" : "text-stone-500 font-light"}`}>
+                              {soldCount} ya vendidos
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
@@ -1560,57 +1679,50 @@ export default function OnaLanding({ property, onClose }: Props) {
 
             {/* PASO 2: SELECCIONA EL PISO DISPONIBLE */}
             <div className="mt-8">
-              <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">2</span>
                   <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
                     Pisos disponibles para {currentAmbiente.shortName}:
                   </h3>
                 </div>
-                <span className="text-[11px] text-stone-400 font-light">
-                  Toca un piso disponible
-                </span>
+                {floorsForAmbiente.filter((f) => !f.isAvailable).length > 0 && (
+                  <span className="text-[11px] font-medium text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
+                    {floorsForAmbiente.filter((f) => !f.isAvailable).length} departamentos de este tipo ya se vendieron
+                  </span>
+                )}
               </div>
 
+              {/* SOLO RENDERIZA PISOS DISPONIBLES (SIN MOSTRAR OPCIONES NO DISPONIBLES) */}
               <div className="flex flex-wrap gap-2">
-                {floorsForAmbiente.map(({ floor, isAvailable, unit }) => {
-                  const isSelected = selectedFloor === floor;
+                {floorsForAmbiente
+                  .filter(({ isAvailable }) => isAvailable)
+                  .map(({ floor, unit }) => {
+                    const isSelected = selectedFloor === floor;
 
-                  if (!isAvailable) {
                     return (
-                      <div
+                      <button
                         key={floor}
-                        className="rounded-xl border border-stone-200/60 bg-stone-100/70 px-3 py-2 text-center text-xs text-stone-400 line-through select-none cursor-not-allowed opacity-50"
-                        title={`Piso ${floor}: Agotado para esta tipología`}
+                        onClick={() => setSelectedFloor(floor)}
+                        className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
+                            : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
+                        }`}
                       >
-                        Piso {floor} · Vendido
-                      </div>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span className="font-serif text-sm">Piso {floor}</span>
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        </div>
+                        <p className={`text-[11px] mt-0.5 font-medium ${isSelected ? "text-white" : "text-stone-900"}`}>
+                          USD {formatOnaUsd(unit.cash)}
+                        </p>
+                        <p className={`text-[10px] font-light ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
+                          ${formatOnaUsd(unit.cashPerM2)} USD/m²
+                        </p>
+                      </button>
                     );
-                  }
-
-                  return (
-                    <button
-                      key={floor}
-                      onClick={() => setSelectedFloor(floor)}
-                      className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
-                        isSelected
-                          ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span className="font-serif text-sm">Piso {floor}</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      </div>
-                      <p className={`text-[11px] mt-0.5 font-medium ${isSelected ? "text-white" : "text-stone-900"}`}>
-                        USD {formatOnaUsd(unit.cash)}
-                      </p>
-                      <p className={`text-[10px] font-light ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
-                        ${formatOnaUsd(unit.cashPerM2)} USD/m²
-                      </p>
-                    </button>
-                  );
-                })}
+                  })}
               </div>
             </div>
 
