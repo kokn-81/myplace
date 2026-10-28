@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
   DollarSign,
   Download,
   ExternalLink,
@@ -500,32 +501,52 @@ export default function OnaLanding({ property, onClose }: Props) {
     return floorItem?.unit || null;
   }, [floorsForAmbiente, selectedFloor]);
 
-  // Cálculos financieros para la unidad activa
+  // Cálculos financieros para la unidad activa (con desglose transparente de cuota inicial y saldo)
   const activeFinancials = useMemo(() => {
     if (!activeUnit) return null;
 
-    let totalPrice = activeUnit.cash;
-    let initialPayment = activeUnit.cash;
-    let balancePayment = 0;
+    let unitTotalPrice = activeUnit.cash;
+    let unitInitial = activeUnit.cash;
+    let unitBalance = 0;
     let pricePerM2 = activeUnit.cashPerM2;
 
     if (selectedPlan === "plan60") {
-      totalPrice = activeUnit.plan60.total;
-      initialPayment = activeUnit.plan60.initial;
-      balancePayment = activeUnit.plan60.total - activeUnit.plan60.initial;
+      unitTotalPrice = activeUnit.plan60.total;
+      unitInitial = activeUnit.plan60.initial;
+      unitBalance = activeUnit.plan60.total - activeUnit.plan60.initial;
       pricePerM2 = activeUnit.plan60.perM2;
     } else if (selectedPlan === "plan40") {
-      totalPrice = activeUnit.plan40.total;
-      initialPayment = activeUnit.plan40.initial;
-      balancePayment = activeUnit.plan40.total - activeUnit.plan40.initial;
+      unitTotalPrice = activeUnit.plan40.total;
+      unitInitial = activeUnit.plan40.initial;
+      unitBalance = activeUnit.plan40.total - activeUnit.plan40.initial;
       pricePerM2 = activeUnit.plan40.perM2;
     }
+
+    const hasParking = selectedParkingOption !== "none";
+    const parkingInitial = !hasParking
+      ? 0
+      : selectedPlan === "contado"
+      ? parkingPrice
+      : selectedPlan === "plan60"
+      ? Math.round(parkingPrice * 0.6)
+      : Math.round(parkingPrice * 0.4);
+    const parkingBalance = !hasParking ? 0 : parkingPrice - parkingInitial;
+
+    const totalPrice = unitTotalPrice + (hasParking ? parkingPrice : 0);
+    const initialPayment = unitInitial + parkingInitial;
+    const balancePayment = unitBalance + parkingBalance;
 
     const marketValueAtDelivery = Math.round(activeUnit.totalM2 * 1600);
     const capitalGain = marketValueAtDelivery - totalPrice;
     const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
 
     return {
+      unitTotalPrice,
+      unitInitial,
+      unitBalance,
+      parkingPrice: hasParking ? parkingPrice : 0,
+      parkingInitial,
+      parkingBalance,
       totalPrice,
       initialPayment,
       balancePayment,
@@ -539,7 +560,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       rentMonthlyBsMax: currentAmbiente.rentMax * 12,
       yieldRange: currentAmbiente.yieldRange,
     };
-  }, [activeUnit, selectedPlan, currentAmbiente]);
+  }, [activeUnit, selectedPlan, currentAmbiente, selectedParkingOption, parkingPrice]);
 
   const handleShareOna = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
@@ -1995,63 +2016,168 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <div className="mt-2">
                       <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">Inversión Total Preventa:</p>
                       <p className="font-serif text-2xl font-bold text-stone-900">
-                        USD {formatOnaUsd(activeFinancials.totalPrice + parkingPrice)}
+                        USD {formatOnaUsd(activeFinancials.totalPrice)}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Selector de Modalidad de Pago */}
+                {/* Selector de Modalidad de Pago con Cuota Inicial Destacada */}
                 <div className="mt-5">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">
-                    Elige la modalidad de pago para este departamento:
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500">
+                      Elige la modalidad de pago para este departamento:
+                    </p>
+                    <span className="text-[11px] font-medium text-stone-500">
+                      Entrega programada: <strong className="text-stone-800">{ONA_DELIVERY}</strong>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                       {
                         key: "contado",
                         label: "Al Contado",
-                        total: activeUnit.cash,
+                        badge: "100%",
                         perM2: activeUnit.cashPerM2,
-                        detail: "100% al inicio · Máximo ahorro",
+                        initial: activeUnit.cash + (selectedParkingOption !== "none" ? parkingPrice : 0),
+                        balance: 0,
+                        total: activeUnit.cash + (selectedParkingOption !== "none" ? parkingPrice : 0),
+                        tag: "Mayor Ahorro",
                       },
                       {
                         key: "plan60",
                         label: "60% Inicial",
-                        total: activeUnit.plan60.total,
+                        badge: "60 / 40",
                         perM2: activeUnit.plan60.perM2,
-                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan60.initial)}`,
+                        initial: activeUnit.plan60.initial + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.6) : 0),
+                        balance: (activeUnit.plan60.total - activeUnit.plan60.initial) + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.4) : 0),
+                        total: activeUnit.plan60.total + (selectedParkingOption !== "none" ? parkingPrice : 0),
+                        tag: "Equilibrio",
                       },
                       {
                         key: "plan40",
                         label: "40% Inicial",
-                        total: activeUnit.plan40.total,
+                        badge: "40 / 60",
                         perM2: activeUnit.plan40.perM2,
-                        detail: `Inicial USD ${formatOnaUsd(activeUnit.plan40.initial)}`,
+                        initial: activeUnit.plan40.initial + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.4) : 0),
+                        balance: (activeUnit.plan40.total - activeUnit.plan40.initial) + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.6) : 0),
+                        total: activeUnit.plan40.total + (selectedParkingOption !== "none" ? parkingPrice : 0),
+                        tag: "Menor Entrada",
                       },
                     ].map((plan) => {
                       const isSelected = selectedPlan === plan.key;
                       return (
                         <button
                           key={plan.key}
+                          type="button"
                           onClick={() => setSelectedPlan(plan.key as any)}
-                          className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                          className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
                             isSelected
                               ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
-                              : "border-stone-200 bg-white/70 text-stone-600 hover:border-stone-300"
+                              : "border-stone-200 bg-white/70 text-stone-600 hover:border-[#9a7b45] hover:bg-white"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold uppercase tracking-wider text-stone-900">{plan.label}</span>
-                            <span className="text-[10px] font-semibold text-[#816127]">${formatOnaUsd(plan.perM2)} USD/m²</span>
+                          <div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
+                                <span className={`h-2 w-2 rounded-full ${isSelected ? "bg-[#9a7b45]" : "bg-stone-300"}`} />
+                                {plan.label}
+                              </span>
+                              <span className="text-[10px] font-semibold text-[#816127] bg-[#9a7b45]/10 px-2 py-0.5 rounded-full">
+                                ${formatOnaUsd(plan.perM2)} USD/m²
+                              </span>
+                            </div>
+
+                            {/* Cuota Inicial Destacada en la Tarjeta */}
+                            <div className={`mt-3 rounded-xl p-2.5 border ${
+                              isSelected ? "bg-emerald-50 border-emerald-200" : "bg-stone-50 border-stone-200/70"
+                            }`}>
+                              <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-800">
+                                {plan.key === "contado" ? "Pago Único (100%):" : `Cuota Inicial Requerida (${plan.badge.split(" ")[0]}%):`}
+                              </p>
+                              <p className="mt-0.5 font-serif text-xl font-bold text-emerald-900">
+                                USD {formatOnaUsd(plan.initial)}
+                              </p>
+                            </div>
                           </div>
-                          <p className="mt-1 font-serif text-lg font-bold text-stone-900">
-                            USD {formatOnaUsd(plan.total + parkingPrice)}
-                          </p>
-                          <p className="text-[11px] text-stone-500 font-light mt-0.5">{plan.detail}</p>
+
+                          <div className="mt-3 pt-2.5 border-t border-stone-100 space-y-1">
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="text-stone-500 font-light">Total Inversión:</span>
+                              <strong className="text-stone-900 font-semibold">USD {formatOnaUsd(plan.total)}</strong>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-stone-500">
+                              <span className="font-light">
+                                {plan.key === "contado" ? "Saldo contra entrega:" : `Saldo entrega (${plan.key === "plan60" ? "40%" : "60%"}):`}
+                              </span>
+                              <span className="font-medium text-stone-700">
+                                {plan.key === "contado" ? "USD 0" : `USD ${formatOnaUsd(plan.balance)}`}
+                              </span>
+                            </div>
+                          </div>
                         </button>
                       );
                     })}
+                  </div>
+                </div>
+
+                {/* Desglose de Desembolsos del Plan Activo */}
+                <div className="mt-4 rounded-2xl border border-[#9a7b45]/30 bg-white p-4 sm:p-5 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                    <div className="flex items-center gap-2">
+                      <CreditCard size={15} className="text-[#9a7b45]" />
+                      <p className="text-xs font-bold uppercase tracking-wider text-stone-900">
+                        Estructura de Desembolsos · {selectedPlan === "contado" ? "Pago al Contado (100%)" : selectedPlan === "plan60" ? "Plan 60% Inicial / 40% Contra Entrega" : "Plan 40% Inicial / 60% Contra Entrega"}
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-semibold text-[#816127] bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full">
+                      ${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²
+                    </span>
+                  </div>
+
+                  <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {/* 1. Reserva Inmediata */}
+                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-stone-500">1. Reserva hoy</span>
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      </div>
+                      <p className="mt-1 font-serif text-xl font-bold text-stone-900">USD {formatOnaUsd(ONA_RESERVE_USD)}</p>
+                      <p className="text-[11px] text-stone-600 font-light mt-1">
+                        Congela el piso {activeUnit.floor} hoy y se descuenta íntegramente de tu cuota inicial.
+                      </p>
+                    </div>
+
+                    {/* 2. Cuota Inicial Neta */}
+                    <div className="rounded-xl bg-emerald-50/80 p-3.5 border border-emerald-200">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-800">
+                        2. Cuota Inicial ({selectedPlan === "contado" ? "100%" : selectedPlan === "plan60" ? "60%" : "40%"})
+                      </p>
+                      <p className="mt-1 font-serif text-xl font-bold text-emerald-900">
+                        USD {formatOnaUsd(activeFinancials.initialPayment)}
+                      </p>
+                      <p className="text-[11px] text-emerald-800 font-medium mt-1">
+                        {selectedPlan === "contado"
+                          ? "Pago total al suscribir contrato de preventa."
+                          : `Saldo inicial a la firma: USD ${formatOnaUsd(Math.max(0, activeFinancials.initialPayment - ONA_RESERVE_USD))} (descontando reserva de USD 1.000).`}
+                      </p>
+                    </div>
+
+                    {/* 3. Saldo contra Entrega */}
+                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-stone-500">
+                        3. Saldo contra Entrega ({selectedPlan === "contado" ? "0%" : selectedPlan === "plan60" ? "40%" : "60%"})
+                      </p>
+                      <p className="mt-1 font-serif text-xl font-bold text-stone-900">
+                        USD {formatOnaUsd(activeFinancials.balancePayment)}
+                      </p>
+                      <p className="text-[11px] text-stone-600 font-light mt-1">
+                        {selectedPlan === "contado"
+                          ? "Sin cuotas pendientes ni saldo posterior."
+                          : `Se cancela recién al recibir tus llaves y posesión en ${ONA_DELIVERY}.`}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -2136,9 +2262,10 @@ export default function OnaLanding({ property, onClose }: Props) {
                         const parkingDetail = selectedParkingOption !== "none" && activeParking
                           ? ` + Parqueo ${activeParking.code} en ${activeParking.level} (${activeParking.kind === "simple" ? "Simple" : "Doble"}, USD ${formatOnaUsd(activeParking.price)} con baulera)`
                           : "";
-                        const totalContract = activeFinancials.totalPrice + parkingPrice;
+                        const totalContract = activeFinancials.totalPrice;
+                        const initialText = selectedPlan === "contado" ? "" : `, Cuota Inicial: USD ${formatOnaUsd(activeFinancials.initialPayment)}`;
                         reserve(
-                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²)${parkingDetail}, Inversión Total USD ${formatOnaUsd(totalContract)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD ${formatOnaUsd(ONA_RESERVE_USD)}?`,
+                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²)${parkingDetail}, Inversión Total USD ${formatOnaUsd(totalContract)}, modalidad ${planLabel}${initialText}. ¿Sigue disponible para reservar con USD ${formatOnaUsd(ONA_RESERVE_USD)}?`,
                           totalContract
                         );
                       }}
