@@ -668,7 +668,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
 
-          {/* 1. HERO / VIVÍ ONA: EXPERIENCIA Y ESTILO DE VIDA */}
+          {/* 1. HERO / ONA RESIDENCES: EXPERIENCIA Y ESTILO DE VIDA */}
           <section id="intro" ref={introRef} className="scroll-mt-6">
             <div className="flex items-center gap-2">
               <Sparkles size={14} className="text-[#9a7b45]" />
@@ -678,7 +678,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Viví ONA. <br />
+              ONA Residences. <br />
               <span className="italic font-normal text-[#9a7b45]">
                 Un proyecto pensado para elevar tu forma de vivir.
               </span>
