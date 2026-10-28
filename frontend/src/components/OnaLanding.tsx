@@ -964,6 +964,109 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* EQUIPAMIENTO DETALLADO DE ÁREAS SOCIALES */}
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45]/15 text-[#816127]">
+                    <Check size={12} strokeWidth={3} />
+                  </span>
+                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                    Equipamiento entregado en áreas comunes:
+                  </h3>
+                </div>
+                <span className="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                  100% Amoblado &amp; Equipado
+                </span>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 1. Lobby & Ascensores */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Lobby &amp; Circulación Vertical
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>Lobby de doble altura:</strong> Amoblado, decorado e iluminado con control de acceso.</li>
+                    <li>• <strong>2 Ascensores de alta velocidad:</strong> Con capacidad para 8 personas cada uno.</li>
+                  </ul>
+                </div>
+
+                {/* 2. Piscina & Deck */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Piscina, Hidromasaje &amp; Deck
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>Piscina tipo playa:</strong> Con hidromasaje integrado para descanso al aire libre.</li>
+                    <li>• <strong>Deck solarium:</strong> Equipado con reposeras de descanso y vegetación biofílica.</li>
+                  </ul>
+                </div>
+
+                {/* 3. Churrasqueras & Fogata */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Churrasqueras &amp; Fogonero
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>2 Churrasqueras equipadas:</strong> Con mesones de apoyo y parrillas funcionales.</li>
+                    <li>• <strong>Espacio al aire libre con fogata:</strong> Diseñado para convivencia y encuentros nocturnos.</li>
+                  </ul>
+                </div>
+
+                {/* 4. Gimnasio & Baños */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Gimnasio &amp; Bienestar
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>Gimnasio equipado:</strong> Máquinas cardiovasculares y de musculación instaladas.</li>
+                    <li>• <strong>Baños independientes:</strong> Baños exclusivos para damas y caballeros en el área social.</li>
+                  </ul>
+                </div>
+
+                {/* 5. Sauna Seca */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Sauna Seca
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>Sauna seca equipada:</strong> Revestimiento en madera natural para relajación y salud.</li>
+                    <li>• <strong>Instalaciones completas:</strong> Ducha y vestidor adyacente para confort continuo.</li>
+                  </ul>
+                </div>
+
+                {/* 6. Salón & Coworking */}
+                <div className="rounded-xl border border-stone-100 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#9a7b45]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Salón de Reuniones &amp; Eventos
+                    </h4>
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-stone-600 font-light">
+                    <li>• <strong>Espacio polivalente equipado:</strong> Mobiliario para reuniones corporativas y celebraciones.</li>
+                    <li>• <strong>Climatización e iluminación funcional:</strong> Listo para uso de los propietarios.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </section>
 
 
