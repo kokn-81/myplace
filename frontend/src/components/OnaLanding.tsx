@@ -385,29 +385,40 @@ export default function OnaLanding({ property, onClose }: Props) {
   const availableUnitsCount = availableUnits.length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
 
-  // Selector de Parqueos por Pasos (Solo 2 tipos: Simple 15k y Doble 22k)
-  const [selectedParkingKind, setSelectedParkingKind] = useState<"simple" | "doble">("simple");
+  // Selector de Parqueos Opcional (Estilo Apple Store: Sin parqueo / Simple 15k / Doble 22k)
+  const [selectedParkingOption, setSelectedParkingOption] = useState<"none" | "simple" | "doble">("none");
   const [selectedParkingCode, setSelectedParkingCode] = useState<string>("5");
 
+  const selectedParkingKind = selectedParkingOption === "doble" ? "doble" : "simple";
+
   const availableParkingsForKind = useMemo(() => {
+    if (selectedParkingOption === "none") return [];
     return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "disponible");
-  }, [selectedParkingKind]);
+  }, [selectedParkingOption, selectedParkingKind]);
 
   const soldParkingsCountForKind = useMemo(() => {
+    if (selectedParkingOption === "none") return 0;
     return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "vendido").length;
-  }, [selectedParkingKind]);
+  }, [selectedParkingOption, selectedParkingKind]);
 
   useEffect(() => {
+    if (selectedParkingOption === "none") return;
     if (!availableParkingsForKind.some((p) => p.code === selectedParkingCode)) {
       if (availableParkingsForKind.length > 0) {
         setSelectedParkingCode(availableParkingsForKind[0].code);
       }
     }
-  }, [availableParkingsForKind, selectedParkingCode]);
+  }, [selectedParkingOption, availableParkingsForKind, selectedParkingCode]);
 
   const activeParking = useMemo(() => {
+    if (selectedParkingOption === "none") return null;
     return ONA_PARKINGS.find((p) => p.code === selectedParkingCode) || availableParkingsForKind[0] || null;
-  }, [selectedParkingCode, availableParkingsForKind]);
+  }, [selectedParkingOption, selectedParkingCode, availableParkingsForKind]);
+
+  const parkingPrice = useMemo(() => {
+    if (selectedParkingOption === "none") return 0;
+    return selectedParkingOption === "simple" ? 15000 : 22000;
+  }, [selectedParkingOption]);
 
   // Tipologías con precios mínimos y USD/m² actualizados en vivo según unidades disponibles
   const liveAmbienteOptions = useMemo(() => {
@@ -1582,252 +1593,6 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
               </div>
             </div>
-
-            {/* SECCIÓN PARQUEOS: ELECCIÓN POR PASOS COMPACTA & EFICIENTE */}
-            <div className="mt-8 rounded-3xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-3.5">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-900 text-[#e8d5a8]">
-                    <Car size={18} />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#9a7b45]">
-                      Estacionamiento & Bauleras
-                    </span>
-                    <h3 className="font-serif text-xl font-light text-stone-900">
-                      Disponibilidad de Parqueos
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    22 Disponibles
-                  </span>
-                  <a
-                    href={ONA_PARKINGS_PDF_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white px-2.5 py-0.5 text-[11px] font-medium text-stone-600 transition-all hover:border-[#9a7b45] hover:bg-stone-50"
-                    title="Descargar planilla oficial en PDF"
-                  >
-                    <Download size={11} className="text-[#9a7b45]" />
-                    <span>PDF</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* PASO 1: SELECCIONA EL TIPO DE PARQUEO (SOLO 2 OPCIONES: 15k y 22k) */}
-              <div className="mt-5">
-                <div className="flex items-center gap-2 mb-2.5">
-                  <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-stone-900 text-[9px] font-bold text-white">1</span>
-                  <h4 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                    Elige el tipo de parqueo:
-                  </h4>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Opción 1: Simple 15k */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedParkingKind("simple")}
-                    className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
-                      selectedParkingKind === "simple"
-                        ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
-                        : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className={`font-serif text-base font-semibold ${selectedParkingKind === "simple" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                          Parqueo Simple + Baulera
-                        </p>
-                        <p className={`text-xs mt-0.5 ${selectedParkingKind === "simple" ? "text-stone-300" : "text-stone-500"}`}>
-                          1 vehículo cubierto · Baulera privada incluida
-                        </p>
-                      </div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                        selectedParkingKind === "simple"
-                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
-                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                      }`}>
-                        12 disponibles
-                      </span>
-                    </div>
-
-                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className={selectedParkingKind === "simple" ? "text-amber-300/80 text-[11px]" : "text-stone-400 text-[11px]"}>
-                        4 de este tipo ya se vendieron
-                      </span>
-                      <span className={`font-serif text-base font-bold ${selectedParkingKind === "simple" ? "text-white" : "text-stone-900"}`}>
-                        USD 15.000
-                      </span>
-                    </div>
-                  </button>
-
-                  {/* Opción 2: Doble 22k */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedParkingKind("doble")}
-                    className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
-                      selectedParkingKind === "doble"
-                        ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
-                        : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className={`font-serif text-base font-semibold ${selectedParkingKind === "doble" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                          Parqueo Doble (A y B) + Baulera
-                        </p>
-                        <p className={`text-xs mt-0.5 ${selectedParkingKind === "doble" ? "text-stone-300" : "text-stone-500"}`}>
-                          2 vehículos continuos · Baulera privada incluida
-                        </p>
-                      </div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                        selectedParkingKind === "doble"
-                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
-                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                      }`}>
-                        10 disponibles
-                      </span>
-                    </div>
-
-                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className={selectedParkingKind === "doble" ? "text-stone-300 text-[11px]" : "text-stone-400 text-[11px]"}>
-                        0 vendidos (todos disponibles)
-                      </span>
-                      <span className={`font-serif text-base font-bold ${selectedParkingKind === "doble" ? "text-white" : "text-stone-900"}`}>
-                        USD 22.000
-                      </span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* PASO 2: ELIGE EL PARQUEO DISPONIBLE */}
-              <div className="mt-5">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-stone-900 text-[9px] font-bold text-white">2</span>
-                    <h4 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                      Parqueos disponibles ({selectedParkingKind === "simple" ? "USD 15.000" : "USD 22.000"}):
-                    </h4>
-                  </div>
-                  {soldParkingsCountForKind > 0 && (
-                    <span className="text-[11px] font-medium text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
-                      {soldParkingsCountForKind} parqueos de este tipo ya se vendieron (1 al 4)
-                    </span>
-                  )}
-                </div>
-
-                {/* Subgrupos por nivel: Planta Baja y Subsuelo (SOLO DISPONIBLES) */}
-                <div className="space-y-3">
-                  {availableParkingsForKind.filter((p) => p.level === "Planta baja").length > 0 && (
-                    <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
-                        Planta Baja ({availableParkingsForKind.filter((p) => p.level === "Planta baja").length} disponibles):
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {availableParkingsForKind
-                          .filter((p) => p.level === "Planta baja")
-                          .map((spot) => {
-                            const isSelected = selectedParkingCode === spot.code;
-                            return (
-                              <button
-                                key={`pb-${spot.code}`}
-                                type="button"
-                                onClick={() => setSelectedParkingCode(spot.code)}
-                                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                                  isSelected
-                                    ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
-                                    : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
-                                }`}
-                              >
-                                <span className="flex items-center gap-1">
-                                  <span>Parqueo {spot.code}</span>
-                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                </span>
-                              </button>
-                            );
-                          })}
-                      </div>
-                    </div>
-                  )}
-
-                  {availableParkingsForKind.filter((p) => p.level === "Subsuelo").length > 0 && (
-                    <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
-                        Subsuelo ({availableParkingsForKind.filter((p) => p.level === "Subsuelo").length} disponibles):
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {availableParkingsForKind
-                          .filter((p) => p.level === "Subsuelo")
-                          .map((spot) => {
-                            const isSelected = selectedParkingCode === spot.code;
-                            return (
-                              <button
-                                key={`sub-${spot.code}`}
-                                type="button"
-                                onClick={() => setSelectedParkingCode(spot.code)}
-                                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                                  isSelected
-                                    ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
-                                    : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
-                                }`}
-                              >
-                                <span className="flex items-center gap-1">
-                                  <span>Parqueo {spot.code}</span>
-                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                </span>
-                              </button>
-                            );
-                          })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* BARRA DE ASIGNACIÓN Y CONFIRMACIÓN */}
-              {activeParking && (
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-3.5 sm:p-4 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-900 text-[#e8d5a8]">
-                      <Car size={18} />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-serif text-base font-bold text-stone-900">
-                          Parqueo {activeParking.code}
-                        </span>
-                        <span className="rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 border border-emerald-300">
-                          Disponible
-                        </span>
-                      </div>
-                      <p className="text-xs text-stone-600 font-light mt-0.5">
-                        {activeParking.level} · Tipo {activeParking.kind === "simple" ? "Simple (1 Vehículo)" : "Doble A y B (2 Vehículos)"} · <strong>USD {formatOnaUsd(activeParking.price)}</strong> (Baulera incluida)
-                      </p>
-                    </div>
-                  </div>
-
-                  <a
-                    href={`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                      `Hola, deseo reservar el Parqueo ${activeParking.code} en ${activeParking.level} (${activeParking.kind === "simple" ? "Simple" : "Doble"}, USD ${formatOnaUsd(activeParking.price)} con baulera privada) en ONA Residences. ¿Sigue disponible?`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-stone-900 px-4 py-2 text-xs font-semibold text-[#e8d5a8] shadow-xs transition-all hover:bg-black active:scale-95 cursor-pointer"
-                  >
-                    <MessageCircle size={14} className="text-emerald-400" />
-                    <span>Reservar Parqueo {activeParking.code}</span>
-                  </a>
-                </div>
-              )}
-            </div>
           </section>
 
 
@@ -2008,17 +1773,200 @@ export default function OnaLanding({ property, onClose }: Props) {
               </div>
             </div>
 
-            {/* PASO 3: PRECIO EXACTO, MODALIDAD DE PAGO Y CÁLCULO DE GANANCIA */}
+            {/* PASO 3: ¿DESEAS AÑADIR PARQUEO + BAULERA? (OPCIONAL · ESTILO APPLE) */}
+            <div className="mt-8">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">3</span>
+                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
+                    ¿Deseas añadir estacionamiento con baulera? (Opcional):
+                  </h3>
+                </div>
+                <a
+                  href={ONA_PARKINGS_PDF_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] text-[#9a7b45] hover:underline"
+                  title="Ver planilla oficial de parqueos"
+                >
+                  <Download size={11} />
+                  <span>Planilla de Parqueos PDF</span>
+                </a>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Opción A: Sin Parqueo */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedParkingOption("none")}
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                    selectedParkingOption === "none"
+                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider">Sin Parqueo</span>
+                    <span className={`text-xs font-serif ${selectedParkingOption === "none" ? "text-stone-300" : "text-stone-400"}`}>USD 0</span>
+                  </div>
+                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "none" ? "text-stone-300" : "text-stone-500"}`}>
+                    Solo departamento seleccionado
+                  </p>
+                </button>
+
+                {/* Opción B: Simple 15k */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedParkingOption("simple")}
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                    selectedParkingOption === "simple"
+                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider">Parqueo Simple</span>
+                    <span className={`text-xs font-serif font-bold ${selectedParkingOption === "simple" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                      +USD 15.000
+                    </span>
+                  </div>
+                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "simple" ? "text-stone-300" : "text-stone-500"}`}>
+                    1 vehículo cubierto · Baulera privada
+                  </p>
+                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    selectedParkingOption === "simple"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
+                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  }`}>
+                    12 disponibles · 4 vendidos
+                  </span>
+                </button>
+
+                {/* Opción C: Doble 22k */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedParkingOption("doble")}
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                    selectedParkingOption === "doble"
+                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider">Parqueo Doble (A y B)</span>
+                    <span className={`text-xs font-serif font-bold ${selectedParkingOption === "doble" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
+                      +USD 22.000
+                    </span>
+                  </div>
+                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "doble" ? "text-stone-300" : "text-stone-500"}`}>
+                    2 vehículos continuos · Baulera privada
+                  </p>
+                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    selectedParkingOption === "doble"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
+                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  }`}>
+                    10 disponibles
+                  </span>
+                </button>
+              </div>
+
+              {/* Selector de nivel y número si se seleccionó Simple o Doble */}
+              {selectedParkingOption !== "none" && (
+                <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm animate-fadeIn">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-stone-900">
+                      Selecciona tu parqueo ({selectedParkingOption === "simple" ? "Simple · USD 15.000" : "Doble A y B · USD 22.000"} con baulera):
+                    </p>
+                    {activeParking && (
+                      <span className="text-xs font-bold text-[#816127]">
+                        Parqueo {activeParking.code} ({activeParking.level}) asignado
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    {availableParkingsForKind.filter((p) => p.level === "Planta baja").length > 0 && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                          Planta Baja:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {availableParkingsForKind
+                            .filter((p) => p.level === "Planta baja")
+                            .map((spot) => {
+                              const isSelected = selectedParkingCode === spot.code;
+                              return (
+                                <button
+                                  key={`pb-${spot.code}`}
+                                  type="button"
+                                  onClick={() => setSelectedParkingCode(spot.code)}
+                                  className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                                    isSelected
+                                      ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
+                                      : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
+                                  }`}
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <span>Parqueo {spot.code}</span>
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+
+                    {availableParkingsForKind.filter((p) => p.level === "Subsuelo").length > 0 && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
+                          Subsuelo:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {availableParkingsForKind
+                            .filter((p) => p.level === "Subsuelo")
+                            .map((spot) => {
+                              const isSelected = selectedParkingCode === spot.code;
+                              return (
+                                <button
+                                  key={`sub-${spot.code}`}
+                                  type="button"
+                                  onClick={() => setSelectedParkingCode(spot.code)}
+                                  className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                                    isSelected
+                                      ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
+                                      : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
+                                  }`}
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <span>Parqueo {spot.code}</span>
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* PASO 4: PRECIO TOTAL, MODALIDAD DE PAGO Y RESERVA UNIFICADA */}
             {activeUnit && activeFinancials && (
               <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">3</span>
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">4</span>
                   <h3 className="text-xs uppercase tracking-wider font-semibold text-[#816127]">
-                    Precio oficial y proyección de ganancia:
+                    Resumen de inversión y modalidad de pago:
                   </h3>
                 </div>
 
-                {/* Encabezado de la Unidad Seleccionada */}
+                {/* Encabezado de la Configuración Seleccionada */}
                 <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#9a7b45]/20 pb-4">
                   <div>
                     <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
@@ -2028,21 +1976,35 @@ export default function OnaLanding({ property, onClose }: Props) {
                       {currentAmbiente.name}
                     </h4>
                     <p className="text-xs text-stone-600 font-light mt-0.5">
-                      Superficie: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} ·{" "}
+                      Superficie depto: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} ·{" "}
                       <strong className="text-[#816127]">${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²</strong> · {activeUnit.view}
                     </p>
+                    {selectedParkingOption !== "none" && activeParking && (
+                      <p className="text-xs text-emerald-800 font-medium mt-1.5 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg w-fit">
+                        <Car size={13} className="text-[#9a7b45]" />
+                        <span>+ Parqueo {activeParking.code} en {activeParking.level} ({activeParking.kind === "simple" ? "Simple" : "Doble"}, USD {formatOnaUsd(activeParking.price)} con baulera)</span>
+                      </p>
+                    )}
                   </div>
 
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Disponible para Reserva
-                  </span>
+                  <div className="text-right">
+                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Disponible para Reserva
+                    </span>
+                    <div className="mt-2">
+                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">Inversión Total Preventa:</p>
+                      <p className="font-serif text-2xl font-bold text-stone-900">
+                        USD {formatOnaUsd(activeFinancials.totalPrice + parkingPrice)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Selector de Modalidad de Pago */}
                 <div className="mt-5">
                   <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">
-                    Elige la modalidad de pago para este piso:
+                    Elige la modalidad de pago para este departamento:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     {[
@@ -2084,7 +2046,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                             <span className="text-[10px] font-semibold text-[#816127]">${formatOnaUsd(plan.perM2)} USD/m²</span>
                           </div>
                           <p className="mt-1 font-serif text-lg font-bold text-stone-900">
-                            USD {formatOnaUsd(plan.total)}
+                            USD {formatOnaUsd(plan.total + parkingPrice)}
                           </p>
                           <p className="text-[11px] text-stone-500 font-light mt-0.5">{plan.detail}</p>
                         </button>
@@ -2154,14 +2116,14 @@ export default function OnaLanding({ property, onClose }: Props) {
                     </div>
                   </div>
 
-                  {/* BOTÓN DIRECTO DE RESERVA */}
+                  {/* BOTÓN DIRECTO DE RESERVA UNIFICADA */}
                   <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div>
                       <p className="text-xs text-stone-700 font-medium text-center sm:text-left">
-                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
+                        Congela esta configuración en <strong>Piso {activeUnit.floor}</strong> {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
                       </p>
                       <p className="text-[11px] text-stone-400 font-light text-center sm:text-left">
-                        Firma y desembolso inicial coordinado directamente con la constructora.
+                        Firma de preventa y desembolso coordinado directamente con la constructora.
                       </p>
                     </div>
 
@@ -2171,14 +2133,18 @@ export default function OnaLanding({ property, onClose }: Props) {
                           (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
                         }
                         const planLabel = selectedPlan === "contado" ? "Al Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial";
+                        const parkingDetail = selectedParkingOption !== "none" && activeParking
+                          ? ` + Parqueo ${activeParking.code} en ${activeParking.level} (${activeParking.kind === "simple" ? "Simple" : "Doble"}, USD ${formatOnaUsd(activeParking.price)} con baulera)`
+                          : "";
+                        const totalContract = activeFinancials.totalPrice + parkingPrice;
                         reserve(
-                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²), precio USD ${formatOnaUsd(activeFinancials.totalPrice)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD ${formatOnaUsd(ONA_RESERVE_USD)}?`,
-                          activeFinancials.totalPrice
+                          `Hola, vengo directo para reservar en ONA: Piso ${activeUnit.floor} - Tipo ${activeUnit.tipo} (${activeUnit.rooms} dorm, ${activeUnit.totalM2} m²)${parkingDetail}, Inversión Total USD ${formatOnaUsd(totalContract)}, modalidad ${planLabel}. ¿Sigue disponible para reservar con USD ${formatOnaUsd(ONA_RESERVE_USD)}?`,
+                          totalContract
                         );
                       }}
-                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0"
+                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0 cursor-pointer"
                     >
-                      Reservar Piso {activeUnit.floor} con USD {formatOnaUsd(ONA_RESERVE_USD)}
+                      Reservar Piso {activeUnit.floor} {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con USD {formatOnaUsd(ONA_RESERVE_USD)}
                     </button>
                   </div>
                 </div>
