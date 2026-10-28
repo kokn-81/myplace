@@ -166,6 +166,64 @@ const TYPOLOGIES_DATA = [
   },
 ];
 
+const EQUIPAMIENTO_SLIDES = [
+  {
+    id: "cocina",
+    room: "COCINA",
+    title: "Cocina Equipada",
+    tagline: "Mobiliario a medida y equipamiento funcional",
+    image: "/ona/cocina.jpg",
+    items: [
+      "Muebles superiores e inferiores a medida",
+      "Mesón de granito de alta resistencia",
+      "Bacha de acero inoxidable y grifería monomando",
+      "Cocina empotrada con campana extractora",
+      "Horno microondas empotrado",
+    ],
+  },
+  {
+    id: "dormitorio",
+    room: "DORMITORIO",
+    title: "Dormitorio Principal",
+    tagline: "Confort térmico y almacenamiento optimizado",
+    image: "/ona/dormitorio.jpg",
+    items: [
+      "Aire acondicionado instalado y listo para usar",
+      "Ropero empotrado con divisiones internas completas",
+      "Piso de porcelanato de alto tráfico",
+      "Iluminación funcional cálida integrada",
+    ],
+  },
+  {
+    id: "bano",
+    room: "BAÑO",
+    title: "Baño Contemporáneo",
+    tagline: "Grifería alta, box de vidrio y espejo LED",
+    image: "/ona/bano.jpg",
+    items: [
+      "Ducha con box de vidrio templado instalado",
+      "Espejo con iluminación LED perimetral",
+      "Mueble de baño flotante con mesón de granito",
+      "Grifería alta y accesorios sanitarios de calidad",
+      "Piso y revestimiento de paredes en porcelanato",
+    ],
+  },
+  {
+    id: "sala-acceso",
+    room: "SALA & SERVICIOS",
+    title: "Acceso Seguro & Conectividad",
+    tagline: "Seguridad digital y servicios listos",
+    image: "/ona/living.jpg",
+    items: [
+      "Puerta principal con cerradura inteligente digital",
+      "Herrajes y accesorios de alta seguridad",
+      "Calefón instalado para agua caliente continua",
+      "Lavadero con grifería e instalaciones para lavadora",
+      "Iluminación funcional instalada en todos los ambientes",
+    ],
+  },
+];
+
 interface AmbienteOption {
   id: string;
   name: string;
@@ -490,11 +548,19 @@ export default function OnaLanding({ property, onClose }: Props) {
   const placeRef = useRef<HTMLElement>(null);
   const amenitiesRef = useRef<HTMLElement>(null);
   const typesRef = useRef<HTMLElement>(null);
+  const equipRef = useRef<HTMLElement>(null);
+  const equipCarouselRef = useRef<HTMLDivElement>(null);
   const payRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLElement>(null);
   const investorRef = useRef<HTMLElement>(null);
   const disponibilidadRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLElement>(null);
+
+  const scrollEquip = (direction: "left" | "right") => {
+    if (!equipCarouselRef.current) return;
+    const offset = direction === "left" ? -330 : 330;
+    equipCarouselRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
@@ -502,6 +568,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       lugar: { src: "/ona/ubicacion.jpg", label: "Ubicación" },
       amenidades: { src: "/ona/piscina.jpg", label: "Amenidades" },
       tipologias: { src: "/ona/dormitorio.jpg", label: "Tipologías" },
+      equipamiento: { src: "/ona/cocina.jpg", label: "Equipamiento" },
       constructora: { src: "/ona/fachada-atardecer.jpg", label: "Constructora" },
       pago: { src: "/ona/fachada-atardecer.jpg", label: "Formas de Pago" },
       inversion: { src: "/ona/living.jpg", label: "Rentabilidad" },
@@ -522,7 +589,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       { threshold: [0.22, 0.5] }
     );
 
-    [introRef, placeRef, amenitiesRef, typesRef, builderRef, payRef, investorRef, disponibilidadRef, closeRef].forEach((ref) => {
+    [introRef, placeRef, amenitiesRef, typesRef, equipRef, builderRef, payRef, investorRef, disponibilidadRef, closeRef].forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -738,6 +805,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
+              <a href="#equipamiento" className="hover:text-stone-950 transition-colors font-semibold text-[#9a7b45]">Equipamiento</a>
               <a href="#constructora" className="hover:text-stone-950 transition-colors font-semibold text-stone-700">Constructora</a>
               <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
               <a href="#inversion" className="hover:text-stone-950 transition-colors">Rentabilidad</a>
@@ -978,6 +1046,146 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </article>
               ))}
+            </div>
+          </section>
+
+
+          {/* 5. EQUIPAMIENTO E INCLUSIONES: LLAVE EN MANO */}
+          <section id="equipamiento" ref={equipRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Sparkles size={14} className="text-[#9a7b45]" />
+                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                  Especificaciones &amp; Equipamiento
+                </p>
+              </div>
+
+              <a
+                href="/ona/especificaciones-equipamiento.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 transition-all hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
+                title="Descargar especificaciones oficiales en PDF"
+              >
+                <Download size={12} className="text-[#9a7b45]" />
+                <span>Equipamiento Oficial (PDF)</span>
+              </a>
+            </div>
+
+            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
+              Lo que incluye tu departamento.
+            </h2>
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              En ONA Residences cada departamento se entrega con equipamiento completo de primera calidad, listo para habitar o poner en alquiler de inmediato sin gastos imprevistos de habilitación.
+            </p>
+
+            {/* Carrusel / Tarjetas con Controles */}
+            <div className="mt-8 relative">
+              {/* Controles de navegación del carrusel */}
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="text-xs text-stone-400 font-light">
+                  Desliza para ver todos los ambientes
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => scrollEquip("left")}
+                    aria-label="Ver ambiente anterior"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 shadow-xs transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollEquip("right")}
+                    aria-label="Ver ambiente siguiente"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 shadow-xs transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Contenedor del carrusel con scroll-snap */}
+              <div
+                ref={equipCarouselRef}
+                className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {EQUIPAMIENTO_SLIDES.map((slide) => (
+                  <article
+                    key={slide.id}
+                    className="w-[280px] sm:w-[310px] shrink-0 snap-start overflow-hidden rounded-2xl border border-stone-200 bg-white p-3.5 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-[#9a7b45]/60 flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Imagen con badge */}
+                      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-stone-100">
+                        <img
+                          src={slide.image}
+                          alt={`Equipamiento de ${slide.room} en ONA Residences`}
+                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-2.5 right-2.5 rounded-full bg-stone-900/85 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8] backdrop-blur">
+                          Incluido
+                        </div>
+                      </div>
+
+                      {/* Título y etiqueta de ambiente (formato editorial del diseño de referencia) */}
+                      <div className="mt-4 text-center">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#9a7b45]">
+                          {slide.room}
+                        </p>
+                        <h3 className="font-serif text-lg font-medium text-stone-900 mt-0.5">
+                          {slide.title}
+                        </h3>
+                        <p className="text-[11px] text-stone-500 font-light mt-0.5">
+                          {slide.tagline}
+                        </p>
+                      </div>
+
+                      {/* Lista de equipamiento incluido */}
+                      <ul className="mt-3.5 space-y-2 border-t border-stone-100 pt-3 text-xs text-stone-700">
+                        {slide.items.map((it, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#fbf9f4] border border-[#9a7b45]/40 text-[#816127]">
+                              <Check size={10} strokeWidth={3} />
+                            </span>
+                            <span className="leading-snug [text-align:justify] [text-justify:inter-word]">
+                              {it}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Banner resumen Llave en Mano */}
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4 text-xs text-stone-700">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-900 text-[#e8d5a8]">
+                  <CheckCircle2 size={18} />
+                </div>
+                <div>
+                  <p className="font-semibold text-stone-900 text-sm">
+                    Entrega Llave en Mano · Sin Inversión Extra
+                  </p>
+                  <p className="text-stone-600 font-light text-xs mt-0.5">
+                    Tu unidad incluye mobiliario a medida, granito, luminarias, aire acondicionado, roperos y calefón.
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/ona/especificaciones-equipamiento.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-stone-900 px-3.5 py-1.5 text-xs font-semibold text-[#e8d5a8] shadow-xs hover:bg-black transition-all cursor-pointer"
+              >
+                <Download size={13} />
+                <span>Ver Planilla Completa (PDF)</span>
+              </a>
             </div>
           </section>
 
