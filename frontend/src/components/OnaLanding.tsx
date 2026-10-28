@@ -367,6 +367,19 @@ export default function OnaLanding({ property, onClose }: Props) {
     return Math.min(...availableUnits.map((u) => u.cash));
   }, [availableUnits]);
 
+  // Precios mínimos en vivo por tipología (1 Dorm y 2 Dorms) según disponibilidad
+  const minPrice1Dorm = useMemo(() => {
+    const avail1D = availableUnits.filter((u) => u.rooms === 1);
+    if (avail1D.length === 0) return 40375;
+    return Math.min(...avail1D.map((u) => u.cash));
+  }, [availableUnits]);
+
+  const minPrice2Dorms = useMemo(() => {
+    const avail2D = availableUnits.filter((u) => u.rooms === 2);
+    if (avail2D.length === 0) return 67675;
+    return Math.min(...avail2D.map((u) => u.cash));
+  }, [availableUnits]);
+
   const totalUnitsCount = units.length;
   const availableUnitsCount = availableUnits.length;
   const soldUnitsCount = units.filter((u) => u.status === "vendido").length;
@@ -695,8 +708,8 @@ export default function OnaLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica */}
-      <div className="relative h-[40vh] min-h-[290px] shrink-0 bg-stone-950 md:h-screen md:w-[44%]">
+      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica con Datos Clave Destacados */}
+      <div className="relative min-h-[480px] shrink-0 bg-stone-950 md:h-screen md:min-h-0 md:w-[44%]">
         <AnimatePresence mode="popLayout">
           <motion.img
             key={activeImage}
@@ -709,25 +722,82 @@ export default function OnaLanding({ property, onClose }: Props) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30" />
-        <div className="absolute bottom-6 left-6 right-16 text-white md:bottom-10 md:left-10">
-          <span className="inline-block rounded-full bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
-            Preventa Exclusiva · 1.ª Fase · {activeLabel}
-          </span>
-          <h1 className="mt-3 font-serif text-4xl font-light tracking-wide leading-none md:text-6xl">
-            ONA
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/30" />
+        <div className="absolute bottom-6 left-6 right-6 text-white md:bottom-8 md:left-8 md:right-8 lg:bottom-10 lg:left-10 lg:right-10">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-block rounded-full bg-black/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
+              Preventa Exclusiva · 1.ª Fase
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-md border border-white/10">
+              <MapPin size={11} className="text-[#e8d5a8]" /> {ONA_ZONE}
+            </span>
+          </div>
+
+          <h1 className="mt-2.5 font-serif text-4xl sm:text-5xl md:text-6xl font-light tracking-wide leading-none text-white">
+            ONA <span className="font-sans text-xl sm:text-2xl font-light tracking-normal text-[#e8d5a8] ml-1">Residences</span>
           </h1>
-          <p className="mt-3 max-w-sm text-sm font-light text-white/90 md:text-base leading-relaxed [text-align:justify] [text-justify:inter-word]">
+
+          <p className="mt-2 max-w-md text-xs sm:text-sm font-light text-white/90 leading-relaxed [text-align:justify] [text-justify:inter-word]">
             Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en {ONA_ZONE}.
           </p>
-          <div className="mt-3 flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-white/80 font-light">
-            <span>Constructora {ONA_BUILDER}</span>
-            <span>·</span>
-            <span>Entrega {ONA_DELIVERY}</span>
+
+          {/* Constructora & Entrega (Destacadas y Más Grandes) */}
+          <div className="mt-3.5 grid grid-cols-2 gap-2.5 max-w-md">
+            <div className="rounded-xl border border-white/15 bg-black/45 p-2.5 backdrop-blur-md shadow-sm">
+              <div className="flex items-center gap-1.5 text-[#e8d5a8]">
+                <ShieldCheck size={14} />
+                <p className="text-[10px] font-bold uppercase tracking-wider">Constructora</p>
+              </div>
+              <p className="mt-1 text-sm sm:text-base font-serif font-medium text-white leading-tight">
+                {ONA_BUILDER}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-white/15 bg-black/45 p-2.5 backdrop-blur-md shadow-sm">
+              <div className="flex items-center gap-1.5 text-[#e8d5a8]">
+                <Building2 size={14} />
+                <p className="text-[10px] font-bold uppercase tracking-wider">Entrega de Obra</p>
+              </div>
+              <p className="mt-1 text-sm sm:text-base font-serif font-medium text-white leading-tight">
+                {ONA_DELIVERY}
+              </p>
+            </div>
           </div>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#e8d5a8]">
-            <MapPin size={13} /> {ONA_ZONE}
-          </p>
+
+          {/* Opciones de Departamentos & Precios Desde (Actualizándose en tiempo real con Sheets) */}
+          <div className="mt-2.5 rounded-xl border border-[#9a7b45]/40 bg-stone-900/80 p-3 backdrop-blur-md max-w-md shadow-lg">
+            <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
+              <span>Departamentos Disponibles</span>
+              <span className="flex items-center gap-1 text-emerald-400 font-sans font-medium text-[9px] lowercase">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                en vivo
+              </span>
+            </div>
+
+            <div className="mt-2 grid grid-cols-2 gap-2 text-left">
+              {/* 1 Dormitorio */}
+              <div className="border-r border-white/10 pr-2">
+                <div className="flex items-baseline justify-between gap-1">
+                  <span className="text-xs font-medium text-stone-200">1 Dormitorio</span>
+                  <span className="text-[10px] text-stone-400">32 m²</span>
+                </div>
+                <p className="mt-0.5 font-serif text-sm sm:text-base font-bold text-white">
+                  Desde USD {formatOnaUsd(minPrice1Dorm)}
+                </p>
+              </div>
+
+              {/* 2 Dormitorios */}
+              <div className="pl-1">
+                <div className="flex items-baseline justify-between gap-1">
+                  <span className="text-xs font-medium text-stone-200">2 Dormitorios</span>
+                  <span className="text-[10px] text-stone-400">54 a 92 m²</span>
+                </div>
+                <p className="mt-0.5 font-serif text-sm sm:text-base font-bold text-white">
+                  Desde USD {formatOnaUsd(minPrice2Dorms)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
