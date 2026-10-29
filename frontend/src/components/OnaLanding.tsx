@@ -844,7 +844,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
       {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
       <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
-        <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:px-10 md:py-14">
+        <div className="mx-auto max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-5 py-8 pb-32 md:px-10 lg:px-14 md:py-14 md:pb-44">
 
           {/* 1. HERO / ONA RESIDENCES: EXPERIENCIA Y ESTILO DE VIDA */}
           <section id="intro" ref={introRef} className="scroll-mt-6">
@@ -1437,38 +1437,46 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             {/* Métricas de Respaldo */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">+42 Años</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Trayectoria Profesional</p>
-                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Arquitectura e ingeniería con formación académica en Brasil y ejercicio en Bolivia desde 1984.
+            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
+              <div className="rounded-2xl border border-stone-200 bg-white p-5 md:p-6 shadow-sm text-left flex flex-col justify-between transition-all hover:border-[#9a7b45]/60 hover:shadow-md">
+                <div>
+                  <p className="font-serif text-2xl md:text-3xl font-light text-stone-900 tracking-tight">+42 Años</p>
+                  <p className="text-[11px] md:text-xs uppercase tracking-wider font-bold text-[#9a7b45] mt-1">Trayectoria Profesional</p>
+                </div>
+                <p className="text-xs md:text-sm text-stone-600 font-light mt-3 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Arquitectura e ingeniería con formación académica en Brasil y ejercicio continuo en Bolivia desde 1984.
                 </p>
               </div>
-              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Diversidad Técnica</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Alcance Constructivo</p>
-                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Edificios residenciales, hospitales, clínicas de salud, naves industriales y viviendas.
+
+              <div className="rounded-2xl border border-stone-200 bg-white p-5 md:p-6 shadow-sm text-left flex flex-col justify-between transition-all hover:border-[#9a7b45]/60 hover:shadow-md">
+                <div>
+                  <p className="font-serif text-2xl md:text-3xl font-light text-stone-900 tracking-tight">Diversidad Técnica</p>
+                  <p className="text-[11px] md:text-xs uppercase tracking-wider font-bold text-[#9a7b45] mt-1">Alcance Constructivo</p>
+                </div>
+                <p className="text-xs md:text-sm text-stone-600 font-light mt-3 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Edificios residenciales, hospitales, clínicas de salud, naves industriales y desarrollos corporativos.
                 </p>
               </div>
-              <div className="rounded-xl border border-stone-200 bg-white p-4.5 shadow-sm text-center sm:text-left">
-                <p className="font-serif text-2xl font-light text-stone-900 md:text-3xl">Dirección Propia</p>
-                <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9a7b45] mt-0.5">Garantía de Obra</p>
-                <p className="text-xs text-stone-500 font-light mt-1.5 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Supervisión técnica directa de los arquitectos fundadores en obra, garantizando precisión de cálculo, calidad de materiales y entrega en plazo.
+
+              <div className="rounded-2xl border border-stone-200 bg-white p-5 md:p-6 shadow-sm text-left flex flex-col justify-between transition-all hover:border-[#9a7b45]/60 hover:shadow-md">
+                <div>
+                  <p className="font-serif text-2xl md:text-3xl font-light text-stone-900 tracking-tight">Dirección Propia</p>
+                  <p className="text-[11px] md:text-xs uppercase tracking-wider font-bold text-[#9a7b45] mt-1">Garantía de Obra</p>
+                </div>
+                <p className="text-xs md:text-sm text-stone-600 font-light mt-3 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+                  Supervisión técnica directa de los arquitectos fundadores en obra, garantizando precisión de cálculo y entrega en plazo.
                 </p>
               </div>
             </div>
 
             {/* Testimonio / Cita del Fundador */}
-            <div className="mt-6 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-5.5 shadow-xs">
-              <p className="font-serif italic text-base md:text-lg text-stone-800 leading-relaxed [text-align:justify] [text-justify:inter-word]">
+            <div className="mt-8 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-6 md:p-8 shadow-xs">
+              <p className="font-serif italic text-base md:text-xl text-stone-800 leading-relaxed [text-align:justify] [text-justify:inter-word]">
                 “Cada edificio entregado representa una promesa cumplida. El esfuerzo de un gran equipo y la confianza de cientos de familias que creyeron en nosotros. La experiencia nos enseña que la confianza no se pide, se gana: y eso es lo que honramos en ONA.”
               </p>
-              <div className="mt-3.5 flex items-center justify-between border-t border-[#9a7b45]/20 pt-3 text-xs text-stone-500">
-                <span className="font-medium text-stone-800">Constructora Palacios Antúnez</span>
-                <span className="text-[#9a7b45] font-semibold">Garantía &amp; Seguridad</span>
+              <div className="mt-4 flex flex-wrap items-center justify-between border-t border-[#9a7b45]/20 pt-3.5 text-xs text-stone-500 gap-2">
+                <span className="font-semibold text-stone-800">Constructora Palacios Antúnez</span>
+                <span className="text-[#9a7b45] font-semibold tracking-wide">Garantía &amp; Seguridad de Obra</span>
               </div>
             </div>
           </section>
@@ -1966,43 +1974,43 @@ export default function OnaLanding({ property, onClose }: Props) {
 
             {/* PASO 4: PRECIO TOTAL, MODALIDAD DE PAGO Y RESERVA UNIFICADA */}
             {activeUnit && activeFinancials && (
-              <div className="mt-8 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 shadow-xl">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="mt-10 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 md:p-8 lg:p-9 shadow-xl scroll-mt-24">
+                <div className="flex items-center gap-2 mb-4">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">4</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-[#816127]">
+                  <h3 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-[#816127]">
                     Resumen de inversión y modalidad de pago:
                   </h3>
                 </div>
 
                 {/* Encabezado de la Configuración Seleccionada */}
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#9a7b45]/20 pb-4">
-                  <div>
-                    <span className="rounded-full bg-stone-900 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
+                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#9a7b45]/20 pb-5">
+                  <div className="space-y-1">
+                    <span className="rounded-full bg-stone-900 px-3 py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#e8d5a8]">
                       Piso {activeUnit.floor} · TIPO {activeUnit.tipo}
                     </span>
-                    <h4 className="mt-2 font-serif text-2xl font-semibold text-stone-900">
+                    <h4 className="mt-2 font-serif text-2xl md:text-3xl font-semibold text-stone-900">
                       {currentAmbiente.name}
                     </h4>
-                    <p className="text-xs text-stone-600 font-light mt-0.5">
+                    <p className="text-xs md:text-sm text-stone-600 font-light mt-1">
                       Superficie depto: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} ·{" "}
                       <strong className="text-[#816127]">${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²</strong> · {activeUnit.view}
                     </p>
                     {selectedParkingOption !== "none" && activeParking && (
-                      <p className="text-xs text-emerald-800 font-medium mt-1.5 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg w-fit">
-                        <Car size={13} className="text-[#9a7b45]" />
+                      <p className="text-xs md:text-sm text-emerald-800 font-medium mt-2 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg w-fit">
+                        <Car size={14} className="text-[#9a7b45]" />
                         <span>+ Parqueo {activeParking.code} en {activeParking.level} ({activeParking.kind === "simple" ? "Simple" : "Doble"}, USD {formatOnaUsd(activeParking.price)} con baulera)</span>
                       </p>
                     )}
                   </div>
 
-                  <div className="text-right">
-                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5">
+                  <div className="text-right flex flex-col items-end">
+                    <span className="rounded-full bg-emerald-100 px-3.5 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5">
                       <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                       Disponible para Reserva
                     </span>
-                    <div className="mt-2">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">Inversión Total Preventa:</p>
-                      <p className="font-serif text-2xl font-bold text-stone-900">
+                    <div className="mt-3">
+                      <p className="text-[10px] md:text-xs uppercase tracking-wider text-stone-500 font-semibold">Inversión Total Preventa:</p>
+                      <p className="font-serif text-2xl md:text-3xl font-bold text-stone-900">
                         USD {formatOnaUsd(activeFinancials.totalPrice)}
                       </p>
                     </div>
@@ -2010,17 +2018,17 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
 
                 {/* Selector de Modalidad de Pago con Cuota Inicial Destacada */}
-                <div className="mt-5">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-stone-500">
+                <div className="mt-6">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <p className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-stone-500">
                       Elige la modalidad de pago para este departamento:
                     </p>
-                    <span className="text-[11px] font-medium text-stone-500">
+                    <span className="text-[11px] md:text-xs font-medium text-stone-500">
                       Entrega programada: <strong className="text-stone-800">{ONA_DELIVERY}</strong>
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 lg:gap-5">
                     {[
                       {
                         key: "contado",
@@ -2059,46 +2067,46 @@ export default function OnaLanding({ property, onClose }: Props) {
                           key={plan.key}
                           type="button"
                           onClick={() => setSelectedPlan(plan.key as any)}
-                          className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                          className={`rounded-2xl border p-4 md:p-5 text-left transition-all cursor-pointer flex flex-col justify-between ${
                             isSelected
                               ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
                               : "border-stone-200 bg-white/70 text-stone-600 hover:border-[#9a7b45] hover:bg-white"
                           }`}
                         >
                           <div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
-                                <span className={`h-2 w-2 rounded-full ${isSelected ? "bg-[#9a7b45]" : "bg-stone-300"}`} />
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
+                                <span className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[#9a7b45]" : "bg-stone-300"}`} />
                                 {plan.label}
                               </span>
-                              <span className="text-[10px] font-semibold text-[#816127] bg-[#9a7b45]/10 px-2 py-0.5 rounded-full">
+                              <span className="text-[10px] md:text-xs font-semibold text-[#816127] bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full shrink-0">
                                 ${formatOnaUsd(plan.perM2)} USD/m²
                               </span>
                             </div>
 
                             {/* Cuota Inicial Destacada en la Tarjeta */}
-                            <div className={`mt-3 rounded-xl p-2.5 border ${
-                              isSelected ? "bg-emerald-50 border-emerald-200" : "bg-stone-50 border-stone-200/70"
+                            <div className={`mt-3.5 rounded-xl p-3 border ${
+                              isSelected ? "bg-emerald-50 border-emerald-300 shadow-xs" : "bg-stone-50 border-stone-200/70"
                             }`}>
-                              <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-800">
-                                {plan.key === "contado" ? "Pago Único (100%):" : `Cuota Inicial Requerida (${plan.badge.split(" ")[0]}%):`}
+                              <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-emerald-800">
+                                {plan.key === "contado" ? "Pago Único (100%):" : `Cuota Inicial (${plan.badge.split(" ")[0]}%):`}
                               </p>
-                              <p className="mt-0.5 font-serif text-xl font-bold text-emerald-900">
+                              <p className="mt-0.5 font-serif text-xl md:text-2xl font-bold text-emerald-950">
                                 USD {formatOnaUsd(plan.initial)}
                               </p>
                             </div>
                           </div>
 
-                          <div className="mt-3 pt-2.5 border-t border-stone-100 space-y-1">
-                            <div className="flex items-center justify-between text-[11px]">
+                          <div className="mt-3.5 pt-3 border-t border-stone-100 space-y-1.5">
+                            <div className="flex items-center justify-between text-xs gap-1">
                               <span className="text-stone-500 font-light">Total Inversión:</span>
-                              <strong className="text-stone-900 font-semibold">USD {formatOnaUsd(plan.total)}</strong>
+                              <strong className="text-stone-900 font-bold md:text-sm">USD {formatOnaUsd(plan.total)}</strong>
                             </div>
-                            <div className="flex items-center justify-between text-[10px] text-stone-500">
+                            <div className="flex items-center justify-between text-[11px] text-stone-500 gap-1">
                               <span className="font-light">
                                 {plan.key === "contado" ? "Saldo contra entrega:" : `Saldo entrega (${plan.key === "plan60" ? "40%" : "60%"}):`}
                               </span>
-                              <span className="font-medium text-stone-700">
+                              <span className="font-semibold text-stone-700">
                                 {plan.key === "contado" ? "USD 0" : `USD ${formatOnaUsd(plan.balance)}`}
                               </span>
                             </div>
@@ -2110,7 +2118,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                 </div>
 
                 {/* Desglose de Desembolsos del Plan Activo */}
-                <div className="mt-4 rounded-2xl border border-[#9a7b45]/30 bg-white p-4 sm:p-5 shadow-xs">
+                <div className="mt-5 rounded-2xl border border-[#9a7b45]/30 bg-white p-4 sm:p-5 md:p-6 shadow-xs">
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
                     <div className="flex items-center gap-2">
                       <CreditCard size={15} className="text-[#9a7b45]" />
@@ -2338,7 +2346,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleShareOna}
-                className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
+                className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95 cursor-pointer"
                 title="Compartir ONA Residences"
               >
                 {shareFeedback ? (
@@ -2352,15 +2360,6 @@ export default function OnaLanding({ property, onClose }: Props) {
                     <span className="hidden sm:inline">Compartir</span>
                   </>
                 )}
-              </button>
-
-              <button
-                onClick={() =>
-                  closeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-                }
-                className="bg-stone-900 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
-              >
-                Reservar Ahora
               </button>
             </div>
           </motion.div>
