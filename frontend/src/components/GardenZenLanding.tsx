@@ -477,7 +477,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
-    const shareUrl = `${origin}/?proyecto=garden-zen`;
+    const shareUrl = `${origin}/gardenzen`;
     const shareTitle = "Garden Zen · Preventa Eco-Sostenible en Equipetrol Norte";
     const shareText = `Departamentos eco-sostenibles con paneles solares y 50% menos expensas en Equipetrol Norte desde USD ${formatGardenZenUsd(minPriceMono)}. Conoce Garden Zen:`;
 
@@ -1035,11 +1035,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Espacios concebidos para alta rotación y renta en dólares.
+              Espacios concebidos para el confort y la vida contemporánea.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Cada planta optimiza el metraje útil eliminando pasillos muertos. Con amplios balcones, iluminación cruzada y orientación estratégica para maximizar el confort y la rentabilidad en Airbnb y alquiler tradicional.
+              Cada planta optimiza el metraje útil eliminando pasillos muertos. Con amplios balcones, iluminación cruzada y orientación estratégica para maximizar el confort, la luminosidad y la calidad de vida diaria.
             </p>
 
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1077,14 +1077,20 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         Desde USD {formatGardenZenUsd(displayPrice)}
                       </p>
                       <p className="mt-1 text-xs text-stone-500 font-light">
-                        Renta estimada: USD {amb.rentMin} – {amb.rentMax}/mes
+                        {amb.id === "mono"
+                          ? "Cocina integrada · Balcón aterrazado · Baño completo"
+                          : amb.id === "1d"
+                          ? "Suite privada · Walking closet · Balcón corrido"
+                          : amb.id === "2d"
+                          ? "Master suite + dormitorio · 2 Baños · Living amplio"
+                          : "3 Dormitorios · Terraza panorámica · Cocina con isla"}
                       </p>
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <span className="text-emerald-700 font-medium">Yield: {amb.yieldRange}</span>
+                      <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
                       <span className="inline-flex items-center gap-1 text-[#9a7b45] font-semibold">
-                        Ver pisos <ArrowRight size={13} />
+                        Ver unidades disponibles <ArrowRight size={13} />
                       </span>
                     </div>
                   </div>
@@ -1099,7 +1105,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   code: "MP",
                   name: "Monoambiente Zen (Studio)",
                   area: "Desde 40.15 m²",
-                  image: "/garden_zen/preview_page_22.jpg",
+                  image: "/garden_zen/plano_mono_mp.jpg",
                   desc: "Distribución en L que independiza el área de descanso de la cocina integrada. Incluye mesón desayunador, espacio de lavandería oculto y ventanal con balcón aterrazado.",
                   pills: ["Balcón integrado", "Mesón cuarzo blanco", "Lavandería privada", "Chapa inteligente"]
                 },
@@ -1107,7 +1113,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   code: "B1",
                   name: "1 Dormitorio Master Suite",
                   area: "Desde 46.10 m²",
-                  image: "/garden_zen/preview_page_26.jpg",
+                  image: "/garden_zen/plano_1dorm_b1.jpg",
                   desc: "Espaciosa suite con walking closet, sala de estar conectada a balcón aterrazado y cocina americana con doble frente de mesones de cuarzo blanco.",
                   pills: ["Balcón aterrazado", "Walking closet con divisiones", "Doble mesón cocina", "Aires acondicionados instalados"]
                 },
@@ -1115,17 +1121,17 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   code: "D2",
                   name: "2 Dormitorios Family Suite",
                   area: "Desde 66.83 m²",
-                  image: "/garden_zen/preview_page_30.jpg",
+                  image: "/garden_zen/plano_2dorm_d2.jpg",
                   desc: "Máxima privacidad con dormitorios en extremos opuestos. Amplio living comedor con balcón corrido y cocina integrada de concepto abierto.",
                   pills: ["Dormitorio en Master Suite", "2 Baños con piedra sinterizada", "Balcón corrido", "Comedor para 6 personas"]
                 },
                 "3d": {
-                  code: "E2",
-                  name: "Penthouse & Gran Suite",
-                  area: "Desde 96.55 m²",
-                  image: "/garden_zen/preview_page_32.jpg",
-                  desc: "Planta extendida en niveles superiores con doble orientación, master suite con vestidor, ventanales de piso a techo y amplia terraza panorámica.",
-                  pills: ["Doble orientación", "Terraza panorámica", "Master vestidor", "Cocina con isla central"]
+                  code: "B3",
+                  name: "3 Dormitorios / Penthouse Suite",
+                  area: "Desde 106.12 m²",
+                  image: "/garden_zen/plano_3dorm_b3.jpg",
+                  desc: "Planta extendida en niveles superiores con triple dormitorio, master suite con vestidor, ventanales de piso a techo y amplia terraza panorámica.",
+                  pills: ["3 Dormitorios", "Master vestidor", "Terraza panorámica", "Cocina con isla central"]
                 }
               };
 
@@ -1162,6 +1168,12 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       src={currentVisual.image}
                       alt={`Plano arquitectónico tipología ${currentVisual.name}`}
                       className="h-full w-full object-contain p-2"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.src.includes("preview_page")) {
+                          target.src = "/garden_zen/preview_page_22.jpg";
+                        }
+                      }}
                     />
                   </div>
 
@@ -2158,32 +2170,85 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* BLOQUE 3: PLUSVALÍA PROYECTADA ($1.800 USD/m²) */}
+                {/* BLOQUE 3: ESCENARIO FINANCIERO ESTIMADO (PLUSVALÍA Y ALQUILERES) */}
                 <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4 text-xs">
-                  <p className="font-bold uppercase tracking-wider text-[#816127]">
-                    Proyección de Ganancia Bruta a la Entrega ($1.800 USD/m² Equipetrol Norte)
-                  </p>
-                  <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-4 gap-2 text-stone-700">
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                      <p className="text-[10px] text-stone-500 uppercase">Mono (40,5 m²)</p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">Entrada: $56.672</p>
-                      <p className="font-serif text-sm font-bold text-stone-900 mt-1">+USD 16.228</p>
+                  <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-3">
+                    <p className="font-bold uppercase tracking-wider text-[#816127]">
+                      Escenario Financiero Estimado · Plusvalía &amp; Alquileres de Referencia
+                    </p>
+                    <span className="text-[10px] bg-stone-200/80 text-stone-700 px-2 py-0.5 rounded-full font-medium">
+                      Proyección orientativa
+                    </span>
+                  </div>
+
+                  {/* 1. Plusvalía de Preventa a Entrega */}
+                  <div>
+                    <p className="font-semibold text-stone-800 text-[11px] uppercase tracking-wider">
+                      1. Plusvalía Proyectada al Momento de Entrega (Marzo 2027 · $1.800 USD/m² Equipetrol Norte)
+                    </p>
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-4 gap-2 text-stone-700">
+                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
+                        <p className="text-[10px] text-stone-500 uppercase">Mono (40,5 m²)</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $56.672</p>
+                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 16.228</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,6% plusvalía)</p>
+                      </div>
+                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
+                        <p className="text-[10px] text-stone-500 uppercase">1 Dorm (46,1 m²)</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $64.540</p>
+                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 18.440</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,5% plusvalía)</p>
+                      </div>
+                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
+                        <p className="text-[10px] text-stone-500 uppercase">2 Dorms (83,3 m²)</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $115.388</p>
+                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 34.552</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">(+29,9% plusvalía)</p>
+                      </div>
+                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
+                        <p className="text-[10px] text-stone-500 uppercase">3 Dorms (106 m²)</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $148.568</p>
+                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 42.232</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,4% plusvalía)</p>
+                      </div>
                     </div>
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                      <p className="text-[10px] text-stone-500 uppercase">1 Dorm (46,1 m²)</p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">Entrada: $64.540</p>
-                      <p className="font-serif text-sm font-bold text-stone-900 mt-1">+USD 18.440</p>
+                  </div>
+
+                  {/* 2. Alquileres de Referencia en la Zona */}
+                  <div className="mt-4 border-t border-stone-200/80 pt-3">
+                    <p className="font-semibold text-stone-800 text-[11px] uppercase tracking-wider">
+                      2. Rango Estimado de Alquiler en Equipetrol Norte (Amoblado / Airbnb)
+                    </p>
+                    <p className="mt-1 text-[11px] text-stone-500 font-light leading-relaxed">
+                      Estimaciones de renta mensual basadas en tarifas de mercado para departamentos a estrenar en el cuadrante Equipetrol / Sirari:
+                    </p>
+                    <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
+                        <span className="text-[10px] text-stone-500 uppercase block">Monoambiente</span>
+                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 480 – 550/mes</strong>
+                        <span className="text-[10px] text-emerald-700">Retorno est.: ~9,8%–11%</span>
+                      </div>
+                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
+                        <span className="text-[10px] text-stone-500 uppercase block">1 Dormitorio</span>
+                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 600 – 700/mes</strong>
+                        <span className="text-[10px] text-emerald-700">Retorno est.: ~9,5%–10,8%</span>
+                      </div>
+                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
+                        <span className="text-[10px] text-stone-500 uppercase block">2 Dormitorios</span>
+                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 850 – 980/mes</strong>
+                        <span className="text-[10px] text-emerald-700">Retorno est.: ~8,8%–9,9%</span>
+                      </div>
+                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
+                        <span className="text-[10px] text-stone-500 uppercase block">3 Dorms / PH</span>
+                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 1150 – 1350/mes</strong>
+                        <span className="text-[10px] text-emerald-700">Retorno est.: ~8,5%–9,6%</span>
+                      </div>
                     </div>
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                      <p className="text-[10px] text-stone-500 uppercase">2 Dorms (83,3 m²)</p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">Entrada: $115.388</p>
-                      <p className="font-serif text-sm font-bold text-stone-900 mt-1">+USD 34.552</p>
-                    </div>
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                      <p className="text-[10px] text-stone-500 uppercase">3 Dorms (106 m²)</p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">Entrada: $148.568</p>
-                      <p className="font-serif text-sm font-bold text-stone-900 mt-1">+USD 42.232</p>
-                    </div>
+                  </div>
+
+                  {/* 3. Disclaimer de Transparencia NIA */}
+                  <div className="mt-4 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
+                    <strong className="font-semibold text-stone-800">Nota de Cumplimiento &amp; Transparencia NIA:</strong> Los valores de plusvalía y alquiler proyectados son estimaciones analíticas orientativas basadas en el comportamiento histórico de la zona y precios de mercado vigentes. <strong>No constituyen una promesa o garantía contractual de rentabilidad fija</strong>. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
                   </div>
                 </div>
               </div>

@@ -59,6 +59,24 @@ export default function App() {
         <Routes>
           <Route path="/" element={<MapPage />} />
           <Route path="/ona" element={<MapPage />} />
+          <Route path="/ona-residences" element={<MapPage />} />
+          <Route path="/gardenzen" element={<MapPage />} />
+          <Route path="/garden-zen" element={<MapPage />} />
+          <Route path="/zen" element={<MapPage />} />
+          <Route path="/eurodesign" element={<MapPage />} />
+          <Route path="/euro-design" element={<MapPage />} />
+          <Route path="/domus" element={<MapPage />} />
+          <Route path="/domus/:slug" element={<MapPage />} />
+          <Route path="/domus-black" element={<MapPage />} />
+          <Route path="/domus-gold" element={<MapPage />} />
+          <Route path="/domus-onix" element={<MapPage />} />
+          <Route path="/domus-tower" element={<MapPage />} />
+          <Route path="/domus-infinity" element={<MapPage />} />
+          <Route path="/domus-lux" element={<MapPage />} />
+          <Route path="/domus-insignia" element={<MapPage />} />
+          <Route path="/domus-smart" element={<MapPage />} />
+          <Route path="/proyecto/:slug" element={<MapPage />} />
+          <Route path="/p/:slug" element={<MapPage />} />
           <Route path="/c/:slug" element={<ContextPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/nia-metrics" element={<NiaMetricsDashboard />} />

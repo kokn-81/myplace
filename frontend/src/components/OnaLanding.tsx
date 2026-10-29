@@ -566,7 +566,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
   const handleShareOna = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
-    const shareUrl = `${origin}/?proyecto=ona`;
+    const shareUrl = `${origin}/ona`;
     const shareTitle = "ONA Residences · Preventa en Los Cusis";
     const shareText = `Departamentos de 1 y 2 dormitorios en Los Cusis desde USD ${formatOnaUsd(minUnitCashPrice)}. Conoce ONA Residences:`;
 
@@ -2659,10 +2659,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                       • <strong>Anclaje de precio en 1.ª fase:</strong> Desde ${formatOnaUsd(minCashPerM2)} USD/m² vs $1.600 USD/m² que se proyecta al momento de entrega en {ONA_DELIVERY} (+28% de plusvalía en dólares).
                     </li>
                     <li>
-                      • <strong>Retorno de alquiler del 10,4% – 11,1% anual en USD:</strong> Debido a que el precio de entrada es muy competitivo para una zona de alta demanda como Los Cusis.
-                    </li>
-                    <li>
-                      • <strong>Ubicación y menor riesgo de inundación:</strong> A 8 minutos de Equipetrol, rodeado de supermercados, cafeterías y servicios, pero en cota alta con drenaje pluvial superior.
+                      • <strong>Ubicación estratégica y menor riesgo de anegamiento:</strong> A 8 minutos de Equipetrol, sobre Av. Los Cusis, en cota alta protegida y con acceso a servicios comerciales de primer nivel.
                     </li>
                     <li>
                       • <strong>100% Equipado llave en mano:</strong> Granito, cajonería completa, roperos con divisiones, aire acondicionado instalado, box de vidrio y calefón sin cobros sorpresa.
@@ -2711,27 +2708,50 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* BLOQUE 3: CÁLCULO DE PLUSVALÍA POR TIPOLOGÍA */}
+                {/* BLOQUE 3: ESCENARIO FINANCIERO ESTIMADO (PLUSVALÍA Y ALQUILERES) */}
                 <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4 text-xs">
-                  <p className="font-bold uppercase tracking-wider text-[#816127]">
-                    Proyección de Ganancia Bruta a la Entrega ($1.600 USD/m²)
+                  <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-3">
+                    <p className="font-bold uppercase tracking-wider text-[#816127]">
+                      Escenario Financiero Estimado · Plusvalía &amp; Alquileres de Referencia
+                    </p>
+                    <span className="text-[10px] bg-stone-200/80 text-stone-700 px-2 py-0.5 rounded-full font-medium">
+                      Proyección orientativa
+                    </span>
+                  </div>
+
+                  <p className="font-light leading-relaxed [text-align:justify]">
+                    <strong>1. Plusvalía estimada a la entrega ({ONA_DELIVERY} · $1.600 USD/m² Los Cusis):</strong>
                   </p>
                   <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2 text-stone-700">
                     <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
                       <p className="text-[11px] text-stone-500 uppercase">1 Dorm (32,3 m²)</p>
                       <p className="text-xs text-stone-400 mt-0.5">Entrada: USD 40.375</p>
-                      <p className="font-serif text-base font-bold text-stone-900 mt-1">+USD 11.305</p>
+                      <p className="font-serif text-base font-bold text-emerald-700 mt-1">+USD 11.305</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">(+28% plusvalía)</p>
                     </div>
                     <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
                       <p className="text-[11px] text-stone-500 uppercase">2 Dorms (54,1 m²)</p>
                       <p className="text-xs text-stone-400 mt-0.5">Entrada: USD 67.675</p>
-                      <p className="font-serif text-base font-bold text-stone-900 mt-1">+USD 18.949</p>
+                      <p className="font-serif text-base font-bold text-emerald-700 mt-1">+USD 18.949</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">(+28% plusvalía)</p>
                     </div>
                     <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
                       <p className="text-[11px] text-stone-500 uppercase">2 Dorms Suite (92 m²)</p>
                       <p className="text-xs text-stone-400 mt-0.5">Entrada: USD 115.000</p>
-                      <p className="font-serif text-base font-bold text-stone-900 mt-1">+USD 32.200</p>
+                      <p className="font-serif text-base font-bold text-emerald-700 mt-1">+USD 32.200</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">(+28% plusvalía)</p>
                     </div>
+                  </div>
+
+                  <div className="mt-3.5 border-t border-stone-200/80 pt-2.5">
+                    <p className="font-light leading-relaxed [text-align:justify]">
+                      <strong>2. Rangos de alquiler mensual de referencia en Los Cusis:</strong> 1 Dormitorio: USD 380 – 460/mes · 2 Dormitorios: USD 600 – 750/mes.
+                    </p>
+                  </div>
+
+                  {/* Disclaimer de Transparencia NIA */}
+                  <div className="mt-3 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
+                    <strong className="font-semibold text-stone-800">Nota de Cumplimiento &amp; Transparencia NIA:</strong> Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. <strong>No constituyen una promesa o garantía contractual de rentabilidad fija</strong>. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
                   </div>
                 </div>
               </div>

@@ -452,7 +452,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     }).catch(() => {});
 
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
-    const shareUrl = `${origin}/?proyecto=eurodesign`;
+    const shareUrl = `${origin}/eurodesign`;
     const shareTitle = "Tower Eurodesign · Preventa Exclusiva en Equipetrol Norte";
     const shareText = `Departamentos premium en Equipetrol Norte desde USD ${formatEurodesignUsd(minPrice1Dorm)}. Torre de 18 niveles con obra gruesa al 100%:`;
 
@@ -1044,14 +1044,18 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         Desde USD {formatEurodesignUsd(displayPrice)}
                       </p>
                       <p className="mt-1 text-xs text-stone-500 font-light">
-                        Renta estimada: USD {amb.rentMin} – {amb.rentMax}/mes
+                        {amb.id === "1d"
+                          ? "Suite privada · Walking closet · Balcón terraza"
+                          : amb.id === "2d"
+                          ? "Master suite + dormitorio · 2 Baños · Living espacioso"
+                          : "3 Suites · Balcón panorámico · Cocina europea integrada"}
                       </p>
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <span className="text-emerald-700 font-medium">{amb.yieldRange}</span>
+                      <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
                       <span className="inline-flex items-center gap-1 text-[#9a7b45] font-semibold">
-                        Ver pisos <ArrowRight size={13} />
+                        Ver unidades disponibles <ArrowRight size={13} />
                       </span>
                     </div>
                   </div>
@@ -1714,31 +1718,70 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               </h2>
 
               <div className="mt-6 space-y-4 text-xs text-stone-700">
-                <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
-                  <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
-                    1. Tesis de Inversión Central
+                {/* 1. VENTAJAS COMERCIALES CLAVE */}
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+                  <p className="font-semibold text-emerald-900 uppercase tracking-wider text-[11px]">
+                    1. Ventajas Comerciales Clave (Qué destacar)
                   </p>
-                  <p className="mt-1.5 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Tower Eurodesign se encuentra en etapa de obra gruesa 100% finalizada (losa 18). El valor de preventa arranca en <strong>$1.480 USD/m² al contado</strong> frente a un precio de mercado terminado en Equipetrol Norte de <strong>$2.100 USD/m²</strong>, lo que garantiza hasta un <strong>41% de plusvalía neta</strong> a la entrega en {EURODESIGN_DELIVERY}.
-                  </p>
+                  <ul className="mt-2 space-y-1.5 font-light leading-relaxed text-stone-700">
+                    <li>• <strong>Obra gruesa 100% finalizada (losa 18):</strong> Cero riesgo de excavación o fundaciones. Estructura portante concluida en su totalidad.</li>
+                    <li>• <strong>Ubicación AAA en calle Enrique Finot:</strong> A 3 cuadras de Ventura Mall y Manzana 40, en el eje corporativo y comercial más cotizado de Santa Cruz.</li>
+                    <li>• <strong>Equipamiento de estándar europeo:</strong> Porcelanato importado, grifería empotrada y carpintería de aluminio hermética.</li>
+                  </ul>
                 </div>
 
-                <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
-                  <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
-                    2. Renta Proyectada &amp; Airbnb Friendly
+                {/* 2. DESVENTAJAS TRANSPARENTES Y MANEJO DE OBJECIONES */}
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
+                  <p className="font-semibold text-amber-900 uppercase tracking-wider text-[11px]">
+                    2. Desventajas Transparentes &amp; Manejo de Objeciones
                   </p>
-                  <p className="mt-1.5 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Ubicación inmejorable sobre calle Enrique Finot a 3 cuadras de Ventura Mall y Manzana 40. Estimación de alquiler mensual: 1D ($550 – $700 USD/mes), 2D ($900 – $1.200 USD/mes), con un yield anual en dólares de <strong>10,2% a 11,8%</strong>.
-                  </p>
+                  <div className="mt-2 space-y-2 font-light leading-relaxed text-stone-700">
+                    <div>
+                      <strong className="text-stone-900">• Objeción: &quot;¿Qué pasa si se demora la entrega?&quot;</strong>
+                      <p className="mt-0.5 text-stone-600 [text-align:justify]">
+                        <strong>Respuesta:</strong> Toda la estructura ya está erigida. Los trabajos actuales se concentran en tabiquería interna e instalaciones. Las visitas a obra están habilitadas martes y viernes con cita previa para verificar el avance.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
-                  <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
-                    3. Manejo de Objeción: &quot;¿Qué pasa si se demora la entrega?&quot;
+                {/* 3. ESCENARIO FINANCIERO ESTIMADO (DESPUÉS DE PROS Y CONTRAS) */}
+                <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4">
+                  <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-3">
+                    <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
+                      3. Escenario Financiero Estimado · Plusvalía &amp; Alquileres de Referencia
+                    </p>
+                    <span className="text-[10px] bg-stone-200/80 text-stone-700 px-2 py-0.5 rounded-full font-medium">
+                      Proyección orientativa
+                    </span>
+                  </div>
+
+                  <p className="font-light leading-relaxed [text-align:justify]">
+                    El valor de preventa arranca en <strong>$1.480 USD/m² al contado</strong> frente a un precio de mercado terminado en Equipetrol Norte de <strong>$2.100 USD/m²</strong>, lo que proyecta hasta un <strong>41% de plusvalía bruta</strong> al momento de entrega en {EURODESIGN_DELIVERY}.
                   </p>
-                  <p className="mt-1.5 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Respuesta: La estructura portante está 100% vaciada hasta el piso 18. No existe riesgo de excavación ni fundaciones. El cronograma actual está concentrado en instalaciones sanitarias, eléctricas y revestimientos finos, con visitas guiadas a obra habilitadas los martes y viernes.
-                  </p>
+
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
+                      <span className="text-[10px] text-stone-500 uppercase block">1 Dormitorio</span>
+                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 550 – 700/mes</strong>
+                      <span className="text-[10px] text-emerald-700">Retorno est.: ~10,2%–11,4%</span>
+                    </div>
+                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
+                      <span className="text-[10px] text-stone-500 uppercase block">2 Dormitorios</span>
+                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 900 – 1.200/mes</strong>
+                      <span className="text-[10px] text-emerald-700">Retorno est.: ~10,5%–11,8%</span>
+                    </div>
+                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
+                      <span className="text-[10px] text-stone-500 uppercase block">3 Dormitorios / PH</span>
+                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 1.400 – 1.700/mes</strong>
+                      <span className="text-[10px] text-emerald-700">Retorno est.: ~11,5%–13%</span>
+                    </div>
+                  </div>
+
+                  {/* Disclaimer de Transparencia NIA */}
+                  <div className="mt-3 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
+                    <strong className="font-semibold text-stone-800">Nota de Cumplimiento &amp; Transparencia NIA:</strong> Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. <strong>No constituyen una promesa o garantía contractual de rentabilidad fija</strong>. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
+                  </div>
                 </div>
               </div>
 

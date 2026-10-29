@@ -1173,36 +1173,38 @@ export default function MapPage() {
       const isOna = isOnaProperty(property);
       const isEuro = isEurodesignProperty(property);
       const isDom = isDomusProperty(property);
-      const url = new URL(window.location.href);
-      const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
+      const isZen = isGardenZenProperty(property);
+      const pathname = window.location.pathname.toLowerCase();
 
       if (isOna) {
-        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== "ona") {
-          url.searchParams.set("proyecto", "ona");
-          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
-          window.history.pushState({ modal: "ona", propertyId: property.id }, "", targetUrl);
+        if (!options?.skipHistoryPush && !pathname.startsWith("/ona")) {
+          window.history.pushState({ modal: "ona", propertyId: property.id }, "", "/ona");
         }
       } else if (isEuro) {
-        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== "eurodesign") {
-          url.searchParams.set("proyecto", "eurodesign");
-          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
-          window.history.pushState({ modal: "eurodesign", propertyId: property.id }, "", targetUrl);
+        if (!options?.skipHistoryPush && !pathname.startsWith("/eurodesign")) {
+          window.history.pushState({ modal: "eurodesign", propertyId: property.id }, "", "/eurodesign");
+        }
+      } else if (isZen) {
+        if (!options?.skipHistoryPush && !pathname.startsWith("/gardenzen") && !pathname.startsWith("/garden-zen")) {
+          window.history.pushState({ modal: "garden-zen", propertyId: property.id }, "", "/gardenzen");
         }
       } else if (isDom) {
         const domId = String(property.id).toLowerCase();
-        if (!options?.skipHistoryPush && currentParam?.toLowerCase() !== domId) {
-          url.searchParams.set("proyecto", domId);
-          const targetUrl = url.pathname + "?" + url.searchParams.toString() + url.hash;
-          window.history.pushState({ modal: domId, propertyId: property.id }, "", targetUrl);
+        if (!options?.skipHistoryPush && !pathname.startsWith("/domus")) {
+          window.history.pushState({ modal: domId, propertyId: property.id }, "", `/domus/${domId}`);
         }
-      } else if (currentParam) {
-        url.searchParams.delete("proyecto");
-        url.searchParams.delete("project");
-        url.searchParams.delete("p");
-        const cleanSearch = url.searchParams.toString();
-        const targetUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
-        if (!options?.skipHistoryPush) {
-          window.history.replaceState(null, "", targetUrl || "/");
+      } else {
+        const url = new URL(window.location.href);
+        const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
+        if (currentParam) {
+          url.searchParams.delete("proyecto");
+          url.searchParams.delete("project");
+          url.searchParams.delete("p");
+          const cleanSearch = url.searchParams.toString();
+          const targetUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
+          if (!options?.skipHistoryPush) {
+            window.history.replaceState(null, "", targetUrl || "/");
+          }
         }
       }
     }
@@ -1233,53 +1235,47 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. ?proyecto=ona o ?proyecto=eurodesign o ?proyecto=domus-black) al entrar a la web
+  // Parse direct links (e.g. /gardenzen, /eurodesign, /ona, /domus o ?proyecto=...) al entrar a la web
   useEffect(() => {
-    if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
+    if (typeof window === "undefined" || hasSearchInteractionRef.current) return;
     
     const params = new URLSearchParams(window.location.search);
-    const isOnaPath = window.location.pathname.toLowerCase().startsWith("/ona");
-    const isEuroPath = window.location.pathname.toLowerCase().startsWith("/eurodesign");
-    const isDomusPath = window.location.pathname.toLowerCase().startsWith("/domus");
-    const isZenPath = window.location.pathname.toLowerCase().startsWith("/garden-zen") || window.location.pathname.toLowerCase().startsWith("/zen");
-    const proyecto = params.get("proyecto") || params.get("project") || params.get("p") || (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : isZenPath ? "garden-zen" : null);
+    const pathname = window.location.pathname.toLowerCase();
+    const isOnaPath = pathname.startsWith("/ona");
+    const isEuroPath = pathname.startsWith("/eurodesign") || pathname.startsWith("/euro-design");
+    const isDomusPath = pathname.startsWith("/domus");
+    const isZenPath =
+      pathname.startsWith("/gardenzen") ||
+      pathname.startsWith("/garden-zen") ||
+      pathname.startsWith("/zen") ||
+      pathname.startsWith("/garden");
+    const proyecto =
+      params.get("proyecto") ||
+      params.get("project") ||
+      params.get("p") ||
+      (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : isZenPath ? "garden-zen" : null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
       if (target) {
-        setTimeout(() => {
-          selectProperty(target, { skipHistoryPush: true });
-          hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: `direct_${proyecto}`, propertyId: target.id }, "", window.location.href);
-        }, 300);
-      } else if (proyecto.toLowerCase().includes("ona") || proyecto === "5") {
-        setTimeout(() => {
-          selectProperty(SYNTHETIC_ONA_PROPERTY, { skipHistoryPush: true });
-          hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: "direct_ona", propertyId: "5" }, "", window.location.href);
-        }, 300);
-      } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
-        setTimeout(() => {
-          selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
-          hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: "direct_eurodesign", propertyId: "1816" }, "", window.location.href);
-        }, 300);
+        selectProperty(target, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
       } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
-        setTimeout(() => {
-          selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
-          hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: "direct_garden_zen", propertyId: "garden-zen" }, "", window.location.href);
-        }, 300);
+        selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
+      } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
+        selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
+      } else if (proyecto.toLowerCase().includes("ona") || proyecto === "5") {
+        selectProperty(SYNTHETIC_ONA_PROPERTY, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
       } else if (
         proyecto.toLowerCase().includes("domus") ||
         ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
       ) {
         const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
-        setTimeout(() => {
-          selectProperty(domTarget, { skipHistoryPush: true });
-          hasSearchInteractionRef.current = true;
-          window.history.replaceState({ modal: `direct_${domTarget.id}`, propertyId: domTarget.id }, "", window.location.href);
-        }, 300);
+        selectProperty(domTarget, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
       }
     }
   }, [properties, selectedProperty, selectProperty]);
@@ -1351,24 +1347,29 @@ export default function MapPage() {
     setSelectedProperty(null);
 
     if (typeof window !== "undefined") {
+      const pathname = window.location.pathname.toLowerCase();
+      const isProjectRoute =
+        pathname.startsWith("/ona") ||
+        pathname.startsWith("/eurodesign") ||
+        pathname.startsWith("/gardenzen") ||
+        pathname.startsWith("/garden-zen") ||
+        pathname.startsWith("/zen") ||
+        pathname.startsWith("/domus") ||
+        pathname.startsWith("/proyecto") ||
+        pathname.startsWith("/p/");
+
       const url = new URL(window.location.href);
       const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
 
-      if (hasProjectParam) {
-        if (
-          window.history.state?.modal === "ona" ||
-          window.history.state?.modal === "eurodesign" ||
-          String(window.history.state?.modal || "").startsWith("domus")
-        ) {
-          window.history.back();
-        } else {
-          url.searchParams.delete("proyecto");
-          url.searchParams.delete("project");
-          url.searchParams.delete("p");
-          const cleanSearch = url.searchParams.toString();
-          const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
-          window.history.replaceState(null, "", cleanUrl || "/");
-        }
+      if (isProjectRoute) {
+        window.history.pushState(null, "", "/");
+      } else if (hasProjectParam) {
+        url.searchParams.delete("proyecto");
+        url.searchParams.delete("project");
+        url.searchParams.delete("p");
+        const cleanSearch = url.searchParams.toString();
+        const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
+        window.history.replaceState(null, "", cleanUrl || "/");
       }
     }
 

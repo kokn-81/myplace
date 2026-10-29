@@ -144,12 +144,17 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 * **Equipamiento de áreas comunes:** Lista detallada de lo que incluye cada espacio (mobiliario de diseño, climatización, parrillas de acero inoxidable, sonido ambiental).
 
 #### 4. Sección Tipologías Residenciales (`#tipologias`)
-* Tarjetas para cada tipología (ej. 1 Dormitorio 32 m², 2 Dormitorios 54 m², 2 Dormitorios Suite 92 m²).
-* Datos expuestos:
-  * Superficie construida y metraje de balcón.
-  * Orientación y tipo de vista.
-  * Precio base contado y precio por m².
-  * Estimación conservadora de alquiler mensual en USD y rentabilidad anual proyectada (%).
+* **Regla de Transparencia NIA (Estricta):** Queda **terminantemente prohibido prometer rendimientos exactos, rentas fijas o mostrar etiquetas de "Yield / Renta estimada"** en las tarjetas de tipología. Las tarjetas deben mantenerse limpias, arquitectónicas y enfocadas en la experiencia habitable.
+* **Datos expuestos en cada tarjeta:**
+  * Nombre de la tipología (ej. *Monoambiente*, *1 Dormitorio*, *2 Dormitorios*, *Penthouse*).
+  * Metraje útil y total (rango en m²).
+  * Precio preventa oficial: `Desde USD [precio mínimo disponible]`.
+  * Aspectos arquitectónicos clave (ej. balcón aterrazado, suite con vestidor, ventilación cruzada).
+  * Botón interactivo de llamado a la acción: `Ver unidades disponibles →` (desplaza directamente a `#disponibilidad`).
+* **Visualización interactiva de planos:**
+  * Tarjeta visual con plano 2D acotado y corte isométrico 3D de alta definición correspondiente a la tipología seleccionada.
+  * Etiquetas de especificaciones arquitectónicas aprobadas (ej. `Planta MP`, `Planta B1`, etc.).
+  * Botón directo: `Cotizar en Disponibilidad`.
 
 #### 5. Sección Equipamiento 100% Incluido (`#equipamiento`)
 * **Carrusel visual por ambiente:** Cocina, Dormitorio, Baños, Climatización, Iluminación.
@@ -222,25 +227,39 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Al hacer clic en cualquier sección, se realiza scroll suave y el menú se repliega.
   * Al subir de nuevo a la parte superior de la página, la burbuja desaparece automáticamente.
 
-### 5.3 Módulo Privado "Insights Asesor"
-* Modal protegido accesible desde el botón superior `TrendingUp`.
-* **Objetivo:** Equipar al asesor de ventas de N.I.A con información comercial estratégica que no debe saturar la landing del cliente:
-  * Argumentario de venta clave (por qué comprar en este proyecto).
-  * Manejo de objeciones transparente (ej. fecha de entrega, competencia de la zona).
-  * Tabla de plusvalía y rendimientos brutos proyectados por m² al momento de la entrega.
+### 5.3 Módulo Privado "Insights Asesor" & Análisis Financiero Responsable
+* **Acceso:** Modal protegido accesible desde el botón circular superior `TrendingUp`.
+* **Estructura en 3 Bloques Secuenciales:**
+  1. *Bloque 1: Ventajas Comerciales Clave (Qué destacar):* Argumentos diferenciales de arquitectura, ingeniería, sostenibilidad y ahorros en expensas.
+  2. *Bloque 2: Desventajas Transparentes & Manejo de Objeciones:* Respuestas sólidas a objeciones reales de la zona (ej. tiempos de entrega, cuota de reserva, competencia).
+  3. *Bloque 3: Escenario Financiero Estimado de Mercado (Plusvalía y Alquileres de Referencia):*
+     * Ubicación obligatoria: **Siempre después de las ventajas y desventajas de la zona**.
+     * Desglose de plusvalía estimada de preventa a entrega de obra (crecimiento de valor proyectado por m²).
+     * Rango referencial de alquiler amoblado mensual / Airbnb según demanda real en el cuadrante urbano.
+     * **Disclaimer de Cumplimiento & Transparencia NIA (Obligatorio):**
+       > *"Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. No constituyen una promesa o garantía contractual de rentabilidad fija. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario."*
 
 ---
 
-## 6. Integraciones Técnicas y Tracking
+## 6. Integraciones Técnicas, Enrutamiento y Tracking
 
-1. **Google Sheets Live Inventory:**
+1. **Enrutamiento y URLs Amigables por Proyecto:**
+   * Cada desarrollo inmobiliario cuenta con un enlace personal directo y limpio:
+     * *Garden Zen:* `nia-web.com/gardenzen`
+     * *Tower Eurodesign:* `nia-web.com/eurodesign`
+     * *ONA Residences:* `nia-web.com/ona`
+     * *Línea DOMUS:* `nia-web.com/domus/[slug]` (ej. `/domus-black`, `/domus-lux`)
+   * La entrada directa abre de inmediato la landing correspondiente con sus datos sintéticos cargados en 0 ms sin esperar la respuesta de red del catálogo general.
+   * El botón `Compartir` genera y copia siempre este enlace limpio.
+   * Al cerrar la landing, la URL vuelve suavemente a `/` sin recarga de página.
+2. **Google Sheets Live Inventory:**
    * Archivo CSV público de Google Sheets con columnas: `UNIDAD`, `PISO`, `TIPO`, `M2_TOTAL`, `ESTADO`, `PRECIO_CONTADO`, `PRECIO_PLAN60`, `PRECIO_PLAN40`.
    * Cache local en `localStorage` con timestamp para optimizar velocidad y evitar rate-limits.
-2. **Meta Pixel & Lead Tracking:**
+3. **Meta Pixel & Lead Tracking:**
    * Disparo de evento `PageView` al entrar.
    * Disparo de evento `Lead` (`trackOnaLead` / `fbq('track', 'Lead')`) inmediatamente al presionar el botón de reserva por WhatsApp.
    * Registro en el backend de N.I.A mediante `recordLeadEvent({ action: "contact_tap", ... })`.
-3. **Web Share API:**
+4. **Web Share API:**
    * Utilizar `navigator.share` nativo para teléfonos móviles y `navigator.clipboard.writeText` con mensaje de confirmación para navegadores de escritorio.
 
 ---
