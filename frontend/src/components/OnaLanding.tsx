@@ -1265,24 +1265,11 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           {/* 5. EQUIPAMIENTO E INCLUSIONES: LLAVE EN MANO */}
           <section id="equipamiento" ref={equipRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Sparkles size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                  Especificaciones &amp; Equipamiento
-                </p>
-              </div>
-
-              <a
-                href="/ona/especificaciones-equipamiento.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 transition-all hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
-                title="Descargar especificaciones oficiales en PDF"
-              >
-                <Download size={12} className="text-[#9a7b45]" />
-                <span>Equipamiento Oficial (PDF)</span>
-              </a>
+            <div className="flex items-center gap-2">
+              <Sparkles size={14} className="text-[#9a7b45]" />
+              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                Especificaciones &amp; Equipamiento
+              </p>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
