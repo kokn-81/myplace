@@ -516,7 +516,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              {projectConfig.name}. <br />
+              Vive en {projectConfig.name}. <br />
               <span className="italic font-normal text-[#8a6d3b]">
                 {projectConfig.tagline}
               </span>

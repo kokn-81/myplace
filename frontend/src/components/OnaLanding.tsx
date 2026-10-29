@@ -923,7 +923,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              ONA Residences. <br />
+              Vive en ONA Residences. <br />
               <span className="italic font-normal text-[#9a7b45]">
                 Un proyecto pensado para elevar tu forma de vivir.
               </span>

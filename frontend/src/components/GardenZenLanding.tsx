@@ -759,7 +759,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       <div ref={rightPanelRef} className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-5 py-8 pb-32 md:px-10 lg:px-14 md:py-14 md:pb-44">
 
-          {/* 1. HERO / VIVÍ GARDEN ZEN: EXPERIENCIA Y ESTILO DE VIDA */}
+          {/* 1. HERO / VIVE EN GARDEN ZEN: EXPERIENCIA Y ESTILO DE VIDA */}
           <section id="intro" ref={introRef} className="scroll-mt-6">
             <div className="flex items-center gap-2">
               <Sparkles size={14} className="text-[#9a7b45]" />
@@ -769,9 +769,9 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Garden Zen. <br />
+              Vive en Garden Zen. <br />
               <span className="italic font-normal text-[#9a7b45]">
-                Un proyecto pensado para vivir en calma, confort y consciencia.
+                Un proyecto pensado para vivir en calma y consciencia.
               </span>
             </h2>
 

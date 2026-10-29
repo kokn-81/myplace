@@ -125,7 +125,7 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 
 #### 1. Sección Hero & Experiencia (`#intro`)
 * **Eyebrow:** Ícono `Sparkles` + texto dorado en mayúsculas con tracking espaciado (`Experiencia Residencial & Preventa`).
-* **Titular Serif:** Nombre del proyecto + propuesta de valor emocional en cursiva dorada.
+* **Titular Serif:** Formato estándar `"Vive en [Nombre del Proyecto]."` + propuesta de valor emocional en cursiva dorada (ej. `Vive en Garden Zen.` / `Vive en ONA Residences.`).
 * **Tesis del proyecto:** Párrafo de 3 a 5 líneas justificadas explicando la ubicación, constructora y el perfil del comprador/inversor.
 * **Tarjeta de Tracción:** Muestra el número de unidades vendidas o reservadas en la fase actual para generar prueba social y urgencia legítima.
 * **Accesos rápidos:** Botón de descarga de Brochure y botón para saltar a disponibilidad.

@@ -662,7 +662,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Distinción & Vanguardia Europea. <br />
+              Vive en Tower Eurodesign. <br />
               <span className="italic font-normal text-[#7b4a2e]">
                 El nuevo estándar de confort y plusvalía en Equipetrol Norte.
               </span>
