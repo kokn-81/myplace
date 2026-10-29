@@ -214,9 +214,8 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Botón derecho: `[ Compartir ]` con icono de Share y feedback de copiado.
 
 ### 5.2 Burbuja Flotante de Navegación de Secciones
-* **Condición de activación:** Cuando la barra de opciones inicial de `#intro` se desplaza fuera de la pantalla (scroll hacia abajo), emerge una burbuja flotante en `bottom-20 right-4 sm:right-6 md:right-8 z-[125]`.
-* **Estado cerrado:** Píldora negra elegante con acento dorado: `[ ☰ Secciones ]`.
-* **Estado abierto:**
+* **Estado cerrado:** Botón circular negro elegante (`h-11 w-11 rounded-full`) con solo el icono dorado `Menu` (`☰`), sin texto visible.
+* **Estado abierto:** Muestra icono `X` dorado de cierre y despliega el menú.
   * Backdrop semitransparente que intercepta clics externos para cerrar.
   * Tarjeta flotante con efecto glassmorphism (`w-72`) que lista las 8 secciones con sus iconos correspondientes.
   * **Indicador en vivo:** Resalta con fondo dorado la sección exacta donde el usuario se encuentra leyendo.
@@ -252,7 +251,7 @@ Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 
 - [ ] ¿Los botones superiores son exactamente 4 iconos circulares limpios sin etiquetas de texto?
 - [ ] ¿El botón "Inicio" de la barra de navegación se desplaza al `#intro` sin recargar la página ni cerrar la landing?
-- [ ] ¿La burbuja flotante `[ ☰ Secciones ]` aparece únicamente cuando la barra de navegación principal se pierde de vista?
+- [ ] ¿El botón flotante de secciones es circular y solo muestra el icono (`Menu`/`X`), sin texto?
 - [ ] ¿El panel derecho en escritorio utiliza anchos amplios (`md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`) sin comprimir tarjetas a 3 columnas?
 - [ ] ¿En celular la vista se mantiene compacta e intacta (`max-w-xl`) con botones fácilmente pulsables con el pulgar?
 - [ ] ¿Las cuotas iniciales del Plan 60/40 y Plan 40/60 se muestran de manera explícita en dólares?

@@ -15,6 +15,7 @@ import {
   Layers,
   MapPin,
   Maximize2,
+  Menu,
   MessageCircle,
   RefreshCw,
   Share2,
@@ -1619,11 +1620,15 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <button
                 type="button"
                 onClick={() => setFloatingNavOpen((prev) => !prev)}
-                className="flex items-center gap-2 rounded-full bg-stone-900/95 px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white shadow-2xl backdrop-blur-md border border-white/15 transition-all hover:bg-black hover:scale-105 active:scale-95 cursor-pointer"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-900/95 text-white shadow-2xl backdrop-blur-md border border-white/15 transition-all hover:bg-black hover:scale-105 active:scale-95 cursor-pointer"
                 aria-label="Menú de Secciones"
+                title="Navegar secciones del proyecto"
               >
-                <span className="flex h-2 w-2 rounded-full bg-[#9a7b45] animate-pulse" />
-                <span className="font-semibold">Secciones</span>
+                {floatingNavOpen ? (
+                  <X size={18} className="text-[#e8d5a8]" />
+                ) : (
+                  <Menu size={18} className="text-[#e8d5a8]" />
+                )}
               </button>
 
               <AnimatePresence>

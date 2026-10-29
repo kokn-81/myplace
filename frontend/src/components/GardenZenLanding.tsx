@@ -2042,20 +2042,14 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               whileTap={{ scale: 0.94 }}
               whileHover={{ scale: 1.05 }}
               onClick={() => setFloatingNavOpen((prev) => !prev)}
-              className="relative z-[128] flex items-center gap-2 rounded-full border border-stone-800/80 bg-stone-900/95 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white shadow-2xl backdrop-blur-md transition-all hover:bg-black hover:shadow-black/25 cursor-pointer"
+              className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl backdrop-blur-md transition-all hover:bg-black hover:shadow-black/25 cursor-pointer"
               aria-label="Menú de secciones"
               title="Navegar secciones del proyecto"
             >
               {floatingNavOpen ? (
-                <>
-                  <X size={15} className="text-[#e8d5a8]" />
-                  <span>Cerrar</span>
-                </>
+                <X size={18} className="text-[#e8d5a8]" />
               ) : (
-                <>
-                  <Menu size={15} className="text-[#e8d5a8]" />
-                  <span>Secciones</span>
-                </>
+                <Menu size={18} className="text-[#e8d5a8]" />
               )}
             </motion.button>
           </div>
