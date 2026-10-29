@@ -14,6 +14,7 @@ import {
   DollarSign,
   Download,
   ExternalLink,
+  Home,
   Layers,
   MapPin,
   MessageCircle,
@@ -590,6 +591,35 @@ export default function OnaLanding({ property, onClose }: Props) {
     }
   };
 
+  const handleGoHome = () => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("proyecto");
+      url.searchParams.delete("project");
+      url.searchParams.delete("p");
+      const cleanSearch = url.searchParams.toString();
+      const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
+      window.history.replaceState(null, "", cleanUrl || "/");
+    }
+
+    if (onClose) {
+      onClose();
+    } else if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const searchInput = document.querySelector<HTMLInputElement>(
+          ".nia-mobile-search-form input, input[placeholder*='buscar'], input[placeholder*='Encuentra']"
+        );
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+    }
+  };
+
   const introRef = useRef<HTMLElement>(null);
   const placeRef = useRef<HTMLElement>(null);
   const amenitiesRef = useRef<HTMLElement>(null);
@@ -912,7 +942,16 @@ export default function OnaLanding({ property, onClose }: Props) {
 
 
             {/* Accesos rápidos de navegación */}
-            <nav className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
+            <nav className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
+              <button
+                type="button"
+                onClick={handleGoHome}
+                className="inline-flex items-center gap-1.5 font-bold text-stone-900 hover:text-[#9a7b45] transition-colors cursor-pointer bg-stone-100 hover:bg-[#9a7b45]/15 px-2.5 py-1 rounded-full text-xs"
+                title="Ir a la barra de búsqueda e inicio de N.I.A"
+              >
+                <Home size={13} className="text-[#9a7b45]" />
+                <span>Inicio</span>
+              </button>
               <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
               <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
               <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
