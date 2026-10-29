@@ -24,35 +24,69 @@ export interface GardenZenUnit {
   planoUrl: string;
 }
 
+export interface GardenZenParking {
+  code: string;
+  floor: string;
+  price: number;
+  areaM2: number;
+  kind: "techado" | "exterior" | "moto" | "baulera";
+  status: "disponible" | "vendido" | "bloqueado";
+  comment?: string;
+}
+
 export const GARDEN_ZEN_CONFIG = {
   id: "garden-zen",
   name: "Garden Zen",
+  builder: "Garden Buildings",
+  builderUrl: "https://gardenbuildings.com.bo/",
   zone: "Equipetrol Norte",
-  address: "Calle Dra. María de Oliveira, Equipetrol Norte",
+  address: "Calle Dra. María de Oliveira, Equipetrol Norte (Barrio Brígida)",
   city: "Santa Cruz de la Sierra",
   delivery: "Marzo 2027",
   constructionStatus: "En etapa de obra fina",
   totalUnits: 61,
-  floorsCount: 13,
-  reservaUsd: 1500,
+  floorsCount: 16,
+  reservaUsd: 5000,
   minPriceUsd: 56210,
   driveUrl: "https://drive.google.com/drive/folders/15ckBWfu8u0HOc4RR-VjhJsrD37G2a8ig",
-  sheetUrl: "https://docs.google.com/spreadsheets/d/15lzhDdyVY83KGl311yOAVSaJdhssyM6dv4jcEZsNvnk/edit?usp=sharing",
+  sheetUrl: "https://docs.google.com/spreadsheets/d/15lzhDdyVY83KGl311yOAVSaJdhssyM6dv4jcEZsNvnk/htmlview",
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/15lzhDdyVY83KGl311yOAVSaJdhssyM6dv4jcEZsNvnk/export?format=csv",
+  parkingsCsvUrl: "https://docs.google.com/spreadsheets/d/15lzhDdyVY83KGl311yOAVSaJdhssyM6dv4jcEZsNvnk/export?format=csv&gid=2130763003",
+  brochurePdfUrl: "/garden_zen/presentacion_garden_zen.pdf",
   amenities: [
-    "Piscina sinfín panorámica",
-    "Jardines flotantes & ambiente relax",
-    "Gym inteligente & calistenia",
-    "Sauna seco y sauna vapor",
-    "Doble churrasquera gourmet",
-    "Salón de uso múltiple",
-    "Espacio Co-Work",
-    "Pet Spa",
-    "Paneles solares (60% menos energía)",
-    "Recolección agua lluvia (30% menos agua)",
-    "Ingreso automatizado & doble ascensor"
+    "Piscina Izumi sinfín con deck panorámico (Piso 17)",
+    "Doble sauna: Sauna Seco Ki & Sauna Vapor Mizu",
+    "Gimnasio Tecnológico Kinō",
+    "Espacio Co-Work Nōka climatizado",
+    "Salón Haku de uso múltiple",
+    "Doble churrasquera gourmet Ensō & Kōen",
+    "Área de Calistenia & Pet Spa",
+    "Lobby Zen con ingreso inteligente automatizado",
+    "Paneles solares ON-GRID (60% menos energía comunal)",
+    "Cosecha y reutilización de agua pluvial (30% ahorro)",
+    "Reducción del 50% en expensas de por vida"
   ]
 };
+
+export const GARDEN_ZEN_PARKINGS: GardenZenParking[] = [
+  { code: "P01", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P02", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P03", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P04", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P05", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P13", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P14", floor: "Subsuelo", price: 13000, areaM2: 14.0, kind: "techado", status: "disponible" },
+  { code: "P15", floor: "Subsuelo", price: 13000, areaM2: 14.0, kind: "techado", status: "disponible" },
+  { code: "P17", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P19", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "P20", floor: "Subsuelo", price: 12000, areaM2: 12.5, kind: "techado", status: "disponible" },
+  { code: "PB01", floor: "Planta Baja", price: 12500, areaM2: 12.5, kind: "exterior", status: "disponible" },
+  { code: "PB02", floor: "Planta Baja", price: 12500, areaM2: 12.5, kind: "exterior", status: "disponible" },
+  { code: "PB10", floor: "Planta Baja", price: 12500, areaM2: 12.5, kind: "exterior", status: "disponible" },
+  { code: "01", floor: "Subsuelo", price: 7500, areaM2: 3.75, kind: "moto", status: "disponible" },
+  { code: "02", floor: "Subsuelo", price: 7500, areaM2: 3.75, kind: "moto", status: "disponible" },
+  { code: "B03", floor: "Piso 1", price: 3700, areaM2: 7.22, kind: "baulera", status: "disponible" },
+];
 
 export function formatGardenZenUsd(val: number): string {
   return Math.round(val).toLocaleString("es-BO");

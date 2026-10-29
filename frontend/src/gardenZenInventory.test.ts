@@ -12,6 +12,7 @@ test("Garden Zen config is valid", () => {
   assert.equal(GARDEN_ZEN_CONFIG.name, "Garden Zen");
   assert.equal(GARDEN_ZEN_CONFIG.zone, "Equipetrol Norte");
   assert.equal(GARDEN_ZEN_CONFIG.delivery, "Marzo 2027");
+  assert.equal(GARDEN_ZEN_CONFIG.reservaUsd, 5000);
   assert.ok(GARDEN_ZEN_CONFIG.amenities.length >= 8);
 });
 
