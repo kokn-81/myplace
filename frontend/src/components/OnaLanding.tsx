@@ -769,46 +769,38 @@ export default function OnaLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
-      {/* Botones Flotantes: Insights Asesor, Brochure, Compartir y Cerrar */}
+      {/* Botones Flotantes Superiores: Insights Asesor, Brochure, Compartir y Cerrar (Solo Logos) */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button
           onClick={() => setShowAdvisorInsights(true)}
-          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-800 shadow-xl backdrop-blur transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl backdrop-blur transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
           aria-label="Insights Asesor"
-          title="Abrir Argumentario de Venta y Ventajas Comerciales (Privado Asesor)"
+          title="Insights Asesor · Argumentario de Venta y Ventajas Comerciales"
         >
-          <TrendingUp size={16} className="text-[#9a7b45]" />
-          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Insights Asesor</span>
+          <TrendingUp size={18} className="text-[#9a7b45]" />
         </button>
 
         <a
           href="/ona/brochure.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-          aria-label="Descargar Brochure"
-          title="Descargar Brochure Oficial en PDF"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          aria-label="Descargar Brochure Oficial"
+          title="Descargar Brochure Oficial (PDF)"
         >
-          <Download size={16} className="text-[#9a7b45]" />
-          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Brochure PDF</span>
+          <Download size={18} className="text-[#9a7b45]" />
         </a>
 
         <button
           onClick={handleShareOna}
-          className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/95 px-3.5 py-2.5 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
           aria-label="Compartir"
-          title="Compartir ONA Residences"
+          title={shareFeedback ? "¡Enlace copiado!" : "Compartir ONA Residences"}
         >
           {shareFeedback ? (
-            <>
-              <Check size={18} className="text-emerald-600" />
-              <span className="text-[11px] font-semibold text-emerald-700">¡Copiado!</span>
-            </>
+            <Check size={18} className="text-emerald-600" />
           ) : (
-            <>
-              <Share2 size={16} />
-              <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wider">Compartir</span>
-            </>
+            <Share2 size={18} className="text-stone-800" />
           )}
         </button>
 
