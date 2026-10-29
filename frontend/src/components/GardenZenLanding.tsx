@@ -1080,6 +1080,95 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 );
               })}
             </div>
+
+            {/* Visualización interactiva del Plano Arquitectónico 2D + Corte 3D */}
+            {(() => {
+              const visualMap: Record<string, { code: string; name: string; area: string; image: string; desc: string; pills: string[] }> = {
+                mono: {
+                  code: "MP",
+                  name: "Monoambiente Zen (Studio)",
+                  area: "Desde 40.15 m²",
+                  image: "/garden_zen/preview_page_22.jpg",
+                  desc: "Distribución en L que independiza el área de descanso de la cocina integrada. Incluye mesón desayunador, espacio de lavandería oculto y ventanal con balcón aterrazado.",
+                  pills: ["Balcón integrado", "Mesón cuarzo blanco", "Lavandería privada", "Chapa inteligente"]
+                },
+                "1d": {
+                  code: "B1",
+                  name: "1 Dormitorio Master Suite",
+                  area: "Desde 46.10 m²",
+                  image: "/garden_zen/preview_page_26.jpg",
+                  desc: "Espaciosa suite con walking closet, sala de estar conectada a balcón aterrazado y cocina americana con doble frente de mesones de cuarzo blanco.",
+                  pills: ["Balcón aterrazado", "Walking closet con divisiones", "Doble mesón cocina", "Aires acondicionados instalados"]
+                },
+                "2d": {
+                  code: "D2",
+                  name: "2 Dormitorios Family Suite",
+                  area: "Desde 66.83 m²",
+                  image: "/garden_zen/preview_page_30.jpg",
+                  desc: "Máxima privacidad con dormitorios en extremos opuestos. Amplio living comedor con balcón corrido y cocina integrada de concepto abierto.",
+                  pills: ["Dormitorio en Master Suite", "2 Baños con piedra sinterizada", "Balcón corrido", "Comedor para 6 personas"]
+                },
+                "3d": {
+                  code: "E2",
+                  name: "Penthouse & Gran Suite",
+                  area: "Desde 96.55 m²",
+                  image: "/garden_zen/preview_page_32.jpg",
+                  desc: "Planta extendida en niveles superiores con doble orientación, master suite con vestidor, ventanales de piso a techo y amplia terraza panorámica.",
+                  pills: ["Doble orientación", "Terraza panorámica", "Master vestidor", "Cocina con isla central"]
+                }
+              };
+
+              const currentVisual = visualMap[selectedAmbId] || visualMap["mono"];
+
+              return (
+                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm transition-all">
+                  <div className="p-4 sm:p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold text-white tracking-wider">
+                          PLANTA {currentVisual.code}
+                        </span>
+                        <span className="font-serif text-lg font-medium text-stone-900">
+                          {currentVisual.name}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-stone-500 font-light">
+                        Superficie: <strong className="font-semibold text-stone-800">{currentVisual.area}</strong> · Plano oficial de arquitectura Garden Zen
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection("disponibilidad")}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-medium text-white transition-all hover:bg-[#9a7b45] active:scale-95"
+                    >
+                      Cotizar en Disponibilidad
+                      <ArrowRight size={13} />
+                    </button>
+                  </div>
+
+                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={currentVisual.image}
+                      alt={`Plano arquitectónico tipología ${currentVisual.name}`}
+                      className="h-full w-full object-contain p-2"
+                    />
+                  </div>
+
+                  <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
+                    <p className="text-xs text-stone-600 font-light leading-relaxed">
+                      {currentVisual.desc}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {currentVisual.pills.map((pill, idx) => (
+                        <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">
+                          ✓ {pill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </section>
 
           {/* 5. EQUIPAMIENTO 100% INCLUIDO (LLAVE EN MANO) */}
