@@ -17,6 +17,7 @@ import {
   Home,
   Layers,
   MapPin,
+  Menu,
   MessageCircle,
   Percent,
   RefreshCw,
@@ -591,34 +592,13 @@ export default function OnaLanding({ property, onClose }: Props) {
     }
   };
 
-  const handleGoHome = () => {
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("proyecto");
-      url.searchParams.delete("project");
-      url.searchParams.delete("p");
-      const cleanSearch = url.searchParams.toString();
-      const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
-      window.history.replaceState(null, "", cleanUrl || "/");
-    }
+  const [activeSectionId, setActiveSectionId] = useState<string>("intro");
+  const [showFloatingNav, setShowFloatingNav] = useState(false);
+  const [floatingNavOpen, setFloatingNavOpen] = useState(false);
 
-    if (onClose) {
-      onClose();
-    } else if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
-
-    if (typeof window !== "undefined") {
-      setTimeout(() => {
-        const searchInput = document.querySelector<HTMLInputElement>(
-          ".nia-mobile-search-form input, input[placeholder*='buscar'], input[placeholder*='Encuentra']"
-        );
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-    }
-  };
+  const outerContainerRef = useRef<HTMLDivElement>(null);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const navBarRef = useRef<HTMLElement>(null);
 
   const introRef = useRef<HTMLElement>(null);
   const placeRef = useRef<HTMLElement>(null);
@@ -631,11 +611,74 @@ export default function OnaLanding({ property, onClose }: Props) {
   const disponibilidadRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLElement>(null);
 
+  const SECTIONS_NAV = [
+    { id: "intro", label: "Inicio", icon: Home, hint: "Presentación y portada" },
+    { id: "lugar", label: "Ubicación", icon: MapPin, hint: "Los Cusis y conectividad" },
+    { id: "amenidades", label: "Áreas Sociales", icon: Sparkles, hint: "Piscina, Sky Bar y Lounge" },
+    { id: "tipologias", label: "Tipologías", icon: Layers, hint: "1 y 2 Dormitorios" },
+    { id: "equipamiento", label: "Equipamiento", icon: CheckCircle2, hint: "100% Equipado llave en mano" },
+    { id: "constructora", label: "Constructora", icon: ShieldCheck, hint: "Palacios Antunez (+42 años)" },
+    { id: "pago", label: "Formas de Pago", icon: CreditCard, hint: "Planes 60/40 y 40/60" },
+    { id: "disponibilidad", label: "Disponibilidad en Vivo", icon: Building2, hint: "Inventario y cotizador" },
+  ];
+
+  const scrollToSection = (sectionId: string) => {
+    setFloatingNavOpen(false);
+    if (sectionId === "intro") {
+      if (introRef.current) {
+        introRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (rightPanelRef.current) {
+        rightPanelRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (outerContainerRef.current) {
+        outerContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
+
+    const targetEl = document.getElementById(sectionId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const scrollEquip = (direction: "left" | "right") => {
     if (!equipCarouselRef.current) return;
     const offset = direction === "left" ? -330 : 330;
     equipCarouselRef.current.scrollBy({ left: offset, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const checkNavVisibility = () => {
+      if (!navBarRef.current) return;
+      const rect = navBarRef.current.getBoundingClientRect();
+      // Si la barra de navegación ya subió y quedó fuera de la vista
+      const isPast = rect.bottom < 50;
+      setShowFloatingNav(isPast);
+      if (!isPast) {
+        setFloatingNavOpen(false);
+      }
+    };
+
+    const rightEl = rightPanelRef.current;
+    const outerEl = outerContainerRef.current;
+
+    rightEl?.addEventListener("scroll", checkNavVisibility, { passive: true });
+    outerEl?.addEventListener("scroll", checkNavVisibility, { passive: true });
+    window.addEventListener("scroll", checkNavVisibility, { passive: true });
+
+    checkNavVisibility();
+
+    return () => {
+      rightEl?.removeEventListener("scroll", checkNavVisibility);
+      outerEl?.removeEventListener("scroll", checkNavVisibility);
+      window.removeEventListener("scroll", checkNavVisibility);
+    };
+  }, []);
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
@@ -659,6 +702,7 @@ export default function OnaLanding({ property, onClose }: Props) {
         if (!scene) return;
         setActiveImage(scene.src);
         setActiveLabel(scene.label);
+        setActiveSectionId(visible.target.id);
       },
       { threshold: [0.22, 0.5] }
     );
@@ -719,6 +763,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
   return (
     <motion.div
+      ref={outerContainerRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -873,7 +918,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       </div>
 
       {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
-      <div className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
+      <div ref={rightPanelRef} className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-5 py-8 pb-32 md:px-10 lg:px-14 md:py-14 md:pb-44">
 
           {/* 1. HERO / ONA RESIDENCES: EXPERIENCIA Y ESTILO DE VIDA */}
@@ -942,23 +987,68 @@ export default function OnaLanding({ property, onClose }: Props) {
 
 
             {/* Accesos rápidos de navegación */}
-            <nav className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500">
+            <nav
+              ref={navBarRef}
+              className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500"
+            >
               <button
                 type="button"
-                onClick={handleGoHome}
+                onClick={() => scrollToSection("intro")}
                 className="inline-flex items-center gap-1.5 font-bold text-stone-900 hover:text-[#9a7b45] transition-colors cursor-pointer bg-stone-100 hover:bg-[#9a7b45]/15 px-2.5 py-1 rounded-full text-xs"
-                title="Ir a la barra de búsqueda e inicio de N.I.A"
+                title="Ir al inicio de la presentación de ONA"
               >
                 <Home size={13} className="text-[#9a7b45]" />
                 <span>Inicio</span>
               </button>
-              <a href="#lugar" className="hover:text-stone-950 transition-colors">Ubicación</a>
-              <a href="#amenidades" className="hover:text-stone-950 transition-colors">Áreas Sociales</a>
-              <a href="#tipologias" className="hover:text-stone-950 transition-colors">Tipologías</a>
-              <a href="#equipamiento" className="hover:text-stone-950 transition-colors font-semibold text-[#9a7b45]">Equipamiento</a>
-              <a href="#constructora" className="hover:text-stone-950 transition-colors font-semibold text-stone-700">Constructora</a>
-              <a href="#pago" className="hover:text-stone-950 transition-colors">Formas de Pago</a>
-              <a href="#disponibilidad" className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors">Disponibilidad en Vivo</a>
+              <button
+                type="button"
+                onClick={() => scrollToSection("lugar")}
+                className="hover:text-stone-950 transition-colors cursor-pointer"
+              >
+                Ubicación
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("amenidades")}
+                className="hover:text-stone-950 transition-colors cursor-pointer"
+              >
+                Áreas Sociales
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("tipologias")}
+                className="hover:text-stone-950 transition-colors cursor-pointer"
+              >
+                Tipologías
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("equipamiento")}
+                className="hover:text-stone-950 transition-colors font-semibold text-[#9a7b45] cursor-pointer"
+              >
+                Equipamiento
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("constructora")}
+                className="hover:text-stone-950 transition-colors font-semibold text-stone-700 cursor-pointer"
+              >
+                Constructora
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("pago")}
+                className="hover:text-stone-950 transition-colors cursor-pointer"
+              >
+                Formas de Pago
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("disponibilidad")}
+                className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors cursor-pointer"
+              >
+                Disponibilidad en Vivo
+              </button>
             </nav>
           </section>
 
@@ -2404,6 +2494,126 @@ export default function OnaLanding({ property, onClose }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* BURBUJA FLOTANTE DE NAVEGACIÓN RÁPIDA DE SECCIONES (aparece al perder de vista la barra de opciones) */}
+      <AnimatePresence>
+        {showFloatingNav && (
+          <div className="fixed bottom-20 right-4 sm:right-6 md:right-8 z-[125] flex flex-col items-end">
+            {/* MENÚ DESPLEGABLE DE SECCIONES */}
+            <AnimatePresence>
+              {floatingNavOpen && (
+                <>
+                  {/* Backdrop para cerrar al hacer clic afuera */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setFloatingNavOpen(false)}
+                    className="fixed inset-0 z-[126] bg-black/25 backdrop-blur-[2px]"
+                  />
+
+                  {/* Tarjeta flotante del menú de secciones */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 14 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 14 }}
+                    transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                    className="relative z-[127] mb-3 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-stone-200/90 bg-white/95 p-2.5 shadow-2xl backdrop-blur-xl text-stone-900"
+                  >
+                    <div className="flex items-center justify-between border-b border-stone-100 px-2.5 pb-2 pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-[#9a7b45] animate-pulse" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+                          Secciones de ONA
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFloatingNavOpen(false)}
+                        className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors cursor-pointer"
+                        title="Cerrar menú"
+                      >
+                        <X size={15} />
+                      </button>
+                    </div>
+
+                    <div className="mt-1 space-y-0.5 max-h-[60vh] overflow-y-auto py-1">
+                      {SECTIONS_NAV.map((sec) => {
+                        const IconComponent = sec.icon;
+                        const isActive =
+                          activeSectionId === sec.id ||
+                          (sec.id === "disponibilidad" && activeSectionId === "cierre");
+                        return (
+                          <button
+                            key={sec.id}
+                            type="button"
+                            onClick={() => scrollToSection(sec.id)}
+                            className={`w-full flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-xs transition-all cursor-pointer ${
+                              isActive
+                                ? "bg-[#9a7b45]/15 text-[#816127] font-semibold shadow-xs"
+                                : "text-stone-700 hover:bg-stone-100/90 hover:text-stone-950 font-normal"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div
+                                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                                  isActive
+                                    ? "bg-[#9a7b45] text-white"
+                                    : "bg-stone-100 text-stone-500"
+                                }`}
+                              >
+                                <IconComponent size={14} />
+                              </div>
+                              <div className="min-w-0 truncate">
+                                <p className="truncate text-xs leading-tight">
+                                  {sec.label}
+                                </p>
+                                <p className="text-[10px] text-stone-400 font-light truncate">
+                                  {sec.hint}
+                                </p>
+                              </div>
+                            </div>
+                            {isActive && (
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+
+            {/* BOTÓN / BURBUJA FLOTANTE CON ICONO DE MENÚ */}
+            <motion.button
+              type="button"
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              whileTap={{ scale: 0.94 }}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => setFloatingNavOpen((prev) => !prev)}
+              className="relative z-[128] flex items-center gap-2 rounded-full border border-stone-800/80 bg-stone-900/95 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white shadow-2xl backdrop-blur-md transition-all hover:bg-black hover:shadow-black/25 cursor-pointer"
+              aria-label="Menú de secciones"
+              title="Navegar secciones del proyecto"
+            >
+              {floatingNavOpen ? (
+                <>
+                  <X size={15} className="text-[#e8d5a8]" />
+                  <span>Cerrar</span>
+                </>
+              ) : (
+                <>
+                  <Menu size={15} className="text-[#e8d5a8]" />
+                  <span>Secciones</span>
+                </>
+              )}
+            </motion.button>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* MODAL / DRAWER PRIVADO: INSIGHTS DE ASESOR & ARGUMENTARIO COMERCIAL */}
       <AnimatePresence>
         {showAdvisorInsights && (
