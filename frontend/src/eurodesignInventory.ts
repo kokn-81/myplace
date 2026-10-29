@@ -29,9 +29,40 @@ export const EURODESIGN_ZONE = "Equipetrol";
 export const EURODESIGN_ADDRESS = "Calle Enrique Finot esq. La Plata / 9 Oeste, Equipetrol Norte";
 export const EURODESIGN_CITY = "Santa Cruz de la Sierra";
 export const EURODESIGN_DELIVERY = "Junio 2027";
-export const EURODESIGN_CONSTRUCTION_STATUS = "Obra gruesa al 100% en loza piso 18 (visitas a obra martes y viernes)";
+export const EURODESIGN_CONSTRUCTION_STATUS = "Obra gruesa al 100% en losa piso 18 (visitas a obra martes y viernes)";
 export const EURODESIGN_PARKING_USD = 12500;
 export const EURODESIGN_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/export?format=csv";
+
+export const EURODESIGN_CONFIG = {
+  id: "eurodesign",
+  name: "Tower Eurodesign",
+  builder: "Desarrollo Eurodesign",
+  builderUrl: "https://maps.google.com/?q=Tower+Eurodesign+Equipetrol+Santa+Cruz",
+  zone: "Equipetrol Norte",
+  address: "Calle Enrique Finot esq. La Plata / 9 Oeste, Equipetrol Norte",
+  city: "Santa Cruz de la Sierra",
+  delivery: "Junio 2027",
+  constructionStatus: "Obra gruesa al 100% en losa piso 18",
+  totalUnits: 72,
+  floorsCount: 18,
+  reservaUsd: 1000,
+  minPriceUsd: 71780,
+  parkingPriceUsd: 12500,
+  sheetUrl: "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/htmlview",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/export?format=csv",
+  brochurePdfUrl: "/eurodesign/presentacion_eurodesign_tower.pdf",
+  mapsUrl: "https://www.google.com/maps/place/17%C2%B045'41.4%22S+63%C2%B011'49.9%22W/@-17.7615,-63.197194,17z",
+  amenities: [
+    "Piscina Panorámica & Sky Deck 360° en Piso 18",
+    "Sky Bar & Piscina Nocturna climatizada",
+    "Sala Lounge & Club Social para eventos",
+    "Gimnasio Panorámico Climatizado con vistas a Equipetrol",
+    "Lobby de Doble Altura revestido en porcelanato y maderas nobles",
+    "Salón de Espera & Living Exclusivo para visitas",
+    "Locales Comerciales & Oficinas corporativas en Planta Baja",
+    "Seguridad automatizada 24/7 y doble ascensor de alta velocidad",
+  ],
+};
 
 export function formatEurodesignUsd(val: number): string {
   return Math.round(val).toLocaleString("es-BO");
