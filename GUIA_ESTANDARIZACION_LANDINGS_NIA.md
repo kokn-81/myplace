@@ -136,6 +136,7 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 #### 2. Sección Ubicación Privilegiada (`#lugar`)
 * Distancias reales en minutos hacia puntos estratégicos (centros financieros, gastronómicos, colegios y avenidas).
 * **Factor diferencial de ingeniería:** Destacar la cota topográfica de la zona y el sistema de drenaje pluvial para disipar el temor a inundaciones.
+* **Botón de Google Maps:** Enlace estilizado inferior derecho (`VER UBICACIÓN EN GOOGLE MAPS`) con ícono `MapPin` y tracking uppercase dorado, apuntando a la ficha satelital verificada.
 
 #### 3. Sección Áreas Sociales & Bienestar (`#amenidades`)
 * **Carrusel visual de amenidades:** Fotos reales/renders con títulos, categorías y descripciones claras.

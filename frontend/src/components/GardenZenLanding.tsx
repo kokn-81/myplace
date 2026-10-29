@@ -922,6 +922,17 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   <p className="text-stone-500 font-light">Gastronomía y entretenimiento</p>
                 </div>
               </div>
+
+              <div className="border-t border-stone-100 p-4 pt-3 text-right">
+                <a
+                  href={GARDEN_ZEN_CONFIG.mapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#9a7b45] hover:underline cursor-pointer"
+                >
+                  <MapPin size={13} /> Ver ubicación en Google Maps
+                </a>
+              </div>
             </div>
           </section>
 
