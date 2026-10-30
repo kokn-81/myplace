@@ -1538,52 +1538,81 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               {activeFinancials && activeUnit && (
                 <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-b border-stone-100 pb-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                        Inversión Total
-                      </p>
-                      <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-0.5">
-                        USD {formatEurodesignUsd(activeFinancials.totalPrice)}
-                      </p>
-                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">
-                        USD {formatEurodesignUsd(activeFinancials.pricePerM2)} / m²
-                      </p>
+                    <div className="flex flex-col justify-between">
+                      <div className="min-h-[28px] flex items-end">
+                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
+                          Inversión Total
+                        </p>
+                      </div>
+                      <div className="mt-1">
+                        <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                          USD {formatEurodesignUsd(activeFinancials.totalPrice)}
+                        </p>
+                        <p className="text-[10px] text-stone-500 font-mono mt-0.5">
+                          USD {formatEurodesignUsd(activeFinancials.pricePerM2)} / m²
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                        Cuota Inicial ({selectedPlan === "contado" ? "100%" : "40%"})
-                      </p>
-                      <p className="font-serif text-xl sm:text-2xl font-bold text-[#816127] mt-0.5">
-                        USD {formatEurodesignUsd(activeFinancials.initialPayment)}
-                      </p>
-                      <p className="text-[10px] text-stone-500 mt-0.5">
-                        A la firma del contrato
-                      </p>
+                    <div className="flex flex-col justify-between">
+                      <div className="min-h-[28px] flex items-end">
+                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
+                          Cuota Inicial ({selectedPlan === "contado" ? "100%" : "40%"})
+                        </p>
+                      </div>
+                      <div className="mt-1">
+                        <p className="font-serif text-xl sm:text-2xl font-bold text-[#816127]">
+                          USD {formatEurodesignUsd(activeFinancials.initialPayment)}
+                        </p>
+                        <p className="text-[10px] text-stone-500 mt-0.5">
+                          A la firma del contrato
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                        Saldo contra Entrega
-                      </p>
-                      <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-0.5">
-                        USD {formatEurodesignUsd(activeFinancials.balancePayment)}
-                      </p>
-                      <p className="text-[10px] text-stone-500 mt-0.5">
-                        En {EURODESIGN_DELIVERY}
-                      </p>
+                    <div className="flex flex-col justify-between">
+                      <div className="min-h-[28px] flex items-end">
+                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
+                          Saldo contra Entrega
+                        </p>
+                      </div>
+                      <div className="mt-1">
+                        {activeFinancials.balancePayment > 0 ? (
+                          <>
+                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                              USD {formatEurodesignUsd(activeFinancials.balancePayment)}
+                            </p>
+                            <p className="text-[10px] text-stone-500 mt-0.5">
+                              En {EURODESIGN_DELIVERY}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-400">
+                              —
+                            </p>
+                            <p className="text-[10px] text-stone-400 mt-0.5">
+                              Sin saldo pendiente
+                            </p>
+                          </>
+                        )}
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold">
-                        Plusvalía Proyectada
-                      </p>
-                      <p className="font-serif text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5">
-                        +USD {formatEurodesignUsd(activeFinancials.capitalGain)}
-                      </p>
-                      <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
-                        +{activeFinancials.gainPercentage}% en dólares
-                      </p>
+                    <div className="flex flex-col justify-between">
+                      <div className="min-h-[28px] flex items-end">
+                        <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold leading-tight">
+                          Plusvalía Proyectada
+                        </p>
+                      </div>
+                      <div className="mt-1">
+                        <p className="font-serif text-xl sm:text-2xl font-bold text-emerald-600">
+                          +USD {formatEurodesignUsd(activeFinancials.capitalGain)}
+                        </p>
+                        <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                          +{activeFinancials.gainPercentage}% en dólares
+                        </p>
+                      </div>
                     </div>
                   </div>
 
