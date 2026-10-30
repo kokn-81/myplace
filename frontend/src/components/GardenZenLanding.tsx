@@ -1355,21 +1355,20 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </h3>
                   <p className="text-xs text-stone-500 mt-0.5">PM² $1.500 USD/m²</p>
 
-                  <div className="mt-4 rounded-xl bg-white border border-stone-100 p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Cuota Inicial (30%)
-                    </p>
-                    <p className="font-serif text-xl font-bold text-[#816127] mt-0.5">
-                      {activeFinancials ? `USD ${formatGardenZenUsd(activeFinancials.unitInitial)}` : "30% a la firma"}
-                    </p>
-                    <p className="text-[11px] text-stone-500 mt-1">
-                      Saldo restante: <strong>70% contra entrega</strong>
-                    </p>
+                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-500 font-light">Cuota a la firma:</span>
+                      <strong className="font-semibold text-stone-900">30% del valor</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
+                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
+                      <strong className="font-semibold text-[#816127]">70% (Marzo 2027)</strong>
+                    </div>
                   </div>
                 </div>
 
                 <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Entrada accesible hoy. El 70% restante se liquida recién en Marzo 2027 (con fondos propios o crédito bancario).
+                  Entrada accesible hoy. Congelas con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} de reserva y el 70% restante se liquida recién a la entrega de llaves (apto crédito bancario).
                 </p>
               </div>
 
@@ -1391,21 +1390,20 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </h3>
                   <p className="text-xs text-stone-500 mt-0.5">PM² $1.450 USD/m² (-$50/m²)</p>
 
-                  <div className="mt-4 rounded-xl bg-white border border-stone-100 p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Cuota Inicial (70%)
-                    </p>
-                    <p className="font-serif text-xl font-bold text-[#816127] mt-0.5">
-                      {activeFinancials ? `USD ${formatGardenZenUsd(activeFinancials.unitInitial)}` : "70% a la firma"}
-                    </p>
-                    <p className="text-[11px] text-stone-500 mt-1">
-                      Saldo restante: <strong>30% contra entrega</strong>
-                    </p>
+                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-500 font-light">Cuota a la firma:</span>
+                      <strong className="font-semibold text-stone-900">70% del valor</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
+                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
+                      <strong className="font-semibold text-[#816127]">30% (Marzo 2027)</strong>
+                    </div>
                   </div>
                 </div>
 
                 <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Descuento directo por m² adelantando el 70% a la firma del contrato.
+                  Descuento directo por m² adelantando el 70% a la firma del contrato. Saldo mínimo contra entrega.
                 </p>
               </div>
 
@@ -1427,23 +1425,40 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </h3>
                   <p className="text-xs text-stone-500 mt-0.5">PM² $1.400 USD/m² (Ahorro Máximo)</p>
 
-                  <div className="mt-4 rounded-xl bg-white border border-stone-100 p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                      Desembolso Único (100%)
-                    </p>
-                    <p className="font-serif text-xl font-bold text-stone-900 mt-0.5">
-                      {activeFinancials ? `USD ${formatGardenZenUsd(activeFinancials.unitTotalPrice)}` : "100% Contado"}
-                    </p>
-                    <p className="text-[11px] text-emerald-700 mt-1 font-medium">
-                      Máxima rentabilidad neta anual
-                    </p>
+                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-500 font-light">Desembolso único:</span>
+                      <strong className="font-semibold text-stone-900">100% al contado</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
+                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
+                      <strong className="font-semibold text-emerald-700">0% (Sin cuotas)</strong>
+                    </div>
                   </div>
                 </div>
 
                 <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Para inversores con liquidez inmediata que buscan capturar el precio por metro cuadrado más bajo.
+                  Para inversores con liquidez inmediata que buscan capturar el precio por metro cuadrado más bajo de preventa.
                 </p>
               </div>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-[#9a7b45]/30 bg-[#9a7b45]/5 p-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-stone-900">
+                  ¿Deseas conocer la cuota exacta de tu departamento?
+                </p>
+                <p className="text-[11px] text-stone-600 font-light mt-0.5">
+                  Elige tu tipología y piso en Disponibilidad para calcular el desembolso exacto en dólares según el plan elegido.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => scrollToSection("disponibilidad")}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-medium text-white transition-all hover:bg-[#9a7b45] active:scale-95 cursor-pointer"
+              >
+                Elegir departamento y cotizar <ArrowRight size={13} />
+              </button>
             </div>
 
             {/* Cronograma de Desembolsos */}

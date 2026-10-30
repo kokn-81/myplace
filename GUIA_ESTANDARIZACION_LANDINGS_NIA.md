@@ -177,11 +177,10 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 * 3 Tarjetas de planes financieros:
   1. **Contado (100%):** Máximo descuento por m².
   2. **Plan 60/40:** 60% durante la obra en cuotas y 40% a la entrega en Junio 2028.
-  3. **Plan 40/60:** 40% durante la obra y 60% contra entrega (apto crédito bancario).
-* **Muestra destacada de la Cuota Inicial:** Exponer con tipografía clara el valor monetario en USD y el porcentaje de cuota inicial requerido.
+* **Regla Estricta de Formas de Pago:** En la sección `#pago` **NO se deben mostrar montos monetarios en dólares para la cuota inicial**, ya que el usuario aún no ha seleccionado una unidad. Los planes se presentan conceptualmente en porcentajes claros de desembolso (ej. 30% a la firma / 70% contra entrega, 70% firma / 30% entrega, 100% contado) y precio referencial por m². Los montos exactos en dólares (cuota inicial, saldo y total) se calculan y muestran exclusivamente en la sección `#disponibilidad` (Paso 4) una vez que el usuario ha elegido su departamento y piso.
 * **Cronograma de hitos:**
-  * Hito 1: Reserva con USD 1.000 (congela precio y unidad).
-  * Hito 2: Cuota inicial a la firma de contrato de preventa.
+  * Hito 1: Reserva formal que congela precio y unidad (ej. USD 1.000 o USD 5.000).
+  * Hito 2: Integración de cuota inicial a la firma de contrato de preventa (descontando la reserva).
   * Hito 3: Saldo contra entrega de llaves.
 
 #### 8. Sección Disponibilidad en Vivo & Cotizador Interactivo (`#disponibilidad`)
