@@ -524,33 +524,6 @@ export default function OnaLanding({ property, onClose }: Props) {
 
   // Selector de Parqueos Opcional (Estilo Apple Store: Sin parqueo / Simple 15k / Doble 22k)
   const [selectedParkingOption, setSelectedParkingOption] = useState<"none" | "simple" | "doble">("none");
-  const [selectedParkingCode, setSelectedParkingCode] = useState<string>("5");
-
-  const selectedParkingKind = selectedParkingOption === "doble" ? "doble" : "simple";
-
-  const availableParkingsForKind = useMemo(() => {
-    if (selectedParkingOption === "none") return [];
-    return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "disponible");
-  }, [selectedParkingOption, selectedParkingKind]);
-
-  const soldParkingsCountForKind = useMemo(() => {
-    if (selectedParkingOption === "none") return 0;
-    return ONA_PARKINGS.filter((p) => p.kind === selectedParkingKind && p.status === "vendido").length;
-  }, [selectedParkingOption, selectedParkingKind]);
-
-  useEffect(() => {
-    if (selectedParkingOption === "none") return;
-    if (!availableParkingsForKind.some((p) => p.code === selectedParkingCode)) {
-      if (availableParkingsForKind.length > 0) {
-        setSelectedParkingCode(availableParkingsForKind[0].code);
-      }
-    }
-  }, [selectedParkingOption, availableParkingsForKind, selectedParkingCode]);
-
-  const activeParking = useMemo(() => {
-    if (selectedParkingOption === "none") return null;
-    return ONA_PARKINGS.find((p) => p.code === selectedParkingCode) || availableParkingsForKind[0] || null;
-  }, [selectedParkingOption, selectedParkingCode, availableParkingsForKind]);
 
   const parkingPrice = useMemo(() => {
     if (selectedParkingOption === "none") return 0;
@@ -2207,31 +2180,6 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </p>
                 </button>
               </div>
-
-              {/* Selector de número de parqueo */}
-              {selectedParkingOption !== "none" && availableParkingsForKind.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-2 p-3 bg-stone-50 rounded-xl border border-stone-200/70">
-                  <span className="text-xs font-medium text-stone-600">
-                    Número asignado:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {availableParkingsForKind.map((spot) => (
-                      <button
-                        key={spot.code}
-                        type="button"
-                        onClick={() => setSelectedParkingCode(spot.code)}
-                        className={`rounded-lg px-2.5 py-1 text-xs font-medium transition cursor-pointer ${
-                          selectedParkingCode === spot.code
-                            ? "bg-stone-900 text-white font-bold"
-                            : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-100"
-                        }`}
-                      >
-                        N° {spot.code} ({spot.level})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* PASO 4: MODALIDAD DE PAGO */}
@@ -2335,7 +2283,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
                     <div className="text-center sm:text-left">
                       <p className="text-xs text-stone-700 font-medium">
-                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
+                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> {selectedParkingOption !== "none" ? (selectedParkingOption === "simple" ? "+ Parqueo Simple" : "+ Parqueo Doble") : ""} con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
                       </p>
                       <p className="text-[11px] text-stone-400 font-light mt-0.5">
                         Se descuenta íntegramente de tu cuota inicial al suscribir el contrato de preventa.
@@ -2349,8 +2297,8 @@ export default function OnaLanding({ property, onClose }: Props) {
                           (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
                         }
                         const planLabel = selectedPlan === "contado" ? "Al Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial";
-                        const parkingDetail = selectedParkingOption !== "none" && activeParking
-                          ? ` + Parqueo ${activeParking.code} en ${activeParking.level} (${activeParking.kind === "simple" ? "Simple" : "Doble"}, USD ${formatOnaUsd(activeParking.price)} con baulera)`
+                        const parkingDetail = selectedParkingOption !== "none"
+                          ? ` + Parqueo ${selectedParkingOption === "simple" ? "Simple (USD 15.000 con baulera)" : "Doble (USD 22.000 con baulera)"}`
                           : "";
                         const totalContract = activeFinancials.totalPrice;
                         const initialText = selectedPlan === "contado" ? "" : `, Cuota Inicial: USD ${formatOnaUsd(activeFinancials.initialPayment)}`;
