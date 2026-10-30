@@ -352,6 +352,19 @@ export default function GardenZenLanding({ property, onClose }: Props) {
     return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 148568;
   }, [availableUnits]);
 
+  // Precios mínimos por m² dinámicos según inventario en vivo
+  const minCashPerM2 = useMemo(() => {
+    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.cashPerM2)) : 1400;
+  }, [availableUnits]);
+
+  const minPlan70PerM2 = useMemo(() => {
+    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.initial70PerM2)) : 1450;
+  }, [availableUnits]);
+
+  const minPlan30PerM2 = useMemo(() => {
+    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.initial30PerM2)) : 1500;
+  }, [availableUnits]);
+
   const currentAmbiente = useMemo(() => {
     return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
   }, [selectedAmbId]);
@@ -1373,125 +1386,156 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
           {/* 7. FORMAS DE PAGO TRANSPARENTES & CRONOGRAMA */}
           <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <CreditCard size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura de Inversión
-              </p>
+            {/* Cabecera con refresco rápido */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard size={14} className="text-[#9a7b45]" />
+                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
+                  Estructura de Inversión
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleRefreshInventory}
+                disabled={isRefreshingInv}
+                title="Actualizar precio mínimo por m² e inventario desde planilla"
+                className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 shadow-xs transition-all hover:border-[#9a7b45] hover:bg-stone-50 active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : "text-[#9a7b45]"} />
+                <span>{isRefreshingInv ? "Actualizando..." : "Actualizar precio m²"}</span>
+              </button>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Planes de pago flexibles con saldo contra entrega.
+              Planes de pago flexibles adaptados a tu estrategia.
             </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Sin cuotas intermedias complicadas durante la obra fina. Congelas tu unidad hoy con <strong>USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}</strong>, integras tu cuota inicial a la firma del contrato y abonas el saldo total directamente al momento de recibir las llaves en {GARDEN_ZEN_CONFIG.delivery}.
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {GARDEN_ZEN_CONFIG.delivery} (Obra Fina).
             </p>
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* PLAN 30% ANTICIPO */}
-              <div
-                onClick={() => setSelectedPlan("plan30")}
-                className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
-                  selectedPlan === "plan30"
-                    ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
-                    : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
-                }`}
-              >
+            {/* Banner de Precio Base Preventa en Vivo */}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-3.5 sm:px-4.5 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/15 text-[#9a7b45]">
+                  <DollarSign size={16} />
+                </span>
                 <div>
-                  <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-stone-600">
-                    Recomendado Inversor
-                  </span>
-                  <h3 className="mt-2 font-serif text-lg font-bold text-stone-900">
-                    Plan 30% Anticipo
-                  </h3>
-                  <p className="text-xs text-stone-500 mt-0.5">PM² $1.500 USD/m²</p>
-
-                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500 font-light">Cuota a la firma:</span>
-                      <strong className="font-semibold text-stone-900">30% del valor</strong>
-                    </div>
-                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
-                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
-                      <strong className="font-semibold text-[#816127]">70% (Marzo 2027)</strong>
-                    </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-xs font-light text-stone-600">Precio base preventa:</span>
+                    <strong className="font-serif text-lg font-medium text-stone-900">
+                      Desde ${formatGardenZenUsd(minCashPerM2)} USD/m²
+                    </strong>
                   </div>
+                  <p className="text-[11px] text-stone-500 font-light">
+                    Calculado en vivo sobre {availableUnits.length} unidades disponibles · {lastPriceUpdateText}
+                  </p>
                 </div>
-
-                <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Entrada accesible hoy. Congelas con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} de reserva y el 70% restante se liquida recién a la entrega de llaves (apto crédito bancario).
-                </p>
               </div>
-
-              {/* PLAN 70% ANTICIPO */}
-              <div
-                onClick={() => setSelectedPlan("plan70")}
-                className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
-                  selectedPlan === "plan70"
-                    ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
-                    : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
-                }`}
+              <button
+                type="button"
+                onClick={handleRefreshInventory}
+                disabled={isRefreshingInv}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#9a7b45] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-[#816127] active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                <div>
-                  <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-800">
-                    Mayor Descuento
-                  </span>
-                  <h3 className="mt-2 font-serif text-lg font-bold text-stone-900">
-                    Plan 70% Anticipo
-                  </h3>
-                  <p className="text-xs text-stone-500 mt-0.5">PM² $1.450 USD/m² (-$50/m²)</p>
+                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin" : ""} />
+                <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar ahora"}</span>
+              </button>
+            </div>
 
-                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500 font-light">Cuota a la firma:</span>
-                      <strong className="font-semibold text-stone-900">70% del valor</strong>
-                    </div>
-                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
-                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
-                      <strong className="font-semibold text-[#816127]">30% (Marzo 2027)</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Descuento directo por m² adelantando el 70% a la firma del contrato. Saldo mínimo contra entrega.
-                </p>
-              </div>
-
-              {/* PLAN CONTADO */}
+            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA (ESTILO ONA) */}
+            <div className="mt-6 space-y-4">
+              {/* Opción 1: Contado */}
               <div
                 onClick={() => setSelectedPlan("contado")}
-                className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`relative overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer shadow-lg ${
                   selectedPlan === "contado"
-                    ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
+                    ? "border-stone-900 bg-stone-900 text-white ring-2 ring-[#e8d5a8]/50"
+                    : "border-stone-900 bg-stone-900 text-white"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
+                      Mayor Descuento
+                    </span>
+                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">
+                      ${formatGardenZenUsd(minCashPerM2)} <span className="text-xs font-sans text-stone-300">USD/m²</span>
+                    </p>
+                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
+                    Accedes al valor por m² más bajo de todo el proyecto ($1.400 USD/m²). Ahorras hasta $100 USD/m² respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en {GARDEN_ZEN_CONFIG.delivery}.
+                  </p>
+                </div>
+              </div>
+
+              {/* Opción 2: 70% inicial */}
+              <div
+                onClick={() => setSelectedPlan("plan70")}
+                className={`rounded-2xl border p-6 transition-all cursor-pointer shadow-sm ${
+                  selectedPlan === "plan70"
+                    ? "border-[#9a7b45] bg-[#9a7b45]/5 ring-1 ring-[#9a7b45]"
                     : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
                 }`}
               >
-                <div>
-                  <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800">
-                    Precio Piso Mínimo
-                  </span>
-                  <h3 className="mt-2 font-serif text-lg font-bold text-stone-900">
-                    Pago Contado (100%)
-                  </h3>
-                  <p className="text-xs text-stone-500 mt-0.5">PM² $1.400 USD/m² (Ahorro Máximo)</p>
-
-                  <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200/80 p-3.5 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500 font-light">Desembolso único:</span>
-                      <strong className="font-semibold text-stone-900">100% al contado</strong>
-                    </div>
-                    <div className="flex items-center justify-between text-xs border-t border-stone-200/60 pt-2">
-                      <span className="text-stone-500 font-light">Saldo contra entrega:</span>
-                      <strong className="font-semibold text-emerald-700">0% (Sin cuotas)</strong>
-                    </div>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Equilibrio Financiero
+                    </span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 70% + Saldo contra Entrega (30%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">
+                      ${formatGardenZenUsd(minPlan70PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
+                    </p>
+                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
                   </div>
                 </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    El balance perfecto entre liquidez y descuento. Congelas tu unidad con un precio preferencial con $50 USD/m² de bonificación sobre el precio estándar y abonas el 30% restante recién cuando la obra fina esté 100% concluida en {GARDEN_ZEN_CONFIG.delivery}.
+                  </p>
+                </div>
+              </div>
 
-                <p className="mt-4 text-[11px] text-stone-500 font-light border-t border-stone-100 pt-3">
-                  Para inversores con liquidez inmediata que buscan capturar el precio por metro cuadrado más bajo de preventa.
-                </p>
+              {/* Opción 3: 30% inicial */}
+              <div
+                onClick={() => setSelectedPlan("plan30")}
+                className={`rounded-2xl border p-6 transition-all cursor-pointer shadow-sm ${
+                  selectedPlan === "plan30"
+                    ? "border-[#9a7b45] bg-[#9a7b45]/5 ring-1 ring-[#9a7b45]"
+                    : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Entrada Cómoda
+                    </span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 30% + Saldo contra Entrega (70%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">
+                      ${formatGardenZenUsd(minPlan30PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
+                    </p>
+                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
+                  </div>
+                </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    El menor desembolso de entrada para asegurar tu departamento en {GARDEN_ZEN_CONFIG.zone}. Congelas la unidad con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} de reserva formal e integras el 30% inicial, cancelando el 70% restante en {GARDEN_ZEN_CONFIG.delivery} mediante fondos propios o financiamiento bancario.
+                  </p>
+                </div>
               </div>
             </div>
 

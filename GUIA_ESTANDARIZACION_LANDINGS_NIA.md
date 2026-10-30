@@ -175,15 +175,19 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Dirección propia de obra (sin tercerización ciega).
 * Cita textual del fundador o director de obra con su visión técnica.
 
-#### 7. Sección Formas de Pago Transparentes (`#pago`)
-* 3 Tarjetas de planes financieros:
-  1. **Contado (100%):** Máximo descuento por m².
-  2. **Plan 60/40:** 60% durante la obra en cuotas y 40% a la entrega en Junio 2028.
-* **Regla Estricta de Formas de Pago:** En la sección `#pago` **NO se deben mostrar montos monetarios en dólares para la cuota inicial**, ya que el usuario aún no ha seleccionado una unidad. Los planes se presentan conceptualmente en porcentajes claros de desembolso (ej. 30% a la firma / 70% contra entrega, 70% firma / 30% entrega, 100% contado) y precio referencial por m². Los montos exactos en dólares (cuota inicial, saldo y total) se calculan y muestran exclusivamente en la sección `#disponibilidad` (Paso 4) una vez que el usuario ha elegido su departamento y piso.
+#### 7. Sección Formas de Pago Transparentes (`#pago`) - Estándar Oficial ONA
+* **Estructura visual estandarizada:**
+  * **Banner superior en vivo:** Precio base preventa `Desde $X USD/m²` calculado automáticamente sobre el inventario disponible con badge de sincronización y botón para actualizar en tiempo real.
+  * **3 Tarjetas apiladas horizontalmente a todo el ancho (`space-y-4`):**
+    1. **Opción 1: Contado (100%)** - Tarjeta destacada oscura (`bg-stone-900 text-white shadow-lg`) con badge dorado `MAYOR DESCUENTO`, precio por m² resaltado en tipografía serif con comparativa vs la zona, y bloque editorial inferior `VENTAJA COMERCIAL:` explicando el ahorro y la plusvalía máxima.
+    2. **Opción 2: Anticipo Alto (ej. 70% o 60%) + Saldo contra Entrega** - Tarjeta clara (`bg-white shadow-sm border border-stone-200`) con badge `EQUILIBRIO FINANCIERO`, precio por m² y bloque editorial `VENTAJA COMERCIAL:` con el balance entre liquidez y descuento.
+    3. **Opción 3: Anticipo Mínimo (ej. 30% o 40%) + Saldo contra Entrega** - Tarjeta clara con badge `ENTRADA CÓMODA` / `ENTRADA ACCESIBLE`, precio por m² y bloque editorial `VENTAJA COMERCIAL:` detallando el menor desembolso de entrada y congelamiento de unidad.
+* **Regla Estricta de Formas de Pago:** En la sección `#pago` **NO se deben mostrar montos monetarios en dólares para la cuota inicial**, ya que el usuario aún no ha seleccionado una unidad. Los planes se presentan conceptualmente en porcentajes claros de desembolso (ej. 100% contado, 70% firma / 30% entrega, 30% firma / 70% entrega) y precio referencial por m². Los montos exactos en dólares (cuota inicial, saldo y total) se calculan y muestran exclusivamente en la sección `#disponibilidad` (Paso 4) una vez que el usuario ha elegido su departamento y piso.
+* **Caja de transición a Disponibilidad:** Banner con llamado a la acción para cotizar una unidad específica con el botón `Elegir departamento y cotizar →`.
 * **Cronograma de hitos:**
-  * Hito 1: Reserva formal que congela precio y unidad (ej. USD 1.000 o USD 5.000).
-  * Hito 2: Integración de cuota inicial a la firma de contrato de preventa (descontando la reserva).
-  * Hito 3: Saldo contra entrega de llaves.
+  * Hito 1 (Paso 1 · Hoy): Reserva formal que congela precio y unidad (ej. USD 1.000 en ONA o USD 5.000 en Garden Zen).
+  * Hito 2 (Paso 2 · A la firma): Integración de cuota inicial a la firma de contrato de preventa (descontando la reserva).
+  * Hito 3 (Paso 3 · Entrega de Obra): Saldo contra entrega de llaves (apto crédito bancario).
 
 #### 8. Sección Disponibilidad en Vivo & Cotizador Interactivo (`#disponibilidad`)
 * **Sincronización en tiempo real con Google Sheets:**
