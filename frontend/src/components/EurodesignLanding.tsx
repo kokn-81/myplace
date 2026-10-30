@@ -445,7 +445,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
   const handleShare = async () => {
     recordLeadEvent({
-      action: "share_project",
+      action: "share",
       propertyRef: "eurodesign",
       operacion: "Preventa",
       zona: EURODESIGN_ZONE,
