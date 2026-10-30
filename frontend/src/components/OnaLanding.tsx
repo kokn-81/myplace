@@ -239,6 +239,7 @@ interface AmbienteOption {
   rentMin: number;
   rentMax: number;
   yieldRange: string;
+  image: string;
   matchUnit: (u: OnaUnit) => boolean;
 }
 
@@ -255,6 +256,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 350,
     rentMax: 375,
     yieldRange: "10,4% – 11,1%",
+    image: "/ona/tipo-32.jpg",
     matchUnit: (u) => u.rooms === 1 && (u.tipo === "3" || u.tipo === "4"),
   },
   {
@@ -269,6 +271,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 520,
     rentMax: 560,
     yieldRange: "9,2% – 9,9%",
+    image: "/ona/tipo-54.jpg",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "1",
   },
   {
@@ -283,6 +286,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 750,
     rentMax: 830,
     yieldRange: "7,8% – 8,7%",
+    image: "/ona/tipo-92.jpg",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "2",
   },
   {
@@ -297,6 +301,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 750,
     rentMax: 830,
     yieldRange: "7,8% – 8,7%",
+    image: "/ona/tipo-92.jpg",
     matchUnit: (u) => u.rooms === 2 && u.tipo === "5",
   },
 ];
@@ -1732,28 +1737,25 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
           </section>
 
-
-          {/* 7. DISPONIBILIDAD & SIMULADOR EN TIEMPO REAL · UNIDADES DE 1.ª FASE */}
+          {/* 7. DISPONIBILIDAD EN VIVO & COTIZADOR EN CASCADA (ESTILO GARDEN ZEN) */}
           <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            {/* Cabecera con sincronización en vivo y link a Google Sheets */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Layers size={14} className="text-[#9a7b45]" />
+                <Building2 size={14} className="text-[#9a7b45]" />
                 <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                  Inventario & Disponibilidad Oficial
+                  Cotizador &amp; Disponibilidad en Vivo
                 </p>
               </div>
-
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleRefreshInventory}
                   disabled={isRefreshingInv}
-                  title="Actualizar disponibilidad y precios por m² desde planilla oficial"
-                  className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-700 transition-all hover:bg-stone-50 hover:border-[#9a7b45] active:scale-95 disabled:opacity-50 shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
+                  title="Sincronizar datos con Google Sheets"
                 >
-                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : "text-[#9a7b45]"} />
-                  <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar precios y m²"}</span>
+                  <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
+                  <span>{lastPriceUpdateText}</span>
                 </button>
                 <a
                   href="https://docs.google.com/spreadsheets/d/14-g7f0tzOYfTX9KejkPa4enDf7pi1Kl2ytZaxB-qH6U/edit?usp=sharing"
@@ -1769,13 +1771,10 @@ export default function OnaLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Disponibilidad y Proyección de Ganancia.
+              Selecciona tu unidad y simula tu inversión al instante.
             </h2>
-            <p className="mt-2 text-sm font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Elige el ambiente de tu interés y selecciona el piso disponible en la torre para conocer su precio exacto de preventa y la rentabilidad estimada.
-            </p>
 
-            {/* Resumen compacto de unidades de 1.ª fase */}
+            {/* Visor al inicio de los deptos totales, vendidos y disponibles y los pisos de la torre (Pedido del usuario) */}
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-[#fbf9f4] px-4 py-3 text-xs">
               <div className="flex items-center gap-3 text-stone-700">
                 <span className="font-semibold text-stone-900">{totalUnitsCount} departamentos</span>
@@ -1792,133 +1791,140 @@ export default function OnaLanding({ property, onClose }: Props) {
               </span>
             </div>
 
-            {/* PASO 1: SELECCIONA EL TIPO DE AMBIENTE */}
+            {/* PASO 1: ELIGE LA TIPOLOGÍA */}
             <div className="mt-8">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">1</span>
-                <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                  Elige tu tipo de ambiente:
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                Paso 1: Elige la Tipología
+              </p>
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {liveAmbienteOptions.map((amb) => {
-                  const isSelected = selectedAmbId === amb.id;
-                  const availCount = amb.availCount;
-                  const soldCount = amb.soldCount;
-
+                  const isSel = selectedAmbId === amb.id;
                   return (
                     <button
                       key={amb.id}
+                      type="button"
                       onClick={() => handleSelectAmbiente(amb.id)}
-                      className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
-                        isSelected
-                          ? "border-stone-900 bg-stone-900 text-white shadow-lg ring-2 ring-[#9a7b45]"
-                          : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:shadow-xs"
+                      className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
+                        isSel
+                          ? "border-[#9a7b45] bg-[#9a7b45]/15 text-[#816127] font-semibold shadow-xs ring-1 ring-[#9a7b45]"
+                          : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className={`font-serif text-base font-semibold ${isSelected ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                            {amb.name}
-                          </p>
-                          <p className={`text-xs mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
-                            {amb.areaM2} m² {amb.balconyM2 ? `(Balcón ${amb.balconyM2} m²)` : ""} · {amb.view}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            availCount > 0
-                              ? isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : "bg-stone-100 text-stone-400"
-                          }`}>
-                            {availCount} disponibles
-                          </span>
-                          {soldCount > 0 && (
-                            <span className={`block text-[10px] mt-1 ${isSelected ? "text-amber-200/80" : "text-stone-500 font-light"}`}>
-                              {soldCount} ya vendidos
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
-                        <span className={isSelected ? "text-stone-400 font-light" : "text-stone-500 font-light"}>
-                          Preventa desde:
-                        </span>
-                        <div className="text-right">
-                          <span className={`font-serif text-sm font-semibold ${isSelected ? "text-white" : "text-stone-900"}`}>
-                            USD {formatOnaUsd(amb.minCash)}
-                          </span>
-                          <span className={`block text-[10px] font-medium ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
-                            ${formatOnaUsd(amb.minPerM2)} USD/m²
-                          </span>
-                        </div>
-                      </div>
+                      <p className="text-xs font-bold">{amb.name}</p>
+                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">{amb.areaM2} m²</p>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* PASO 2: SELECCIONA EL PISO DISPONIBLE */}
+            {/* PASO 2: ELIGE EL PISO */}
             <div className="mt-8">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">2</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                    Pisos disponibles para {currentAmbiente.shortName}:
-                  </h3>
-                </div>
-                {floorsForAmbiente.filter((f) => !f.isAvailable).length > 0 && (
-                  <span className="text-[11px] font-medium text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
-                    {floorsForAmbiente.filter((f) => !f.isAvailable).length} departamentos de este tipo ya se vendieron
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                  Paso 2: Elige el Piso ({currentAmbiente.name})
+                </p>
+                <div className="flex items-center gap-3 text-[11px]">
+                  <span className="flex items-center gap-1 text-emerald-700 font-medium">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Disponible
                   </span>
-                )}
+                  <span className="flex items-center gap-1 text-stone-400">
+                    <span className="h-2 w-2 rounded-full bg-stone-300" /> Vendido / Reservado
+                  </span>
+                </div>
               </div>
 
-              {/* SOLO RENDERIZA PISOS DISPONIBLES (SIN MOSTRAR OPCIONES NO DISPONIBLES) */}
-              <div className="flex flex-wrap gap-2">
-                {floorsForAmbiente
-                  .filter(({ isAvailable }) => isAvailable)
-                  .map(({ floor, unit }) => {
-                    const isSelected = selectedFloor === floor;
-
+              <div className="mt-3 flex flex-wrap gap-2">
+                {floorsForAmbiente.map((item) => {
+                  const isSel = selectedFloor === item.floor;
+                  if (!item.isAvailable) {
                     return (
-                      <button
-                        key={floor}
-                        onClick={() => setSelectedFloor(floor)}
-                        className={`rounded-xl border px-3.5 py-2 text-center transition-all cursor-pointer ${
-                          isSelected
-                            ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-md ring-2 ring-[#9a7b45]"
-                            : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45] hover:bg-stone-50 shadow-xs"
-                        }`}
+                      <div
+                        key={item.floor}
+                        className="rounded-xl border border-stone-200 bg-stone-100/60 px-3.5 py-2 text-center text-xs text-stone-400 cursor-not-allowed"
+                        title={`Piso ${item.floor}: Unidades reservadas o vendidas`}
                       >
-                        <div className="flex items-center justify-center gap-1.5">
-                          <span className="font-serif text-sm">Piso {floor}</span>
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        </div>
-                        <p className={`text-[11px] mt-0.5 font-medium ${isSelected ? "text-white" : "text-stone-900"}`}>
-                          USD {formatOnaUsd(unit.cash)}
-                        </p>
-                        <p className={`text-[10px] font-light ${isSelected ? "text-[#e8d5a8]" : "text-[#816127]"}`}>
-                          ${formatOnaUsd(unit.cashPerM2)} USD/m²
-                        </p>
-                      </button>
+                        <span className="font-bold">Piso {item.floor}</span>
+                        <span className="block text-[9px] uppercase tracking-wider">Agotado</span>
+                      </div>
                     );
-                  })}
+                  }
+
+                  return (
+                    <button
+                      key={item.floor}
+                      type="button"
+                      onClick={() => setSelectedFloor(item.floor)}
+                      className={`rounded-xl border px-3.5 py-2 text-center text-xs transition-all cursor-pointer ${
+                        isSel
+                          ? "border-[#9a7b45] bg-stone-900 text-white shadow-md scale-105"
+                          : "border-emerald-300 bg-emerald-50/70 text-emerald-950 hover:bg-emerald-100/70"
+                      }`}
+                    >
+                      <span className="font-bold">Piso {item.floor}</span>
+                      <span className="block text-[9px] font-medium opacity-90">
+                        {item.availableCount} disp.
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Vista previa de la unidad seleccionada con foto/render del depto (estilo Garden Zen) */}
+              {activeUnit && (
+                <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                    <div>
+                      <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
+                        Piso {activeUnit.floor} · Tipo {activeUnit.tipo}
+                      </span>
+                      <p className="mt-1 font-serif text-lg font-bold text-stone-900">
+                        {currentAmbiente.name} ({activeUnit.totalM2} m²)
+                      </p>
+                      <p className="text-xs text-stone-500 font-light mt-0.5">
+                        {activeUnit.view} {activeUnit.balconyM2 ? `· Balcón ${activeUnit.balconyM2} m²` : ""}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                        Precio Unidad ({selectedPlan === "contado" ? "Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial"})
+                      </p>
+                      <p className="font-serif text-xl font-bold text-[#816127]">
+                        USD {formatOnaUsd(activeFinancials ? activeFinancials.unitTotalPrice : activeUnit.cash)}
+                      </p>
+                      <p className="text-[10px] text-stone-400 font-mono">
+                        ${formatOnaUsd(activeFinancials ? activeFinancials.pricePerM2 : activeUnit.cashPerM2)} USD/m²
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Foto / Plano del depto */}
+                  <div className="mt-4 overflow-hidden rounded-xl border border-stone-100 bg-stone-50 p-2 text-center">
+                    <img
+                      src={currentAmbiente.image || "/ona/tipo-32.jpg"}
+                      alt={`Plano / Render ${currentAmbiente.name}`}
+                      className="mx-auto max-h-56 object-contain"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.src.includes("dormitorio")) {
+                          target.src = "/ona/dormitorio.jpg";
+                        }
+                      }}
+                    />
+                    <p className="mt-1 text-[11px] text-stone-400">
+                      Plano esquemático referencial · {currentAmbiente.name} ({activeUnit.totalM2} m²)
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* PASO 3: ¿DESEAS AÑADIR PARQUEO + BAULERA? (OPCIONAL · ESTILO APPLE) */}
+            {/* PASO 3: PARQUEO O BAULERA (OPCIONAL ESTILO APPLE STORE) */}
             <div className="mt-8">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-[10px] font-bold text-white">3</span>
-                  <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-900">
-                    ¿Deseas añadir estacionamiento con baulera? (Opcional):
-                  </h3>
-                </div>
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                  Paso 3: Añade tu Parqueo o Baulera (Opcional)
+                </p>
                 <a
                   href={ONA_PARKINGS_PDF_URL}
                   target="_blank"
@@ -1927,449 +1933,217 @@ export default function OnaLanding({ property, onClose }: Props) {
                   title="Ver planilla oficial de parqueos"
                 >
                   <Download size={11} />
-                  <span>Planilla de Parqueos PDF</span>
+                  <span>Planilla PDF</span>
                 </a>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Opción A: Sin Parqueo */}
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Sin parqueo */}
                 <button
                   type="button"
                   onClick={() => setSelectedParkingOption("none")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
                     selectedParkingOption === "none"
-                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider">Sin Parqueo</span>
-                    <span className={`text-xs font-serif ${selectedParkingOption === "none" ? "text-stone-300" : "text-stone-400"}`}>USD 0</span>
+                  <div>
+                    <span className="text-xs font-bold text-stone-900">Sin Parqueo</span>
+                    <p className="text-[11px] text-stone-500 font-light mt-1">
+                      Solo departamento seleccionado.
+                    </p>
                   </div>
-                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "none" ? "text-stone-300" : "text-stone-500"}`}>
-                    Solo departamento seleccionado
+                  <p className="font-serif text-sm font-bold text-stone-900 mt-3">
+                    + USD 0
                   </p>
                 </button>
 
-                {/* Opción B: Simple 15k */}
+                {/* Parqueo Simple */}
                 <button
                   type="button"
                   onClick={() => setSelectedParkingOption("simple")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
                     selectedParkingOption === "simple"
-                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider">Parqueo Simple</span>
-                    <span className={`text-xs font-serif font-bold ${selectedParkingOption === "simple" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                      +USD 15.000
-                    </span>
+                  <div>
+                    <div className="flex items-center gap-1.5 text-stone-900">
+                      <Car size={15} className="text-[#9a7b45]" />
+                      <span className="text-xs font-bold">Parqueo Simple</span>
+                    </div>
+                    <p className="text-[11px] text-stone-500 font-light mt-1">
+                      1 vehículo cubierto + baulera privada.
+                    </p>
                   </div>
-                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "simple" ? "text-stone-300" : "text-stone-500"}`}>
-                    1 vehículo cubierto · Baulera privada
+                  <p className="font-serif text-sm font-bold text-[#816127] mt-3">
+                    + USD 15.000
                   </p>
-                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    selectedParkingOption === "simple"
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
-                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  }`}>
-                    12 disponibles · 4 vendidos
-                  </span>
                 </button>
 
-                {/* Opción C: Doble 22k */}
+                {/* Parqueo Doble */}
                 <button
                   type="button"
                   onClick={() => setSelectedParkingOption("doble")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
                     selectedParkingOption === "doble"
-                      ? "border-stone-900 bg-stone-900 text-white shadow-md ring-2 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white text-stone-800 hover:border-[#9a7b45]"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider">Parqueo Doble (A y B)</span>
-                    <span className={`text-xs font-serif font-bold ${selectedParkingOption === "doble" ? "text-[#e8d5a8]" : "text-stone-900"}`}>
-                      +USD 22.000
-                    </span>
+                  <div>
+                    <div className="flex items-center gap-1.5 text-stone-900">
+                      <ShieldCheck size={15} className="text-[#9a7b45]" />
+                      <span className="text-xs font-bold">Parqueo Doble (A y B)</span>
+                    </div>
+                    <p className="text-[11px] text-stone-500 font-light mt-1">
+                      2 vehículos continuos + baulera privada.
+                    </p>
                   </div>
-                  <p className={`text-xs mt-1 font-light ${selectedParkingOption === "doble" ? "text-stone-300" : "text-stone-500"}`}>
-                    2 vehículos continuos · Baulera privada
+                  <p className="font-serif text-sm font-bold text-[#816127] mt-3">
+                    + USD 22.000
                   </p>
-                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    selectedParkingOption === "doble"
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
-                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  }`}>
-                    10 disponibles
-                  </span>
                 </button>
               </div>
 
-              {/* Selector de nivel y número si se seleccionó Simple o Doble */}
-              {selectedParkingOption !== "none" && (
-                <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm animate-fadeIn">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-stone-900">
-                      Selecciona tu parqueo ({selectedParkingOption === "simple" ? "Simple · USD 15.000" : "Doble A y B · USD 22.000"} con baulera):
-                    </p>
-                    {activeParking && (
-                      <span className="text-xs font-bold text-[#816127]">
-                        Parqueo {activeParking.code} ({activeParking.level}) asignado
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="space-y-3">
-                    {availableParkingsForKind.filter((p) => p.level === "Planta baja").length > 0 && (
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
-                          Planta Baja:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {availableParkingsForKind
-                            .filter((p) => p.level === "Planta baja")
-                            .map((spot) => {
-                              const isSelected = selectedParkingCode === spot.code;
-                              return (
-                                <button
-                                  key={`pb-${spot.code}`}
-                                  type="button"
-                                  onClick={() => setSelectedParkingCode(spot.code)}
-                                  className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                                    isSelected
-                                      ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
-                                      : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
-                                  }`}
-                                >
-                                  <span className="flex items-center gap-1">
-                                    <span>Parqueo {spot.code}</span>
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                  </span>
-                                </button>
-                              );
-                            })}
-                        </div>
-                      </div>
-                    )}
-
-                    {availableParkingsForKind.filter((p) => p.level === "Subsuelo").length > 0 && (
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5 flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#9a7b45]" />
-                          Subsuelo:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {availableParkingsForKind
-                            .filter((p) => p.level === "Subsuelo")
-                            .map((spot) => {
-                              const isSelected = selectedParkingCode === spot.code;
-                              return (
-                                <button
-                                  key={`sub-${spot.code}`}
-                                  type="button"
-                                  onClick={() => setSelectedParkingCode(spot.code)}
-                                  className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                                    isSelected
-                                      ? "border-[#9a7b45] bg-stone-900 text-white font-semibold shadow-sm ring-2 ring-[#9a7b45]"
-                                      : "border-stone-200 bg-white text-stone-700 hover:border-[#9a7b45] hover:bg-stone-50"
-                                  }`}
-                                >
-                                  <span className="flex items-center gap-1">
-                                    <span>Parqueo {spot.code}</span>
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                  </span>
-                                </button>
-                              );
-                            })}
-                        </div>
-                      </div>
-                    )}
+              {/* Selector de número de parqueo */}
+              {selectedParkingOption !== "none" && availableParkingsForKind.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center gap-2 p-3 bg-stone-50 rounded-xl border border-stone-200/70">
+                  <span className="text-xs font-medium text-stone-600">
+                    Número asignado:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {availableParkingsForKind.map((spot) => (
+                      <button
+                        key={spot.code}
+                        type="button"
+                        onClick={() => setSelectedParkingCode(spot.code)}
+                        className={`rounded-lg px-2.5 py-1 text-xs font-medium transition cursor-pointer ${
+                          selectedParkingCode === spot.code
+                            ? "bg-stone-900 text-white font-bold"
+                            : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-100"
+                        }`}
+                      >
+                        N° {spot.code} ({spot.level})
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* PASO 4: PRECIO TOTAL, MODALIDAD DE PAGO Y RESERVA UNIFICADA */}
-            {activeUnit && activeFinancials && (
-              <div className="mt-10 rounded-3xl border-2 border-[#9a7b45] bg-[#fbf9f4] p-5 sm:p-7 md:p-8 lg:p-9 shadow-xl scroll-mt-24">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9a7b45] text-[10px] font-bold text-white">4</span>
-                  <h3 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-[#816127]">
-                    Resumen de inversión y modalidad de pago:
-                  </h3>
-                </div>
+            {/* PASO 4: MODALIDAD DE PAGO */}
+            <div className="mt-8">
+              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                Paso 4: Modalidad de Pago
+              </p>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlan("contado")}
+                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
+                    selectedPlan === "contado"
+                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                  }`}
+                >
+                  <p className="text-xs font-bold">Pago Contado (100%)</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.250 · Máximo Descuento</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlan("plan60")}
+                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
+                    selectedPlan === "plan60"
+                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                  }`}
+                >
+                  <p className="text-xs font-bold">Plan 60% Inicial</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.300 · 40% contra entrega</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlan("plan40")}
+                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
+                    selectedPlan === "plan40"
+                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                  }`}
+                >
+                  <p className="text-xs font-bold">Plan 40% Inicial</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.350 · 60% contra entrega</p>
+                </button>
+              </div>
 
-                {/* Encabezado de la Configuración Seleccionada */}
-                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#9a7b45]/20 pb-5">
-                  <div className="space-y-1">
-                    <span className="rounded-full bg-stone-900 px-3 py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#e8d5a8]">
-                      Piso {activeUnit.floor} · TIPO {activeUnit.tipo}
-                    </span>
-                    <h4 className="mt-2 font-serif text-2xl md:text-3xl font-semibold text-stone-900">
-                      {currentAmbiente.name}
-                    </h4>
-                    <p className="text-xs md:text-sm text-stone-600 font-light mt-1">
-                      Superficie depto: <strong>{activeUnit.totalM2} m²</strong> {activeUnit.balconyM2 ? `(Balcón ${activeUnit.balconyM2} m²)` : ""} ·{" "}
-                      <strong className="text-[#816127]">${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²</strong> · {activeUnit.view}
-                    </p>
-                    {selectedParkingOption !== "none" && activeParking && (
-                      <p className="text-xs md:text-sm text-emerald-800 font-medium mt-2 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg w-fit">
-                        <Car size={14} className="text-[#9a7b45]" />
-                        <span>+ Parqueo {activeParking.code} en {activeParking.level} ({activeParking.kind === "simple" ? "Simple" : "Doble"}, USD {formatOnaUsd(activeParking.price)} con baulera)</span>
+              {/* Tarjeta de Resumen Financiero Total (Estilo Garden Zen) */}
+              {activeFinancials && activeUnit && (
+                <div className="mt-5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-b border-stone-100 pb-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                        Inversión Total
                       </p>
-                    )}
-                  </div>
-
-                  <div className="text-right flex flex-col items-end">
-                    <span className="rounded-full bg-emerald-100 px-3.5 py-1 text-xs font-semibold text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Disponible para Reserva
-                    </span>
-                    <div className="mt-3">
-                      <p className="text-[10px] md:text-xs uppercase tracking-wider text-stone-500 font-semibold">Inversión Total Preventa:</p>
-                      <p className="font-serif text-2xl md:text-3xl font-bold text-stone-900">
+                      <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-0.5">
                         USD {formatOnaUsd(activeFinancials.totalPrice)}
                       </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Selector de Modalidad de Pago con Cuota Inicial Destacada */}
-                <div className="mt-6">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <p className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-stone-500">
-                      Elige la modalidad de pago para este departamento:
-                    </p>
-                    <span className="text-[11px] md:text-xs font-medium text-stone-500">
-                      Entrega programada: <strong className="text-stone-800">{ONA_DELIVERY}</strong>
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 lg:gap-5">
-                    {[
-                      {
-                        key: "contado",
-                        label: "Al Contado",
-                        badge: "100%",
-                        perM2: activeUnit.cashPerM2,
-                        initial: activeUnit.cash + (selectedParkingOption !== "none" ? parkingPrice : 0),
-                        balance: 0,
-                        total: activeUnit.cash + (selectedParkingOption !== "none" ? parkingPrice : 0),
-                        tag: "Mayor Ahorro",
-                      },
-                      {
-                        key: "plan60",
-                        label: "60% Inicial",
-                        badge: "60 / 40",
-                        perM2: activeUnit.plan60.perM2,
-                        initial: activeUnit.plan60.initial + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.6) : 0),
-                        balance: (activeUnit.plan60.total - activeUnit.plan60.initial) + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.4) : 0),
-                        total: activeUnit.plan60.total + (selectedParkingOption !== "none" ? parkingPrice : 0),
-                        tag: "Equilibrio",
-                      },
-                      {
-                        key: "plan40",
-                        label: "40% Inicial",
-                        badge: "40 / 60",
-                        perM2: activeUnit.plan40.perM2,
-                        initial: activeUnit.plan40.initial + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.4) : 0),
-                        balance: (activeUnit.plan40.total - activeUnit.plan40.initial) + (selectedParkingOption !== "none" ? Math.round(parkingPrice * 0.6) : 0),
-                        total: activeUnit.plan40.total + (selectedParkingOption !== "none" ? parkingPrice : 0),
-                        tag: "Menor Entrada",
-                      },
-                    ].map((plan) => {
-                      const isSelected = selectedPlan === plan.key;
-                      return (
-                        <button
-                          key={plan.key}
-                          type="button"
-                          onClick={() => setSelectedPlan(plan.key as any)}
-                          className={`rounded-2xl border p-4 md:p-5 text-left transition-all cursor-pointer flex flex-col justify-between ${
-                            isSelected
-                              ? "border-stone-900 bg-white text-stone-900 shadow-md ring-2 ring-[#9a7b45]"
-                              : "border-stone-200 bg-white/70 text-stone-600 hover:border-[#9a7b45] hover:bg-white"
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
-                                <span className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[#9a7b45]" : "bg-stone-300"}`} />
-                                {plan.label}
-                              </span>
-                              <span className="text-[10px] md:text-xs font-semibold text-[#816127] bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full shrink-0">
-                                ${formatOnaUsd(plan.perM2)} USD/m²
-                              </span>
-                            </div>
-
-                            {/* Cuota Inicial Destacada en la Tarjeta */}
-                            <div className={`mt-3.5 rounded-xl p-3 border ${
-                              isSelected ? "bg-emerald-50 border-emerald-300 shadow-xs" : "bg-stone-50 border-stone-200/70"
-                            }`}>
-                              <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-emerald-800">
-                                {plan.key === "contado" ? "Pago Único (100%):" : `Cuota Inicial (${plan.badge.split(" ")[0]}%):`}
-                              </p>
-                              <p className="mt-0.5 font-serif text-xl md:text-2xl font-bold text-emerald-950">
-                                USD {formatOnaUsd(plan.initial)}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="mt-3.5 pt-3 border-t border-stone-100 space-y-1.5">
-                            <div className="flex items-center justify-between text-xs gap-1">
-                              <span className="text-stone-500 font-light">Total Inversión:</span>
-                              <strong className="text-stone-900 font-bold md:text-sm">USD {formatOnaUsd(plan.total)}</strong>
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-stone-500 gap-1">
-                              <span className="font-light">
-                                {plan.key === "contado" ? "Saldo contra entrega:" : `Saldo entrega (${plan.key === "plan60" ? "40%" : "60%"}):`}
-                              </span>
-                              <span className="font-semibold text-stone-700">
-                                {plan.key === "contado" ? "USD 0" : `USD ${formatOnaUsd(plan.balance)}`}
-                              </span>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Desglose de Desembolsos del Plan Activo */}
-                <div className="mt-5 rounded-2xl border border-[#9a7b45]/30 bg-white p-4 sm:p-5 md:p-6 shadow-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
-                    <div className="flex items-center gap-2">
-                      <CreditCard size={15} className="text-[#9a7b45]" />
-                      <p className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                        Estructura de Desembolsos · {selectedPlan === "contado" ? "Pago al Contado (100%)" : selectedPlan === "plan60" ? "Plan 60% Inicial / 40% Contra Entrega" : "Plan 40% Inicial / 60% Contra Entrega"}
-                      </p>
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#816127] bg-[#9a7b45]/10 px-2.5 py-0.5 rounded-full">
-                      ${formatOnaUsd(activeFinancials.pricePerM2)} USD/m²
-                    </span>
-                  </div>
-
-                  <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {/* 1. Reserva Inmediata */}
-                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-stone-500">1. Reserva hoy</span>
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      </div>
-                      <p className="mt-1 font-serif text-xl font-bold text-stone-900">USD {formatOnaUsd(ONA_RESERVE_USD)}</p>
-                      <p className="text-[11px] text-stone-600 font-light mt-1">
-                        Congela el piso {activeUnit.floor} hoy y se descuenta íntegramente de tu cuota inicial.
+                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">
+                        USD {formatOnaUsd(activeFinancials.pricePerM2)} / m²
                       </p>
                     </div>
 
-                    {/* 2. Cuota Inicial Neta */}
-                    <div className="rounded-xl bg-emerald-50/80 p-3.5 border border-emerald-200">
-                      <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-800">
-                        2. Cuota Inicial ({selectedPlan === "contado" ? "100%" : selectedPlan === "plan60" ? "60%" : "40%"})
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                        Cuota Inicial ({selectedPlan === "contado" ? "100%" : selectedPlan === "plan60" ? "60%" : "40%"})
                       </p>
-                      <p className="mt-1 font-serif text-xl font-bold text-emerald-900">
+                      <p className="font-serif text-xl sm:text-2xl font-bold text-[#816127] mt-0.5">
                         USD {formatOnaUsd(activeFinancials.initialPayment)}
                       </p>
-                      <p className="text-[11px] text-emerald-800 font-medium mt-1">
-                        {selectedPlan === "contado"
-                          ? "Pago total al suscribir contrato de preventa."
-                          : `Saldo inicial a la firma: USD ${formatOnaUsd(Math.max(0, activeFinancials.initialPayment - ONA_RESERVE_USD))} (descontando reserva de USD 1.000).`}
+                      <p className="text-[10px] text-stone-500 mt-0.5">
+                        A la firma del contrato
                       </p>
                     </div>
 
-                    {/* 3. Saldo contra Entrega */}
-                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider font-bold text-stone-500">
-                        3. Saldo contra Entrega ({selectedPlan === "contado" ? "0%" : selectedPlan === "plan60" ? "40%" : "60%"})
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                        Saldo contra Entrega
                       </p>
-                      <p className="mt-1 font-serif text-xl font-bold text-stone-900">
+                      <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-0.5">
                         USD {formatOnaUsd(activeFinancials.balancePayment)}
                       </p>
-                      <p className="text-[11px] text-stone-600 font-light mt-1">
-                        {selectedPlan === "contado"
-                          ? "Sin cuotas pendientes ni saldo posterior."
-                          : `Se cancela recién al recibir tus llaves y posesión en ${ONA_DELIVERY}.`}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CÁLCULO DE GANANCIA / TABLERO DE RENDIMIENTO FINANCIERO */}
-                <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
-                  <p className="text-[11px] uppercase tracking-widest font-bold text-stone-500 mb-3 flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-[#9a7b45]" />
-                    Proyección de Ganancia & Rentabilidad (Entrega {ONA_DELIVERY}):
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    {/* Tarjeta 1: Valor a la Entrega */}
-                    <div className="rounded-xl bg-[#fbf9f4] p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Valor Estimado a la Entrega ($1.600 USD/m²)
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-[#816127]">
-                        USD {formatOnaUsd(activeFinancials.marketValueAtDelivery)}
-                      </p>
-                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
-                        Valor de mercado terminado para departamentos en {ONA_ZONE}
+                      <p className="text-[10px] text-stone-500 mt-0.5">
+                        En {ONA_DELIVERY}
                       </p>
                     </div>
 
-                    {/* Tarjeta 2: Ganancia Neta (Plusvalía) */}
-                    <div className="rounded-xl bg-emerald-50/70 p-3.5 border border-emerald-200">
-                      <p className="text-[10px] uppercase tracking-wider text-emerald-800 font-semibold">
-                        Ganancia Estimada de Preventa (Plusvalía)
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold">
+                        Plusvalía Proyectada
                       </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
+                      <p className="font-serif text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5">
                         +USD {formatOnaUsd(activeFinancials.capitalGain)}
                       </p>
-                      <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
-                        +{activeFinancials.gainPercentage}% de valorización sobre tu precio de compra
-                      </p>
-                    </div>
-
-                    {/* Tarjeta 3: Alquiler Mensual */}
-                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Alquiler Mensual Estimado
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-stone-900">
-                        ${activeFinancials.rentMonthlyMin} – ${activeFinancials.rentMonthlyMax} <span className="text-xs font-sans text-stone-500">USD</span>
-                      </p>
-                      <p className="text-[11px] text-stone-600 font-light mt-0.5">
-                        Bs {activeFinancials.rentMonthlyBsMin.toLocaleString("es-BO")} – {activeFinancials.rentMonthlyBsMax.toLocaleString("es-BO")}/mes (TC 12)
-                      </p>
-                    </div>
-
-                    {/* Tarjeta 4: Rentabilidad Anual */}
-                    <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200/80">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
-                        Rentabilidad Anual Estimada
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-bold text-emerald-700">
-                        {activeFinancials.yieldRange}
-                      </p>
-                      <p className="text-[11px] text-stone-500 font-light mt-0.5">
-                        Retorno en dólares libre de inflación por alquiler tradicional o corporativo
+                      <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                        +{activeFinancials.gainPercentage}% en dólares
                       </p>
                     </div>
                   </div>
 
-                  {/* BOTÓN DIRECTO DE RESERVA UNIFICADA */}
-                  <div className="mt-5 border-t border-stone-200 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs text-stone-700 font-medium text-center sm:text-left">
-                        Congela esta configuración en <strong>Piso {activeUnit.floor}</strong> {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
+                  {/* Fila de acción de reserva directa */}
+                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                    <div className="text-center sm:text-left">
+                      <p className="text-xs text-stone-700 font-medium">
+                        Congela esta unidad en <strong>Piso {activeUnit.floor}</strong> {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con <strong>USD {formatOnaUsd(ONA_RESERVE_USD)}</strong>.
                       </p>
-                      <p className="text-[11px] text-stone-400 font-light text-center sm:text-left">
-                        Firma de preventa y desembolso coordinado directamente con la constructora.
+                      <p className="text-[11px] text-stone-400 font-light mt-0.5">
+                        Se descuenta íntegramente de tu cuota inicial al suscribir el contrato de preventa.
                       </p>
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => {
                         if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
                           (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
@@ -2385,14 +2159,15 @@ export default function OnaLanding({ property, onClose }: Props) {
                           totalContract
                         );
                       }}
-                      className="w-full sm:w-auto bg-stone-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95 text-center shrink-0 cursor-pointer"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95 cursor-pointer shrink-0"
                     >
-                      Reservar Piso {activeUnit.floor} {selectedParkingOption !== "none" && activeParking ? `+ Parqueo ${activeParking.code}` : ""} con USD {formatOnaUsd(ONA_RESERVE_USD)}
+                      <MessageCircle size={15} />
+                      Reservar Piso {activeUnit.floor} con USD {formatOnaUsd(ONA_RESERVE_USD)}
                     </button>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </section>
 
 
