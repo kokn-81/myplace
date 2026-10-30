@@ -306,15 +306,144 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
   },
 ];
 
+const AMBIENTE_GALLERY: Record<
+  string,
+  Array<{ src: string; label: string; type: "plano" | "render"; desc: string }>
+> = {
+  "1D-32": [
+    {
+      src: "/ona/tipo-32.jpg",
+      label: "Plano Corte 3D",
+      type: "plano",
+      desc: "Distribución isométrica tridimensional amoblada",
+    },
+    {
+      src: "/ona/dormitorio.jpg",
+      label: "Dormitorio Master",
+      type: "render",
+      desc: "Suite con clóset empotrado y ventanal de piso a techo",
+    },
+    {
+      src: "/ona/cocina.jpg",
+      label: "Cocina Equipada",
+      type: "render",
+      desc: "Mobiliario a medida, mesones de cuarzo y cocina encimera",
+    },
+    {
+      src: "/ona/bano.jpg",
+      label: "Baño Completo",
+      type: "render",
+      desc: "Revestimiento cerámico de alta gama, box de vidrio y grifería premium",
+    },
+  ],
+  "2D-54": [
+    {
+      src: "/ona/tipo-54.jpg",
+      label: "Plano Corte 3D",
+      type: "plano",
+      desc: "Distribución isométrica tridimensional de 2 dormitorios",
+    },
+    {
+      src: "/ona/living.jpg",
+      label: "Living & Comedor",
+      type: "render",
+      desc: "Área social integrada con vistas panorámicas e iluminación natural",
+    },
+    {
+      src: "/ona/dormitorio.jpg",
+      label: "Dormitorio Principal",
+      type: "render",
+      desc: "Habitación principal amplia con clóset empotrado y acabados elegantes",
+    },
+    {
+      src: "/ona/cocina.jpg",
+      label: "Cocina Americana",
+      type: "render",
+      desc: "Concepto abierto con mesones de cuarzo y desayunador diario",
+    },
+    {
+      src: "/ona/bano.jpg",
+      label: "Baño Confort",
+      type: "render",
+      desc: "Diseño moderno con vanitorio flotante y grifería monomando",
+    },
+  ],
+  "2D-92-cusis": [
+    {
+      src: "/ona/tipo-92.jpg",
+      label: "Plano Corte 3D",
+      type: "plano",
+      desc: "Distribución suite frontal de 92 m² con balcón sobre Av. Los Cusis",
+    },
+    {
+      src: "/ona/living.jpg",
+      label: "Living Suite & Balcón",
+      type: "render",
+      desc: "Gran espacio social con terraza y vista frontal hacia Los Cusis",
+    },
+    {
+      src: "/ona/dormitorio.jpg",
+      label: "Master Suite",
+      type: "render",
+      desc: "Habitación principal con vestidor y baño privado en suite",
+    },
+    {
+      src: "/ona/cocina.jpg",
+      label: "Cocina Gourmet",
+      type: "render",
+      desc: "Cocina de generosas dimensiones con isla y equipamiento completo",
+    },
+    {
+      src: "/ona/bano.jpg",
+      label: "Baño en Suite",
+      type: "render",
+      desc: "Acabados de lujo, doble bacha y box de ducha templado",
+    },
+  ],
+  "2D-92-post": [
+    {
+      src: "/ona/tipo-92.jpg",
+      label: "Plano Corte 3D",
+      type: "plano",
+      desc: "Distribución suite posterior de 92 m² con máxima tranquilidad",
+    },
+    {
+      src: "/ona/living.jpg",
+      label: "Living Suite",
+      type: "render",
+      desc: "Área social espaciosa con iluminación natural y privacidad total",
+    },
+    {
+      src: "/ona/dormitorio.jpg",
+      label: "Master Suite",
+      type: "render",
+      desc: "Suite con vestidor integrado y vistas despejadas",
+    },
+    {
+      src: "/ona/cocina.jpg",
+      label: "Cocina Integrada",
+      type: "render",
+      desc: "Cocina gourmet con isla y muebles altos y bajos",
+    },
+    {
+      src: "/ona/bano.jpg",
+      label: "Baño Suite",
+      type: "render",
+      desc: "Terminaciones contemporáneas en porcelanato y cuarzo",
+    },
+  ],
+};
+
 export default function OnaLanding({ property, onClose }: Props) {
-  const [activeImage, setActiveImage] = useState("/ona/fachada-dia.jpg");
-  const [activeLabel, setActiveLabel] = useState("Fachada");
+  const [activeImage] = useState("/ona/fachada-dia.jpg");
+  const [activeLabel] = useState("Fachada");
   const [amenityIndex, setAmenityIndex] = useState(0);
 
   // Estados del Flujo Paso a Paso (Ambiente -> Piso disponible -> Precio & Ganancia):
   const [selectedAmbId, setSelectedAmbId] = useState<string>("1D-32");
   const [selectedFloor, setSelectedFloor] = useState<number>(2);
   const [selectedPlan, setSelectedPlan] = useState<"contado" | "plan60" | "plan40">("contado");
+  const [unitPhotoIndex, setUnitPhotoIndex] = useState<number>(0);
 
   const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
@@ -488,6 +617,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
   const handleSelectAmbiente = (ambId: string) => {
     setSelectedAmbId(ambId);
+    setUnitPhotoIndex(0);
     const amb = AMBIENTE_OPTIONS.find((a) => a.id === ambId);
     if (amb) {
       const matchingUnitsOnFloor = units.filter(
@@ -703,10 +833,7 @@ export default function OnaLanding({ property, onClose }: Props) {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const scene = visible ? scenes[visible.target.id] : undefined;
-        if (!scene) return;
-        setActiveImage(scene.src);
-        setActiveLabel(scene.label);
+        if (!visible) return;
         setActiveSectionId(visible.target.id);
       },
       { threshold: [0.22, 0.5] }
@@ -821,20 +948,13 @@ export default function OnaLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica con Datos Clave Destacados */}
+      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Fijada en el Edificio (Fachada Principal) */}
       <div className="relative min-h-[480px] shrink-0 bg-stone-950 md:h-screen md:min-h-0 md:w-[44%]">
-        <AnimatePresence mode="popLayout">
-          <motion.img
-            key={activeImage}
-            src={activeImage}
-            alt={`ONA Residences - ${activeLabel}`}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </AnimatePresence>
+        <img
+          src="/ona/fachada-dia.jpg"
+          alt="ONA Residences - Fachada Principal"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/30" />
         <div className="absolute bottom-6 left-6 right-6 text-white md:bottom-8 md:left-8 md:right-8 lg:bottom-10 lg:left-10 lg:right-10">
           <div className="flex flex-wrap items-center gap-2">
@@ -1861,53 +1981,142 @@ export default function OnaLanding({ property, onClose }: Props) {
                 })}
               </div>
 
-              {/* Vista previa de la unidad seleccionada con foto/render del depto (estilo Garden Zen) */}
-              {activeUnit && (
-                <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
-                    <div>
-                      <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                        Piso {activeUnit.floor} · Tipo {activeUnit.tipo}
-                      </span>
-                      <p className="mt-1 font-serif text-lg font-bold text-stone-900">
-                        {currentAmbiente.name} ({activeUnit.totalM2} m²)
-                      </p>
-                      <p className="text-xs text-stone-500 font-light mt-0.5">
-                        {activeUnit.view} {activeUnit.balconyM2 ? `· Balcón ${activeUnit.balconyM2} m²` : ""}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                        Precio Unidad ({selectedPlan === "contado" ? "Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial"})
-                      </p>
-                      <p className="font-serif text-xl font-bold text-[#816127]">
-                        USD {formatOnaUsd(activeFinancials ? activeFinancials.unitTotalPrice : activeUnit.cash)}
-                      </p>
-                      <p className="text-[10px] text-stone-400 font-mono">
-                        ${formatOnaUsd(activeFinancials ? activeFinancials.pricePerM2 : activeUnit.cashPerM2)} USD/m²
-                      </p>
-                    </div>
-                  </div>
+              {/* Vista previa de la unidad seleccionada con encuadre cinematográfico (estilo Garden Zen + ONA Luxury) */}
+              {activeUnit && (() => {
+                const currentSlides = AMBIENTE_GALLERY[selectedAmbId] || AMBIENTE_GALLERY["1D-32"];
+                const safeSlideIndex = Math.min(unitPhotoIndex, currentSlides.length - 1);
+                const activeSlide = currentSlides[safeSlideIndex] || currentSlides[0];
 
-                  {/* Foto / Plano del depto */}
-                  <div className="mt-4 overflow-hidden rounded-xl border border-stone-100 bg-stone-50 p-2 text-center">
-                    <img
-                      src={currentAmbiente.image || "/ona/tipo-32.jpg"}
-                      alt={`Plano / Render ${currentAmbiente.name}`}
-                      className="mx-auto max-h-56 object-contain"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (!target.src.includes("dormitorio")) {
-                          target.src = "/ona/dormitorio.jpg";
+                return (
+                  <div className="mt-4 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 p-4">
+                      <div>
+                        <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
+                          Piso {activeUnit.floor} · Tipo {activeUnit.tipo}
+                        </span>
+                        <p className="mt-1 font-serif text-lg font-bold text-stone-900">
+                          {currentAmbiente.name} ({activeUnit.totalM2} m²)
+                        </p>
+                        <p className="text-xs text-stone-500 font-light mt-0.5">
+                          {activeUnit.view} {activeUnit.balconyM2 ? `· Balcón ${activeUnit.balconyM2} m²` : ""}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
+                          Precio Unidad ({selectedPlan === "contado" ? "Contado" : selectedPlan === "plan60" ? "60% Inicial" : "40% Inicial"})
+                        </p>
+                        <p className="font-serif text-xl font-bold text-[#816127]">
+                          USD {formatOnaUsd(activeFinancials ? activeFinancials.unitTotalPrice : activeUnit.cash)}
+                        </p>
+                        <p className="text-[10px] text-stone-400 font-mono">
+                          ${formatOnaUsd(activeFinancials ? activeFinancials.pricePerM2 : activeUnit.cashPerM2)} USD/m²
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Selector de vistas / fotos del depto (Plano 3D + Renders de ambientes) */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 bg-stone-50/80 px-4 py-2.5">
+                      <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+                        {currentSlides.map((slide, sIdx) => {
+                          const isCurrent = safeSlideIndex === sIdx;
+                          return (
+                            <button
+                              key={sIdx}
+                              type="button"
+                              onClick={() => setUnitPhotoIndex(sIdx)}
+                              className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer ${
+                                isCurrent
+                                  ? "bg-stone-900 text-white shadow-xs"
+                                  : "bg-white text-stone-600 hover:bg-stone-100 border border-stone-200/80"
+                              }`}
+                            >
+                              {slide.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setUnitPhotoIndex((prev) => (prev - 1 + currentSlides.length) % currentSlides.length)}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-700 shadow-2xs hover:bg-stone-50 active:scale-95 cursor-pointer"
+                          title="Foto anterior"
+                        >
+                          <ChevronLeft size={14} />
+                        </button>
+                        <span className="text-[11px] font-mono text-stone-400 px-1">
+                          {safeSlideIndex + 1}/{currentSlides.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setUnitPhotoIndex((prev) => (prev + 1) % currentSlides.length)}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-700 shadow-2xs hover:bg-stone-50 active:scale-95 cursor-pointer"
+                          title="Siguiente foto"
+                        >
+                          <ChevronRight size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Contenedor cinematográfico con encuadre generoso y fondo negro para corte 3D */}
+                    <div
+                      className={`relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden flex items-center justify-center transition-colors group ${
+                        activeSlide.type === "plano" ? "bg-black" : "bg-stone-900"
+                      }`}
+                    >
+                      <img
+                        key={activeSlide.src}
+                        src={activeSlide.src}
+                        alt={`${currentAmbiente.name} - ${activeSlide.label}`}
+                        className={
+                          activeSlide.type === "plano"
+                            ? "h-full w-full object-contain p-2 sm:p-4 select-none"
+                            : "h-full w-full object-cover select-none transition-transform duration-500 group-hover:scale-105"
                         }
-                      }}
-                    />
-                    <p className="mt-1 text-[11px] text-stone-400">
-                      Plano esquemático referencial · {currentAmbiente.name} ({activeUnit.totalM2} m²)
-                    </p>
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (!target.src.includes("fachada")) {
+                            target.src = "/ona/fachada-dia.jpg";
+                          }
+                        }}
+                      />
+
+                      {/* Badge flotante en la foto */}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 pointer-events-none">
+                        <span className="rounded-full bg-black/65 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8] backdrop-blur-md border border-white/10">
+                          {activeSlide.label}
+                        </span>
+                      </div>
+
+                      {/* Flechas superpuestas para pasar de foto (estilo Garden Zen) */}
+                      <button
+                        type="button"
+                        onClick={() => setUnitPhotoIndex((prev) => (prev - 1 + currentSlides.length) % currentSlides.length)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-md shadow-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 cursor-pointer"
+                        aria-label="Foto anterior"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUnitPhotoIndex((prev) => (prev + 1) % currentSlides.length)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-md shadow-md transition-all hover:bg-[#9a7b45] hover:scale-105 active:scale-95 cursor-pointer"
+                        aria-label="Siguiente foto"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+
+                    {/* Pie descriptivo del encuadre */}
+                    <div className="p-3 text-center bg-white border-t border-stone-100">
+                      <p className="text-[11px] text-stone-500 font-light">
+                        <strong className="font-semibold text-stone-800">{activeSlide.desc}</strong> · {currentAmbiente.name} ({activeUnit.totalM2} m²) · {activeUnit.view}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* PASO 3: PARQUEO O BAULERA (OPCIONAL ESTILO APPLE STORE) */}
