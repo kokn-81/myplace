@@ -1373,15 +1373,6 @@ export default function OnaLanding({ property, onClose }: Props) {
                       </ul>
                     </div>
 
-                    {/* Precio inicial */}
-                    <div className="mt-6 border-t border-stone-100 pt-5">
-                      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">
-                        Precio inicial de preventa
-                      </p>
-                      <p className="font-serif text-2xl font-medium text-stone-900">
-                        Desde USD {formatOnaUsd(tipo.cashPrice)}
-                      </p>
-                    </div>
                   </div>
                 </article>
               ))}
