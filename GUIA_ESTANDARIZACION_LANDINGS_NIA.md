@@ -203,14 +203,16 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Al seleccionar, se actualiza automáticamente la inversión total unificada.
 * **Paso 4:** Selección de Plan de Pago con recálculo dinámico en Tarjeta de Resumen Financiero (`grid-cols-2 sm:grid-cols-4`):
   * **Regla Obligatoria de Alineación Vertical:** Para evitar desorden visual cuando los títulos se dividen en 1 o 2 líneas (ej. "SALDO CONTRA ENTREGA" vs "INVERSIÓN TOTAL"), los encabezados de las 4 columnas deben ubicarse dentro de un contenedor de altura mínima uniforme (`min-h-[28px] flex items-end`). Esto garantiza que todos los montos numéricos principales compartan exactamente la misma línea de base horizontal en cualquier pantalla.
+  * **Regla Estricta de Formato de Montos (USD Arriba, Número Abajo):** En las 4 columnas de la tarjeta, el símbolo de moneda (`USD` o `+USD`) debe ubicarse obligatoriamente en su propia línea arriba, y el valor numérico formateado abajo (`<span className="block">USD</span><span className="block mt-0.5">{monto}</span>`). Esto previene desbordes en columnas móviles y garantiza una estética editorial 100% simétrica y ordenada en todos los proyectos.
   * **Regla Obligatoria para Pago al Contado (100%):** En la columna "Saldo contra Entrega", está **terminantemente prohibido mostrar "USD 0"** y la fecha de entrega de obra. Cuando la modalidad seleccionada sea "Contado (100%)" o el saldo pendiente sea cero:
-    * El valor principal debe mostrar un guion estilizado (`—`) en lugar de `USD 0`.
-    * El subtítulo descriptivo debe mostrar `Sin saldo pendiente` en lugar de la fecha de entrega de obra (ej. evitar "En Junio 2028" cuando la unidad ya está liquidada al 100%).
+    * Arriba se muestra `USD` y abajo un guion estilizado (`—`) en lugar de `USD 0`.
+    * El subtítulo descriptivo inferior debe mostrar `Sin saldo pendiente` en lugar de la fecha de entrega de obra (evitando fechas absurdas como "En Junio 2028" cuando la unidad ya se pagó al 100%).
+  * **Regla de Cálculo de Plusvalía con Opcionales:** Al calcular el valor estimado de mercado a la entrega (`marketValueAtDelivery`), se debe incorporar el valor estimado a la entrega de los parqueos o bauleras seleccionados, asegurando que la plusvalía neta (`capitalGain`) y el porcentaje sean siempre positivos y coherentes con la valorización de la zona.
   * **Columnas de la Tarjeta:**
-    1. *Inversión Total:* Monto total unificado (departamento + parqueo/baulera) y precio real por m².
-    2. *Cuota Inicial (%):* Monto a la firma del contrato de preventa.
-    3. *Saldo contra Entrega:* Monto pendiente a la entrega de llaves y fecha estimada (o `—` y `Sin saldo pendiente` al contado).
-    4. *Plusvalía Proyectada:* Crecimiento de valor estimado en USD y porcentaje en dólares.
+    1. *Inversión Total:* `USD` arriba, monto total unificado (departamento + parqueo/baulera) abajo, y precio real por m² en el pie.
+    2. *Cuota Inicial (%):* `USD` arriba, monto a la firma del contrato abajo, y "A la firma del contrato" en el pie.
+    3. *Saldo contra Entrega:* `USD` arriba, monto pendiente abajo (o `—` si es contado), y fecha de entrega (o `Sin saldo pendiente`) en el pie.
+    4. *Plusvalía Proyectada:* `+USD` arriba, ganancia neta estimada abajo, y porcentaje en dólares en el pie.
 * **Paso 5:** Botón de acción principal: `RESERVAR UNIDAD [X] EN PISO [Y] VÍA WHATSAPP`.
   * Genera automáticamente un mensaje estructurado con todos los datos seleccionados para el agente comercial.
 

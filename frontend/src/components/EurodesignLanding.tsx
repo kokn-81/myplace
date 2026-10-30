@@ -1545,10 +1545,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                          USD {formatEurodesignUsd(activeFinancials.totalPrice)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
+                          <span className="block">USD</span>
+                          <span className="block mt-0.5">{formatEurodesignUsd(activeFinancials.totalPrice)}</span>
                         </p>
-                        <p className="text-[10px] text-stone-500 font-mono mt-0.5">
+                        <p className="text-[10px] text-stone-500 font-mono mt-1">
                           USD {formatEurodesignUsd(activeFinancials.pricePerM2)} / m²
                         </p>
                       </div>
@@ -1561,10 +1562,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-[#816127]">
-                          USD {formatEurodesignUsd(activeFinancials.initialPayment)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-[#816127] leading-tight">
+                          <span className="block">USD</span>
+                          <span className="block mt-0.5">{formatEurodesignUsd(activeFinancials.initialPayment)}</span>
                         </p>
-                        <p className="text-[10px] text-stone-500 mt-0.5">
+                        <p className="text-[10px] text-stone-500 mt-1">
                           A la firma del contrato
                         </p>
                       </div>
@@ -1579,19 +1581,21 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       <div className="mt-1">
                         {activeFinancials.balancePayment > 0 ? (
                           <>
-                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                              USD {formatEurodesignUsd(activeFinancials.balancePayment)}
+                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
+                              <span className="block">USD</span>
+                              <span className="block mt-0.5">{formatEurodesignUsd(activeFinancials.balancePayment)}</span>
                             </p>
-                            <p className="text-[10px] text-stone-500 mt-0.5">
+                            <p className="text-[10px] text-stone-500 mt-1">
                               En {EURODESIGN_DELIVERY}
                             </p>
                           </>
                         ) : (
                           <>
-                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-400">
-                              —
+                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-400 leading-tight">
+                              <span className="block">USD</span>
+                              <span className="block mt-0.5">—</span>
                             </p>
-                            <p className="text-[10px] text-stone-400 mt-0.5">
+                            <p className="text-[10px] text-stone-400 mt-1">
                               Sin saldo pendiente
                             </p>
                           </>
@@ -1606,10 +1610,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-emerald-600">
-                          +USD {formatEurodesignUsd(activeFinancials.capitalGain)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-emerald-600 leading-tight">
+                          <span className="block">+USD</span>
+                          <span className="block mt-0.5">{formatEurodesignUsd(activeFinancials.capitalGain)}</span>
                         </p>
-                        <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                        <p className="text-[10px] text-emerald-700 font-medium mt-1">
                           +{activeFinancials.gainPercentage}% en dólares
                         </p>
                       </div>

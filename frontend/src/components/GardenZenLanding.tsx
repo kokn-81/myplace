@@ -464,9 +464,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
     const initialPayment = unitInitial + parkingInitial;
     const balancePayment = unitBalance + parkingBalance;
 
-    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 1800);
-    const capitalGain = marketValueAtDelivery - totalPrice;
-    const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
+    const parkingValueAtDelivery = hasParking ? Math.round(parkingPrice * 1.1) : 0;
+    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2050) + parkingValueAtDelivery;
+    const capitalGain = Math.max(1000, marketValueAtDelivery - totalPrice);
+    const gainPercentage = Math.max(1, Math.round((capitalGain / totalPrice) * 100));
 
     return {
       unitTotalPrice,
@@ -1896,10 +1897,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                          USD {formatGardenZenUsd(activeFinancials.totalPrice)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
+                          <span className="block">USD</span>
+                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.totalPrice)}</span>
                         </p>
-                        <p className="text-[10px] text-stone-500 font-mono mt-0.5">
+                        <p className="text-[10px] text-stone-500 font-mono mt-1">
                           USD {formatGardenZenUsd(activeFinancials.pricePerM2)} / m²
                         </p>
                       </div>
@@ -1912,10 +1914,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-[#1b4332]">
-                          USD {formatGardenZenUsd(activeFinancials.initialPayment)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-[#1b4332] leading-tight">
+                          <span className="block">USD</span>
+                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.initialPayment)}</span>
                         </p>
-                        <p className="text-[10px] text-stone-500 mt-0.5">
+                        <p className="text-[10px] text-stone-500 mt-1">
                           A la firma del contrato
                         </p>
                       </div>
@@ -1930,19 +1933,21 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       <div className="mt-1">
                         {activeFinancials.balancePayment > 0 ? (
                           <>
-                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                              USD {formatGardenZenUsd(activeFinancials.balancePayment)}
+                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
+                              <span className="block">USD</span>
+                              <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.balancePayment)}</span>
                             </p>
-                            <p className="text-[10px] text-stone-500 mt-0.5">
+                            <p className="text-[10px] text-stone-500 mt-1">
                               En {GARDEN_ZEN_CONFIG.delivery}
                             </p>
                           </>
                         ) : (
                           <>
-                            <p className="font-serif text-xl sm:text-2xl font-bold text-stone-400">
-                              —
+                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-400 leading-tight">
+                              <span className="block">USD</span>
+                              <span className="block mt-0.5">—</span>
                             </p>
-                            <p className="text-[10px] text-stone-400 mt-0.5">
+                            <p className="text-[10px] text-stone-400 mt-1">
                               Sin saldo pendiente
                             </p>
                           </>
@@ -1957,10 +1962,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         </p>
                       </div>
                       <div className="mt-1">
-                        <p className="font-serif text-xl sm:text-2xl font-bold text-emerald-600">
-                          +USD {formatGardenZenUsd(activeFinancials.capitalGain)}
+                        <p className="font-serif text-lg sm:text-2xl font-bold text-emerald-600 leading-tight">
+                          <span className="block">+USD</span>
+                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.capitalGain)}</span>
                         </p>
-                        <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                        <p className="text-[10px] text-emerald-700 font-medium mt-1">
                           +{activeFinancials.gainPercentage}% en dólares
                         </p>
                       </div>
