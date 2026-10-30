@@ -1056,11 +1056,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     key={amb.id}
                     onClick={() => {
                       handleSelectAmbiente(amb.id);
-                      scrollToSection("disponibilidad");
                     }}
                     className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md"
+                        ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
                         : "border-stone-200 bg-white hover:border-[#9a7b45]/50 hover:shadow-sm"
                     }`}
                   >
@@ -1089,8 +1088,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
                     <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
                       <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
-                      <span className="inline-flex items-center gap-1 text-[#9a7b45] font-semibold">
-                        Ver unidades disponibles <ArrowRight size={13} />
+                      <span className={`inline-flex items-center gap-1 font-semibold ${isSelected ? "text-stone-900" : "text-[#9a7b45]"}`}>
+                        {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
                       </span>
                     </div>
                   </div>
@@ -1135,6 +1134,11 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 }
               };
 
+              const ambKeys = ["mono", "1d", "2d", "3d"];
+              const currentIdx = ambKeys.indexOf(selectedAmbId);
+              const prevAmbKey = ambKeys[(currentIdx - 1 + ambKeys.length) % ambKeys.length];
+              const nextAmbKey = ambKeys[(currentIdx + 1) % ambKeys.length];
+
               const currentVisual = visualMap[selectedAmbId] || visualMap["mono"];
 
               return (
@@ -1153,17 +1157,31 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         Superficie: <strong className="font-semibold text-stone-800">{currentVisual.area}</strong> · Plano oficial de arquitectura Garden Zen
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => scrollToSection("disponibilidad")}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-medium text-white transition-all hover:bg-[#9a7b45] active:scale-95"
-                    >
-                      Cotizar en Disponibilidad
-                      <ArrowRight size={13} />
-                    </button>
+
+                    {/* Botones para pasar de una imagen a otra sin mover de sección */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSelectAmbiente(prevAmbKey)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-50 active:scale-95 cursor-pointer shadow-2xs"
+                        title="Ver plano anterior"
+                      >
+                        <ChevronLeft size={14} />
+                        Anterior
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectAmbiente(nextAmbKey)}
+                        className="inline-flex items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#9a7b45] active:scale-95 cursor-pointer shadow-2xs"
+                        title="Ver siguiente plano"
+                      >
+                        Siguiente
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden">
+                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden group">
                     <img
                       src={currentVisual.image}
                       alt={`Plano arquitectónico tipología ${currentVisual.name}`}
@@ -1175,12 +1193,46 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         }
                       }}
                     />
+
+                    {/* Flechas superpuestas para pasar de imagen */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAmbiente(prevAmbKey)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-stone-900 hover:text-white cursor-pointer opacity-80 hover:opacity-100"
+                      aria-label="Plano anterior"
+                      title="Plano anterior"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAmbiente(nextAmbKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-stone-900 hover:text-white cursor-pointer opacity-80 hover:opacity-100"
+                      aria-label="Plano siguiente"
+                      title="Plano siguiente"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
                   </div>
 
                   <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
-                    <p className="text-xs text-stone-600 font-light leading-relaxed">
-                      {currentVisual.desc}
-                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                      <p className="text-xs text-stone-600 font-light leading-relaxed flex-1">
+                        {currentVisual.desc}
+                      </p>
+                      {/* Indicador de imagen activa */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {ambKeys.map((k) => (
+                          <button
+                            key={k}
+                            type="button"
+                            onClick={() => handleSelectAmbiente(k)}
+                            className={`h-1.5 rounded-full transition-all cursor-pointer ${selectedAmbId === k ? "w-5 bg-[#9a7b45]" : "w-1.5 bg-stone-300 hover:bg-stone-400"}`}
+                            title={`Ver plano ${visualMap[k]?.code}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {currentVisual.pills.map((pill, idx) => (
                         <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">

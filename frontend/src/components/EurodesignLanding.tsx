@@ -1023,11 +1023,10 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                     key={amb.id}
                     onClick={() => {
                       setSelectedAmbId(amb.id);
-                      scrollToSection("disponibilidad");
                     }}
                     className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md"
+                        ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
                         : "border-stone-200 bg-white hover:border-[#9a7b45]/50 hover:shadow-sm"
                     }`}
                   >
@@ -1044,18 +1043,18 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         Desde USD {formatEurodesignUsd(displayPrice)}
                       </p>
                       <p className="mt-1 text-xs text-stone-500 font-light">
-                        {amb.id === "1d"
+                        {amb.id === "1dorm"
                           ? "Suite privada · Walking closet · Balcón terraza"
-                          : amb.id === "2d"
+                          : amb.id === "2dorm"
                           ? "Master suite + dormitorio · 2 Baños · Living espacioso"
-                          : "3 Suites · Balcón panorámico · Cocina europea integrada"}
+                          : "Vitrinas comerciales · Doble altura · Alto tráfico"}
                       </p>
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
                       <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
-                      <span className="inline-flex items-center gap-1 text-[#9a7b45] font-semibold">
-                        Ver unidades disponibles <ArrowRight size={13} />
+                      <span className={`inline-flex items-center gap-1 font-semibold ${isSelected ? "text-stone-900" : "text-[#9a7b45]"}`}>
+                        {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
                       </span>
                     </div>
                   </div>
@@ -1064,63 +1063,115 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             {/* Visualización interactiva del Plano Arquitectónico */}
-            {currentAmbiente && (
-              <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm transition-all">
-                <div className="p-4 sm:p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold text-white tracking-wider">
-                        PLANTA {currentAmbiente.code}
-                      </span>
-                      <span className="font-serif text-lg font-medium text-stone-900">
-                        {currentAmbiente.name}
-                      </span>
+            {currentAmbiente && (() => {
+              const ambKeys = AMBIENTE_OPTIONS.map((a) => a.id);
+              const currentIdx = ambKeys.indexOf(selectedAmbId);
+              const prevAmbKey = ambKeys[(currentIdx - 1 + ambKeys.length) % ambKeys.length];
+              const nextAmbKey = ambKeys[(currentIdx + 1) % ambKeys.length];
+
+              return (
+                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm transition-all">
+                  <div className="p-4 sm:p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold text-white tracking-wider">
+                          PLANTA {currentAmbiente.code}
+                        </span>
+                        <span className="font-serif text-lg font-medium text-stone-900">
+                          {currentAmbiente.name}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-stone-500 font-light">
+                        Superficie: <strong className="font-semibold text-stone-800">{currentAmbiente.areaRange}</strong> · Plano oficial Tower Eurodesign
+                      </p>
                     </div>
-                    <p className="mt-1 text-xs text-stone-500 font-light">
-                      Superficie: <strong className="font-semibold text-stone-800">{currentAmbiente.areaRange}</strong> · Plano oficial Tower Eurodesign
+                    {/* Botones para pasar de una imagen a otra sin mover de sección */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedAmbId(prevAmbKey)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-50 active:scale-95 cursor-pointer shadow-2xs"
+                        title="Ver plano anterior"
+                      >
+                        <ChevronLeft size={14} />
+                        Anterior
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedAmbId(nextAmbKey)}
+                        className="inline-flex items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#9a7b45] active:scale-95 cursor-pointer shadow-2xs"
+                        title="Ver siguiente plano"
+                      >
+                        Siguiente
+                        <ChevronRight size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setZoomPlanImage(currentAmbiente.image)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-100 active:scale-95 cursor-pointer"
+                        title="Ver en pantalla completa"
+                      >
+                        <Maximize2 size={13} /> Ver HD
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden p-4 group">
+                    <img
+                      src={currentAmbiente.image}
+                      alt={`Plano arquitectónico tipología ${currentAmbiente.name}`}
+                      className="max-h-full max-w-full object-contain"
+                    />
+
+                    {/* Flechas superpuestas para pasar de imagen */}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAmbId(prevAmbKey)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-stone-700 shadow-md backdrop-blur-xs transition opacity-80 hover:opacity-100 hover:bg-white active:scale-95 cursor-pointer"
+                      aria-label="Plano anterior"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAmbId(nextAmbKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-stone-700 shadow-md backdrop-blur-xs transition opacity-80 hover:opacity-100 hover:bg-white active:scale-95 cursor-pointer"
+                      aria-label="Plano siguiente"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+
+                    {/* Indicadores de plano / puntos */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-stone-900/40 backdrop-blur-xs px-2.5 py-1 rounded-full">
+                      {AMBIENTE_OPTIONS.map((amb) => (
+                        <button
+                          key={amb.id}
+                          type="button"
+                          onClick={() => setSelectedAmbId(amb.id)}
+                          className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                            selectedAmbId === amb.id ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
+                          }`}
+                          title={amb.name}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
+                    <p className="text-xs text-stone-600 font-light leading-relaxed">
+                      {currentAmbiente.description}
                     </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setZoomPlanImage(currentAmbiente.image)}
-                      className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-xs font-medium text-stone-700 transition hover:bg-stone-100"
-                    >
-                      <Maximize2 size={13} /> Ver HD
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollToSection("disponibilidad")}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-medium text-white transition-all hover:bg-[#9a7b45] active:scale-95"
-                    >
-                      Cotizar en Disponibilidad
-                      <ArrowRight size={13} />
-                    </button>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {currentAmbiente.pills.map((pill, idx) => (
+                        <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">
+                          ✓ {pill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-                <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden p-4">
-                  <img
-                    src={currentAmbiente.image}
-                    alt={`Plano arquitectónico tipología ${currentAmbiente.name}`}
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </div>
-
-                <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
-                  <p className="text-xs text-stone-600 font-light leading-relaxed">
-                    {currentAmbiente.description}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {currentAmbiente.pills.map((pill, idx) => (
-                      <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">
-                        ✓ {pill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })()}
           </section>
 
           {/* 5. EQUIPAMIENTO 100% INCLUIDO (LLAVE EN MANO) */}

@@ -145,16 +145,18 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 
 #### 4. Sección Tipologías Residenciales (`#tipologias`)
 * **Regla de Transparencia NIA (Estricta):** Queda **terminantemente prohibido prometer rendimientos exactos, rentas fijas o mostrar etiquetas de "Yield / Renta estimada"** en las tarjetas de tipología. Las tarjetas deben mantenerse limpias, arquitectónicas y enfocadas en la experiencia habitable.
+* **Regla de Navegación Local (Estricta):** Los botones y tarjetas de `#tipologias` **NO deben mover al usuario de sección ni saltar a `#disponibilidad`**. La sección está concebida para la exploración arquitectónica pausada. Los clics y controles sirven exclusivamente para alternar entre planos 2D, cortes 3D y especificaciones de cada tipología sin interrumpir el flujo de lectura.
 * **Datos expuestos en cada tarjeta:**
   * Nombre de la tipología (ej. *Monoambiente*, *1 Dormitorio*, *2 Dormitorios*, *Penthouse*).
   * Metraje útil y total (rango en m²).
   * Precio preventa oficial: `Desde USD [precio mínimo disponible]`.
   * Aspectos arquitectónicos clave (ej. balcón aterrazado, suite con vestidor, ventilación cruzada).
-  * Botón interactivo de llamado a la acción: `Ver unidades disponibles →` (desplaza directamente a `#disponibilidad`).
+  * Indicador de estado visual: `Plano activo abajo ✓` (cuando está seleccionada) o `Ver plano arquitectónico →` (al hacer clic activa el plano en el visor inferior sin desplazarse).
 * **Visualización interactiva de planos:**
-  * Tarjeta visual con plano 2D acotado y corte isométrico 3D de alta definición correspondiente a la tipología seleccionada.
-  * Etiquetas de especificaciones arquitectónicas aprobadas (ej. `Planta MP`, `Planta B1`, etc.).
-  * Botón directo: `Cotizar en Disponibilidad`.
+  * Tarjeta visual con plano 2D acotado y renderizado correspondiente a la tipología seleccionada.
+  * Controles de navegación local (`Anterior` / `Siguiente`, flechas superpuestas sobre la imagen y puntos indicadores) para pasar de una tipología a otra con total fluidez.
+  * Botón de ampliación: `Ver HD` (abre modal de zoom para examinar medidas y distribución al detalle).
+  * Etiquetas de especificaciones arquitectónicas aprobadas (ej. `PLANTA MP`, `PLANTA B1`, etc.) y pills de equipamiento incluido en la tipología.
 
 #### 5. Sección Equipamiento 100% Incluido (`#equipamiento`)
 * **Carrusel visual por ambiente:** Cocina, Dormitorio, Baños, Climatización, Iluminación.
