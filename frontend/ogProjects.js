@@ -143,6 +143,90 @@ export function projectFromUrl(url) {
   return fromQuery(queryProject);
 }
 
+export function slugify(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function projectByKey(value) {
+  const key = String(value || "").trim().toLowerCase();
+  if (!key) return null;
+  if (PROJECTS[key]) return PROJECTS[key];
+  if (PATH_ALIASES[key]) return PROJECTS[PATH_ALIASES[key]] || null;
+  return null;
+}
+
+function catalogImages(item) {
+  const list = [];
+  if (Array.isArray(item.images)) list.push(...item.images);
+  if (Array.isArray(item.imagenes)) list.push(...item.imagenes);
+  if (typeof item.imagenes === "string") list.push(...item.imagenes.split(","));
+  if (item.imagen_url) list.push(item.imagen_url);
+  return list;
+}
+
+function catalogImage(item) {
+  for (const raw of catalogImages(item)) {
+    const url = String(raw || "").trim();
+    if (!url || /\.(mp4|webm|mov|m4v|pdf)(\?|$)/i.test(url)) continue;
+    if (url.startsWith("https://")) return url;
+    if (url.startsWith("http://")) return `https://${url.slice("http://".length)}`;
+    if (url.startsWith("/")) return `${SITE}${url}`;
+  }
+  return "";
+}
+
+export function projectFromCatalogItem(item, slug) {
+  if (!item) return null;
+  const id = String(item.id ?? "").trim();
+  const title = String(item.titulo || item.title || "").trim();
+  if (!id || !title) return null;
+
+  const zone = String(item.zona || item.ciudad || item.complejo_nombre || item.complejoNombre || "").trim();
+  const price = Number(item.precio_usd ?? item.precio ?? 0);
+  const requested = slugify(slug) || id;
+  const bits = [];
+  if (zone) bits.push(zone);
+  if (price > 0) bits.push(`desde USD ${usd(price)}`);
+  let description = bits.join(" · ");
+  const blurb = String(item.descripcion || item.description || "").replace(/\s+/g, " ").trim();
+  if (blurb) description = description ? `${description}. ${blurb}` : blurb;
+
+  return {
+    id,
+    title,
+    description: (description || title).slice(0, 220),
+    image: catalogImage(item),
+    imageAlt: title,
+    canonicalPath: `/proyecto/${requested}`,
+    appUrl: `/?proyecto=${encodeURIComponent(id)}`,
+  };
+}
+
+export function findCatalogItem(items, slug) {
+  const key = String(slug || "").trim().toLowerCase();
+  const slugKey = slugify(slug);
+  if (!key || !Array.isArray(items)) return null;
+
+  const byId = items.find((item) => String(item.id) === key);
+  if (byId) return byId;
+
+  const matches = items.filter((item) => {
+    const title = slugify(item.titulo || item.title || "");
+    const complejo = slugify(item.complejo_nombre || item.complejoNombre || "");
+    return (title && title === slugKey) || (complejo && complejo === slugKey);
+  });
+  if (matches.length === 0) return null;
+  return (
+    matches.find((item) => /proyecto|preventa/i.test(String(item.tipo_inmueble || item.type || ""))) ||
+    matches[0]
+  );
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -153,12 +237,27 @@ function escapeHtml(value) {
 export function projectOgHtml(project, requestUrl) {
   const title = escapeHtml(project.title);
   const description = escapeHtml(project.description);
-  const image = escapeHtml(project.image);
-  const alt = escapeHtml(project.imageAlt);
+  const image = project.image ? escapeHtml(project.image) : "";
+  const alt = escapeHtml(project.imageAlt || project.title);
   const canonical = escapeHtml(requestUrl || `${SITE}${project.canonicalPath}`);
   const size = project.imageWidth
     ? `<meta property="og:image:width" content="${project.imageWidth}" />
   <meta property="og:image:height" content="${project.imageHeight}" />`
+    : "";
+  const imageType = /\.png(\?|$)/i.test(project.image || "")
+    ? "image/png"
+    : /\.webp(\?|$)/i.test(project.image || "")
+      ? "image/webp"
+      : /\.gif(\?|$)/i.test(project.image || "")
+        ? "image/gif"
+        : "image/jpeg";
+  const imageTags = image
+    ? `<meta property="og:image" content="${image}" />
+  <meta property="og:image:secure_url" content="${image}" />
+  <meta property="og:image:type" content="${imageType}" />
+  ${size}
+  <meta property="og:image:alt" content="${alt}" />
+  <meta name="twitter:image" content="${image}" />`
     : "";
 
   return `<!doctype html>
@@ -173,15 +272,10 @@ export function projectOgHtml(project, requestUrl) {
   <meta property="og:url" content="${canonical}" />
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
-  <meta property="og:image" content="${image}" />
-  <meta property="og:image:secure_url" content="${image}" />
-  <meta property="og:image:type" content="image/jpeg" />
-  ${size}
-  <meta property="og:image:alt" content="${alt}" />
+  ${imageTags}
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />
-  <meta name="twitter:image" content="${image}" />
 </head>
 <body>
   <p><a href="${escapeHtml(project.appUrl)}">${title}</a></p>

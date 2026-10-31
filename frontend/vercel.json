@@ -37,6 +37,14 @@
       "destination": "/api/project-og?project=:slug"
     },
     {
+      "source": "/proyecto/:slug",
+      "destination": "/api/project-og?project=:slug"
+    },
+    {
+      "source": "/p/:slug",
+      "destination": "/api/project-og?project=:slug"
+    },
+    {
       "source": "/garden",
       "destination": "/api/project-og?project=gardenzen"
     },

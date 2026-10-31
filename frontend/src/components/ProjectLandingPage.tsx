@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import OnaLanding from "./OnaLanding";
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export default function ProjectLandingPage({ property, onClose }: Props) {
+  const [shareFeedback, setShareFeedback] = useState(false);
+
   if (property.title?.toLowerCase().includes("ona")) {
     return <OnaLanding property={property} onClose={onClose} />;
   }
@@ -48,6 +51,26 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
   }
 
   const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
+  const share = async () => {
+    const origin = window.location.origin || "https://nia-web.com";
+    const shareUrl = `${origin}/proyecto/${property.id}`;
+    const shareText = [property.title, property.zone].filter(Boolean).join(" · ");
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title: property.title, text: shareText, url: shareUrl });
+        return;
+      }
+    } catch (error) {
+      if ((error as DOMException)?.name === "AbortError") return;
+    }
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      setShareFeedback(true);
+      setTimeout(() => setShareFeedback(false), 2500);
+    } catch {
+      setShareFeedback(false);
+    }
+  };
   const contact = () => {
     recordLeadEvent({
       action: "contact_tap",
@@ -75,9 +98,14 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
         <p className="mt-2 text-sm text-stone-500">{[property.zone, property.city].filter(Boolean).join(", ")}</p>
         {property.images[0] && <img src={property.images[0]} alt={property.title} className="mt-6 aspect-[16/9] w-full object-cover" />}
         <p className="mt-6 whitespace-pre-line text-sm font-light leading-relaxed text-stone-600">{property.description}</p>
-        <button onClick={contact} className="mt-8 bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white">
-          Pedir información
-        </button>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <button onClick={contact} className="bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white">
+            Pedir información
+          </button>
+          <button onClick={share} className="border border-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em]">
+            {shareFeedback ? "Enlace copiado" : "Compartir"}
+          </button>
+        </div>
       </div>
     </motion.div>
   );
