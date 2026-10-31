@@ -3,12 +3,28 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
+import { BOT_UA, projectFromUrl, projectOgHtml } from "./ogProjects.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+  if (!BOT_UA.test(String(req.headers["user-agent"] || ""))) return next();
+  let project = null;
+  try {
+    project = projectFromUrl(new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`));
+  } catch {
+    return next();
+  }
+  if (!project) return next();
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.status(200).send(projectOgHtml(project, `https://nia-web.com${project.canonicalPath}`));
+});
 
 app.get("/c/:slug", async (req, res) => {
   const apiBase = process.env.VITE_API_BASE_URL || "http://localhost:8010/api";
@@ -206,18 +222,18 @@ app.get(["/domus", "/domus-black", "/domus-gold", "/domus-onix", "/domus-insigni
   res.send(html);
 });
 
-app.get(["/garden-zen", "/zen", "/api/garden-zen-og"], (req, res) => {
+app.get(["/gardenzen", "/garden-zen", "/zen", "/api/garden-zen-og"], (req, res) => {
   const ua = req.headers["user-agent"] || "";
   const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|applebot|curl|wget|bingbot|googlebot/i.test(
     ua
   );
 
   const title = "Garden Zen · Preventa Eco-Sostenible en Equipetrol Norte";
-  const desc = "Torre eco-sostenible con paneles solares, recolección de agua de lluvia y 50% menos expensas. Departamentos desde USD 56.210. Entrega Marzo 2027.";
+  const desc = "Departamentos eco-sostenibles con paneles solares y 50% menos expensas en Equipetrol Norte desde USD 56.672.";
   const img = "https://nia-web.com/garden_zen/fachada.jpg";
   const targetUrl = "/?proyecto=garden-zen";
 
-  if (!isBot) {
+  if (!isBot && req.path !== "/api/garden-zen-og") {
     res.redirect(307, targetUrl);
     return;
   }
@@ -231,14 +247,14 @@ app.get(["/garden-zen", "/zen", "/api/garden-zen-og"], (req, res) => {
   <meta name="description" content="${desc}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Garden Zen · N.I.A" />
-  <meta property="og:url" content="https://nia-web.com${targetUrl}" />
+  <meta property="og:url" content="https://nia-web.com/gardenzen" />
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${desc}" />
   <meta property="og:image" content="${img}" />
   <meta property="og:image:secure_url" content="${img}" />
   <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  <meta property="og:image:width" content="1125" />
+  <meta property="og:image:height" content="783" />
   <meta property="og:image:alt" content="Garden Zen en Equipetrol Norte" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />

@@ -1243,7 +1243,10 @@ export default function MapPage() {
     const pathname = window.location.pathname.toLowerCase();
     const isOnaPath = pathname.startsWith("/ona");
     const isEuroPath = pathname.startsWith("/eurodesign") || pathname.startsWith("/euro-design");
-    const isDomusPath = pathname.startsWith("/domus");
+    const pathParts = pathname.split("/").filter(Boolean);
+    const head = pathParts[0] || "";
+    const isDomusPath = head === "domus" || head.startsWith("domus-");
+    const domusSlug = head === "domus" ? pathParts[1] || "" : head.startsWith("domus-") ? head : "";
     const isZenPath =
       pathname.startsWith("/gardenzen") ||
       pathname.startsWith("/garden-zen") ||
@@ -1253,7 +1256,7 @@ export default function MapPage() {
       params.get("proyecto") ||
       params.get("project") ||
       params.get("p") ||
-      (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? "domus-black" : isZenPath ? "garden-zen" : null);
+      (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? (domusSlug || "domus-black") : isZenPath ? "garden-zen" : null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));

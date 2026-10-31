@@ -5,8 +5,76 @@
       "destination": "/api/c/:slug"
     },
     {
+      "source": "/gardenzen",
+      "destination": "/api/project-og?project=gardenzen"
+    },
+    {
+      "source": "/garden-zen",
+      "destination": "/api/project-og?project=gardenzen"
+    },
+    {
+      "source": "/zen",
+      "destination": "/api/project-og?project=gardenzen"
+    },
+    {
       "source": "/ona",
-      "destination": "/api/ona-og"
+      "destination": "/api/project-og?project=ona"
+    },
+    {
+      "source": "/eurodesign",
+      "destination": "/api/project-og?project=eurodesign"
+    },
+    {
+      "source": "/euro-design",
+      "destination": "/api/project-og?project=eurodesign"
+    },
+    {
+      "source": "/domus",
+      "destination": "/api/project-og?project=domus-black"
+    },
+    {
+      "source": "/domus/:slug",
+      "destination": "/api/project-og?project=:slug"
+    },
+    {
+      "source": "/garden",
+      "destination": "/api/project-og?project=gardenzen"
+    },
+    {
+      "source": "/ona-residences",
+      "destination": "/api/project-og?project=ona"
+    },
+    {
+      "source": "/domus-black",
+      "destination": "/api/project-og?project=domus-black"
+    },
+    {
+      "source": "/domus-gold",
+      "destination": "/api/project-og?project=domus-gold"
+    },
+    {
+      "source": "/domus-onix",
+      "destination": "/api/project-og?project=domus-onix"
+    },
+    {
+      "source": "/domus-insignia",
+      "destination": "/api/project-og?project=domus-insignia"
+    },
+    {
+      "source": "/domus-luxury",
+      "destination": "/api/project-og?project=domus-luxury"
+    },
+    {
+      "source": "/domus-lux",
+      "destination": "/api/project-og?project=domus-luxury"
+    },
+    {
+      "source": "/domus-tower",
+      "destination": "/api/project-og?project=domus-tower"
+    },
+    {
+      "source": "/domus-infinity",
+      "destination": "/api/project-og?project=domus-infinity"
     },
     {
       "source": "/(.*)",

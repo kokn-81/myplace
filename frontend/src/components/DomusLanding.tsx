@@ -250,7 +250,7 @@ export default function DomusLanding({ property, onClose }: Props) {
 
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
-    const shareUrl = `${origin}/?proyecto=${activeProjectId}`;
+    const shareUrl = `${origin}/domus/${activeProjectId}`;
     const shareTitle = `${projectConfig.name} · Preventa en ${projectConfig.zone}`;
     const shareText = `Departamentos en Preventa en ${projectConfig.name} (${projectConfig.zone}) desde $${formatDomusUsd(projectConfig.priceFromUsd)} USD. Conoce la disponibilidad:`;
 
