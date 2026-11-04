@@ -1398,22 +1398,41 @@ export function parseGardenZenLiveCsv(csvText: string): GardenZenUnit[] {
       roomsLabel = "3 Dormitorios";
     }
 
+    const baseline = GARDEN_ZEN_BASELINE_UNITS.find((b) => b.unitNumber === unitNumber);
+
     let finalContado = priceContado;
     let final70 = price70;
     let final30 = price30;
 
+    if (!finalContado && baseline && baseline.cashTotal > 0) {
+      finalContado = baseline.cashTotal;
+    }
+    if (!final70 && baseline && baseline.initial70Total > 0) {
+      final70 = baseline.initial70Total;
+    }
+    if (!final30 && baseline && baseline.initial30Total > 0) {
+      final30 = baseline.initial30Total;
+    }
+
     if (!finalContado && areaM2 > 0) {
       if (pmContado > 0) finalContado = Math.round(areaM2 * pmContado);
       else if (final30 > 0) finalContado = Math.round(final30 * 0.95);
+      else finalContado = Math.round(areaM2 * 1400);
     }
     if (!final70 && areaM2 > 0) {
       if (pm70 > 0) final70 = Math.round(areaM2 * pm70);
       else if (final30 > 0) final70 = Math.round(final30 * 0.98);
+      else final70 = Math.round(areaM2 * 1450);
     }
     if (!final30 && areaM2 > 0) {
       if (pm30 > 0) final30 = Math.round(areaM2 * pm30);
       else if (finalContado > 0) final30 = Math.round(finalContado * 1.05);
+      else final30 = Math.round(areaM2 * 1500);
     }
+
+    const finalCashPerM2 = pmContado || (areaM2 > 0 ? Math.round(finalContado / areaM2) : (baseline?.cashPerM2 || 1400));
+    const final70PerM2 = pm70 || (areaM2 > 0 ? Math.round(final70 / areaM2) : (baseline?.initial70PerM2 || 1450));
+    const final30PerM2 = pm30 || (areaM2 > 0 ? Math.round(final30 / areaM2) : (baseline?.initial30PerM2 || 1500));
 
     const cuotaInicial30 = Math.round(final30 * 0.3);
     const cuotaInicial70 = Math.round(final70 * 0.7);
@@ -1431,9 +1450,9 @@ export function parseGardenZenLiveCsv(csvText: string): GardenZenUnit[] {
       cashTotal: finalContado,
       initial70Total: final70,
       initial30Total: final30,
-      cashPerM2: pmContado || (areaM2 > 0 ? Math.round(finalContado / areaM2) : 0),
-      initial70PerM2: pm70 || (areaM2 > 0 ? Math.round(final70 / areaM2) : 0),
-      initial30PerM2: pm30 || (areaM2 > 0 ? Math.round(final30 / areaM2) : 0),
+      cashPerM2: finalCashPerM2,
+      initial70PerM2: final70PerM2,
+      initial30PerM2: final30PerM2,
       cuotaInicial30,
       cuotaInicial70,
       planoUrl: PLANO_MODELO_MAP[modelo] || "/garden_zen/fachada.jpg"

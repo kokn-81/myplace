@@ -333,36 +333,39 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   const soldUnitsCount = units.filter((u) => u.status === "vendido" || u.status === "reservado").length;
 
   const minPriceMono = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 0);
+    const list = availableUnits.filter((u) => u.rooms === 0 && u.cashTotal > 0);
     return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 56210;
   }, [availableUnits]);
 
   const minPrice1Dorm = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 1);
+    const list = availableUnits.filter((u) => u.rooms === 1 && u.cashTotal > 0);
     return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 64540;
   }, [availableUnits]);
 
   const minPrice2Dorms = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 2);
+    const list = availableUnits.filter((u) => u.rooms === 2 && u.cashTotal > 0);
     return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 115388;
   }, [availableUnits]);
 
   const minPrice3Dorms = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 3);
+    const list = availableUnits.filter((u) => u.rooms === 3 && u.cashTotal > 0);
     return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 148568;
   }, [availableUnits]);
 
   // Precios mínimos por m² dinámicos según inventario en vivo
   const minCashPerM2 = useMemo(() => {
-    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.cashPerM2)) : 1400;
+    const list = availableUnits.filter((u) => u.cashPerM2 > 0);
+    return list.length > 0 ? Math.min(...list.map((u) => u.cashPerM2)) : 1400;
   }, [availableUnits]);
 
   const minPlan70PerM2 = useMemo(() => {
-    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.initial70PerM2)) : 1450;
+    const list = availableUnits.filter((u) => u.initial70PerM2 > 0);
+    return list.length > 0 ? Math.min(...list.map((u) => u.initial70PerM2)) : 1450;
   }, [availableUnits]);
 
   const minPlan30PerM2 = useMemo(() => {
-    return availableUnits.length > 0 ? Math.min(...availableUnits.map((u) => u.initial30PerM2)) : 1500;
+    const list = availableUnits.filter((u) => u.initial30PerM2 > 0);
+    return list.length > 0 ? Math.min(...list.map((u) => u.initial30PerM2)) : 1500;
   }, [availableUnits]);
 
   const currentAmbiente = useMemo(() => {
@@ -433,21 +436,21 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   const activeFinancials = useMemo(() => {
     if (!activeUnit) return null;
 
-    let unitTotalPrice = activeUnit.cashTotal;
-    let unitInitial = activeUnit.cashTotal;
+    let unitTotalPrice = activeUnit.cashTotal || Math.round(activeUnit.areaM2 * 1400);
+    let unitInitial = unitTotalPrice;
     let unitBalance = 0;
-    let pricePerM2 = activeUnit.cashPerM2;
+    let pricePerM2 = activeUnit.cashPerM2 || (activeUnit.areaM2 > 0 ? Math.round(unitTotalPrice / activeUnit.areaM2) : 1400);
 
     if (selectedPlan === "plan30") {
-      unitTotalPrice = activeUnit.initial30Total;
-      unitInitial = activeUnit.cuotaInicial30;
+      unitTotalPrice = activeUnit.initial30Total || Math.round(activeUnit.areaM2 * 1500);
+      unitInitial = activeUnit.cuotaInicial30 || Math.round(unitTotalPrice * 0.3);
       unitBalance = unitTotalPrice - unitInitial;
-      pricePerM2 = activeUnit.initial30PerM2;
+      pricePerM2 = activeUnit.initial30PerM2 || 1500;
     } else if (selectedPlan === "plan70") {
-      unitTotalPrice = activeUnit.initial70Total;
-      unitInitial = activeUnit.cuotaInicial70;
+      unitTotalPrice = activeUnit.initial70Total || Math.round(activeUnit.areaM2 * 1450);
+      unitInitial = activeUnit.cuotaInicial70 || Math.round(unitTotalPrice * 0.7);
       unitBalance = unitTotalPrice - unitInitial;
-      pricePerM2 = activeUnit.initial70PerM2;
+      pricePerM2 = activeUnit.initial70PerM2 || 1450;
     }
 
     const hasParking = selectedParkingOption !== "none";
@@ -1722,7 +1725,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                         Precio Unidad ({selectedPlan === "contado" ? "Contado" : selectedPlan === "plan70" ? "70% Anticipo" : "30% Anticipo"})
                       </p>
                       <p className="font-serif text-xl font-bold text-[#1b4332]">
-                        USD {formatGardenZenUsd(activeFinancials ? activeFinancials.unitTotalPrice : activeUnit.cashTotal)}
+                        USD {formatGardenZenUsd(activeFinancials ? activeFinancials.unitTotalPrice : (activeUnit.cashTotal || Math.round(activeUnit.areaM2 * 1400)))}
                       </p>
                     </div>
                   </div>
