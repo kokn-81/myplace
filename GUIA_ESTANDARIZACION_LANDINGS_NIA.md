@@ -257,7 +257,9 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 
 1. **Enrutamiento y URLs Amigables por Proyecto:**
    * Cada desarrollo inmobiliario cuenta con un enlace personal directo y limpio:
-     * *Garden Zen:* `nia-web.com/gardenzen`
+     * *Bless Tower:* `nia-web.com/bless-tower` (o `/blesstower`)
+     * *Bless Drei:* `nia-web.com/bless-drei` (o `/blessdrei`)
+     * *Garden Zen:* `nia-web.com/gardenzen` (o `/garden-zen`)
      * *Tower Eurodesign:* `nia-web.com/eurodesign`
      * *ONA Residences:* `nia-web.com/ona`
      * *Línea DOMUS:* `nia-web.com/domus/[slug]` (ej. `/domus-black`, `/domus-lux`)
@@ -265,18 +267,36 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
    * El botón `Compartir` genera y copia siempre este enlace limpio.
    * Al cerrar la landing, la URL vuelve suavemente a `/` sin recarga de página.
 2. **Google Sheets Live Inventory:**
-   * Archivo CSV público de Google Sheets con columnas: `UNIDAD`, `PISO`, `TIPO`, `M2_TOTAL`, `ESTADO`, `PRECIO_CONTADO`, `PRECIO_PLAN60`, `PRECIO_PLAN40`.
-   * Cache local en `localStorage` con timestamp para optimizar velocidad y evitar rate-limits.
+   * Archivo CSV público de Google Sheets con columnas: `UNIDAD`, `PISO`, `TIPO`, `M2_TOTAL`, `ESTADO`, `PRECIO_CONTADO`, `PRECIO_CUOTAS`.
+   * Cache local y fallback automático a inventario estático baseline para garantizar 100% de disponibilidad aún si el sheet tiene celdas eliminadas temporalmente.
 3. **Meta Pixel & Lead Tracking:**
    * Disparo de evento `PageView` al entrar.
-   * Disparo de evento `Lead` (`trackOnaLead` / `fbq('track', 'Lead')`) inmediatamente al presionar el botón de reserva por WhatsApp.
+   * Disparo de evento `Lead` inmediatamente al presionar el botón de reserva por WhatsApp.
    * Registro en el backend de N.I.A mediante `recordLeadEvent({ action: "contact_tap", ... })`.
 4. **Web Share API:**
    * Utilizar `navigator.share` nativo para teléfonos móviles y `navigator.clipboard.writeText` con mensaje de confirmación para navegadores de escritorio.
 
 ---
 
-## 7. Checklist de Calidad para Futuros Proyectos
+## 7. Reglas de Presentación Financiera y Cotizador (Obligatorias)
+
+1. **Formato "USD arriba, número abajo":**
+   * En todas las tarjetas de resumen financiero (Inversión Total, Reserva Inicial, Cuota Inicial, Saldo contra Entrega), mantener siempre la etiqueta `USD` arriba en tamaño pequeño/mono y el número formateado en la línea siguiente:
+     ```html
+     <span className="block text-xs font-mono font-normal text-stone-400">USD</span>
+     <span className="block mt-0.5">{formatUsd(totalPrice)}</span>
+     ```
+2. **Saldo contra Entrega en Pago al Contado:**
+   * Cuando el plan seleccionado sea Al Contado, **nunca mostrar `$0` ni ceros confusos**.
+   * Debe mostrarse `USD` arriba, un guión em-dash `—` abajo, y la leyenda descriptiva `Sin saldo pendiente`.
+3. **Selector de Parqueo Directo:**
+   * No usar menús desplegables (`<select>`) confusos. Implementar un checkbox / toggle directo: `[x] Añadir Parqueo Vehicular`. Si hay opciones (simple vs con baulera), desplegar tarjetas seleccionables directas ya marcadas.
+4. **Planos y Modelos Reales:**
+   * No añadir submenús artificiales que desglosen cocina, dormitorio o baño individualmente a menos que se cuente con un render 3D corte real por ambiente. Mostrar directamente el plano arquitectónico general del modelo de departamento extraído del material oficial.
+
+---
+
+## 8. Checklist de Calidad para Futuros Proyectos
 
 Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 
@@ -285,8 +305,7 @@ Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 - [ ] ¿El botón flotante de secciones es circular y solo muestra el icono (`Menu`/`X`), sin texto?
 - [ ] ¿El panel derecho en escritorio utiliza anchos amplios (`md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`) sin comprimir tarjetas a 3 columnas?
 - [ ] ¿En celular la vista se mantiene compacta e intacta (`max-w-xl`) con botones fácilmente pulsables con el pulgar?
-- [ ] ¿Las cuotas iniciales del Plan 60/40 y Plan 40/60 se muestran de manera explícita en dólares?
-- [ ] ¿El selector de parqueo está ubicado después de elegir departamento y piso (flujo Apple Store)?
-- [ ] ¿La tipografía de títulos es `Playfair Display` y los textos de cuerpo están justificados?
-- [ ] ¿Se eliminó cualquier botón redundante o descarga PDF no indispensable en las secciones interiores?
+- [ ] ¿El formato financiero tiene "USD arriba, número abajo" en todas las columnas?
+- [ ] ¿Al seleccionar pago al contado el saldo contra entrega muestra "—" y "Sin saldo pendiente"?
+- [ ] ¿El selector de parqueo es directo con checkbox/toggle sin menús desplegables innecesarios?
 - [ ] ¿Las pruebas unitarias y el build de Vite (`npm run build`) compilan sin errores?

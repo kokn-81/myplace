@@ -5,6 +5,8 @@ import OnaLanding from "./OnaLanding";
 import EurodesignLanding from "./EurodesignLanding";
 import DomusLanding from "./DomusLanding";
 import GardenZenLanding from "./GardenZenLanding";
+import BlessTowerLanding from "./BlessTowerLanding";
+import BlessDreiLanding from "./BlessDreiLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -19,6 +21,26 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (property.title?.toLowerCase().includes("ona")) {
     return <OnaLanding property={property} onClose={onClose} />;
+  }
+
+  const isBlessTower =
+    property.id === "bless-tower" ||
+    Boolean(property.id && String(property.id).toLowerCase().includes("bless-tower")) ||
+    Boolean(property.title && property.title.toLowerCase().includes("bless tower")) ||
+    Boolean(property.complejoNombre && property.complejoNombre.toLowerCase().includes("bless tower"));
+
+  if (isBlessTower) {
+    return <BlessTowerLanding property={property} onClose={onClose} />;
+  }
+
+  const isBlessDrei =
+    property.id === "bless-drei" ||
+    Boolean(property.id && String(property.id).toLowerCase().includes("bless-drei")) ||
+    Boolean(property.title && property.title.toLowerCase().includes("bless drei")) ||
+    Boolean(property.complejoNombre && property.complejoNombre.toLowerCase().includes("bless drei"));
+
+  if (isBlessDrei) {
+    return <BlessDreiLanding property={property} onClose={onClose} />;
   }
 
   const isEurodesign =

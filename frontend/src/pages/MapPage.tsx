@@ -767,6 +767,120 @@ export const isGardenZenProperty = (p: Property | null | undefined): boolean => 
   );
 };
 
+export const SYNTHETIC_BLESS_TOWER_PROPERTY: Property = {
+  id: "bless-tower",
+  title: "BLESS TOWER · Av. Cristo Redentor",
+  price: 43026,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Av. Cristo Redentor entre 2° y 3° Anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Norte",
+  lat: -17.7635,
+  lng: -63.1785,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Exclusiva torre de 30 niveles sobre la Av. Cristo Redentor entre 2° y 3° anillo interno. Departamentos inteligentes con cerradura digital, aires acondicionados instalados, piscina sin fin en rooftop, churrasqueras gourmet, área de fogatero, sala gamer y coworking.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad"],
+  images: [
+    "/bless_tower/fachada_principal.jpg",
+    "/bless_tower/fachada_2.jpg",
+    "/bless_tower/interior_1.jpg",
+    "/bless_tower/interior_2.jpg",
+    "/bless_tower/social_1.jpg",
+    "/bless_tower/social_2.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59175015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "BLESS TOWER",
+  ocupacion: "Disponible",
+  superficieM2: 32.67,
+  amoblado: false,
+  fechaEntrega: "Diciembre 2026",
+  avanceObra: 60,
+  faseObra: "En construcción",
+  totalUnidades: 110,
+  unidadesDisponibles: 30,
+  reservaUsd: 2000,
+  planesPago: "Reserva con USD 2.000 · Contado con descuento, Cuotas 40% inicial o Plan Tradicional",
+};
+
+export const isBlessTowerProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
+  return (
+    sId === "bless-tower" ||
+    sId.startsWith("bless-tower") ||
+    sTitle.includes("bless tower") ||
+    sCmp.includes("bless tower")
+  );
+};
+
+export const SYNTHETIC_BLESS_DREI_PROPERTY: Property = {
+  id: "bless-drei",
+  title: "BLESS DREI · Equipetrol",
+  price: 38168,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Calle Alejandro Ramírez entre 3° y 4° Anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7642,
+  lng: -63.1958,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Edificio residencial premium de 16 niveles en el corazón de Equipetrol, sobre calle Alejandro Ramírez a metros de la Av. San Martín. Piscina panorámica en rooftop, fitness studio, coworking y cerraduras inteligentes.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad"],
+  images: [
+    "/bless_drei/fachada_principal.jpg",
+    "/bless_drei/fachada_2.jpg",
+    "/bless_drei/interior_1.jpg",
+    "/bless_drei/interior_2.jpg",
+    "/bless_drei/social_1.jpg",
+    "/bless_drei/social_2.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59175015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "BLESS DREI",
+  ocupacion: "Disponible",
+  superficieM2: 30.93,
+  amoblado: false,
+  fechaEntrega: "Octubre 2026",
+  avanceObra: 65,
+  faseObra: "En construcción",
+  totalUnidades: 41,
+  unidadesDisponibles: 27,
+  reservaUsd: 2000,
+  planesPago: "Reserva con USD 2.000 · Contado con descuento o Cuotas 50% inicial",
+};
+
+export const isBlessDreiProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = String(p.id).toLowerCase();
+  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
+  return (
+    sId === "bless-drei" ||
+    sId.startsWith("bless-drei") ||
+    sTitle.includes("bless drei") ||
+    sCmp.includes("bless drei")
+  );
+};
+
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
@@ -799,6 +913,12 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (q === "garden-zen" || q.includes("garden zen") || q === "zen" || q === "garden") {
     return isGardenZenProperty(p);
   }
+  if (q === "bless-tower" || q === "blesstower" || q.includes("bless tower")) {
+    return isBlessTowerProperty(p);
+  }
+  if (q === "bless-drei" || q === "blessdrei" || q.includes("bless drei")) {
+    return isBlessDreiProperty(p);
+  }
   if (
     q.includes("domus") ||
     q.startsWith("domus-") ||
@@ -819,7 +939,14 @@ export const isTargetProject = isTargetOna;
 
 export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  return isOnaProperty(p) || isEurodesignProperty(p) || isDomusProperty(p) || isGardenZenProperty(p);
+  return (
+    isOnaProperty(p) ||
+    isEurodesignProperty(p) ||
+    isDomusProperty(p) ||
+    isGardenZenProperty(p) ||
+    isBlessTowerProperty(p) ||
+    isBlessDreiProperty(p)
+  );
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
@@ -828,6 +955,8 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
       SYNTHETIC_ONA_PROPERTY,
       SYNTHETIC_EURODESIGN_PROPERTY,
       SYNTHETIC_GARDEN_ZEN_PROPERTY,
+      SYNTHETIC_BLESS_TOWER_PROPERTY,
+      SYNTHETIC_BLESS_DREI_PROPERTY,
       ...SYNTHETIC_DOMUS_PROPERTIES,
       SYNTHETIC_RIVIERA_PROPERTY,
       SYNTHETIC_SWISSOTEL_PROPERTY,
@@ -839,6 +968,10 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p));
   // Opción 3: Garden Zen (Equipetrol Norte)
   const gardenZen = list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p));
+  // Opción 4: Bless Tower (Av. Cristo Redentor)
+  const blessTower = list.find((p) => String(p.id) === "bless-tower" || isBlessTowerProperty(p));
+  // Opción 5: Bless Drei (Equipetrol)
+  const blessDrei = list.find((p) => String(p.id) === "bless-drei" || isBlessDreiProperty(p));
 
   const priorityItems: Property[] = [];
   if (ona) priorityItems.push(ona);
@@ -848,8 +981,14 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   if (gardenZen && !priorityItems.some((p) => String(p.id) === String(gardenZen.id))) {
     priorityItems.push(gardenZen);
   }
+  if (blessTower && !priorityItems.some((p) => String(p.id) === String(blessTower.id))) {
+    priorityItems.push(blessTower);
+  }
+  if (blessDrei && !priorityItems.some((p) => String(p.id) === String(blessDrei.id))) {
+    priorityItems.push(blessDrei);
+  }
 
-  // Opción 4 a 10: Proyectos de la marca DOMUS
+  // Opción 6 a 12: Proyectos de la marca DOMUS
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
     const existing = list.find((p) => String(p.id) === String(domusProp.id));
     if (existing && !priorityItems.some((p) => String(p.id) === String(existing.id))) {
@@ -857,7 +996,7 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     }
   }
 
-  // Opción 11: Departamento de La Riviera (Ref #4 o complejo La Riviera) - Solo si está en list (Venta)
+  // Opción 13: Departamento de La Riviera (Ref #4 o complejo La Riviera) - Solo si está en list (Venta)
   const riviera = list.find(
     (p) =>
       String(p.id) === "4" ||
@@ -869,7 +1008,7 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     priorityItems.push(riviera);
   }
 
-  // Opción 12: Departamento de Swissôtel (Ref #3 o complejo Swissôtel) - Solo si está en list (Venta)
+  // Opción 14: Departamento de Swissôtel (Ref #3 o complejo Swissôtel) - Solo si está en list (Venta)
   const swissotel = list.find(
     (p) =>
       String(p.id) === "3" ||
@@ -887,7 +1026,15 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
 
 export const isPromotedProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
-  if (isDomusProperty(p) || isOnaProperty(p) || isEurodesignProperty(p) || isGardenZenProperty(p)) return true;
+  if (
+    isDomusProperty(p) ||
+    isOnaProperty(p) ||
+    isEurodesignProperty(p) ||
+    isGardenZenProperty(p) ||
+    isBlessTowerProperty(p) ||
+    isBlessDreiProperty(p)
+  )
+    return true;
   return (
     String(p.id) === "4" ||
     Boolean((p as any).destacado) ||
@@ -1174,6 +1321,8 @@ export default function MapPage() {
       const isEuro = isEurodesignProperty(property);
       const isDom = isDomusProperty(property);
       const isZen = isGardenZenProperty(property);
+      const isBT = isBlessTowerProperty(property);
+      const isBD = isBlessDreiProperty(property);
       const pathname = window.location.pathname.toLowerCase();
 
       if (isOna) {
@@ -1187,6 +1336,14 @@ export default function MapPage() {
       } else if (isZen) {
         if (!options?.skipHistoryPush && !pathname.startsWith("/gardenzen") && !pathname.startsWith("/garden-zen")) {
           window.history.pushState({ modal: "garden-zen", propertyId: property.id }, "", "/gardenzen");
+        }
+      } else if (isBT) {
+        if (!options?.skipHistoryPush && !pathname.startsWith("/bless-tower") && !pathname.startsWith("/blesstower")) {
+          window.history.pushState({ modal: "bless-tower", propertyId: property.id }, "", "/bless-tower");
+        }
+      } else if (isBD) {
+        if (!options?.skipHistoryPush && !pathname.startsWith("/bless-drei") && !pathname.startsWith("/blessdrei")) {
+          window.history.pushState({ modal: "bless-drei", propertyId: property.id }, "", "/bless-drei");
         }
       } else if (isDom) {
         const domId = String(property.id).toLowerCase();
@@ -1235,7 +1392,7 @@ export default function MapPage() {
     }
   }, [focusPropertyLocation]);
 
-  // Parse direct links (e.g. /gardenzen, /eurodesign, /ona, /domus o ?proyecto=...) al entrar a la web
+  // Parse direct links (e.g. /gardenzen, /bless-tower, /bless-drei, /eurodesign, /ona, /domus o ?proyecto=...) al entrar a la web
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current) return;
     
@@ -1243,6 +1400,8 @@ export default function MapPage() {
     const pathname = window.location.pathname.toLowerCase();
     const isOnaPath = pathname.startsWith("/ona");
     const isEuroPath = pathname.startsWith("/eurodesign") || pathname.startsWith("/euro-design");
+    const isBTPath = pathname.startsWith("/bless-tower") || pathname.startsWith("/blesstower");
+    const isBDPath = pathname.startsWith("/bless-drei") || pathname.startsWith("/blessdrei");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1257,7 +1416,19 @@ export default function MapPage() {
       params.get("proyecto") ||
       params.get("project") ||
       params.get("p") ||
-      (isOnaPath ? "ona" : isEuroPath ? "eurodesign" : isDomusPath ? (domusSlug || "domus-black") : isZenPath ? "garden-zen" : linkSlug || null);
+      (isOnaPath
+        ? "ona"
+        : isEuroPath
+        ? "eurodesign"
+        : isBTPath
+        ? "bless-tower"
+        : isBDPath
+        ? "bless-drei"
+        : isDomusPath
+        ? domusSlug || "domus-black"
+        : isZenPath
+        ? "garden-zen"
+        : linkSlug || null);
     
     if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -1266,6 +1437,12 @@ export default function MapPage() {
         hasSearchInteractionRef.current = true;
       } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
         selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
+      } else if (proyecto.toLowerCase().includes("bless-tower") || proyecto.toLowerCase().includes("tower") || proyecto.toLowerCase().includes("blesstower")) {
+        selectProperty(SYNTHETIC_BLESS_TOWER_PROPERTY, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
+      } else if (proyecto.toLowerCase().includes("bless-drei") || proyecto.toLowerCase().includes("drei") || proyecto.toLowerCase().includes("blessdrei")) {
+        selectProperty(SYNTHETIC_BLESS_DREI_PROPERTY, { skipHistoryPush: true });
         hasSearchInteractionRef.current = true;
       } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
         selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
@@ -1292,6 +1469,10 @@ export default function MapPage() {
       document.title = "Tower Eurodesign · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isGardenZenProperty(selectedProperty)) {
       document.title = "Garden Zen · Preventa Eco-Sostenible en Equipetrol | N.I.A";
+    } else if (selectedProperty && isBlessTowerProperty(selectedProperty)) {
+      document.title = "Bless Tower · 30 Niveles en Av. Cristo Redentor | N.I.A";
+    } else if (selectedProperty && isBlessDreiProperty(selectedProperty)) {
+      document.title = "Bless Drei · Preventa Exclusiva en Equipetrol | N.I.A";
     } else if (selectedProperty && isDomusProperty(selectedProperty)) {
       document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
@@ -1311,7 +1492,14 @@ export default function MapPage() {
         setSelectedProperty((current) => {
           if (current) {
             focusPropertyLocation(current, 16.2);
-            if (isOnaProperty(current) || isEurodesignProperty(current) || isDomusProperty(current) || isGardenZenProperty(current)) {
+            if (
+              isOnaProperty(current) ||
+              isEurodesignProperty(current) ||
+              isDomusProperty(current) ||
+              isGardenZenProperty(current) ||
+              isBlessTowerProperty(current) ||
+              isBlessDreiProperty(current)
+            ) {
               setCurrentIndex(0);
             }
           }
@@ -1325,6 +1513,10 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
           selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("bless-tower") || proyecto.toLowerCase().includes("tower") || proyecto.toLowerCase().includes("blesstower")) {
+          selectProperty(SYNTHETIC_BLESS_TOWER_PROPERTY, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("bless-drei") || proyecto.toLowerCase().includes("drei") || proyecto.toLowerCase().includes("blessdrei")) {
+          selectProperty(SYNTHETIC_BLESS_DREI_PROPERTY, { skipHistoryPush: true });
         } else if (
           proyecto.toLowerCase().includes("domus") ||
           ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
@@ -1344,7 +1536,14 @@ export default function MapPage() {
     const target = selectedProperty || lastViewedProperty;
     if (target) {
       focusPropertyLocation(target, 16.2);
-      if (isOnaProperty(target) || isEurodesignProperty(target) || isDomusProperty(target) || isGardenZenProperty(target)) {
+      if (
+        isOnaProperty(target) ||
+        isEurodesignProperty(target) ||
+        isDomusProperty(target) ||
+        isGardenZenProperty(target) ||
+        isBlessTowerProperty(target) ||
+        isBlessDreiProperty(target)
+      ) {
         setCurrentIndex(0);
       }
     }
@@ -3626,7 +3825,13 @@ export default function MapPage() {
       {/* CAPA 3: MODAL INMERSIVO DE PANTALLA COMPLETA */}
       <AnimatePresence>
         {selectedProperty && (
-          (isProjectType(selectedProperty.type) || isOnaProperty(selectedProperty) || isEurodesignProperty(selectedProperty) || isDomusProperty(selectedProperty) || isGardenZenProperty(selectedProperty)) ? (
+          (isProjectType(selectedProperty.type) ||
+          isOnaProperty(selectedProperty) ||
+          isEurodesignProperty(selectedProperty) ||
+          isDomusProperty(selectedProperty) ||
+          isGardenZenProperty(selectedProperty) ||
+          isBlessTowerProperty(selectedProperty) ||
+          isBlessDreiProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div

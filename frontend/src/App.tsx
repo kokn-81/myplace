@@ -63,6 +63,10 @@ export default function App() {
           <Route path="/gardenzen" element={<MapPage />} />
           <Route path="/garden-zen" element={<MapPage />} />
           <Route path="/zen" element={<MapPage />} />
+          <Route path="/bless-tower" element={<MapPage />} />
+          <Route path="/blesstower" element={<MapPage />} />
+          <Route path="/bless-drei" element={<MapPage />} />
+          <Route path="/blessdrei" element={<MapPage />} />
           <Route path="/eurodesign" element={<MapPage />} />
           <Route path="/euro-design" element={<MapPage />} />
           <Route path="/domus" element={<MapPage />} />
