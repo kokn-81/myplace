@@ -21,8 +21,8 @@ test("Garden Zen baseline contains 61 units with correct statuses", () => {
   const disponibles = GARDEN_ZEN_BASELINE_UNITS.filter((u) => u.status === "disponible");
   const vendidos = GARDEN_ZEN_BASELINE_UNITS.filter((u) => u.status === "vendido");
 
-  assert.equal(disponibles.length, 44);
-  assert.equal(vendidos.length, 17);
+  assert.equal(disponibles.length, 29);
+  assert.equal(vendidos.length, 32);
 });
 
 test("Garden Zen floor plans and typologies are mapped properly", () => {
@@ -43,8 +43,8 @@ test("Garden Zen floor plans and typologies are mapped properly", () => {
 });
 
 test("formatGardenZenUsd formats numbers properly", () => {
-  const formatted = formatGardenZenUsd(56210);
-  assert.ok(formatted.includes("56") && formatted.includes("210"));
+  const formatted = formatGardenZenUsd(59600);
+  assert.ok(formatted.includes("59") && formatted.includes("600"));
 });
 
 test("parseGardenZenLiveCsv parses sample CSV accurately", () => {

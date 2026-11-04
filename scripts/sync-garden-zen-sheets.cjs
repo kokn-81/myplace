@@ -2,8 +2,12 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const SHEET_ID = '15lzhDdyVY83KGl311yOAVSaJdhssyM6dv4jcEZsNvnk';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+const SHEET_ID = '131d0GDjOhvHerSya1izI1CS6qIBkBV6a';
+const GID_DEPTOS = '1727984128';
+const GID_PARKINGS = '2088384023';
+
+const CSV_DEPTOS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID_DEPTOS}`;
+const CSV_PARKINGS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID_PARKINGS}`;
 
 function fetchSheet(url) {
   return new Promise((resolve, reject) => {
@@ -55,8 +59,8 @@ const PLANO_MAP = {
 };
 
 async function syncGardenZen() {
-  console.log('Fetching Garden Zen live sheet...');
-  const csv = await fetchSheet(CSV_URL);
+  console.log('Fetching Garden Zen live sheet (Departamentos)...');
+  const csv = await fetchSheet(CSV_DEPTOS_URL);
   const lines = csv.split('\n').map(l => l.trim()).filter(Boolean);
 
   let headerIdx = -1;
@@ -73,7 +77,7 @@ async function syncGardenZen() {
   }
 
   const rows = lines.slice(headerIdx + 1).map(splitCsv).filter(r => r.length >= 5 && r[2]);
-  const units = [];
+  const liveMap = new Map();
 
   for (const r of rows) {
     const tipoStr = r[0] || '';
@@ -81,15 +85,28 @@ async function syncGardenZen() {
     const unitNumber = (r[2] || '').trim();
     const floor = parseInt(r[3], 10) || 0;
     const areaM2 = parseFloat(r[4]) || 0;
-    const price30 = cleanPrice(r[5]);
-    const price70 = cleanPrice(r[6]);
-    const priceContado = cleanPrice(r[7]);
-    const pm30 = cleanPrice(r[8]);
-    const pm70 = cleanPrice(r[9]);
-    const pmContado = cleanPrice(r[10]);
-    const benefitStatus = (r[11] || '').trim().toUpperCase();
 
-    const isVendido = benefitStatus.includes('VENDIDO') || benefitStatus.includes('RESERVADO');
+    let price30 = 0;
+    let price70 = 0;
+    let priceContado = 0;
+    let isVendido = false;
+
+    if (r.length >= 12 && cleanPrice(r[11]) >= 10000) {
+      price30 = cleanPrice(r[9]);
+      price70 = cleanPrice(r[10]);
+      priceContado = cleanPrice(r[11]);
+      isVendido = r.some(c => {
+        const up = c.toUpperCase();
+        return up.includes('VENDIDO') || up.includes('RESERVADO');
+      });
+    } else {
+      price30 = cleanPrice(r[5]);
+      price70 = cleanPrice(r[6]);
+      priceContado = cleanPrice(r[7]);
+      const benefit = (r[11] || '').toUpperCase();
+      isVendido = benefit.includes('VENDIDO') || benefit.includes('RESERVADO');
+    }
+
     const status = isVendido ? 'vendido' : 'disponible';
 
     let rooms = 1;
@@ -106,34 +123,14 @@ async function syncGardenZen() {
       roomsLabel = '3 Dormitorios';
     }
 
-    let finalContado = priceContado;
-    let final70 = price70;
-    let final30 = price30;
+    const finalCashPerM2 = areaM2 > 0 ? Math.round(priceContado / areaM2) : 1400;
+    const final70PerM2 = areaM2 > 0 ? Math.round(price70 / areaM2) : 1450;
+    const final30PerM2 = areaM2 > 0 ? Math.round(price30 / areaM2) : 1500;
 
-    if (!finalContado && areaM2 > 0) {
-      if (pmContado > 0) finalContado = Math.round(areaM2 * pmContado);
-      else if (final30 > 0) finalContado = Math.round(final30 * 0.95);
-      else finalContado = Math.round(areaM2 * 1400);
-    }
-    if (!final70 && areaM2 > 0) {
-      if (pm70 > 0) final70 = Math.round(areaM2 * pm70);
-      else if (final30 > 0) final70 = Math.round(final30 * 0.98);
-      else final70 = Math.round(areaM2 * 1450);
-    }
-    if (!final30 && areaM2 > 0) {
-      if (pm30 > 0) final30 = Math.round(areaM2 * pm30);
-      else if (finalContado > 0) final30 = Math.round(finalContado * 1.05);
-      else final30 = Math.round(areaM2 * 1500);
-    }
+    const cuotaInicial30 = Math.round(price30 * 0.3);
+    const cuotaInicial70 = Math.round(price70 * 0.7);
 
-    const finalCashPerM2 = pmContado || (areaM2 > 0 ? Math.round(finalContado / areaM2) : 1400);
-    const final70PerM2 = pm70 || (areaM2 > 0 ? Math.round(final70 / areaM2) : 1450);
-    const final30PerM2 = pm30 || (areaM2 > 0 ? Math.round(final30 / areaM2) : 1500);
-
-    const cuotaInicial30 = Math.round(final30 * 0.3);
-    const cuotaInicial70 = Math.round(final70 * 0.7);
-
-    units.push({
+    liveMap.set(unitNumber, {
       projectId: 'garden-zen',
       floor,
       floorLabel: `Piso ${floor}`,
@@ -143,9 +140,9 @@ async function syncGardenZen() {
       roomsLabel,
       areaM2,
       status,
-      cashTotal: finalContado,
-      initial70Total: final70,
-      initial30Total: final30,
+      cashTotal: priceContado,
+      initial70Total: price70,
+      initial30Total: price30,
       cashPerM2: finalCashPerM2,
       initial70PerM2: final70PerM2,
       initial30PerM2: final30PerM2,
@@ -155,9 +152,20 @@ async function syncGardenZen() {
     });
   }
 
+  // Load baseline units
+  const tsContent = fs.readFileSync(path.join(__dirname, '../frontend/src/gardenZenInventory.ts'), 'utf8');
+  const baselineMatch = tsContent.match(/export const GARDEN_ZEN_BASELINE_UNITS: GardenZenUnit\[\] = (\[[\s\S]*?\]);\r?\n\r?\nfunction/);
+  const baselineUnits = baselineMatch ? eval(baselineMatch[1]) : [];
+
+  const finalUnits = baselineUnits.map(base => {
+    const live = liveMap.get(base.unitNumber);
+    if (live) return live;
+    return { ...base, status: 'vendido' };
+  });
+
   const targetPath = path.join(__dirname, '../frontend/public/garden-zen-inventory.json');
-  fs.writeFileSync(targetPath, JSON.stringify(units, null, 2));
-  console.log(`Garden Zen synchronized: ${units.length} units (${units.filter(u => u.status === 'disponible').length} disponibles) saved to ${targetPath}`);
+  fs.writeFileSync(targetPath, JSON.stringify(finalUnits, null, 2));
+  console.log(`Garden Zen synchronized: ${finalUnits.length} total units (${finalUnits.filter(u => u.status === 'disponible').length} disponibles, ${finalUnits.filter(u => u.status === 'vendido').length} vendidos) saved to ${targetPath}`);
 }
 
 syncGardenZen().catch(err => {

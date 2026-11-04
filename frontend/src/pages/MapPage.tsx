@@ -711,7 +711,7 @@ export const SYNTHETIC_DOMUS_PROPERTIES: Property[] = [
 export const SYNTHETIC_GARDEN_ZEN_PROPERTY: Property = {
   id: "garden-zen",
   title: "GARDEN ZEN · Equipetrol Norte",
-  price: 56210,
+  price: 59600,
   rooms: 1,
   bathrooms: 1,
   area: "Equipetrol Norte / Calle Dra. María de Oliveira",

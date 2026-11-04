@@ -69,7 +69,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     shortName: "Monoambiente · 37 a 52 m²",
     rooms: 0,
     areaRange: "37,8 a 52,6 m²",
-    basePrice: 56210,
+    basePrice: 59600,
     rentMin: 480,
     rentMax: 550,
     yieldRange: "9,8% – 11,2%",
@@ -81,7 +81,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     shortName: "1 Dormitorio · 46 a 70 m²",
     rooms: 1,
     areaRange: "46,1 a 70,0 m²",
-    basePrice: 64540,
+    basePrice: 69127,
     rentMin: 600,
     rentMax: 700,
     yieldRange: "9,5% – 10,8%",
@@ -93,7 +93,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     shortName: "2 Dormitorios · 83 a 108 m²",
     rooms: 2,
     areaRange: "83,3 a 107,6 m²",
-    basePrice: 115388,
+    basePrice: 121778,
     rentMin: 850,
     rentMax: 980,
     yieldRange: "8,8% – 9,9%",
@@ -105,7 +105,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     shortName: "3 Dormitorios · 106 a 133 m²",
     rooms: 3,
     areaRange: "106,1 a 133,5 m²",
-    basePrice: 148568,
+    basePrice: 156162,
     rentMin: 1150,
     rentMax: 1350,
     yieldRange: "8,5% – 9,6%",
@@ -317,7 +317,16 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         const text = await res.text();
         const parsed = parseGardenZenLiveCsv(text);
         if (parsed.length > 0) {
-          setUnits(parsed);
+          let merged = parsed;
+          if (parsed.length < GARDEN_ZEN_BASELINE_UNITS.length) {
+            const liveMap = new Map(parsed.map((u) => [u.unitNumber, u]));
+            merged = GARDEN_ZEN_BASELINE_UNITS.map((base) => {
+              const live = liveMap.get(base.unitNumber);
+              if (live) return live;
+              return { ...base, status: "vendido" as const };
+            });
+          }
+          setUnits(merged);
           const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
           setLastPriceUpdateText(`Actualizado ${timeStr}`);
         }
@@ -334,22 +343,22 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
   const minPriceMono = useMemo(() => {
     const list = availableUnits.filter((u) => u.rooms === 0 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 56210;
+    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 59600;
   }, [availableUnits]);
 
   const minPrice1Dorm = useMemo(() => {
     const list = availableUnits.filter((u) => u.rooms === 1 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 64540;
+    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 69127;
   }, [availableUnits]);
 
   const minPrice2Dorms = useMemo(() => {
     const list = availableUnits.filter((u) => u.rooms === 2 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 115388;
+    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 121778;
   }, [availableUnits]);
 
   const minPrice3Dorms = useMemo(() => {
     const list = availableUnits.filter((u) => u.rooms === 3 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 148568;
+    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 156162;
   }, [availableUnits]);
 
   // Precios mínimos por m² dinámicos según inventario en vivo
