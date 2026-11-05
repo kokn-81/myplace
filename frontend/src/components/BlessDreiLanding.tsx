@@ -49,39 +49,32 @@ interface Props {
 
 const AMENITY_SLIDES = [
   {
-    src: "/bless_drei/social_1.jpg",
-    category: "Piscina Panorámica",
-    title: "Piscina en Rooftop con Vista a Equipetrol",
-    description:
-      "Piscina sinfín con deck de madera y reposeras en el piso más alto. Un entorno exclusivo para refrescarte con vista a la zona más cotizada de Santa Cruz.",
-  },
-  {
-    src: "/bless_drei/social_2.jpg",
-    category: "Área Gourmet",
-    title: "Churrasquera & Terraza Social Climatizada",
-    description:
-      "Espacio gourmet moderno con parrilla de acero inoxidable, mesones de granito y mobiliario contemporáneo para compartir veladas inolvidables.",
-  },
-  {
     src: "/bless_drei/social_3.jpg",
-    category: "Fitness & Bienestar",
-    title: "Gimnasio al Aire Libre y Studio",
+    category: "Piscina Infinity en Rooftop",
+    title: "Piscina Panorámica Iluminada con Vista a Equipetrol",
     description:
-      "Área de calistenia, cardio y pesas con ventilación natural y vistas panorámicas para mantener tu rutina activa en tu propio hogar.",
+      "Piscina sinfín con cascada decorativa y solárium en el piso más alto. Un entorno exclusivo para desconectar de noche o disfrutar del sol con vista a la zona más cotizada de Santa Cruz.",
   },
   {
-    src: "/bless_drei/interior_1.jpg",
-    category: "Productividad",
-    title: "Co-Work Climatizado & Sala de Reuniones",
+    src: "/bless_drei/social_1.jpg",
+    category: "Productividad & Lounge",
+    title: "Co-Work Climatizado & Lounge Social",
     description:
-      "Espacio diseñado para profesionales y nómadas digitales, con estaciones de trabajo ergonómicas, Wi-Fi de alta velocidad y ambiente silencioso.",
+      "Espacio de trabajo moderno con boxes privados, iluminación decorativa cálida, mesas de trabajo ergonómicas y Wi-Fi de alta velocidad para ejecutivos y nómadas digitales.",
+  },
+  {
+    src: "/bless_drei/ingreso_boutique.jpg",
+    category: "Acceso & Distinción",
+    title: "Lobby Boutique con Iluminación Chevron",
+    description:
+      "Ingreso imponente a nivel calle con diseño arquitectónico contemporáneo, conserjería permanente, cerraduras digitales y circuito cerrado de cámaras.",
   },
   {
     src: "/bless_drei/fachada_2.jpg",
-    category: "Acceso & Seguridad",
-    title: "Lobby Boutique con Control de Accesos",
+    category: "Arquitectura & Terrazas",
+    title: "Torre Boutique en el Corazón de Equipetrol",
     description:
-      "Recepción contemporánea con conserjería y cerraduras digitales para brindar la máxima tranquilidad y distinción a residentes y huéspedes.",
+      "Perspectiva exterior que destaca la volumetría de la torre, los balcones aterrazados en cada unidad y la integración de áreas comunes en altura.",
   },
 ];
 
@@ -105,7 +98,7 @@ const TYPOLOGIES_DATA = [
     id: "1d",
     title: "1 Dormitorio Master",
     area: "48,2 a 55,6 m²",
-    image: "/bless_drei/modelos_pages/page_3.jpg",
+    image: "/bless_drei/modelos_pages/page_6.jpg",
     cashPrice: 59000,
     tagline:
       "La tipología más demandada de Equipetrol, con suite independiente y living comedor amplio.",
@@ -121,54 +114,54 @@ const TYPOLOGIES_DATA = [
 const EQUIPAMIENTO_SLIDES = [
   {
     id: "cocina",
-    room: "COCINA",
+    room: "COCINA & COMEDOR",
     title: "Cocina de Concepto Abierto Equipada",
-    tagline: "Diseño ergonómico y materiales nobles",
+    tagline: "Diseño ergonómico, cajonería completa y mesón de granito",
     image: "/bless_drei/interior_3.jpg",
     items: [
       "Muebles superiores e inferiores en melamina con cantos de PVC",
-      "Mesón de granito pulido de alta durabilidad",
-      "Bacha de acero inoxidable con grifería monomando alta",
-      "Cocina encimera y campana extractora de primera marca",
+      "Mesón de granito pulido de alta durabilidad con bacha de acero inoxidable",
+      "Mesa desayunadora / comedor integrada con acabado mármol",
+      "Cocina encimera y campana extractora de primera marca instaladas",
     ],
   },
   {
-    id: "dormitorio",
-    room: "DORMITORIO",
-    title: "Dormitorio con Carpintería a Medida",
-    tagline: "Almacenamiento y confort térmico asegurado",
-    image: "/bless_drei/interior_2.jpg",
-    items: [
-      "Ropero empotrado completo con divisiones y cajonería",
-      "Aire acondicionado split inverter instalado",
-      "Piso de porcelanato de alto tráfico en todo el ambiente",
-      "Ventanales corredizos herméticos de piso a techo",
-    ],
-  },
-  {
-    id: "bano",
-    room: "BAÑO",
-    title: "Baño Contemporáneo con Acabados Finos",
-    tagline: "Grifería moderna y box de vidrio",
+    id: "living",
+    room: "LIVING SOCIAL",
+    title: "Living Confort con Ventanal de Piso a Techo",
+    tagline: "Amplitud visual y conexión directa a terraza",
     image: "/bless_drei/interior_1.jpg",
     items: [
-      "Ducha con box de vidrio templado de seguridad instalado",
-      "Mueble de baño flotante con mesón de granito",
-      "Espejo perimetral y sanitarios ecológicos de doble descarga",
-      "Revestimiento de piso y paredes en porcelanato",
+      "Espacio social integrado con iluminación cálida sectorizada",
+      "Ventanales corredizos herméticos con salida a balcón aterrazado",
+      "Piso de porcelanato esmaltado de alto tráfico en todo el ambiente",
+      "Equipo de aire acondicionado split inverter instalado",
     ],
   },
   {
-    id: "servicios",
-    room: "TECNOLOGÍA & SERVICIOS",
-    title: "Acceso Inteligente y Seguridad",
-    tagline: "Control digital para propietarios y huéspedes",
-    image: "/bless_drei/fachada_2.jpg",
+    id: "espacio",
+    room: "ESPACIO SOCIAL & TV",
+    title: "Muro de TV en Piedra y Espacio Integrado",
+    tagline: "Diseño interior contemporáneo de revista",
+    image: "/bless_drei/interior_2.jpg",
     items: [
-      "Cerradura inteligente digital para acceso sin llaves",
+      "Revestimiento vertical tipo piedra y panelado para pantalla plana",
+      "Transición fluida entre la cocina, comedor y sala de estar",
+      "Puntos eléctricos y de fibra óptica empotrados y canalizados",
+      "Aislamiento termoacústico en muros y ventanales",
+    ],
+  },
+  {
+    id: "acceso",
+    room: "ACCESO DIGITAL & SERVICIOS",
+    title: "Ingreso Inteligente y Servicios Listos",
+    tagline: "Seguridad digital para residentes y huéspedes",
+    image: "/bless_drei/ingreso_boutique.jpg",
+    items: [
+      "Cerradura inteligente digital para acceso sin llaves (clave/tarjeta)",
       "Calefón instalado para suministro continuo de agua caliente",
-      "Puntos de red para fibra óptica y cableado estructurado",
-      "Ascensor moderno de última generación",
+      "Portería y control de accesos con videovigilancia 24/7",
+      "Ascensor moderno de última generación y bajo consumo",
     ],
   },
 ];
@@ -465,20 +458,20 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
   const dynamicBackdropImage = useMemo(() => {
     switch (activeSection) {
       case "lugar":
-        return "/bless_drei/fachada_2.jpg";
+        return "/bless_drei/ingreso_boutique.jpg";
       case "amenidades":
-        return "/bless_drei/social_1.jpg";
+        return "/bless_drei/social_3.jpg";
       case "tipologias":
-        return "/bless_drei/interior_1.jpg";
+        return "/bless_drei/interior_2.jpg";
       case "equipamiento":
         return "/bless_drei/interior_3.jpg";
       case "constructora":
-        return "/bless_drei/fachada_principal.jpg";
+        return "/bless_drei/fachada_2.jpg";
       case "pago":
         return "/bless_drei/formas_de_pago.jpg";
       case "disponibilidad":
       case "cierre":
-        return "/bless_drei/social_2.jpg";
+        return "/bless_drei/interior_1.jpg";
       default:
         return "/bless_drei/fachada_principal.jpg";
     }
@@ -487,14 +480,14 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
   const currentTypology = TYPOLOGIES_DATA.find((t) => t.id === selectedTypologyId) || TYPOLOGIES_DATA[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-[#F8F3E7] text-[#1C1917] overflow-hidden font-sans">
+    <div className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-[#FAF5EE] text-[#1C1917] overflow-hidden font-sans">
       {/* ========================================================
           1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
           ======================================================== */}
       <div className="fixed right-4 top-4 md:right-7 md:top-7 z-[120] flex items-center gap-2">
         <button
           onClick={() => setShowAdvisorInsights(true)}
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#9A7B45] hover:bg-stone-50 transition-all hover:scale-105"
+          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#EA580C] hover:bg-stone-50 transition-all hover:scale-105"
           title="Insights de Asesor (Datos Privados)"
           aria-label="Insights Asesor"
         >
@@ -505,7 +498,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           href={BLESS_DREI_CONFIG.brochurePdfUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#9A7B45] hover:bg-stone-50 transition-all hover:scale-105"
+          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#EA580C] hover:bg-stone-50 transition-all hover:scale-105"
           title="Descargar Brochure Oficial"
           aria-label="Descargar Brochure"
         >
@@ -553,7 +546,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
         {/* Top Info */}
         <div className="relative z-10 p-6 md:p-8">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-[#E8D5A8]/20 text-[#E8D5A8] border border-[#E8D5A8]/30 backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-orange-500/15 text-[#FFEDD5] border border-orange-400/30 backdrop-blur-md">
             <Sparkles size={12} />
             Preventa Exclusiva · 16 Niveles · {BLESS_DREI_CONFIG.zone}
           </span>
@@ -571,7 +564,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/10">
               <p className="text-[10px] text-stone-400 uppercase tracking-wider">Constructora</p>
               <p className="text-xs md:text-sm font-semibold text-white mt-0.5 flex items-center gap-1">
-                <Building2 size={13} className="text-[#C19A6B]" />
+                <Building2 size={13} className="text-[#EA580C]" />
                 {BLESS_DREI_CONFIG.builder}
               </p>
             </div>
@@ -586,7 +579,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           {/* Tarjeta de precios dinámicos */}
           <div className="p-4 rounded-xl bg-black/55 backdrop-blur-md border border-white/15 max-w-sm">
             <div className="flex items-center justify-between text-[11px] text-stone-300 pb-2 border-b border-white/10">
-              <span className="font-semibold text-[#E8D5A8]">Precios Preventa en Vivo</span>
+              <span className="font-semibold text-[#FFEDD5]">Precios Preventa en Vivo</span>
               <span className="inline-flex items-center gap-1 text-emerald-400">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 Oficial Sheet
@@ -618,7 +611,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="intro" className="space-y-6 pt-2">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9A7B45]">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#EA580C]">
               <Sparkles size={13} />
               Experiencia Residencial & Preventa
             </span>
@@ -658,7 +651,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               rel="noopener noreferrer"
               className="px-5 py-3 rounded-xl bg-white text-stone-800 border border-stone-200 text-xs font-semibold uppercase tracking-wider hover:bg-stone-50 transition-all flex items-center gap-2"
             >
-              <Download size={15} className="text-[#9A7B45]" />
+              <Download size={15} className="text-[#EA580C]" />
               Brochure en Drive
             </a>
           </div>
@@ -682,7 +675,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               <button onClick={() => scrollToSection("equipamiento")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Equipamiento</button>
               <button onClick={() => scrollToSection("constructora")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Constructora</button>
               <button onClick={() => scrollToSection("pago")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Formas de Pago</button>
-              <button onClick={() => scrollToSection("disponibilidad")} className="px-3 py-1.5 rounded-lg bg-[#9A7B45] text-white font-semibold hover:bg-[#816127] transition-all">Disponibilidad en Vivo</button>
+              <button onClick={() => scrollToSection("disponibilidad")} className="px-3 py-1.5 rounded-lg bg-[#EA580C] text-white font-semibold hover:bg-[#C2410C] transition-all">Disponibilidad en Vivo</button>
             </div>
           </div>
         </section>
@@ -692,7 +685,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="lugar" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <MapPin size={13} />
               Ubicación Privilegiada
             </span>
@@ -728,7 +721,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               href="https://maps.google.com/?q=-17.7612,-63.1970"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#9A7B45] hover:text-[#816127] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#EA580C] hover:text-[#C2410C] transition-colors"
             >
               <MapPin size={14} />
               Ver Ubicación en Google Maps
@@ -742,7 +735,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="amenidades" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <Sparkles size={13} />
               Áreas Sociales & Bienestar
             </span>
@@ -763,7 +756,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
               <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 space-y-1.5">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#E8D5A8]">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#FFEDD5]">
                   {AMENITY_SLIDES[amenityIndex].category}
                 </span>
                 <h4 className="font-serif text-xl md:text-2xl font-normal text-white">
@@ -794,7 +787,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 <button
                   key={i}
                   onClick={() => setAmenityIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#C19A6B]" : "w-1.5 bg-stone-700"}`}
+                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#EA580C]" : "w-1.5 bg-stone-700"}`}
                   aria-label={`Slide ${i + 1}`}
                 />
               ))}
@@ -807,7 +800,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="tipologias" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <Layers size={13} />
               Tipologías Residenciales
             </span>
@@ -828,18 +821,18 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   onClick={() => setSelectedTypologyId(t.id)}
                   className={`p-4 rounded-xl cursor-pointer transition-all border ${
                     isSelected
-                      ? "bg-white border-[#9A7B45] shadow-md ring-1 ring-[#9A7B45]"
+                      ? "bg-white border-[#EA580C] shadow-md ring-1 ring-[#EA580C]"
                       : "bg-white/80 border-stone-200 hover:border-stone-300 hover:bg-white"
                   }`}
                 >
                   <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{t.area}</p>
                   <h4 className="font-serif text-lg font-bold text-stone-900 mt-1">{t.title}</h4>
-                  <p className="text-xs text-[#9A7B45] font-semibold mt-1">
+                  <p className="text-xs text-[#EA580C] font-semibold mt-1">
                     Desde USD {formatBlessUsd(t.cashPrice)}
                   </p>
                   <p className="text-[11px] text-stone-500 mt-2 line-clamp-2">{t.tagline}</p>
                   <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] font-semibold">
-                    <span className={isSelected ? "text-[#9A7B45]" : "text-stone-400"}>
+                    <span className={isSelected ? "text-[#EA580C]" : "text-stone-400"}>
                       {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
                     </span>
                   </div>
@@ -852,7 +845,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9A7B45]">Plano Arquitectónico Oficial</span>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#EA580C]">Plano Arquitectónico Oficial</span>
                 <h4 className="font-serif text-xl font-bold text-stone-900">{currentTypology.title}</h4>
                 <p className="text-xs text-stone-500">{currentTypology.area} de superficie útil</p>
               </div>
@@ -889,7 +882,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="equipamiento" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <CheckCircle2 size={13} />
               Equipamiento 100% Incluido
             </span>
@@ -908,14 +901,14 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   <img src={eq.image} alt={eq.title} className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9A7B45]">{eq.room}</span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[#EA580C]">{eq.room}</span>
                   <h4 className="font-serif text-base font-bold text-stone-900">{eq.title}</h4>
                   <p className="text-[11px] text-stone-500">{eq.tagline}</p>
                 </div>
                 <ul className="space-y-1.5 pt-1 border-t border-stone-100 text-xs text-stone-600">
                   {eq.items.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-1.5">
-                      <span className="text-[#C19A6B] font-bold">·</span>
+                      <span className="text-[#EA580C] font-bold">·</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -930,7 +923,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="constructora" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <Building2 size={13} />
               Respaldo y Solvencia Constructiva
             </span>
@@ -944,17 +937,17 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9A7B45]">16</p>
+              <p className="font-serif text-3xl font-bold text-[#EA580C]">16</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Niveles Boutique</p>
               <p className="text-[11px] text-stone-500 mt-1">Escala humana y máxima exclusividad</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9A7B45]">100%</p>
+              <p className="font-serif text-3xl font-bold text-[#EA580C]">100%</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Seguridad Jurídica</p>
               <p className="text-[11px] text-stone-500 mt-1">Documentación y contratos verificables</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9A7B45]">2026</p>
+              <p className="font-serif text-3xl font-bold text-[#EA580C]">2026</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Entrega Comprometida</p>
               <p className="text-[11px] text-stone-500 mt-1">Octubre 2026 con avance continuo</p>
             </div>
@@ -966,7 +959,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="pago" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
               <CreditCard size={13} />
               Formas de Pago Transparentes
             </span>
@@ -978,16 +971,16 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#FFFDF6] border border-[#E8D5A8] flex items-center justify-between text-xs">
+          <div className="p-3.5 rounded-xl bg-[#FFF7ED] border border-orange-200 flex items-center justify-between text-xs">
             <span className="text-stone-700">Precio preventa oficial en vivo:</span>
-            <span className="font-serif font-bold text-[#9A7B45] text-sm">Desde ${minCashPerM2} USD/m²</span>
+            <span className="font-serif font-bold text-[#EA580C] text-sm">Desde ${minCashPerM2} USD/m²</span>
           </div>
 
           <div className="space-y-4">
             {/* Opción 1: Contado */}
             <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-lg space-y-3">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#C19A6B] text-stone-950">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EA580C] text-stone-950">
                   Mayor Descuento · 100% Contado
                 </span>
                 <span className="text-xs text-stone-400">A la firma de contrato</span>
@@ -996,7 +989,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               <p className="text-xs text-stone-300">
                 Asegura el precio por metro cuadrado más competitivo de Equipetrol y maximiza tu plusvalía a la entrega.
               </p>
-              <div className="pt-2 border-t border-white/10 text-xs text-[#E8D5A8]">
+              <div className="pt-2 border-t border-white/10 text-xs text-[#FFEDD5]">
                 <strong className="text-white">VENTAJA COMERCIAL:</strong> Ahorro financiero directo de hasta un 15% sobre la lista oficial.
               </div>
             </div>
@@ -1052,7 +1045,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
         <section id="disponibilidad" className="space-y-6 pt-4 border-t border-stone-200/80">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9A7B45] flex items-center gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] flex items-center gap-1.5">
                 <Calculator size={13} />
                 Disponibilidad en Vivo & Cotizador
               </span>
@@ -1087,13 +1080,13 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                     onClick={() => setSelectedAmbId(amb.id)}
                     className={`p-3 rounded-xl text-left transition-all border ${
                       isSelected
-                        ? "bg-white border-[#9A7B45] shadow-md ring-1 ring-[#9A7B45]"
+                        ? "bg-white border-[#EA580C] shadow-md ring-1 ring-[#EA580C]"
                         : "bg-white/80 border-stone-200 hover:border-stone-300"
                     }`}
                   >
                     <p className="text-xs font-bold text-stone-900">{amb.name}</p>
                     <p className="text-[11px] text-stone-500 mt-0.5">{amb.areaRange}</p>
-                    <p className="text-xs font-semibold text-[#9A7B45] mt-1">
+                    <p className="text-xs font-semibold text-[#EA580C] mt-1">
                       Desde USD {formatBlessUsd(amb.id === "mono" ? minPriceMono : minPrice1Dorm)}
                     </p>
                   </button>
@@ -1162,14 +1155,14 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                     >
                       <div className="flex items-center justify-between text-xs font-bold">
                         <span>{u.codigo}</span>
-                        <span className={`text-[10px] font-semibold ${isSelected ? "text-[#E8D5A8]" : isLibre ? "text-emerald-600" : "text-stone-400"}`}>
+                        <span className={`text-[10px] font-semibold ${isSelected ? "text-[#FFEDD5]" : isLibre ? "text-emerald-600" : "text-stone-400"}`}>
                           {u.estado}
                         </span>
                       </div>
                       <p className={`text-[11px] mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
                         Modelo {u.modelo} · {u.superficieM2} m²
                       </p>
-                      <p className={`text-xs font-bold mt-1 ${isSelected ? "text-white" : "text-[#9A7B45]"}`}>
+                      <p className={`text-xs font-bold mt-1 ${isSelected ? "text-white" : "text-[#EA580C]"}`}>
                         USD {formatBlessUsd(u.precioContado)}
                       </p>
                     </button>
@@ -1183,7 +1176,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Car size={16} className="text-[#9A7B45]" />
+                <Car size={16} className="text-[#EA580C]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-stone-900">
                   Paso 3 · Opcional de Parqueo Vehicular (+USD 12.000)
                 </span>
@@ -1195,7 +1188,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   onChange={(e) => setIncludeParking(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-10 h-5 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9A7B45]"></div>
+                <div className="w-10 h-5 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#EA580C]"></div>
               </label>
             </div>
             {includeParking && (
@@ -1220,7 +1213,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 }`}
               >
                 <p className="text-xs font-bold">100% Contado</p>
-                <p className={`text-[11px] mt-0.5 ${paymentPlan === "contado" ? "text-[#E8D5A8]" : "text-[#9A7B45]"}`}>
+                <p className={`text-[11px] mt-0.5 ${paymentPlan === "contado" ? "text-[#FFEDD5]" : "text-[#EA580C]"}`}>
                   Tarifa más baja
                 </p>
               </button>
@@ -1257,7 +1250,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           {activeFinancials && (
             <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-xl space-y-4">
               <div className="flex items-center justify-between text-xs pb-3 border-b border-white/10">
-                <span className="font-semibold text-[#E8D5A8]">
+                <span className="font-semibold text-[#FFEDD5]">
                   Resumen · Unidad {activeUnit?.codigo} (Piso {selectedFloor}, Modelo {activeUnit?.modelo})
                 </span>
                 <span className="text-stone-400">
@@ -1342,8 +1335,8 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                     </p>
                   </div>
                   <div className="mt-1">
-                    <p className="font-serif text-lg sm:text-2xl font-bold text-[#C19A6B] leading-tight">
-                      <span className="block text-xs font-mono font-normal text-[#C19A6B]/80">+USD</span>
+                    <p className="font-serif text-lg sm:text-2xl font-bold text-[#EA580C] leading-tight">
+                      <span className="block text-xs font-mono font-normal text-[#EA580C]/80">+USD</span>
                       <span className="block mt-0.5">{formatBlessUsd(activeFinancials.capitalGain)}</span>
                     </p>
                     <p className="text-[10px] text-stone-400 mt-1">
@@ -1386,7 +1379,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>
               <button
                 onClick={contactWhatsApp}
-                className="font-semibold text-[#9A7B45] hover:underline flex items-center gap-1"
+                className="font-semibold text-[#EA580C] hover:underline flex items-center gap-1"
               >
                 Hablar con Asesor de Bless Drei
                 <ArrowRight size={12} />
@@ -1425,7 +1418,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
       <div className="fixed right-5 bottom-18 z-[115]">
         <button
           onClick={() => setShowSectionMenu(!showSectionMenu)}
-          className="h-11 w-11 rounded-full bg-stone-900 hover:bg-stone-800 text-[#C19A6B] shadow-2xl flex items-center justify-center transition-all border border-white/20 hover:scale-105"
+          className="h-11 w-11 rounded-full bg-stone-900 hover:bg-stone-800 text-[#EA580C] shadow-2xl flex items-center justify-center transition-all border border-white/20 hover:scale-105"
           title="Menú de Secciones"
           aria-label="Secciones"
         >
@@ -1464,7 +1457,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                     onClick={() => scrollToSection(sec.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors ${
                       activeSection === sec.id
-                        ? "bg-[#9A7B45] text-white font-semibold"
+                        ? "bg-[#EA580C] text-white font-semibold"
                         : "text-stone-700 hover:bg-stone-100"
                     }`}
                   >
@@ -1512,10 +1505,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-full max-w-md h-full bg-[#FFFDF6] border-l border-stone-200 shadow-2xl p-6 overflow-y-auto space-y-6 text-stone-800"
+              className="w-full max-w-md h-full bg-[#FFF7ED] border-l border-stone-200 shadow-2xl p-6 overflow-y-auto space-y-6 text-stone-800"
             >
               <div className="flex items-center justify-between pb-3 border-b border-stone-200">
-                <div className="flex items-center gap-2 text-[#9A7B45]">
+                <div className="flex items-center gap-2 text-[#EA580C]">
                   <TrendingUp size={20} />
                   <h4 className="font-serif text-lg font-bold text-stone-900">Insights Asesor · Bless Drei</h4>
                 </div>
@@ -1568,7 +1561,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
               {/* Bloque 3: Escenario Financiero Estimado */}
               <div className="space-y-2 pt-2 border-t border-stone-200">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#9A7B45] bg-[#E8D5A8]/20 px-2.5 py-0.5 rounded-full border border-[#9A7B45]/30">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#EA580C] bg-orange-500/15 px-2.5 py-0.5 rounded-full border border-[#EA580C]/30">
                   Bloque 3 · Estimación de Rentas
                 </span>
                 <div className="grid grid-cols-2 gap-2 text-xs pt-1">
