@@ -55,8 +55,6 @@ export const TRIVENTO_CONFIG = {
   floorsPublished: "Pisos 1 a 5",
   brochurePdfUrl: "/trivento/brochure.pdf",
   driveUrl: "https://drive.google.com/drive/folders/1nSLFJjgxsC1v-pUFqi8LrxizGSASSS51",
-  /** Referencia editorial N.I.A para la columna de plusvalía. No está en el cuadro del proyecto. */
-  marketUsdPerM2: 1800,
 };
 
 export const TRIVENTO_MODELS: TriventoModel[] = [

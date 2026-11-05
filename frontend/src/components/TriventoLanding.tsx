@@ -162,11 +162,8 @@ export default function TriventoLanding({ onClose }: Props) {
     const total = paymentPlan === "contado" ? activeUnit.precioContado : activeUnit.precioCredito;
     const initial = paymentPlan === "contado" ? total : Math.round(total * 50) / 100;
     const balance = paymentPlan === "contado" ? 0 : Math.round((total - initial) * 100) / 100;
-    const market = Math.round(activeUnit.m2Total * TRIVENTO_CONFIG.marketUsdPerM2 * 100) / 100;
-    const gain = Math.round((market - total) * 100) / 100;
-    const gainPct = total > 0 ? Math.round((gain / total) * 1000) / 10 : 0;
     const rate = paymentPlan === "contado" ? activeUnit.puContado : activeUnit.puCredito;
-    return { total, initial, balance, market, gain, gainPct, rate: rate || 0 };
+    return { total, initial, balance, rate: rate || 0 };
   }, [activeUnit, paymentPlan]);
 
   useEffect(() => {
@@ -194,10 +191,15 @@ export default function TriventoLanding({ onClose }: Props) {
       setShowFloatingNav(past);
       if (!past) setShowSectionMenu(false);
     };
-    const root = rightPanelRef.current;
-    root?.addEventListener("scroll", onScroll, { passive: true });
+    const desktop = rightPanelRef.current;
+    const mobile = desktop?.parentElement;
+    desktop?.addEventListener("scroll", onScroll, { passive: true });
+    mobile?.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => root?.removeEventListener("scroll", onScroll);
+    return () => {
+      desktop?.removeEventListener("scroll", onScroll);
+      mobile?.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -667,7 +669,7 @@ export default function TriventoLanding({ onClose }: Props) {
                 <div className="border-b border-white/10 pb-3 text-xs text-[#E8D5A8]">
                   Unidad {activeUnit.codigo} · Piso {activeUnit.piso} · Modelo {Number(activeUnit.modelo)} · {activeUnit.posicion} · {formatTriventoM2(activeUnit.m2Total)} m²
                 </div>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <div className="flex min-h-[28px] items-end"><p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Inversión total</p></div>
                     <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span><span className="mt-0.5 block">{formatTriventoUsd(financials.total)}</span></p>
@@ -692,13 +694,7 @@ export default function TriventoLanding({ onClose }: Props) {
                       </>
                     )}
                   </div>
-                  <div>
-                    <div className="flex min-h-[28px] items-end"><p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Plusvalía proyectada</p></div>
-                    <p className="mt-1 font-serif text-2xl font-bold leading-tight text-[#C19A6B]"><span className="block font-mono text-xs font-normal text-[#C19A6B]/80">+USD</span><span className="mt-0.5 block">{formatTriventoUsd(financials.gain)}</span></p>
-                    <p className="mt-1 text-[10px] text-stone-400">+{financials.gainPct}% estimado a entrega</p>
-                  </div>
                 </div>
-                <p className="text-[10px] text-stone-500">La diferencia estima tu unidad a USD {formatTriventoUsd(TRIVENTO_CONFIG.marketUsdPerM2)}/m² cuando la recibas. Es una referencia de N.I.A para leer la preventa, no un número del cuadro ni una renta prometida.</p>
                 <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
                   <MessageCircle size={16} />
                   Quiero la unidad {activeUnit.codigo} del piso {activeUnit.piso}
@@ -819,10 +815,7 @@ export default function TriventoLanding({ onClose }: Props) {
               <div className="space-y-2">
                 <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-stone-700">Escenario de mercado</span>
                 <p className="text-xs leading-relaxed text-stone-700">
-                  La columna de plusvalía compara el precio elegido contra USD {formatTriventoUsd(TRIVENTO_CONFIG.marketUsdPerM2)} por m² a noviembre de 2027. Es una referencia editorial de N.I.A para leer la preventa frente a un valor terminado en Equipetrol. El Drive no trae ese número ni un rango de alquiler. El copy sí ubica la unidad para renta tradicional o Airbnb, sin cifra.
-                </p>
-                <p className="text-xs leading-relaxed text-stone-600">
-                  Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. No constituyen una promesa o garantía contractual de rentabilidad fija. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
+                  No cites plusvalía ni una renta. El material no publica ni un valor de reventa ni un alquiler. La unidad se plantea para renta tradicional o Airbnb, sin cifra.
                 </p>
               </div>
             </motion.div>
