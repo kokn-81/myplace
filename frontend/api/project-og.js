@@ -10,6 +10,12 @@ import {
 const API_BASE = (process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL || "https://myplace-2udd.onrender.com/api").replace(/\/$/, "");
 let catalogCache = { at: 0, items: [] };
 
+function varyByVisitor(res) {
+  res.setHeader("Vary", "User-Agent");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+}
+
 async function fetchJson(url) {
   const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
   if (!response.ok) return null;
@@ -52,8 +58,9 @@ export default async function handler(req, res) {
     const ua = req.headers["user-agent"] || "";
     if (slug && BOT_UA.test(ua)) {
       const canonical = `${proto}://${host}/proyecto/${encodeURIComponent(slug)}`;
+      varyByVisitor(res);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=60");
+      res.setHeader("Cache-Control", "private, max-age=60");
       res.status(200).send(projectOgHtml({
         title: "N.I.A",
         description: "Proyecto inmobiliario en Santa Cruz.",
@@ -64,20 +71,29 @@ export default async function handler(req, res) {
       }, canonical));
       return;
     }
-    res.writeHead(307, { Location: slug ? `/?proyecto=${encodeURIComponent(slug)}` : "/" });
+    varyByVisitor(res);
+    res.writeHead(307, {
+      Location: slug ? `/?proyecto=${encodeURIComponent(slug)}` : "/",
+      "Cache-Control": "private, no-store",
+    });
     res.end();
     return;
   }
 
   const ua = req.headers["user-agent"] || "";
   if (!BOT_UA.test(ua)) {
-    res.writeHead(307, { Location: project.appUrl });
+    varyByVisitor(res);
+    res.writeHead(307, {
+      Location: project.appUrl,
+      "Cache-Control": "private, no-store",
+    });
     res.end();
     return;
   }
 
   const canonical = `${proto}://${host}${project.canonicalPath}`;
+  varyByVisitor(res);
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=300, s-maxage=86400");
+  res.setHeader("Cache-Control", "private, max-age=300");
   res.status(200).send(projectOgHtml(project, canonical));
 }
