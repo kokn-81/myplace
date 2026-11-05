@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CustomSelect } from "../components/CustomSelect";
-import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck, FilterX, MessageCircle, Share2, UserCircle, Layers, Flame, FileText, CheckCircle2, TrendingUp, Calendar, Building2, Download, Play } from "lucide-react";
+import { Search, MapPin, Building, Bed, Bath, X, Sparkles, LogOut, Sun, Moon, ChevronLeft, ChevronRight, Images, ExternalLink, ShieldCheck, FilterX, MessageCircle, Share2, UserCircle, Layers, Flame, FileText, CheckCircle2, TrendingUp, Calendar, Building2, Download, Play, Menu } from "lucide-react";
 import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, authPersistenceReady } from "../firebase";
 import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
@@ -1354,6 +1354,10 @@ export default function MapPage() {
   const [userRole, setUserRole] = useState<AppRole>(() => getLastCachedAuthProfile()?.role || "user");
   const [loginError, setLoginError] = useState("");
   const [showClientWelcome, setShowClientWelcome] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const desktopMenuRef = useRef<HTMLDivElement>(null);
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [lastViewedProperty, setLastViewedProperty] = useState<Property | null>(null);
@@ -1741,6 +1745,30 @@ export default function MapPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen && !isDesktopMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (isMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+      if (isDesktopMenuOpen && desktopMenuRef.current && !desktopMenuRef.current.contains(e.target as Node)) {
+        setIsDesktopMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMenuOpen(false);
+        setIsDesktopMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMenuOpen, isDesktopMenuOpen]);
+
   const handleLogin = async () => {
     try {
       setLoginError("");
@@ -1943,6 +1971,128 @@ export default function MapPage() {
 
     return `${base} bg-stone-900/85 hover:bg-stone-850 text-stone-200 hover:text-white border border-white/15 hover:border-orange-500/40 backdrop-blur-md shadow-md`;
   };
+
+  const renderAccountDropdown = (closeMenu: () => void) => (
+    <div className="w-72 origin-top-right rounded-2xl border border-white/15 bg-stone-950/95 p-2 shadow-2xl backdrop-blur-2xl ring-1 ring-black/40 text-left">
+      {/* Header: User Profile or Guest */}
+      {user ? (
+        <div className="mb-2 p-3 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white font-bold text-sm shadow-md ring-1 ring-white/20">
+            {user.displayName ? user.displayName[0].toUpperCase() : "U"}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-bold text-white">
+              {user.displayName || "Usuario"}
+            </p>
+            <p className="truncate text-[10px] text-stone-400">
+              {user.email || "Cuenta conectada"}
+            </p>
+            <div className="mt-1 flex items-center gap-1.5">
+              <span
+                className={`inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
+                  userRole === "admin"
+                    ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                    : userRole === "advisor"
+                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                    : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                }`}
+              >
+                {userRole === "admin" ? "Administrador" : userRole === "advisor" ? "Asesor" : "Cliente"}
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-2 p-3 rounded-xl bg-white/[0.04] border border-white/10">
+          <p className="text-xs font-bold text-white">Bienvenido a NIA</p>
+          <p className="text-[11px] text-stone-400 mt-0.5">Accede a proyectos en preventa y departamentos exclusivos</p>
+        </div>
+      )}
+
+      {/* Menu Options */}
+      <div className="space-y-1">
+        {user ? (
+          <button
+            type="button"
+            onClick={() => {
+              setShowClientWelcome(true);
+              closeMenu();
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-stone-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-left"
+          >
+            <UserCircle size={16} className="text-orange-400 shrink-0" />
+            <span>Mi perfil y bienvenida</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              handleLogin();
+              closeMenu();
+            }}
+            disabled={authLoading}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:brightness-110 transition-all cursor-pointer shadow-md text-left"
+          >
+            <UserCircle size={16} className="shrink-0" />
+            <span>{authLoading ? "Conectando..." : "Iniciar sesión con Google"}</span>
+          </button>
+        )}
+
+        {canOpenAdmin && (
+          <Link
+            to="/admin"
+            onClick={closeMenu}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-stone-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-left"
+          >
+            <ShieldCheck size={16} className="text-purple-400 shrink-0" />
+            <span>Panel Administrador</span>
+          </Link>
+        )}
+
+        {canOpenAdvisor && (
+          <Link
+            to="/asesor"
+            onClick={closeMenu}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-stone-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-left"
+          >
+            <UserCircle size={16} className="text-blue-400 shrink-0" />
+            <span>Panel Asesor</span>
+          </Link>
+        )}
+
+        <button
+          type="button"
+          onClick={() => applyTheme(!isDarkMode)}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-stone-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-left"
+        >
+          <span className="flex items-center gap-2.5">
+            {isDarkMode ? <Sun size={16} className="text-amber-400 shrink-0" /> : <Moon size={16} className="text-blue-400 shrink-0" />}
+            <span>Tema {isDarkMode ? "Claro" : "Oscuro"}</span>
+          </span>
+          <span className="text-[10px] text-stone-400 uppercase font-mono">
+            {isDarkMode ? "Oscuro" : "Claro"}
+          </span>
+        </button>
+      </div>
+
+      {/* Footer: Cerrar sesión */}
+      {user && (
+        <div className="mt-2 pt-2 border-t border-white/10">
+          <button
+            type="button"
+            onClick={() => {
+              handleLogout();
+              closeMenu();
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors cursor-pointer text-left"
+          >
+            <LogOut size={16} className="shrink-0" />
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
 
   // [OPALO-BRIDGE] Lectura Consolidada con snapshot estatico + refresh en segundo plano.
@@ -3190,56 +3340,58 @@ export default function MapPage() {
       <div className="absolute top-6 left-6 z-10 hidden md:block">
         <button
           onClick={() => applyTheme(!isDarkMode)}
-          className="p-3 bg-[var(--color-chocolate)] dark:bg-[rgba(27,20,17,0.94)] backdrop-blur-md rounded-xl shadow-lg border border-[var(--accent-main)]/50 dark:border-[var(--border-soft)] text-[var(--color-ivory)] dark:text-[var(--text-main)] hover:bg-[var(--accent-hover)] hover:text-white transition-colors flex items-center justify-center"
+          className="p-3 bg-stone-900/90 dark:bg-[rgba(27,20,17,0.94)] backdrop-blur-md rounded-xl shadow-lg border border-white/15 dark:border-[var(--border-soft)] text-stone-200 dark:text-[var(--text-main)] hover:bg-stone-850 hover:text-white transition-colors flex items-center justify-center cursor-pointer"
+          aria-label="Cambiar tema"
         >
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
-      {canOpenAdvisor || canOpenAdmin ? (
-        <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
-          {canOpenAdmin ? (
-            <Link to="/admin" className="flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] px-4 py-2.5 text-xs font-bold text-[var(--color-ivory)] shadow-lg backdrop-blur transition-colors hover:bg-[var(--accent-hover)] hover:text-white dark:border-[var(--border-soft)] dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-muted)]">
-              <ShieldCheck size={14} /> Admin
-            </Link>
-          ) : null}
-          {canOpenAdvisor ? (
-            <Link to="/asesor" className="flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] px-4 py-2.5 text-xs font-bold text-[var(--color-ivory)] shadow-lg backdrop-blur transition-colors hover:bg-[var(--accent-hover)] hover:text-white dark:border-[var(--border-soft)] dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-muted)]">
-              <UserCircle size={14} /> {roleLoading ? "..." : "Panel asesor"}
-            </Link>
-          ) : null}
-        </div>
-      ) : user ? (
-        <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
-          <button
-            onClick={() => setShowClientWelcome(true)}
-            className="flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 px-3 py-2 text-xs font-bold text-[var(--text-main)] shadow-lg backdrop-blur hover:border-[var(--accent-main)] transition-colors"
-            title="Ver bienvenida"
-          >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-main)]/20 text-[var(--accent-main)] text-[11px] font-black">
-              {user.displayName ? user.displayName[0].toUpperCase() : "U"}
-            </span>
-            <span className="max-w-[120px] truncate hidden sm:inline">{user.displayName?.split(" ")[0] || "Cliente"}</span>
-          </button>
-          <button
-            onClick={handleLogout}
-            title="Cerrar sesión"
-            className="flex items-center gap-1.5 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-red-500 hover:border-red-400/50 transition-colors shadow-lg backdrop-blur"
-          >
-            <LogOut size={14} />
-            <span className="hidden sm:inline">Salir</span>
-          </button>
-        </div>
-      ) : (
-        <button onClick={handleLogin} disabled={authLoading} className="absolute top-6 right-6 z-10 flex items-center gap-2 rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] px-4 py-2.5 text-xs font-bold text-[var(--color-ivory)] shadow-lg backdrop-blur transition-colors hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-60 dark:border-[var(--border-soft)] dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-muted)]">
-          <UserCircle size={15} /> Entrar
+
+      {/* MENU SUPERIOR DERECHO (Escritorio) */}
+      <div className="absolute top-6 right-6 z-10 hidden md:block" ref={desktopMenuRef}>
+        <button
+          type="button"
+          onClick={() => setIsDesktopMenuOpen((prev) => !prev)}
+          className={`flex items-center gap-2.5 rounded-2xl border px-3.5 py-2 text-xs font-semibold shadow-lg backdrop-blur-xl transition-all duration-200 cursor-pointer active:scale-95 ${
+            isDesktopMenuOpen
+              ? "border-orange-500 bg-stone-900 text-white"
+              : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
+          }`}
+          aria-label="Menú y cuenta"
+        >
+          <Menu size={16} className="text-stone-300" />
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white font-bold text-[11px] shadow-sm">
+                {user.displayName ? user.displayName[0].toUpperCase() : "U"}
+              </span>
+              <span className="max-w-[120px] truncate">{user.displayName?.split(" ")[0] || "Mi cuenta"}</span>
+            </div>
+          ) : (
+            <span>Menú</span>
+          )}
         </button>
-      )}
+
+        <AnimatePresence>
+          {isDesktopMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
+              className="absolute right-0 top-12 z-50 origin-top-right"
+            >
+              {renderAccountDropdown(() => setIsDesktopMenuOpen(false))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* HUD MOVIL: controles compactos en una sola fila */}
       <div className="nia-mobile-hud absolute left-4 right-4 top-5 z-40 flex items-center gap-2 md:hidden">
         <button
           onClick={() => applyTheme(!isDarkMode)}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-stone-900/90 text-stone-200 shadow-lg transition-colors hover:bg-stone-850 hover:text-white cursor-pointer"
           aria-label="Cambiar tema"
         >
           {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -3247,14 +3399,14 @@ export default function MapPage() {
 
         <form
           onSubmit={handleAskGemini}
-          className="nia-mobile-search-form min-w-0 flex-1 rounded-full border border-[var(--border-soft)] bg-[rgba(255,253,246,0.9)] p-1 shadow-[var(--shadow-warm)] backdrop-blur-xl dark:bg-[rgba(16,12,10,0.62)]"
+          className="nia-mobile-search-form min-w-0 flex-1 rounded-full border border-white/15 bg-stone-950/80 p-1 shadow-xl backdrop-blur-xl"
         >
           <div className="flex items-center">
             <div className="flex items-center pl-3 pr-1">
               {isAsking ? (
-                <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+                <div className="h-4 w-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
               ) : (
-                <Sparkles className="h-5 w-4 text-[var(--accent-main)]" />
+                <Sparkles className="h-4 w-4 text-orange-400" />
               )}
             </div>
 
@@ -3264,14 +3416,14 @@ export default function MapPage() {
               onChange={(e) => setGeminiQuery(e.target.value)}
               disabled={isAsking}
               placeholder={searchPlaceholder}
-              className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-[var(--text-main)] outline-none placeholder-[var(--text-muted)] disabled:opacity-50"
+              className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-stone-100 outline-none placeholder-stone-400 disabled:opacity-50"
             />
 
             {(guidedStage !== "operation" || guidedOperation === "Proyectos" || aiFilteredIds !== null) && (
               <button
                 type="button"
                 onClick={resetGuidedSearch}
-                className="p-1.5 text-stone-500 hover:text-red-400 transition-colors"
+                className="p-1.5 text-stone-400 hover:text-red-400 transition-colors cursor-pointer"
                 title="Restablecer busqueda"
               >
                 <X size={15} />
@@ -3281,7 +3433,7 @@ export default function MapPage() {
             <button
               type="submit"
               disabled={isAsking}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-main)] text-[#2F241D] shadow-md transition-colors hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-70"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md transition-all hover:brightness-110 disabled:opacity-70 cursor-pointer"
               aria-label="Buscar"
             >
               <Search size={16} />
@@ -3289,37 +3441,38 @@ export default function MapPage() {
           </div>
         </form>
 
-        {canOpenAdvisor || canOpenAdmin ? (
-          <>
-            {canOpenAdmin ? (
-              <Link to="/admin" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]" aria-label="Admin">
-                <ShieldCheck size={16} />
-              </Link>
-            ) : null}
-            {canOpenAdvisor ? (
-              <Link to="/asesor" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)]" aria-label="Panel asesor">
-                <UserCircle size={16} />
-              </Link>
-            ) : null}
-          </>
-        ) : user ? (
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setShowClientWelcome(true)}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--surface-panel)] text-[var(--accent-main)] font-black text-xs shadow-lg"
-              title="Mi perfil"
-            >
-              {user.displayName ? user.displayName[0].toUpperCase() : "U"}
-            </button>
-            <button onClick={handleLogout} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-soft)] bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-red-900/60" aria-label="Salir" title="Cerrar sesión">
-              <LogOut size={16} />
-            </button>
-          </div>
-        ) : (
-          <button onClick={handleLogin} disabled={authLoading} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--accent-main)]/50 bg-[var(--color-chocolate)] text-[var(--color-ivory)] shadow-lg transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-60" aria-label="Entrar">
-            <UserCircle size={18} />
+        <div className="relative" ref={mobileMenuRef}>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 shadow-lg backdrop-blur-xl active:scale-95 cursor-pointer relative ${
+              isMenuOpen
+                ? "border-orange-500 bg-stone-900 text-orange-400"
+                : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
+            }`}
+            aria-label="Menú y configuración"
+            title="Menú y configuración"
+          >
+            <Menu size={20} />
+            {user && (
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-stone-900" />
+            )}
           </button>
-        )}
+
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                transition={{ duration: 0.16, ease: "easeOut" }}
+                className="absolute right-0 top-13 z-50 origin-top-right"
+              >
+                {renderAccountDropdown(() => setIsMenuOpen(false))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       <div className="nia-mobile-guide-toggle absolute left-4 right-4 top-[4.75rem] z-30 flex flex-col items-center gap-2 md:hidden">
         {!showGuidedChoices ? (
