@@ -1,9 +1,9 @@
 import { BOLIVIA_DEPARTMENTS, normalizeGeoText } from "./geographicLocations";
 
-export type GuidedOperation = "" | "Comprar" | "Alquilar" | "Proyectos";
+export type GuidedOperation = "" | "Proyectos" | "Departamentos" | "Comprar" | "Alquilar";
 export type GuidedStage = "operation" | "propertyType" | "city" | "zone" | "bedrooms" | "budget" | "sell";
 
-export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "">[] = ["Comprar", "Alquilar", "Proyectos"];
+export const GUIDED_OPERATIONS: Exclude<GuidedOperation, "" | "Comprar" | "Alquilar">[] = ["Proyectos", "Departamentos"];
 export const GUIDED_BUY_PROPERTY_TYPES = [
   "Departamento",
   "Preventa",
@@ -38,7 +38,7 @@ export const buildSellWhatsappUrl = (phone = SELL_WHATSAPP_NUMBER) => {
 };
 
 export const nextGuidedStageFromOperation = (operation: Exclude<GuidedOperation, "">): GuidedStage => {
-  if (operation === "Proyectos") return "operation";
+  if (operation === "Proyectos" || operation === "Departamentos") return "operation";
   return "propertyType";
 };
 
@@ -47,7 +47,7 @@ export const previousGuidedStage = (
   operation: GuidedOperation,
   propertyType = "",
 ): GuidedStage | null => {
-  if (operation === "Proyectos") return null;
+  if (operation === "Proyectos" || operation === "Departamentos") return null;
   const normType = (propertyType || "").toLowerCase();
   const hasBedrooms = !normType || normType.includes("departamento") || normType.includes("casa") || normType.includes("preventa");
 

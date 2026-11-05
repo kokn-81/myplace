@@ -19,9 +19,9 @@ import {
   previousGuidedStage,
 } from "./guidedSearch";
 
-test("las opciones iniciales son Comprar, Alquilar y Proyectos", () => {
-  assert.deepEqual(GUIDED_OPERATIONS, ["Comprar", "Alquilar", "Proyectos"]);
-  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Comprar", "Alquilar", "Proyectos"]);
+test("las opciones iniciales son Proyectos y Departamentos", () => {
+  assert.deepEqual(GUIDED_OPERATIONS, ["Proyectos", "Departamentos"]);
+  assert.deepEqual(getGuidedChoiceOptions("operation", ""), ["Proyectos", "Departamentos"]);
 });
 
 test("Comprar pide tipo de inmueble (Departamento, Preventa), dormitorios y presupuesto", () => {

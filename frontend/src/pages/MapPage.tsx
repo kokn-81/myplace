@@ -1011,83 +1011,75 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
 };
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
-  if (!list || list.length === 0) {
-    return [
-      SYNTHETIC_ONA_PROPERTY,
-      SYNTHETIC_EURODESIGN_PROPERTY,
-      SYNTHETIC_GARDEN_ZEN_PROPERTY,
-      SYNTHETIC_BLESS_TOWER_PROPERTY,
-      SYNTHETIC_BLESS_DREI_PROPERTY,
-      SYNTHETIC_TRIVENTO_PROPERTY,
-      ...SYNTHETIC_DOMUS_PROPERTIES,
-      SYNTHETIC_RIVIERA_PROPERTY,
-      SYNTHETIC_SWISSOTEL_PROPERTY,
-    ];
-  }
-  // Opción 1: Proyecto ONA Residences (Ref #5 o título/complejo ONA Residences)
-  const ona = list.find((p) => String(p.id) === "5" || isOnaProperty(p));
-  // Opción 2: Tower Eurodesign (Ref #1816 o Eurodesign)
-  const eurodesign = list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p));
-  // Opción 3: Garden Zen (Equipetrol Norte)
-  const gardenZen = list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p));
-  // Opción 4: Bless Tower (Av. Cristo Redentor)
-  const blessTower = list.find((p) => String(p.id) === "bless-tower" || isBlessTowerProperty(p));
-  // Opción 5: Bless Drei (Equipetrol)
-  const blessDrei = list.find((p) => String(p.id) === "bless-drei" || isBlessDreiProperty(p));
-
   const priorityItems: Property[] = [];
+
+  // Opción 1: Proyecto ONA Residences
+  const ona = (list && list.find((p) => String(p.id) === "5" || isOnaProperty(p))) || SYNTHETIC_ONA_PROPERTY;
   if (ona) priorityItems.push(ona);
+
+  // Opción 2: Tower Eurodesign
+  const eurodesign = (list && list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p))) || SYNTHETIC_EURODESIGN_PROPERTY;
   if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
     priorityItems.push(eurodesign);
   }
+
+  // Opción 3: Garden Zen (Equipetrol Norte)
+  const gardenZen = (list && list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p))) || SYNTHETIC_GARDEN_ZEN_PROPERTY;
   if (gardenZen && !priorityItems.some((p) => String(p.id) === String(gardenZen.id))) {
     priorityItems.push(gardenZen);
   }
+
+  // Opción 4: Bless Tower (Av. Cristo Redentor - Alta Vida)
+  const blessTower = (list && list.find((p) => String(p.id) === "bless-tower" || isBlessTowerProperty(p))) || SYNTHETIC_BLESS_TOWER_PROPERTY;
   if (blessTower && !priorityItems.some((p) => String(p.id) === String(blessTower.id))) {
     priorityItems.push(blessTower);
   }
+
+  // Opción 5: Bless Drei (Equipetrol - Alta Vida)
+  const blessDrei = (list && list.find((p) => String(p.id) === "bless-drei" || isBlessDreiProperty(p))) || SYNTHETIC_BLESS_DREI_PROPERTY;
   if (blessDrei && !priorityItems.some((p) => String(p.id) === String(blessDrei.id))) {
     priorityItems.push(blessDrei);
   }
-  const trivento = list.find((p) => String(p.id) === "trivento-iv") || SYNTHETIC_TRIVENTO_PROPERTY;
-  if (!priorityItems.some((p) => String(p.id) === String(trivento.id))) {
+
+  // Opción 6: Trivento IV (Equipetrol - Trivento)
+  const trivento = (list && list.find((p) => String(p.id) === "trivento-iv" || isTriventoProperty(p))) || SYNTHETIC_TRIVENTO_PROPERTY;
+  if (trivento && !priorityItems.some((p) => String(p.id) === String(trivento.id))) {
     priorityItems.push(trivento);
   }
 
-  // Opción 6 a 12: Proyectos de la marca DOMUS
+  // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
-    const existing = list.find((p) => String(p.id) === String(domusProp.id));
+    const existing = (list && list.find((p) => String(p.id) === String(domusProp.id))) || domusProp;
     if (existing && !priorityItems.some((p) => String(p.id) === String(existing.id))) {
       priorityItems.push(existing);
     }
   }
 
-  // Opción 13: Departamento de La Riviera (Ref #4 o complejo La Riviera) - Solo si está en list (Venta)
-  const riviera = list.find(
+  // Opción 14: Departamento exclusivo La Riviera (Ref #4 o complejo La Riviera)
+  const riviera = (list && list.find(
     (p) =>
       String(p.id) === "4" ||
       String(p.complejoId) === "3" ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
       (p.title && p.title.toLowerCase().includes("riviera"))
-  );
+  )) || SYNTHETIC_RIVIERA_PROPERTY;
   if (riviera && !priorityItems.some((p) => String(p.id) === String(riviera.id))) {
     priorityItems.push(riviera);
   }
 
-  // Opción 14: Departamento de Swissôtel (Ref #3 o complejo Swissôtel) - Solo si está en list (Venta)
-  const swissotel = list.find(
+  // Opción 15: Departamento exclusivo Swissôtel (Ref #3 o complejo Swissôtel)
+  const swissotel = (list && list.find(
     (p) =>
       String(p.id) === "3" ||
       (p.complejoNombre && p.complejoNombre.toLowerCase().includes("swiss")) ||
       (p.title && p.title.toLowerCase().includes("swiss"))
-  );
+  )) || SYNTHETIC_SWISSOTEL_PROPERTY;
   if (swissotel && !priorityItems.some((p) => String(p.id) === String(swissotel.id))) {
     priorityItems.push(swissotel);
   }
 
-  const prioritySet = new Set(priorityItems.map((p) => String(p.id)));
-  const remaining = list.filter((p) => !prioritySet.has(String(p.id)));
-  return [...priorityItems, ...remaining];
+  // NIA Exclusivo: Catálogo filtrado únicamente a proyectos en preventa y departamentos autorizados
+  return priorityItems;
 };
 
 export const isPromotedProperty = (p: Property | null | undefined): boolean => {
@@ -1104,10 +1096,13 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
     return true;
   return (
     String(p.id) === "4" ||
+    String(p.id) === "3" ||
     Boolean((p as any).destacado) ||
     Boolean((p as any).promocion) ||
     Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("riviera")) ||
-    Boolean(p.title && p.title.toLowerCase().includes("riviera"))
+    Boolean(p.title && p.title.toLowerCase().includes("riviera")) ||
+    Boolean(p.complejoNombre && p.complejoNombre.toLowerCase().includes("swiss")) ||
+    Boolean(p.title && p.title.toLowerCase().includes("swiss"))
   );
 };
 
@@ -1120,7 +1115,7 @@ export const isPropertyInCity = (p: Property, cityName: string): boolean => {
   return normCity.includes(normTarget) || normTarget.includes(normCity);
 };
 
-const CATALOG_CACHE_KEY = "nia.catalog.curated.v12";
+const CATALOG_CACHE_KEY = "nia.catalog.curated.v14";
 const CATALOG_SNAPSHOT_URL = "/catalog-snapshot.json";
 
 const readCachedCatalog = (): Property[] => {
@@ -1128,6 +1123,8 @@ const readCachedCatalog = (): Property[] => {
 
   try {
     // Limpiar claves de caché obsoletas
+    window.localStorage.removeItem("nia.catalog.curated.v12");
+    window.localStorage.removeItem("nia.catalog.curated.v13");
     window.localStorage.removeItem("nia.catalog.summary.v10");
     window.localStorage.removeItem("nia.catalog.summary.v11");
 
@@ -1274,6 +1271,9 @@ const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => 
   if (op === "Proyectos") {
     return isProjectOrPreventa(p);
   }
+  if (op === "Departamentos") {
+    return !isProjectOrPreventa(p);
+  }
   if (op === "Alquilar") {
     return (
       normalizeOfferOperation(p.operation) === "rent" ||
@@ -1292,7 +1292,7 @@ const propertyMatchesOperation = (p: Property, op: GuidedOperation): boolean => 
 
 const getOperationIntent = (op: GuidedOperation): SearchIntent => {
   if (op === "Alquilar") return "rent";
-  if (op === "Comprar" || op === "Proyectos") return "buy";
+  if (op === "Comprar" || op === "Proyectos" || op === "Departamentos") return "buy";
   return null;
 };
 
@@ -1886,15 +1886,19 @@ export default function MapPage() {
     ? "NIA analizando..."
     : guidedOperation === "Proyectos"
       ? "Mostrando proyectos en preventa..."
-      : getGuidedSearchPlaceholder(guidedStage, guidedCity, guidedOperation);
+      : guidedOperation === "Departamentos"
+        ? "Mostrando departamentos ya entregados..."
+        : "Buscar proyectos en preventa o departamentos...";
   const isGuidedActive = guidedStage !== "operation";
   const isGuidedSearchOpen = isGuidedActive;
-  const hasFinishedAiSearch = aiFilteredIds !== null && !isGuidedActive && guidedOperation !== "Proyectos";
-  const hasActiveResults = hasFinishedAiSearch || guidedOperation === "Proyectos";
-  const showGuidedChoices = isGuidedActive || (!hasFinishedAiSearch && !aiClarification) || guidedOperation === "Proyectos";
+  const hasFinishedAiSearch = aiFilteredIds !== null && !isGuidedActive && guidedOperation !== "Proyectos" && guidedOperation !== "Departamentos";
+  const hasActiveResults = hasFinishedAiSearch || guidedOperation === "Proyectos" || guidedOperation === "Departamentos";
+  const showGuidedChoices = isGuidedActive || (!hasFinishedAiSearch && !aiClarification) || guidedOperation === "Proyectos" || guidedOperation === "Departamentos";
   const compactSearchLabel = guidedOperation === "Proyectos"
     ? "Proyectos en Preventa"
-    : formatCompactSearchLabel({
+    : guidedOperation === "Departamentos"
+      ? "Departamentos Entregados"
+      : formatCompactSearchLabel({
     operation: guidedOperation,
     propertyType: guidedPropertyType,
     bedrooms: guidedBedrooms,
@@ -2225,6 +2229,34 @@ export default function MapPage() {
     });
   };
 
+  const handleDepartamentosDirectFilter = () => {
+    setActiveSearchIntent("buy");
+    setGuidedOperation("Departamentos");
+    setGuidedStage("operation");
+    setGuidedPropertyType("");
+    setGuidedBedrooms("");
+    setGuidedCity("Santa Cruz");
+    setGuidedZones([]);
+    setGuidedBudget("");
+    setShowSuggested(false);
+    setSelectedBuildingGroup(null);
+    setCurrentIndex(0);
+
+    // Filtrar exclusivamente departamentos ya entregados (La Riviera y Swissôtel)
+    const deptoProperties = properties.filter((p) => !isProjectOrPreventa(p));
+    const deptoIds = deptoProperties.map((p) => p.id);
+    setAiFilteredIds(deptoIds.length > 0 ? deptoIds : []);
+
+    setMapFocus({
+      longitude: -63.195,
+      latitude: -17.755,
+      zoom: 14.5,
+      key: Date.now(),
+      label: "Departamentos Exclusivos, Equipetrol",
+      source: "search",
+    });
+  };
+
   const handleOnboardingOperation = (option: Exclude<GuidedOperation, "">) => {
     if (option === "Proyectos") {
       if (guidedOperation === "Proyectos") {
@@ -2232,6 +2264,15 @@ export default function MapPage() {
         return;
       }
       handleProjectsDirectFilter();
+      return;
+    }
+
+    if (option === "Departamentos") {
+      if (guidedOperation === "Departamentos") {
+        resetGuidedSearch();
+        return;
+      }
+      handleDepartamentosDirectFilter();
       return;
     }
 
@@ -2262,12 +2303,15 @@ export default function MapPage() {
     goToGuidedStage(nextGuidedStageFromOperation(option));
   };
 
-  // Permitir acceso directo a proyectos por URL (e.g. ?filtro=proyectos o ?proyectos)
+  // Permitir acceso directo a proyectos o departamentos por URL (e.g. ?filtro=proyectos o ?departamentos)
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current || properties.length === 0) return;
     const params = new URLSearchParams(window.location.search);
     if (params.get("filtro") === "proyectos" || params.has("proyectos")) {
       handleProjectsDirectFilter();
+      hasSearchInteractionRef.current = true;
+    } else if (params.get("filtro") === "departamentos" || params.has("departamentos")) {
+      handleDepartamentosDirectFilter();
       hasSearchInteractionRef.current = true;
     }
   }, [properties]);
@@ -3310,6 +3354,16 @@ export default function MapPage() {
                         </span>
                       )}
                     </span>
+                  ) : option === "Departamentos" ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Building2 size={12} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
+                      <span>Departamentos</span>
+                      {isChoiceSelected(option) && filteredProperties.length > 0 && (
+                        <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
+                          {filteredProperties.length}
+                        </span>
+                      )}
+                    </span>
                   ) : (
                     option
                   )}
@@ -3460,6 +3514,16 @@ export default function MapPage() {
                       <span className="inline-flex items-center gap-1.5">
                         <Sparkles size={11} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
                         <span>Proyectos</span>
+                        {isChoiceSelected(option) && filteredProperties.length > 0 && (
+                          <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
+                            {filteredProperties.length}
+                          </span>
+                        )}
+                      </span>
+                    ) : option === "Departamentos" ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Building2 size={11} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
+                        <span>Departamentos</span>
                         {isChoiceSelected(option) && filteredProperties.length > 0 && (
                           <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
                             {filteredProperties.length}

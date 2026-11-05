@@ -63,7 +63,7 @@ test("isDomusProperty: reconoce los 7 desarrollos DOMUS pero no reventas ni alqu
   assert.equal(isDomusProperty(resaleDomus as Property), false);
 });
 
-test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 10 proyectos registrados", () => {
+test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 13 proyectos registrados", () => {
   const catalog = (catalogSnapshot as any[]).map((raw) => ({
     ...raw,
     title: raw.title || raw.titulo,
@@ -72,7 +72,7 @@ test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 10 pro
   }));
 
   const projects = catalog.filter((p) => isProjectOrPreventa(p));
-  assert.equal(projects.length, 10, `Esperado 10 proyectos registrados pero encontro ${projects.length}`);
+  assert.equal(projects.length, 13, `Esperado 13 proyectos registrados pero encontro ${projects.length}`);
 
   const projectIds = new Set(projects.map((p) => String(p.id)));
   const expectedIds = [
@@ -86,6 +86,9 @@ test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 10 pro
     "domus-luxury",
     "domus-tower",
     "domus-infinity",
+    "bless-tower",
+    "bless-drei",
+    "trivento-iv",
   ];
 
   for (const expectedId of expectedIds) {
