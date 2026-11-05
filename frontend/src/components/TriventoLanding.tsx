@@ -256,7 +256,7 @@ export default function TriventoLanding({ onClose }: Props) {
 
     const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Crédito 50% inicial y 50% contra entrega";
     const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.posicion}, ${formatTriventoM2(activeUnit.m2Total)} m²)`
+      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, Modelo ${Number(activeUnit.modelo)} (${activeUnit.tipologia}, ${activeUnit.posicion}, ${formatTriventoM2(activeUnit.m2Total)} m²)`
       : "Trivento IV";
     const money = financials
       ? `\n• Inversión total: USD ${formatTriventoUsd(financials.total)}\n• A la firma: USD ${formatTriventoUsd(financials.initial)}\n• Saldo contra entrega: ${paymentPlan === "contado" ? "sin saldo pendiente" : `USD ${formatTriventoUsd(financials.balance)}`}`
@@ -409,10 +409,10 @@ export default function TriventoLanding({ onClose }: Props) {
               Tu unidad queda sobre <strong>{TRIVENTO_CONFIG.address}</strong>. Es la pieza de la ciudad que el proyecto presenta como la más dinámica: movimiento, servicios y gente que busca alquiler. Recibes las llaves en <strong>{TRIVENTO_CONFIG.delivery}</strong>.
             </p>
             <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
-              <iframe
-                title="Mapa de Trivento IV"
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${TRIVENTO_CONFIG.lng - 0.012}%2C${TRIVENTO_CONFIG.lat - 0.008}%2C${TRIVENTO_CONFIG.lng + 0.012}%2C${TRIVENTO_CONFIG.lat + 0.008}&layer=mapnik&marker=${TRIVENTO_CONFIG.lat}%2C${TRIVENTO_CONFIG.lng}`}
-                className="h-72 w-full"
+              <img
+                src="/trivento/drone.jpg"
+                alt="Trivento IV en Av. San Martín y Calle A. Ramírez, Equipetrol"
+                className="h-72 w-full object-cover"
               />
             </div>
             <a
@@ -479,7 +479,7 @@ export default function TriventoLanding({ onClose }: Props) {
             <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[#9A7B45]">Modelo {selectedModel.codigo}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[#9A7B45]">{formatTriventoM2(selectedModel.m2Total)} m² · {selectedModel.posicion}</p>
                   <h4 className="font-serif text-xl">{selectedModel.titulo}</h4>
                 </div>
                 <div className="flex items-center gap-2">
@@ -610,7 +610,7 @@ export default function TriventoLanding({ onClose }: Props) {
                   const selected = selectedModelId === model.id;
                   return (
                     <button key={model.id} type="button" onClick={() => chooseModel(model.id)} className={`rounded-xl border p-3 text-left ${selected ? "border-[#9A7B45] bg-white ring-1 ring-[#9A7B45]" : "border-stone-200 bg-white/80"}`}>
-                      <p className="text-sm font-bold">Modelo {model.codigo} · {model.tipologia}</p>
+                      <p className="text-sm font-bold">{model.titulo}</p>
                       <p className="text-[11px] text-stone-500">{formatTriventoM2(model.m2Total)} m² · {model.posicion}</p>
                       <p className="mt-1 text-xs font-semibold text-[#9A7B45]">{price ? `Desde USD ${formatTriventoUsd(price)}` : "Agotado"}</p>
                     </button>
@@ -665,7 +665,7 @@ export default function TriventoLanding({ onClose }: Props) {
             {activeUnit && financials && (
               <div className="space-y-4 rounded-2xl bg-stone-900 p-5 text-white shadow-xl">
                 <div className="border-b border-white/10 pb-3 text-xs text-[#E8D5A8]">
-                  Unidad {activeUnit.codigo} · Piso {activeUnit.piso} · Modelo {activeUnit.modelo} · {activeUnit.posicion} · {formatTriventoM2(activeUnit.m2Total)} m²
+                  Unidad {activeUnit.codigo} · Piso {activeUnit.piso} · Modelo {Number(activeUnit.modelo)} · {activeUnit.posicion} · {formatTriventoM2(activeUnit.m2Total)} m²
                 </div>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   <div>
@@ -775,7 +775,7 @@ export default function TriventoLanding({ onClose }: Props) {
           <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/90 p-4">
             <div className="w-full max-w-4xl space-y-3 rounded-2xl border border-white/10 bg-stone-900 p-4">
               <div className="flex items-center justify-between text-white">
-                <h4 className="font-serif text-lg">Modelo {selectedModel.codigo} · {planView === "2d" ? "Isométrico" : "Render"}</h4>
+                <h4 className="font-serif text-lg">{selectedModel.titulo} · {planView === "2d" ? "Isométrico" : "Render"}</h4>
                 <button type="button" onClick={() => setShowHd(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10" aria-label="Cerrar plano">
                   <X size={16} />
                 </button>

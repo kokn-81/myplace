@@ -63,7 +63,7 @@ export const TRIVENTO_MODELS: TriventoModel[] = [
   {
     id: "01",
     codigo: "01",
-    titulo: "1 dormitorio · fachada",
+    titulo: "Modelo 1",
     tipologia: "1 Dormitorio",
     posicion: "Fachada",
     m2Depto: 38.93,
@@ -77,7 +77,7 @@ export const TRIVENTO_MODELS: TriventoModel[] = [
   {
     id: "02",
     codigo: "02",
-    titulo: "Monoambiente · fachada",
+    titulo: "Modelo 2",
     tipologia: "Monoambiente",
     posicion: "Fachada",
     m2Depto: 35.45,
@@ -91,7 +91,7 @@ export const TRIVENTO_MODELS: TriventoModel[] = [
   {
     id: "03",
     codigo: "03",
-    titulo: "1 dormitorio · fachada",
+    titulo: "Modelo 3",
     tipologia: "1 Dormitorio",
     posicion: "Fachada",
     m2Depto: 40.59,
@@ -105,7 +105,7 @@ export const TRIVENTO_MODELS: TriventoModel[] = [
   {
     id: "04",
     codigo: "04",
-    titulo: "1 dormitorio · atrás",
+    titulo: "Modelo 4",
     tipologia: "1 Dormitorio",
     posicion: "Atrás",
     m2Depto: 34.23,
@@ -119,7 +119,7 @@ export const TRIVENTO_MODELS: TriventoModel[] = [
   {
     id: "05",
     codigo: "05",
-    titulo: "1 dormitorio · atrás",
+    titulo: "Modelo 5",
     tipologia: "1 Dormitorio",
     posicion: "Atrás",
     m2Depto: 44.66,
