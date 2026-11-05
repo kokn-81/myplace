@@ -85,6 +85,18 @@
       "destination": "/api/project-og?project=domus-infinity"
     },
     {
+      "source": "/trivento",
+      "destination": "/api/project-og?project=trivento"
+    },
+    {
+      "source": "/trivento-iv",
+      "destination": "/api/project-og?project=trivento"
+    },
+    {
+      "source": "/triventoiv",
+      "destination": "/api/project-og?project=trivento"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

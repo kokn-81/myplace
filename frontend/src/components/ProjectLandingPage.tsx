@@ -7,6 +7,7 @@ import DomusLanding from "./DomusLanding";
 import GardenZenLanding from "./GardenZenLanding";
 import BlessTowerLanding from "./BlessTowerLanding";
 import BlessDreiLanding from "./BlessDreiLanding";
+import TriventoLanding from "./TriventoLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -18,6 +19,16 @@ interface Props {
 
 export default function ProjectLandingPage({ property, onClose }: Props) {
   const [shareFeedback, setShareFeedback] = useState(false);
+
+  const isTrivento =
+    property.id === "trivento-iv" ||
+    Boolean(property.id && String(property.id).toLowerCase().startsWith("trivento")) ||
+    Boolean(property.title && property.title.toLowerCase().includes("trivento")) ||
+    Boolean(property.complejoNombre && property.complejoNombre.toLowerCase().includes("trivento"));
+
+  if (isTrivento) {
+    return <TriventoLanding property={property} onClose={onClose} />;
+  }
 
   if (property.title?.toLowerCase().includes("ona")) {
     return <OnaLanding property={property} onClose={onClose} />;

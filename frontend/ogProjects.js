@@ -82,6 +82,18 @@ export const PROJECTS = {
     48500,
     "/domus/domus_tower/fachada_principal.jpg"
   ),
+  trivento: {
+    id: "trivento",
+    title: "Trivento IV · Preventa en Equipetrol",
+    description:
+      "Departamentos en preventa sobre Av. San Martín y Calle A. Ramírez, Equipetrol, desde USD 51.562. Entrega en noviembre 2027.",
+    image: `${SITE}/trivento/og.jpg`,
+    imageAlt: "Fachada de Trivento IV en Equipetrol",
+    imageWidth: 1200,
+    imageHeight: 630,
+    canonicalPath: "/trivento",
+    appUrl: "/?proyecto=trivento-iv",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -113,6 +125,10 @@ const PATH_ALIASES = {
   eurodesign: "eurodesign",
   "euro-design": "eurodesign",
   "domus-lux": "domus-luxury",
+  trivento: "trivento",
+  "trivento-iv": "trivento",
+  triventoiv: "trivento",
+  "trivento-4": "trivento",
 };
 
 function fromQuery(value) {
