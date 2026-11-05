@@ -1929,19 +1929,19 @@ export default function MapPage() {
     setGuidedStage(stage);
   };
 
+  const projectCount = useMemo(() => properties.filter((p) => isProjectOrPreventa(p)).length, [properties]);
+  const deptoCount = useMemo(() => properties.filter((p) => !isProjectOrPreventa(p)).length, [properties]);
+
   const onboardingButtonClass = (variant: "mobile" | "desktop", selected: boolean) => {
-    if (variant === "mobile") {
-      return `rounded-full border border-[var(--accent-main)]/50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] shadow-[var(--shadow-warm)] backdrop-blur transition-colors ${
-        selected
-          ? "bg-[var(--accent-main)] text-[#2F241D]"
-          : "bg-[var(--surface-panel)]/95 text-[var(--accent-main)] hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
-      }`;
+    const isMobile = variant === "mobile";
+    const padding = isMobile ? "px-4 sm:px-5 py-2.5 text-xs sm:text-[13px]" : "px-4 sm:px-5 py-2 text-xs";
+    const base = `rounded-full transition-all duration-300 flex items-center gap-2 font-semibold active:scale-95 cursor-pointer ${padding}`;
+
+    if (selected) {
+      return `${base} bg-gradient-to-r from-[#EA580C] via-[#F97316] to-[#FB923C] text-white font-bold shadow-lg shadow-orange-600/35 border border-orange-300/50 scale-[1.02] ring-1 ring-orange-400/40`;
     }
-    return `rounded-full border border-[var(--accent-main)]/50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] shadow-sm backdrop-blur transition-colors ${
-      selected
-        ? "bg-[var(--accent-main)] text-[#2F241D]"
-        : "bg-[var(--surface-panel)]/92 text-[var(--accent-main)] hover:bg-[var(--accent-main)] hover:text-[#2F241D] dark:bg-[rgba(27,20,17,0.88)]"
-    }`;
+
+    return `${base} bg-stone-900/85 hover:bg-stone-850 text-stone-200 hover:text-white border border-white/15 hover:border-orange-500/40 backdrop-blur-md shadow-md`;
   };
 
 
@@ -3331,50 +3331,70 @@ export default function MapPage() {
                 <button
                   type="button"
                   onClick={goPrevGuidedStep}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/95 text-[var(--accent-main)] shadow-[var(--shadow-warm)] backdrop-blur transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-stone-900/90 text-stone-200 shadow-lg backdrop-blur transition-colors hover:bg-stone-800 hover:text-white"
                   aria-label="Anterior"
                 >
                   <ChevronLeft size={18} />
                 </button>
               )}
-              {guidedStage !== "sell" && visibleGuidedChoiceOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => handleGuidedChoice(option)}
-                  className={onboardingButtonClass("mobile", isChoiceSelected(option))}
-                >
-                  {option === "Proyectos" ? (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Sparkles size={12} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
-                      <span>Proyectos</span>
-                      {isChoiceSelected(option) && filteredProperties.length > 0 && (
-                        <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
-                          {filteredProperties.length}
+              {guidedStage === "operation" ? (
+                <div className="inline-flex items-center p-1 rounded-full bg-stone-950/80 backdrop-blur-xl border border-white/15 shadow-2xl gap-1.5">
+                  {visibleGuidedChoiceOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => handleGuidedChoice(option)}
+                      className={onboardingButtonClass("mobile", isChoiceSelected(option))}
+                    >
+                      {option === "Proyectos" ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Sparkles size={14} className={isChoiceSelected(option) ? "text-white" : "text-orange-400"} />
+                          <span>Proyectos</span>
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
+                              isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
+                            }`}
+                          >
+                            {projectCount}
+                          </span>
                         </span>
-                      )}
-                    </span>
-                  ) : option === "Departamentos" ? (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Building2 size={12} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
-                      <span>Departamentos</span>
-                      {isChoiceSelected(option) && filteredProperties.length > 0 && (
-                        <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
-                          {filteredProperties.length}
+                      ) : option === "Departamentos" ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Building2 size={14} className={isChoiceSelected(option) ? "text-white" : "text-amber-400"} />
+                          <span>Departamentos</span>
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
+                              isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
+                            }`}
+                          >
+                            {deptoCount}
+                          </span>
                         </span>
+                      ) : (
+                        option
                       )}
-                    </span>
-                  ) : (
-                    option
-                  )}
-                </button>
-              ))}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                guidedStage !== "sell" &&
+                visibleGuidedChoiceOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleGuidedChoice(option)}
+                    className={onboardingButtonClass("mobile", isChoiceSelected(option))}
+                  >
+                    {option}
+                  </button>
+                ))
+              )}
               {guidedStage === "zone" && (
                 <>
                   <button
                     type="button"
                     onClick={handleZonesConfirm}
-                    className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-[var(--shadow-warm)] backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
+                    className="rounded-full border border-orange-400/50 bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-2 text-[11px] font-bold text-white shadow-lg backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
                   >
                     Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
                   </button>
@@ -3484,7 +3504,7 @@ export default function MapPage() {
               <button
                 type="button"
                 onClick={goPrevGuidedStep}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--accent-main)]/50 bg-[var(--surface-panel)]/92 text-[var(--accent-main)] shadow-sm backdrop-blur transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D] dark:bg-[rgba(27,20,17,0.88)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-stone-900/90 text-stone-200 shadow-sm backdrop-blur transition-colors hover:bg-stone-800 hover:text-white"
                 aria-label="Anterior"
               >
                 <ChevronLeft size={16} />
@@ -3501,6 +3521,45 @@ export default function MapPage() {
                   <MessageCircle size={14} /> Contactar
                 </button>
               </div>
+            ) : guidedStage === "operation" ? (
+              <div className="inline-flex items-center p-1 rounded-full bg-stone-950/80 backdrop-blur-xl border border-white/15 shadow-2xl gap-1.5">
+                {visibleGuidedChoiceOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleGuidedChoice(option)}
+                    className={onboardingButtonClass("desktop", isChoiceSelected(option))}
+                  >
+                    {option === "Proyectos" ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Sparkles size={13} className={isChoiceSelected(option) ? "text-white" : "text-orange-400"} />
+                        <span>Proyectos</span>
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
+                            isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
+                          }`}
+                        >
+                          {projectCount}
+                        </span>
+                      </span>
+                    ) : option === "Departamentos" ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Building2 size={13} className={isChoiceSelected(option) ? "text-white" : "text-amber-400"} />
+                        <span>Departamentos</span>
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
+                            isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
+                          }`}
+                        >
+                          {deptoCount}
+                        </span>
+                      </span>
+                    ) : (
+                      option
+                    )}
+                  </button>
+                ))}
+              </div>
             ) : (
               <>
                 {visibleGuidedChoiceOptions.map((option) => (
@@ -3510,29 +3569,7 @@ export default function MapPage() {
                     onClick={() => handleGuidedChoice(option)}
                     className={onboardingButtonClass("desktop", isChoiceSelected(option))}
                   >
-                    {option === "Proyectos" ? (
-                      <span className="inline-flex items-center gap-1.5">
-                        <Sparkles size={11} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
-                        <span>Proyectos</span>
-                        {isChoiceSelected(option) && filteredProperties.length > 0 && (
-                          <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
-                            {filteredProperties.length}
-                          </span>
-                        )}
-                      </span>
-                    ) : option === "Departamentos" ? (
-                      <span className="inline-flex items-center gap-1.5">
-                        <Building2 size={11} className={isChoiceSelected(option) ? "text-[#2F241D]" : "text-[var(--accent-main)]"} />
-                        <span>Departamentos</span>
-                        {isChoiceSelected(option) && filteredProperties.length > 0 && (
-                          <span className="rounded-full bg-[#2F241D] px-1.5 py-0.5 text-[9px] font-bold text-[var(--accent-main)]">
-                            {filteredProperties.length}
-                          </span>
-                        )}
-                      </span>
-                    ) : (
-                      option
-                    )}
+                    {option}
                   </button>
                 ))}
                 {guidedStage === "zone" && (
@@ -3540,14 +3577,14 @@ export default function MapPage() {
                     <button
                       type="button"
                       onClick={handleZonesConfirm}
-                      className="rounded-full border border-[var(--accent-main)] bg-[var(--accent-main)] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#2F241D] shadow-sm backdrop-blur transition-all hover:bg-[var(--accent-hover)] hover:text-white flex items-center gap-1"
+                      className="rounded-full border border-orange-400/50 bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
                     >
                       Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
                     </button>
                     <button
                       type="button"
                       onClick={() => goToGuidedStage("city")}
-                      className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-1.5 text-[10px] font-bold text-[var(--text-muted)] hover:text-[var(--accent-main)] hover:border-[var(--accent-main)]/50 transition-colors flex items-center gap-1"
+                      className="rounded-full border border-white/15 bg-stone-900/90 px-3 py-1.5 text-[10px] font-bold text-stone-300 hover:text-white hover:border-orange-500/50 transition-colors flex items-center gap-1"
                       title="Cambiar ciudad seleccionada"
                     >
                       <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
@@ -3555,8 +3592,8 @@ export default function MapPage() {
                   </>
                 )}
                 {visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
-                  <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-                    Sin opciones para "{geminiQuery}". Presiona <strong className="text-[var(--accent-main)]">Buscar</strong> para consultar con IA.
+                  <span className="rounded-full border border-white/15 bg-stone-900/95 px-3 py-1 text-xs font-medium text-stone-300">
+                    Sin opciones para "{geminiQuery}". Presiona <strong className="text-orange-400">Buscar</strong> para consultar con IA.
                   </span>
                 )}
               </>
