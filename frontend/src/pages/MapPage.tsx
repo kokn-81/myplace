@@ -1966,10 +1966,10 @@ export default function MapPage() {
     const base = `rounded-full transition-all duration-300 flex items-center gap-2 font-semibold active:scale-95 cursor-pointer ${padding}`;
 
     if (selected) {
-      return `${base} bg-gradient-to-r from-[#EA580C] via-[#F97316] to-[#FB923C] text-white font-bold shadow-lg shadow-orange-600/35 border border-orange-300/50 scale-[1.02] ring-1 ring-orange-400/40`;
+      return `${base} bg-[#8E3E24] text-[#F8F1E7] font-bold shadow-lg shadow-[#5C2414]/40 border border-[#E6CDB8]/40 scale-[1.02] ring-1 ring-[#C4896A]/40`;
     }
 
-    return `${base} bg-stone-900/85 hover:bg-stone-850 text-stone-200 hover:text-white border border-white/15 hover:border-orange-500/40 backdrop-blur-md shadow-md`;
+    return `${base} bg-stone-900/85 hover:bg-stone-850 text-stone-200 hover:text-white border border-white/15 hover:border-[#C4896A]/55 backdrop-blur-md shadow-md`;
   };
 
   const renderAccountDropdown = (closeMenu: () => void) => (
@@ -1977,7 +1977,7 @@ export default function MapPage() {
       {/* Header: User Profile or Guest */}
       {user ? (
         <div className="mb-2 p-3 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white font-bold text-sm shadow-md ring-1 ring-white/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7A3218] to-[#A34A28] text-white font-bold text-sm shadow-md ring-1 ring-white/20">
             {user.displayName ? user.displayName[0].toUpperCase() : "U"}
           </div>
           <div className="min-w-0 flex-1">
@@ -2020,7 +2020,7 @@ export default function MapPage() {
             }}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-stone-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-left"
           >
-            <UserCircle size={16} className="text-orange-400 shrink-0" />
+            <UserCircle size={16} className="text-[#C4896A] shrink-0" />
             <span>Mi perfil y bienvenida</span>
           </button>
         ) : (
@@ -2031,7 +2031,7 @@ export default function MapPage() {
               closeMenu();
             }}
             disabled={authLoading}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:brightness-110 transition-all cursor-pointer shadow-md text-left"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-[#7A3218] to-[#A34A28] hover:brightness-110 transition-all cursor-pointer shadow-md text-left"
           >
             <UserCircle size={16} className="shrink-0" />
             <span>{authLoading ? "Conectando..." : "Iniciar sesión con Google"}</span>
@@ -3354,7 +3354,7 @@ export default function MapPage() {
           onClick={() => setIsDesktopMenuOpen((prev) => !prev)}
           className={`flex items-center gap-2.5 rounded-2xl border px-3.5 py-2 text-xs font-semibold shadow-lg backdrop-blur-xl transition-all duration-200 cursor-pointer active:scale-95 ${
             isDesktopMenuOpen
-              ? "border-orange-500 bg-stone-900 text-white"
+              ? "border-[#A34A28] bg-stone-900 text-white"
               : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
           }`}
           aria-label="Menú y cuenta"
@@ -3362,7 +3362,7 @@ export default function MapPage() {
           <Menu size={16} className="text-stone-300" />
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white font-bold text-[11px] shadow-sm">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#7A3218] to-[#A34A28] text-white font-bold text-[11px] shadow-sm">
                 {user.displayName ? user.displayName[0].toUpperCase() : "U"}
               </span>
               <span className="max-w-[120px] truncate">{user.displayName?.split(" ")[0] || "Mi cuenta"}</span>
@@ -3404,9 +3404,9 @@ export default function MapPage() {
           <div className="flex items-center">
             <div className="flex items-center pl-3 pr-1">
               {isAsking ? (
-                <div className="h-4 w-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
+                <div className="h-4 w-4 rounded-full border-2 border-[#A34A28] border-t-transparent animate-spin" />
               ) : (
-                <Sparkles className="h-4 w-4 text-orange-400" />
+                <Sparkles className="h-4 w-4 text-[#C4896A]" />
               )}
             </div>
 
@@ -3433,7 +3433,7 @@ export default function MapPage() {
             <button
               type="submit"
               disabled={isAsking}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md transition-all hover:brightness-110 disabled:opacity-70 cursor-pointer"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#7A3218] to-[#A34A28] text-white shadow-md transition-all hover:brightness-110 disabled:opacity-70 cursor-pointer"
               aria-label="Buscar"
             >
               <Search size={16} />
@@ -3447,7 +3447,7 @@ export default function MapPage() {
             onClick={() => setIsMenuOpen((prev) => !prev)}
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 shadow-lg backdrop-blur-xl active:scale-95 cursor-pointer relative ${
               isMenuOpen
-                ? "border-orange-500 bg-stone-900 text-orange-400"
+                ? "border-[#A34A28] bg-stone-900 text-[#C4896A]"
                 : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
             }`}
             aria-label="Menú y configuración"
@@ -3455,7 +3455,7 @@ export default function MapPage() {
           >
             <Menu size={20} />
             {user && (
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-stone-900" />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#A34A28] ring-2 ring-stone-900" />
             )}
           </button>
 
@@ -3501,7 +3501,7 @@ export default function MapPage() {
                     >
                       {option === "Proyectos" ? (
                         <span className="inline-flex items-center gap-2">
-                          <Sparkles size={14} className={isChoiceSelected(option) ? "text-white" : "text-orange-400"} />
+                          <Sparkles size={14} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
                           <span>Proyectos</span>
                           <span
                             className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
@@ -3513,7 +3513,7 @@ export default function MapPage() {
                         </span>
                       ) : option === "Departamentos" ? (
                         <span className="inline-flex items-center gap-2">
-                          <Building2 size={14} className={isChoiceSelected(option) ? "text-white" : "text-amber-400"} />
+                          <Building2 size={14} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
                           <span>Departamentos</span>
                           <span
                             className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
@@ -3547,7 +3547,7 @@ export default function MapPage() {
                   <button
                     type="button"
                     onClick={handleZonesConfirm}
-                    className="rounded-full border border-orange-400/50 bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-2 text-[11px] font-bold text-white shadow-lg backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
+                    className="rounded-full border border-[#E6CDB8]/45 bg-gradient-to-r from-[#7A3218] to-[#A34A28] px-4 py-2 text-[11px] font-bold text-white shadow-lg backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
                   >
                     Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
                   </button>
@@ -3685,7 +3685,7 @@ export default function MapPage() {
                   >
                     {option === "Proyectos" ? (
                       <span className="inline-flex items-center gap-2">
-                        <Sparkles size={13} className={isChoiceSelected(option) ? "text-white" : "text-orange-400"} />
+                        <Sparkles size={13} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
                         <span>Proyectos</span>
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
@@ -3697,7 +3697,7 @@ export default function MapPage() {
                       </span>
                     ) : option === "Departamentos" ? (
                       <span className="inline-flex items-center gap-2">
-                        <Building2 size={13} className={isChoiceSelected(option) ? "text-white" : "text-amber-400"} />
+                        <Building2 size={13} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
                         <span>Departamentos</span>
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
@@ -3730,14 +3730,14 @@ export default function MapPage() {
                     <button
                       type="button"
                       onClick={handleZonesConfirm}
-                      className="rounded-full border border-orange-400/50 bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
+                      className="rounded-full border border-[#E6CDB8]/45 bg-gradient-to-r from-[#7A3218] to-[#A34A28] px-4 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
                     >
                       Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
                     </button>
                     <button
                       type="button"
                       onClick={() => goToGuidedStage("city")}
-                      className="rounded-full border border-white/15 bg-stone-900/90 px-3 py-1.5 text-[10px] font-bold text-stone-300 hover:text-white hover:border-orange-500/50 transition-colors flex items-center gap-1"
+                      className="rounded-full border border-white/15 bg-stone-900/90 px-3 py-1.5 text-[10px] font-bold text-stone-300 hover:text-white hover:border-[#A34A28]/60 transition-colors flex items-center gap-1"
                       title="Cambiar ciudad seleccionada"
                     >
                       <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
@@ -3746,7 +3746,7 @@ export default function MapPage() {
                 )}
                 {visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
                   <span className="rounded-full border border-white/15 bg-stone-900/95 px-3 py-1 text-xs font-medium text-stone-300">
-                    Sin opciones para "{geminiQuery}". Presiona <strong className="text-orange-400">Buscar</strong> para consultar con IA.
+                    Sin opciones para "{geminiQuery}". Presiona <strong className="text-[#C4896A]">Buscar</strong> para consultar con IA.
                   </span>
                 )}
               </>
@@ -3818,7 +3818,7 @@ export default function MapPage() {
                   setShowSuggested(false);
                   setCurrentIndex(0);
                 }}
-                className="ml-2 rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors"
+                className="ml-2 rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-[#C4896A] hover:bg-amber-500/30 transition-colors"
               >
                 {exactProperties.length > 0 ? "Solo exactos" : "Volver"}
               </button>
@@ -5482,7 +5482,7 @@ export default function MapPage() {
                             {selectedProperty.reservaUsd ? (
                               <div className="flex justify-between items-center border-b border-[var(--border-soft)] pb-3">
                                 <span className="text-[var(--text-muted)] text-sm">Monto Reserva</span>
-                                <span className="text-sm font-bold text-amber-600 dark:text-amber-400">${selectedProperty.reservaUsd.toLocaleString()} USD</span>
+                                <span className="text-sm font-bold text-amber-600 dark:text-[#C4896A]">${selectedProperty.reservaUsd.toLocaleString()} USD</span>
                               </div>
                             ) : null}
                             {selectedProperty.precioM2Desde ? (
