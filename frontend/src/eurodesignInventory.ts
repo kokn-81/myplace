@@ -31,6 +31,7 @@ export const EURODESIGN_CITY = "Santa Cruz de la Sierra";
 export const EURODESIGN_DELIVERY = "Junio 2027";
 export const EURODESIGN_CONSTRUCTION_STATUS = "Obra gruesa al 100% en losa piso 18 (visitas a obra martes y viernes)";
 export const EURODESIGN_PARKING_USD = 12500;
+export const EURODESIGN_BAULERA_USD = 2500;
 export const EURODESIGN_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/export?format=csv";
 
 export const EURODESIGN_CONFIG = {

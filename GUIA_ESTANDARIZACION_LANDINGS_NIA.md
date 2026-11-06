@@ -1,7 +1,29 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.0  
-**Referencia Maestra:** *ONA Residences* (`OnaLanding.tsx` & `onaInventory.ts`)  
-**Propósito:** Especificación técnica, comercial y visual obligatoria para estandarizar el desarrollo de futuras landings inmersivas de proyectos inmobiliarios en N.I.A.
+**Versión:** 1.1  
+**Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
+**Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
+
+---
+
+## 0. Marca vigente (esto corrige al resto del manual si chocan)
+
+La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no una variante verde, naranja o de 42/58.
+
+1. **Fondo** `#f7f5f0`. **Acento único** `#9a7b45`, texto de acento `#816127`, tinta clara `#e8d5a8`. El verde esmeralda queda solo para “en vivo”, disponible y copiado. No se usa `#EA580C`, `#2d6a4f` ni el verde de WhatsApp en botones.
+2. **Móvil:** una sola columna que scrollea entera. El hero mide como mínimo 480px y el texto va **abajo** de la foto. **Escritorio:** hero fijo `md:h-screen md:w-[44%]` y panel derecho `md:h-screen md:overflow-y-auto`. Prohibido partir la pantalla en `42vh / 58vh`.
+3. **Hero fijo.** La foto de fachada no cambia con el scroll. La foto de ubicación vive dentro de `#lugar`.
+4. **Contenido del panel derecho** centrado en `max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`, con `pb-32 md:pb-44`. Cada sección después de `#intro` abre con `mt-20 border-t border-stone-200/80 pt-10`.
+5. **Orden fijo:** `#intro`, `#lugar`, `#amenidades`, `#tipologias`, `#equipamiento`, `#constructora`, `#pago`, `#disponibilidad`, `#cierre`.
+6. **Cuatro controles superiores** circulares blancos, a la derecha: Insights, brochure, compartir, cerrar.
+7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Reserva con USD {monto del proyecto}” y botón Compartir. Se oculta en `#cierre`. El monto es el de ese proyecto.
+8. **Menú de secciones** circular negro, icono `#e8d5a8`, en `bottom-20 right-4`. El ítem activo usa fondo `#9a7b45/15` y texto `#816127`.
+9. **Insights** es un modal centrado (`max-w-2xl`, fondo blanco), no un cajón naranja lateral.
+10. **El botón de reserva** es `bg-stone-900` y en hover `#9a7b45`.
+11. **`#pago`:** la primera opción va en tarjeta negra con insignia dorada y “Ventaja comercial”. Las otras, en tarjeta blanca. El precio de esa sección es USD/m², no la cuota en dólares de una unidad todavía no elegida.
+12. **`#disponibilidad`:** cuatro pasos (tipología, piso, opcional, plan). La tarjeta tiene cuatro columnas con `USD` arriba y el número abajo. En contado, el saldo es `—` y “Sin saldo pendiente”. La cuarta columna es plusvalía proyectada **solo si ese proyecto tiene permiso de publicarla**. Trivento IV no la publica.
+13. **Lo que no se copia de ONA:** oraciones, nombres, metrajes, precios, cantidad de planes, monto de reserva, parqueos y fotos. Si el material oficial trae dos planes, se muestran dos, con el mismo dibujo de tarjeta.
+
+Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 
 ---
 

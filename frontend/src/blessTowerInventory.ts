@@ -48,7 +48,7 @@ export const BLESS_TOWER_CONFIG = {
   zone: "Av. Cristo Redentor (2° a 3° Anillo)",
   address: "Av. Cristo Redentor entre 2° y 3° Anillo Interno",
   city: "Santa Cruz de la Sierra",
-  delivery: "Diciembre 2026",
+  delivery: "Diciembre 2027",
   constructionStatus: "En construcción",
   totalUnits: 110,
   floorsCount: 30,

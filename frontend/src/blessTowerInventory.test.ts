@@ -13,7 +13,7 @@ test("Bless Tower config is valid", () => {
   assert.equal(BLESS_TOWER_CONFIG.id, "bless-tower");
   assert.equal(BLESS_TOWER_CONFIG.name, "Bless Tower");
   assert.equal(BLESS_TOWER_CONFIG.builder, "Alta Vida Santa Cruz");
-  assert.equal(BLESS_TOWER_CONFIG.delivery, "Diciembre 2026");
+  assert.equal(BLESS_TOWER_CONFIG.delivery, "Diciembre 2027");
   assert.equal(BLESS_TOWER_CONFIG.floorsCount, 30);
   assert.equal(BLESS_TOWER_CONFIG.reservaUsd, 2000);
   assert.ok(BLESS_TOWER_CONFIG.amenities.length >= 6);

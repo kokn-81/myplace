@@ -46,7 +46,7 @@ export const BLESS_DREI_CONFIG = {
   zone: "Equipetrol",
   address: "Calle Alejandro Ramírez entre 3° y 4° Anillo (a metros de Av. San Martín)",
   city: "Santa Cruz de la Sierra",
-  delivery: "Octubre 2026",
+  delivery: "Febrero 2028",
   constructionStatus: "En construcción",
   totalUnits: 41,
   floorsCount: 16,

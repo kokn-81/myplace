@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  DollarSign,
   Download,
   ExternalLink,
   HardHat,
@@ -34,6 +35,7 @@ import {
   EURODESIGN_DELIVERY,
   EURODESIGN_NAME,
   EURODESIGN_PARKING_USD,
+  EURODESIGN_BAULERA_USD,
   EURODESIGN_SHEETS_CSV_URL,
   EURODESIGN_UNITS,
   EURODESIGN_ZONE,
@@ -178,7 +180,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 1200,
     rentMax: 2000,
     yieldRange: "11,5% – 13,0% anual",
-    image: "/eurodesign/page-32-locales-comerciales.jpg",
+    image: "/eurodesign/amenities/amenity_locales_comerciales.jpg",
     code: "PB-COM",
     description:
       "Vitrinas comerciales de alto impacto peatonal y vehicular en planta baja. Ideal para cafeterías de especialidad, boutiques o firmas corporativas.",
@@ -207,7 +209,7 @@ const EQUIPMENT_SECTIONS = [
     id: "dormitorio",
     title: "Dormitorio Máster & Suites",
     subtitle: "Confort térmico y vestidores completos de piso a techo",
-    image: "/eurodesign/page-10.jpg",
+    image: "/eurodesign/amenities/amenity_sala_lounge.jpg",
     items: [
       "Ropero empotrado de melamina europea con cajonería y divisiones internas",
       "Walking closet en master suites",
@@ -243,13 +245,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   const [selectedAmbId, setSelectedAmbId] = useState<string>("1dorm");
   const [selectedFloor, setSelectedFloor] = useState<number>(4);
   const [selectedPlan, setSelectedPlan] = useState<"contado" | "cuotas">("contado");
-  const [includeParking, setIncludeParking] = useState<boolean>(false);
+  const [parkingOption, setParkingOption] = useState<"none" | "parking" | "baulera" | "parking_baulera">("none");
 
   const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<EurodesignUnit[]>(EURODESIGN_UNITS);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
   const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
+  const availableUnitsCount = useMemo(() => units.filter((u) => u.status === "disponible").length, [units]);
 
   const [activeSectionId, setActiveSectionId] = useState<string>("intro");
   const [showFloatingNav, setShowFloatingNav] = useState(false);
@@ -412,28 +415,36 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   const activeFinancials = useMemo(() => {
     if (!activeUnit) return null;
     const baseTotal = selectedPlan === "contado" ? activeUnit.cashTotal : activeUnit.cuotas.total;
-    const parkingExtra = includeParking ? EURODESIGN_PARKING_USD : 0;
-    const totalPrice = baseTotal + parkingExtra;
+    const extraPrice =
+      parkingOption === "parking"
+        ? EURODESIGN_PARKING_USD
+        : parkingOption === "baulera"
+        ? EURODESIGN_BAULERA_USD
+        : parkingOption === "parking_baulera"
+        ? EURODESIGN_PARKING_USD + EURODESIGN_BAULERA_USD
+        : 0;
+    const totalPrice = baseTotal + extraPrice;
     const pricePerM2 = selectedPlan === "contado" ? activeUnit.cashPerM2 : activeUnit.cuotas.perM2;
 
     const initialPayment =
       selectedPlan === "contado"
         ? totalPrice
-        : Math.round(activeUnit.cuotas.initial40 + (includeParking ? EURODESIGN_PARKING_USD * 0.4 : 0));
+        : Math.round(activeUnit.cuotas.initial40 + extraPrice * 0.4);
 
     const balancePayment =
       selectedPlan === "contado"
         ? 0
-        : Math.round(activeUnit.cuotas.balance40 + (includeParking ? EURODESIGN_PARKING_USD * 0.4 : 0));
+        : Math.round(activeUnit.cuotas.balance40 + extraPrice * 0.4);
 
-    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2100) + (includeParking ? 15000 : 0);
+    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2100) + (extraPrice > 0 ? extraPrice * 1.2 : 0);
     const capitalGain = Math.max(0, marketValueAtDelivery - totalPrice);
     const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
 
     return {
       totalPrice,
       baseTotal,
-      parkingExtra,
+      extraPrice,
+      parkingExtra: extraPrice,
       pricePerM2,
       initialPayment,
       balancePayment,
@@ -441,7 +452,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       capitalGain,
       gainPercentage,
     };
-  }, [activeUnit, selectedPlan, includeParking]);
+  }, [activeUnit, selectedPlan, parkingOption]);
 
   const handleShare = async () => {
     recordLeadEvent({
@@ -507,10 +518,10 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       lugar: { src: "/eurodesign/ubicacion.jpg", label: "Ubicación Equipetrol Norte" },
       amenidades: { src: "/eurodesign/amenities/amenity_piscina_skybar.jpg", label: "Piscina Panorámica Piso 18" },
       tipologias: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Master Suite & Living" },
-      equipamiento: { src: "/eurodesign/page-10.jpg", label: "Terminaciones Europeas" },
+      equipamiento: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Terminaciones Europeas" },
       constructora: { src: "/eurodesign/amenities/amenity_lobby_recepcion.jpg", label: "Lobby Doble Altura" },
       pago: { src: "/eurodesign/fachada-principal.jpg", label: "Estructura de Compra" },
-      disponibilidad: { src: "/eurodesign/page-01-portada.jpg", label: "Disponibilidad en Vivo" },
+      disponibilidad: { src: "/eurodesign/amenities/amenity_piscina_dia.jpg", label: "Disponibilidad en Vivo" },
       cierre: { src: "/eurodesign/amenities/amenity_rooftop_overview.jpg", label: "Vista 360° Equipetrol" },
     };
 
@@ -641,7 +652,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         <AnimatePresence mode="popLayout">
           <motion.img
             key={activeImage}
-            src={activeImage}
+            src="/eurodesign/fachada-principal.jpg"
             alt={`Tower Eurodesign - ${activeLabel}`}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -656,8 +667,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <span className="inline-block rounded-full bg-black/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
               Preventa Exclusiva · Equipetrol Norte
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-medium text-emerald-300 backdrop-blur-md">
-              <HardHat size={11} className="text-emerald-400" />
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-md">
+              <HardHat size={11} className="text-[#e8d5a8]" />
               Obra Gruesa 100% · Losa Piso 18
             </span>
           </div>
@@ -876,7 +887,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
               <img
-                src="/eurodesign/page-05.jpg"
+                src="/eurodesign/ubicacion.jpg"
                 alt="Mapa satelital de ubicación de Tower Eurodesign en Equipetrol Norte"
                 className="h-64 sm:h-80 w-full object-cover"
               />
@@ -1297,59 +1308,151 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               En Tower Eurodesign tu dinero rinde más asegurando una plusvalía de hasta el 41% frente al precio terminado ($2.100 USD/m²) con entrega formal en {EURODESIGN_DELIVERY}.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Plan Contado */}
-              <div className="rounded-3xl border border-stone-900 bg-stone-900 p-6 text-white shadow-xl flex flex-col justify-between">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-3.5 sm:px-4.5 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/15 text-[#9a7b45]">
+                  <DollarSign size={16} />
+                </span>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-[#9a7b45] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                      Máxima Rentabilidad
-                    </span>
-                    <span className="font-serif text-xl font-bold text-[#e8d5a8]">$1.480 USD/m²</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-xs font-light text-stone-600">Precio base preventa:</span>
+                    <strong className="font-serif text-lg font-medium text-stone-900">
+                      Desde $1.480 USD/m²
+                    </strong>
                   </div>
-                  <h3 className="mt-3 font-serif text-2xl text-white">Pago al Contado (100%)</h3>
-                  <p className="mt-2 text-xs font-light text-stone-300 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Aseguras el valor por m² más competitivo de todo Equipetrol Norte. Ahorras hasta USD 10.000 frente al plan en cuotas y aseguras el máximo margen de plusvalía con obra gruesa ya terminada en piso 18.
+                  <p className="text-[11px] text-stone-500 font-light">
+                    Calculado en vivo sobre {availableUnitsCount} unidades disponibles · {lastPriceUpdateText}
                   </p>
                 </div>
-                <div className="mt-6 border-t border-white/10 pt-4">
-                  <p className="text-xs text-stone-400 font-light">
-                    Reserva formal con <strong>USD 1.000</strong> para congelar precio.
+              </div>
+              <button
+                type="button"
+                onClick={handleRefreshInventory}
+                disabled={isRefreshingInv}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#9a7b45] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-[#816127] active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin" : ""} />
+                <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar ahora"}</span>
+              </button>
+            </div>
+
+            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA (ESTÁNDAR ONA) */}
+            <div className="mt-6 space-y-4">
+              {/* Opción 1: Contado */}
+              <div
+                onClick={() => setSelectedPlan("contado")}
+                className="relative overflow-hidden rounded-2xl border-2 border-stone-900 bg-stone-900 p-6 text-white shadow-lg cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8] border border-[#e8d5a8]/30">
+                      Mayor Descuento
+                    </span>
+                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.480 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
+                    Aseguras el valor por m² más competitivo de todo Equipetrol Norte ($1.480 USD/m²). Ahorras hasta USD 10.000 respecto al plan diferido y aseguras un 41% de plusvalía con la estructura y obra gruesa ya consolidadas en piso 18.
                   </p>
                 </div>
               </div>
 
-              {/* Plan Cuotas */}
-              <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-md flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-stone-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">
-                      Flexibilidad de Flujo
+              {/* Opción 2: 60% Inicial */}
+              <div
+                onClick={() => setSelectedPlan("cuotas")}
+                className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm hover:border-[#9a7b45]/40 transition-all cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Equilibrio Financiero
                     </span>
-                    <span className="font-serif text-xl font-bold text-stone-900">$1.580 USD/m²</span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 60% + Saldo contra Entrega (40%)</h3>
                   </div>
-                  <h3 className="mt-3 font-serif text-2xl text-stone-900">Plan Preventa en Cuotas</h3>
-                  <p className="mt-2 text-xs font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                    Desembolso inicial del 40% a la firma del contrato (menos los $1.000 de reserva), 20% distribuido en cuotas programadas durante la fase de obra fina y 40% saldo contra entrega en {EURODESIGN_DELIVERY} (apto crédito bancario).
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">$1.530 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+                  </div>
+                </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    Balance óptimo entre liquidez y descuento. Congelas tu unidad en piso alto con bonificación preferencial y abonas el 40% restante contra entrega formal de llaves en {EURODESIGN_DELIVERY}.
                   </p>
                 </div>
-                <div className="mt-6 border-t border-stone-100 pt-4">
-                  <p className="text-xs text-stone-500 font-light">
-                    Apto crédito hipotecario bancario para el saldo final.
+              </div>
+
+              {/* Opción 3: 40% Inicial / 20% Obra / 40% Saldo */}
+              <div
+                onClick={() => setSelectedPlan("cuotas")}
+                className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm hover:border-[#9a7b45]/40 transition-all cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                      Entrada Cómoda
+                    </span>
+                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 40% + 20% Obra + 40% Entrega</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-2xl font-light text-stone-900">$1.580 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
+                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+                  </div>
+                </div>
+                <div className="mt-3.5 border-t border-stone-100 pt-3">
+                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
+                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+                    El menor desembolso de entrada para asegurar tu departamento en Equipetrol Norte. Desembolso inicial del 40% a la firma del contrato (menos los USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)} de reserva), 20% en cuotas durante obra fina y 40% contra entrega de llaves (apto crédito bancario).
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Tarjeta de Parqueos */}
-            <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm flex items-center justify-between">
+            {/* Caja de transición a Disponibilidad */}
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-[#fbf9f4] p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold text-stone-900">Parqueos Cubiertos en Subsuelo</p>
-                <p className="text-[11px] text-stone-500 font-light">Espacios vehiculares asignados con acceso automatizado</p>
+                <p className="font-serif text-lg font-medium text-stone-900">
+                  ¿Quieres ver el monto exacto de tu departamento?
+                </p>
+                <p className="text-xs text-stone-500 font-light mt-0.5">
+                  Selecciona tu tipología y piso en el cotizador interactivo en tiempo real.
+                </p>
               </div>
-              <p className="font-serif text-xl font-bold text-stone-900">
-                USD {formatEurodesignUsd(EURODESIGN_PARKING_USD)}
+              <button
+                type="button"
+                onClick={() => scrollToSection("disponibilidad")}
+                className="inline-flex items-center gap-2 rounded-full bg-stone-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm hover:bg-[#816127] transition-all cursor-pointer whitespace-nowrap"
+              >
+                <span>Elegir departamento y cotizar</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+
+            {/* Cronograma de hitos */}
+            <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 text-xs space-y-3">
+              <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#9a7b45]">
+                Cronograma de Desembolsos
               </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-stone-600">
+                <div>
+                  <strong className="text-stone-900 block font-semibold">Hito 1 · Hoy:</strong>
+                  Reserva formal con USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)} para congelar unidad y precio de preventa.
+                </div>
+                <div>
+                  <strong className="text-stone-900 block font-semibold">Hito 2 · A la firma:</strong>
+                  Integración de la cuota inicial a la firma del contrato de preventa (descontando los USD 1.000).
+                </div>
+                <div>
+                  <strong className="text-stone-900 block font-semibold">Hito 3 · {EURODESIGN_DELIVERY}:</strong>
+                  Saldo contra entrega definitiva de llaves (apto para crédito bancario o fondos propios).
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1469,35 +1572,77 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               </div>
             </div>
 
-            {/* PASO 3: PARQUEO OPCIONAL */}
+            {/* PASO 3: PARQUEO O BAULERA OPCIONAL (PRECIOS OFICIALES AUDITADOS) */}
             <div className="mt-8">
-              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                Paso 3: ¿Deseas incluir Parqueo en Subsuelo?
-              </p>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                  Paso 3: ¿Deseas incluir Parqueo o Baulera? (Opcional)
+                </p>
+                <span className="text-[11px] text-stone-400 font-light">Subsuelo privado</span>
+              </div>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setIncludeParking(false)}
-                  className={`rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
-                    !includeParking
-                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm"
-                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                  onClick={() => setParkingOption("none")}
+                  className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    parkingOption === "none"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-800"
                   }`}
                 >
-                  <p className="text-xs font-bold">Sin Parqueo</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">Solo departamento</p>
+                  <div>
+                    <span className="text-xs font-bold text-stone-900">Sin Adicionales</span>
+                    <p className="text-[11px] text-stone-500 font-light mt-0.5">Solo departamento</p>
+                  </div>
+                  <p className="font-serif text-sm font-bold text-stone-900 mt-2">+ USD 0</p>
                 </button>
+
                 <button
                   type="button"
-                  onClick={() => setIncludeParking(true)}
-                  className={`rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
-                    includeParking
-                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm"
-                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                  onClick={() => setParkingOption("parking")}
+                  className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    parkingOption === "parking"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-800"
                   }`}
                 >
-                  <p className="text-xs font-bold">Parqueo Cubierto Subsuelo (+USD {formatEurodesignUsd(EURODESIGN_PARKING_USD)})</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">Espacio asignado con acceso automatizado</p>
+                  <div>
+                    <span className="text-xs font-bold text-stone-900">Parqueo Subsuelo</span>
+                    <p className="text-[11px] text-stone-500 font-light mt-0.5">1 vehículo cubierto</p>
+                  </div>
+                  <p className="font-serif text-sm font-bold text-[#816127] mt-2">+ USD {formatEurodesignUsd(EURODESIGN_PARKING_USD)}</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setParkingOption("baulera")}
+                  className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    parkingOption === "baulera"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-800"
+                  }`}
+                >
+                  <div>
+                    <span className="text-xs font-bold text-stone-900">Baulera Privada</span>
+                    <p className="text-[11px] text-stone-500 font-light mt-0.5">Depósito individual</p>
+                  </div>
+                  <p className="font-serif text-sm font-bold text-[#816127] mt-2">+ USD {formatEurodesignUsd(EURODESIGN_BAULERA_USD)}</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setParkingOption("parking_baulera")}
+                  className={`rounded-2xl border p-3.5 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    parkingOption === "parking_baulera"
+                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-800"
+                  }`}
+                >
+                  <div>
+                    <span className="text-xs font-bold text-stone-900">Parqueo + Baulera</span>
+                    <p className="text-[11px] text-stone-500 font-light mt-0.5">Vehicular + depósito</p>
+                  </div>
+                  <p className="font-serif text-sm font-bold text-[#816127] mt-2">+ USD {formatEurodesignUsd(EURODESIGN_PARKING_USD + EURODESIGN_BAULERA_USD)}</p>
                 </button>
               </div>
             </div>
@@ -1631,7 +1776,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       type="button"
                       onClick={() => {
                         const planLabel = selectedPlan === "contado" ? "Pago al Contado ($1.480 USD/m²)" : "Plan en Cuotas ($1.580 USD/m²)";
-                        const parkingText = includeParking ? "Con Parqueo Cubierto (+USD 12.500)" : "Sin parqueo";
+                        const parkingText =
+                          parkingOption === "parking"
+                            ? "Con Parqueo Cubierto (+USD 12.500)"
+                            : parkingOption === "baulera"
+                            ? "Con Baulera Privada (+USD 2.500)"
+                            : parkingOption === "parking_baulera"
+                            ? "Con Parqueo + Baulera (+USD 15.000)"
+                            : "Sin adicionales";
                         const msg = `Hola, vengo directo de N.I.A para reservar en Tower Eurodesign: Unidad ${activeUnit.unitNumber} en ${activeUnit.floorLabel} (${activeUnit.tipoLabel} - ${activeUnit.areaM2} m²), ${parkingText}, Inversión Total USD ${formatEurodesignUsd(activeFinancials.totalPrice)}, Modalidad ${planLabel}. Cuento con los USD ${formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)} para congelar la unidad hoy.`;
                         reserve(msg, activeFinancials.totalPrice);
                       }}
@@ -1647,54 +1799,62 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           </section>
 
           {/* 9. CIERRE / CONDICIONES & DESCARGAS */}
-          <section id="cierre" ref={closeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="rounded-3xl border border-stone-200 bg-gradient-to-br from-stone-900 to-black p-6 sm:p-8 text-white shadow-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                  Garantía &amp; Respaldo · {EURODESIGN_CONFIG.builder}
-                </span>
-                <span className="text-xs text-emerald-400 font-medium">
-                  Entrega {EURODESIGN_DELIVERY}
-                </span>
-              </div>
-
-              <h3 className="mt-3 font-serif text-2xl sm:text-3xl text-white">
-                Asegura tu departamento con obra gruesa al 100% en Equipetrol Norte.
-              </h3>
-
-              <p className="mt-3 text-sm text-stone-300 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                Ingresa al valor de preventa más competitivo ($1.480 USD/m²) con visitas a obra habilitadas los martes y viernes. Asesoramiento directo sin comisiones extras.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const msg = `Hola, quiero coordinar una visita a obra para conocer Tower Eurodesign en Equipetrol Norte. ¿Qué días y horarios tienen disponibles?`;
-                    reserve(msg);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#9a7b45] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-lg transition-all hover:bg-[#816127] active:scale-95 cursor-pointer"
-                >
-                  <Calendar size={15} />
-                  <span>Agendar Visita a Obra</span>
-                </button>
-
-                <a
-                  href={EURODESIGN_CONFIG.brochurePdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download="Brochure_Tower_Eurodesign.pdf"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
-                >
-                  <Download size={15} />
-                  <span>Descargar Brochure</span>
-                </a>
-              </div>
+          <section id="cierre" ref={closeRef} className="mt-20 scroll-mt-6 border-t border-stone-200 pt-12 text-center">
+            <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
+            <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a7b45]">
+              Garantía &amp; Respaldo · {EURODESIGN_CONFIG.builder} · Entrega {EURODESIGN_DELIVERY}
+            </p>
+            <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
+              Asegura tu departamento con obra gruesa al 100% en Equipetrol Norte.
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-stone-600">
+              Ingresa al valor de preventa más competitivo ($1.480 USD/m²) con visitas a obra habilitadas los martes y viernes. Asesoramiento directo sin comisiones extras.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  const msg = `Hola, quiero coordinar una visita a obra para conocer Tower Eurodesign en Equipetrol Norte. ¿Qué días y horarios tienen disponibles?`;
+                  reserve(msg);
+                }}
+                className="bg-stone-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-xl transition-all hover:bg-[#9a7b45] active:scale-95"
+              >
+                <span className="inline-flex items-center gap-2"><Calendar size={15} /> Agendar Visita a Obra</span>
+              </button>
+              <a
+                href={EURODESIGN_CONFIG.brochurePdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download="Brochure_Tower_Eurodesign.pdf"
+                className="inline-flex items-center gap-2 border border-stone-300 bg-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-stone-800 shadow-sm transition-all hover:bg-stone-100"
+              >
+                <Download size={15} className="text-[#9a7b45]" />
+                Descargar Brochure
+              </a>
             </div>
           </section>
 
         </div>
       </div>
+
+      {activeSectionId !== "cierre" && (
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+        <div>
+          <p className="text-xs text-stone-600">
+            Reserva con <span className="font-semibold text-stone-900">USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}</span>
+          </p>
+          <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Congela el precio de preventa hoy</p>
+        </div>
+        <button
+          type="button"
+          onClick={handleShare}
+          className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
+        >
+          {shareFeedback ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
+          <span className="hidden sm:inline">Compartir</span>
+        </button>
+      </div>
+      )}
 
       {/* BURBUJA FLOTANTE DE NAVEGACIÓN RÁPIDA ENTRE SECCIONES */}
       <AnimatePresence>
@@ -1703,7 +1863,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 z-[125]"
+            className="fixed bottom-20 right-4 z-[125] sm:right-6 md:right-8"
           >
             <div className="relative">
               <button

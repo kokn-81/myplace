@@ -14,7 +14,7 @@ test("Bless Drei config is valid", () => {
   assert.equal(BLESS_DREI_CONFIG.name, "Bless Drei");
   assert.equal(BLESS_DREI_CONFIG.builder, "Alta Vida Santa Cruz");
   assert.equal(BLESS_DREI_CONFIG.zone, "Equipetrol");
-  assert.equal(BLESS_DREI_CONFIG.delivery, "Octubre 2026");
+  assert.equal(BLESS_DREI_CONFIG.delivery, "Febrero 2028");
   assert.equal(BLESS_DREI_CONFIG.floorsCount, 16);
   assert.equal(BLESS_DREI_CONFIG.reservaUsd, 2000);
   assert.ok(BLESS_DREI_CONFIG.amenities.length >= 5);
