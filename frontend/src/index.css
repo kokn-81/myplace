@@ -113,6 +113,34 @@
     display: none;
   }
 
+  .nia-project-card .nia-property-card-media {
+    width: 40% !important;
+  }
+
+  .nia-project-card .nia-property-card-body {
+    width: 60% !important;
+    padding: 0.75rem !important;
+  }
+
+  @media (max-width: 640px) and (orientation: portrait) {
+    .nia-property-carousel.nia-project-carousel {
+      height: 14.5rem;
+    }
+
+    .nia-property-card.nia-project-card {
+      height: 14rem !important;
+    }
+
+    .nia-project-card .nia-property-card-media {
+      width: 35% !important;
+    }
+
+    .nia-project-card .nia-property-card-body {
+      width: 65% !important;
+      padding: 0.7rem 0.65rem !important;
+    }
+  }
+
   @media (max-width: 640px) and (orientation: portrait) {
     .nia-mobile-hud {
       top: calc(env(safe-area-inset-top, 0px) + 1rem);
