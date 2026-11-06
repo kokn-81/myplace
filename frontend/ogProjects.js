@@ -35,7 +35,7 @@ export const PROJECTS = {
     title: "Tower Eurodesign · Preventa Exclusiva en Equipetrol Norte",
     description:
       "Departamentos premium en Equipetrol Norte desde USD 71.780. Torre de 18 niveles con obra gruesa al 100%.",
-    image: `${SITE}/eurodesign/fachada-principal.jpg`,
+    image: `${SITE}/eurodesign/fachada-dia.jpg`,
     imageAlt: "Tower Eurodesign en Equipetrol Norte",
     canonicalPath: "/eurodesign",
     appUrl: "/?proyecto=eurodesign",

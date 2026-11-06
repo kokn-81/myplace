@@ -189,6 +189,17 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
   },
 ];
 
+const EURODESIGN_MODELOS = [
+  { id: "m01", rooms: 2 as const, name: "Modelo 01", area: "82 m²", units: "501 – 1701", full: "/eurodesign/modelo-01-2d-82m2.jpg", preview: "/eurodesign/modelos/modelo-01.jpg" },
+  { id: "m02", rooms: 2 as const, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/modelo-02-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-02.jpg" },
+  { id: "m03", rooms: 1 as const, name: "Modelo 03", area: "57 m²", units: "503 – 1703", full: "/eurodesign/modelo-03-1d-57m2.jpg", preview: "/eurodesign/modelos/modelo-03.jpg" },
+  { id: "m04", rooms: 1 as const, name: "Modelo 04", area: "48,50 m²", units: "504 – 1704", full: "/eurodesign/modelo-04-1d-48m2.jpg", preview: "/eurodesign/modelos/modelo-04.jpg" },
+  { id: "m05", rooms: 1 as const, name: "Modelo 05", area: "58 m²", units: "Piso 4 · 405", full: "/eurodesign/modelo-05-1d-35m2.jpg", preview: "/eurodesign/modelos/modelo-05.jpg" },
+  { id: "m06", rooms: 1 as const, name: "Modelo 06", area: "97,60 m²", units: "Piso 4 · 406", full: "/eurodesign/modelo-06-1d-48m2.jpg", preview: "/eurodesign/modelos/modelo-06.jpg" },
+  { id: "m07", rooms: 1 as const, name: "Modelo 07", area: "57 m²", units: "507 – 1707", full: "/eurodesign/modelo-07-1d-57m2.jpg", preview: "/eurodesign/modelos/modelo-07.jpg" },
+  { id: "m08", rooms: 2 as const, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/modelo-08-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-08.jpg" },
+];
+
 const EQUIPMENT_SECTIONS = [
   {
     id: "cocina",
@@ -237,12 +248,15 @@ const EQUIPMENT_SECTIONS = [
 ];
 
 export default function EurodesignLanding({ property, onClose }: Props) {
-  const [activeImage, setActiveImage] = useState("/eurodesign/fachada-principal.jpg");
+  const [activeImage, setActiveImage] = useState("/eurodesign/fachada-dia.jpg");
   const [activeLabel, setActiveLabel] = useState("Fachada Principal");
   const [amenityIndex, setAmenityIndex] = useState(0);
 
   // Estados del cotizador en cascada (estilo Apple Store)
   const [selectedAmbId, setSelectedAmbId] = useState<string>("1dorm");
+  const [tipologiaRooms, setTipologiaRooms] = useState<1 | 2>(1);
+  const [modeloIndex, setModeloIndex] = useState(0);
+  const modeloTouchX = useRef<number | null>(null);
   const [selectedFloor, setSelectedFloor] = useState<number>(4);
   const [selectedPlan, setSelectedPlan] = useState<"contado" | "cuotas">("contado");
   const [parkingOption, setParkingOption] = useState<"none" | "parking" | "baulera" | "parking_baulera">("none");
@@ -514,13 +528,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
-      intro: { src: "/eurodesign/fachada-principal.jpg", label: "Fachada Principal" },
-      lugar: { src: "/eurodesign/ubicacion.jpg", label: "Ubicación Equipetrol Norte" },
+      intro: { src: "/eurodesign/fachada-dia.jpg", label: "Fachada Principal" },
+      lugar: { src: "/eurodesign/ubicacion-mapa.jpg", label: "Ubicación Equipetrol Norte" },
       amenidades: { src: "/eurodesign/amenities/amenity_piscina_skybar.jpg", label: "Piscina Panorámica Piso 18" },
       tipologias: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Master Suite & Living" },
       equipamiento: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Terminaciones Europeas" },
       constructora: { src: "/eurodesign/amenities/amenity_lobby_recepcion.jpg", label: "Lobby Doble Altura" },
-      pago: { src: "/eurodesign/fachada-principal.jpg", label: "Estructura de Compra" },
+      pago: { src: "/eurodesign/fachada-dia.jpg", label: "Estructura de Compra" },
       disponibilidad: { src: "/eurodesign/amenities/amenity_piscina_dia.jpg", label: "Disponibilidad en Vivo" },
       cierre: { src: "/eurodesign/amenities/amenity_rooftop_overview.jpg", label: "Vista 360° Equipetrol" },
     };
@@ -652,7 +666,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         <AnimatePresence mode="popLayout">
           <motion.img
             key={activeImage}
-            src="/eurodesign/fachada-principal.jpg"
+            src="/eurodesign/fachada-dia.jpg"
             alt={`Tower Eurodesign - ${activeLabel}`}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -887,9 +901,9 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
               <img
-                src="/eurodesign/ubicacion.jpg"
-                alt="Mapa satelital de ubicación de Tower Eurodesign en Equipetrol Norte"
-                className="h-64 sm:h-80 w-full object-cover"
+                src="/eurodesign/ubicacion-mapa.jpg"
+                alt="Mapa de Tower Eurodesign en Equipetrol Norte, sin marca de comercializadora"
+                className="h-80 w-full bg-[#f4f1ea] object-contain sm:h-[28rem]"
               />
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border-t border-stone-100 p-4 text-xs">
                 <div>
@@ -1018,168 +1032,153 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
               Espacios concebidos para alta rotación y confort superior.
             </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Desde departamentos confortables de 1 dormitorio pensados para rentas en Airbnb hasta residencias familiares de 2 dormitorios máster y locales comerciales de doble altura.
+                        <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Departamentos de 1 y 2 dormitorios. Si un tipo tiene más de un modelo, el carrusel se desliza. Al tocar la foto se abre la ficha completa.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {AMBIENTE_OPTIONS.map((amb) => {
-                const isSelected = selectedAmbId === amb.id;
-                let displayPrice = amb.basePrice;
-                if (amb.id === "1dorm") displayPrice = minPrice1Dorm;
-                else if (amb.id === "2dorm") displayPrice = minPrice2Dorms;
-
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {([1, 2] as const).map((rooms) => {
+                const isSelected = tipologiaRooms === rooms;
+                const displayPrice = rooms === 1 ? minPrice1Dorm : minPrice2Dorms;
+                const count = EURODESIGN_MODELOS.filter((m) => m.rooms === rooms).length;
                 return (
-                  <div
-                    key={amb.id}
+                  <button
+                    key={rooms}
+                    type="button"
                     onClick={() => {
-                      setSelectedAmbId(amb.id);
+                      setTipologiaRooms(rooms);
+                      setModeloIndex(0);
+                      setSelectedAmbId(rooms === 1 ? "1dorm" : "2dorm");
                     }}
-                    className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
+                    className={`cursor-pointer rounded-2xl border p-5 text-left transition-all ${
                       isSelected
                         ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
                         : "border-stone-200 bg-white hover:border-[#9a7b45]/50 hover:shadow-sm"
                     }`}
                   >
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
-                          {amb.name}
-                        </span>
-                        <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-mono text-stone-600">
-                          {amb.areaRange}
-                        </span>
-                      </div>
-                      <p className="mt-3 font-serif text-2xl font-bold text-stone-900">
-                        Desde USD {formatEurodesignUsd(displayPrice)}
-                      </p>
-                      <p className="mt-1 text-xs text-stone-500 font-light">
-                        {amb.id === "1dorm"
-                          ? "Suite privada · Walking closet · Balcón terraza"
-                          : amb.id === "2dorm"
-                          ? "Master suite + dormitorio · 2 Baños · Living espacioso"
-                          : "Vitrinas comerciales · Doble altura · Alto tráfico"}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
-                      <span className={`inline-flex items-center gap-1 font-semibold ${isSelected ? "text-stone-900" : "text-[#9a7b45]"}`}>
-                        {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
-                      </span>
-                    </div>
-                  </div>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
+                      {rooms === 1 ? "1 Dormitorio" : "2 Dormitorios"}
+                    </span>
+                    <p className="mt-3 font-serif text-2xl font-bold text-stone-900">
+                      Desde USD {formatEurodesignUsd(displayPrice)}
+                    </p>
+                    <p className="mt-1 text-xs font-light text-stone-500">
+                      {count} modelos · desliza para ver cada planta
+                    </p>
+                  </button>
                 );
               })}
             </div>
 
-            {/* Visualización interactiva del Plano Arquitectónico */}
-            {currentAmbiente && (() => {
-              const ambKeys = AMBIENTE_OPTIONS.map((a) => a.id);
-              const currentIdx = ambKeys.indexOf(selectedAmbId);
-              const prevAmbKey = ambKeys[(currentIdx - 1 + ambKeys.length) % ambKeys.length];
-              const nextAmbKey = ambKeys[(currentIdx + 1) % ambKeys.length];
-
+            {(() => {
+              const slides = EURODESIGN_MODELOS.filter((m) => m.rooms === tipologiaRooms);
+              const index = ((modeloIndex % slides.length) + slides.length) % slides.length;
+              const current = slides[index];
+              const go = (dir: number) => setModeloIndex((index + dir + slides.length) % slides.length);
               return (
-                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm transition-all">
-                  <div className="p-4 sm:p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-3">
+                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 p-4 sm:p-5">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold text-white tracking-wider">
-                          PLANTA {currentAmbiente.code}
+                        <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold tracking-wider text-white">
+                          {current.name.toUpperCase()}
                         </span>
                         <span className="font-serif text-lg font-medium text-stone-900">
-                          {currentAmbiente.name}
+                          {tipologiaRooms === 1 ? "1 dormitorio" : "2 dormitorios"} · {current.area}
                         </span>
                       </div>
-                      <p className="mt-1 text-xs text-stone-500 font-light">
-                        Superficie: <strong className="font-semibold text-stone-800">{currentAmbiente.areaRange}</strong> · Plano oficial Tower Eurodesign
-                      </p>
+                      <p className="mt-1 text-xs font-light text-stone-500">Unidades {current.units}</p>
                     </div>
-                    {/* Botones para pasar de una imagen a otra sin mover de sección */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedAmbId(prevAmbKey)}
-                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-50 active:scale-95 cursor-pointer shadow-2xs"
-                        title="Ver plano anterior"
-                      >
-                        <ChevronLeft size={14} />
-                        Anterior
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedAmbId(nextAmbKey)}
-                        className="inline-flex items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#9a7b45] active:scale-95 cursor-pointer shadow-2xs"
-                        title="Ver siguiente plano"
-                      >
-                        Siguiente
-                        <ChevronRight size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setZoomPlanImage(currentAmbiente.image)}
-                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-100 active:scale-95 cursor-pointer"
-                        title="Ver en pantalla completa"
-                      >
-                        <Maximize2 size={13} /> Ver HD
-                      </button>
-                    </div>
+                    {slides.length > 1 && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => go(-1)}
+                          className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 shadow-2xs transition hover:bg-stone-50 active:scale-95"
+                          aria-label="Modelo anterior"
+                        >
+                          <ChevronLeft size={14} /> Anterior
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => go(1)}
+                          className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-[#9a7b45] active:scale-95"
+                          aria-label="Modelo siguiente"
+                        >
+                          Siguiente <ChevronRight size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden p-4 group">
-                    <img
-                      src={currentAmbiente.image}
-                      alt={`Plano arquitectónico tipología ${currentAmbiente.name}`}
-                      className="max-h-full max-w-full object-contain"
-                    />
-
-                    {/* Flechas superpuestas para pasar de imagen */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedAmbId(prevAmbKey)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-stone-700 shadow-md backdrop-blur-xs transition opacity-80 hover:opacity-100 hover:bg-white active:scale-95 cursor-pointer"
-                      aria-label="Plano anterior"
+                  <div
+                    className="relative aspect-[16/9] w-full overflow-hidden bg-[#f7f5f0]"
+                    onTouchStart={(event) => {
+                      modeloTouchX.current = event.changedTouches[0].clientX;
+                    }}
+                    onTouchEnd={(event) => {
+                      if (modeloTouchX.current == null || slides.length < 2) return;
+                      const dx = event.changedTouches[0].clientX - modeloTouchX.current;
+                      if (dx > 40) go(-1);
+                      if (dx < -40) go(1);
+                      modeloTouchX.current = null;
+                    }}
+                  >
+                    <div
+                      className="flex h-full transition-transform duration-500 ease-out"
+                      style={{ transform: `translateX(-${index * 100}%)` }}
                     >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedAmbId(nextAmbKey)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-stone-700 shadow-md backdrop-blur-xs transition opacity-80 hover:opacity-100 hover:bg-white active:scale-95 cursor-pointer"
-                      aria-label="Plano siguiente"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-
-                    {/* Indicadores de plano / puntos */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-stone-900/40 backdrop-blur-xs px-2.5 py-1 rounded-full">
-                      {AMBIENTE_OPTIONS.map((amb) => (
+                      {slides.map((slide) => (
                         <button
-                          key={amb.id}
+                          key={slide.id}
                           type="button"
-                          onClick={() => setSelectedAmbId(amb.id)}
-                          className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                            selectedAmbId === amb.id ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
-                          }`}
-                          title={amb.name}
+                          onClick={() => setZoomPlanImage(slide.full)}
+                          className="relative h-full min-w-full cursor-zoom-in"
+                          aria-label={`Ver ${slide.name} completo`}
+                        >
+                          <img
+                            src={slide.preview}
+                            alt={`${slide.name}, ${slide.area}`}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    {slides.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => go(-1)}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2 text-stone-700 shadow-md"
+                          aria-label="Modelo anterior"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => go(1)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2 text-stone-700 shadow-md"
+                          aria-label="Modelo siguiente"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </>
+                    )}
+                    <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-stone-900/40 px-2.5 py-1">
+                      {slides.map((slide, dot) => (
+                        <button
+                          key={slide.id}
+                          type="button"
+                          onClick={() => setModeloIndex(dot)}
+                          className={`h-1.5 cursor-pointer rounded-full ${dot === index ? "w-5 bg-white" : "w-1.5 bg-white/50"}`}
+                          aria-label={slide.name}
                         />
                       ))}
                     </div>
                   </div>
-
-                  <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
-                    <p className="text-xs text-stone-600 font-light leading-relaxed">
-                      {currentAmbiente.description}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {currentAmbiente.pills.map((pill, idx) => (
-                        <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">
-                          ✓ {pill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <p className="border-t border-stone-100 px-4 py-3 text-xs font-light text-stone-500">
+                    La vista muestra el departamento. Toca la imagen para ver la ficha completa.
+                  </p>
                 </div>
               );
             })()}
