@@ -24,7 +24,6 @@ import {
   Sparkles,
   TrendingUp,
   X,
-  Zap,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
 import {
@@ -189,6 +188,18 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
   },
 ];
 
+const EURODESIGN_LEGADO: { name: string; detail?: string }[] = [
+  { name: "Tower", detail: "Entrega junio 2027" },
+  { name: "Le Blanc" },
+  { name: "Soho" },
+  { name: "Nordic" },
+  { name: "Le Grand" },
+  { name: "Residence" },
+  { name: "Suites" },
+  { name: "La Foret" },
+  { name: "Hacienda del Urubó", detail: "Casa residencial" },
+];
+
 const EURODESIGN_MODELOS = [
   { id: "m01", rooms: 2 as const, name: "Modelo 01", area: "82 m²", units: "501 – 1701", full: "/eurodesign/modelo-01-2d-82m2.jpg", preview: "/eurodesign/modelos/modelo-01.jpg" },
   { id: "m02", rooms: 2 as const, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/modelo-02-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-02.jpg" },
@@ -293,7 +304,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     { id: "amenidades", label: "Áreas Sociales", icon: Sparkles, hint: "Piscina Piso 18 & Sky Bar" },
     { id: "tipologias", label: "Tipologías", icon: Layers, hint: "1D, 2D y Locales Comerciales" },
     { id: "equipamiento", label: "Equipamiento", icon: CheckCircle2, hint: "100% Equipado llave en mano" },
-    { id: "constructora", label: "Constructora", icon: ShieldCheck, hint: "Desarrollo Eurodesign · Sede Platinum" },
+    { id: "constructora", label: "Constructora", icon: ShieldCheck, hint: "Nuestro legado · Entrega junio 2027" },
     { id: "pago", label: "Formas de Pago", icon: TrendingUp, hint: "Contado $1.480/m² y Cuotas Preventa" },
     { id: "disponibilidad", label: "Disponibilidad en Vivo", icon: Building2, hint: "Inventario y cotizador interactivo" },
   ];
@@ -529,11 +540,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   useEffect(() => {
     const scenes: Record<string, { src: string; label: string }> = {
       intro: { src: "/eurodesign/fachada-dia.jpg", label: "Fachada Principal" },
-      lugar: { src: "/eurodesign/ubicacion-mapa.jpg", label: "Ubicación Equipetrol Norte" },
+      lugar: { src: "/eurodesign/ubicacion-entorno.jpg", label: "Ubicación Equipetrol Norte" },
       amenidades: { src: "/eurodesign/amenities/amenity_piscina_skybar.jpg", label: "Piscina Panorámica Piso 18" },
       tipologias: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Master Suite & Living" },
       equipamiento: { src: "/eurodesign/amenities/amenity_living_panoramico.jpg", label: "Terminaciones Europeas" },
-      constructora: { src: "/eurodesign/amenities/amenity_lobby_recepcion.jpg", label: "Lobby Doble Altura" },
+      constructora: { src: "/eurodesign/legado.jpg", label: "Nuestro legado" },
       pago: { src: "/eurodesign/fachada-dia.jpg", label: "Estructura de Compra" },
       disponibilidad: { src: "/eurodesign/amenities/amenity_piscina_dia.jpg", label: "Disponibilidad en Vivo" },
       cierre: { src: "/eurodesign/amenities/amenity_rooftop_overview.jpg", label: "Vista 360° Equipetrol" },
@@ -900,25 +911,21 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </p>
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
-              <img
-                src="/eurodesign/ubicacion-mapa.jpg"
-                alt="Mapa de Tower Eurodesign en Equipetrol Norte, sin marca de comercializadora"
-                className="h-80 w-full bg-[#f4f1ea] object-contain sm:h-[28rem]"
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border-t border-stone-100 p-4 text-xs">
-                <div>
-                  <p className="font-semibold text-stone-900">A 2 min · Patio Design</p>
-                  <p className="text-stone-500 font-light">Gastronomía y boulevard</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-stone-900">A 3 min · Ventura Mall</p>
-                  <p className="text-stone-500 font-light">Cines y retail financiero</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-stone-900">A 4 min · Manzana 40 & Hoteles</p>
-                  <p className="text-stone-500 font-light">Marriott y Los Tajibos</p>
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => setZoomPlanImage("/eurodesign/ubicacion-entorno.jpg")}
+                className="block w-full cursor-zoom-in bg-[#f4f1ea]"
+                aria-label="Ampliar el mapa de entorno de Tower Eurodesign"
+              >
+                <img
+                  src="/eurodesign/ubicacion-entorno.jpg"
+                  alt="Mapa de entorno de Tower Eurodesign en Equipetrol Norte"
+                  className="mx-auto w-full"
+                />
+              </button>
+              <p className="border-t border-stone-100 px-4 py-2 text-center text-[11px] font-light text-stone-500">
+                Mapa del brochure. Toca la imagen para verla completa.
+              </p>
 
               <div className="border-t border-stone-100 p-4 pt-3 text-right">
                 <a
@@ -1234,59 +1241,47 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
           </section>
 
-          {/* 6. CONSTRUCTORA & RESPALDO INSTITUCIONAL */}
+          {/* 6. CONSTRUCTORA — NUESTRO LEGADO (brochure) */}
           <section id="constructora" ref={builderRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
             <div className="flex items-center gap-2">
               <ShieldCheck size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Garantía &amp; Respaldo Institucional
+                Nuestro legado
               </p>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Desarrollado con rigor técnico y supervisión de ingeniería sismorresistente.
+              Diseñando sueños, construyendo futuro.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              {EURODESIGN_CONFIG.builder} se distingue por la precisión estructural y la estética contemporánea en Santa Cruz. Con sede en Equipetrol, cada desarrollo se construye bajo estrictos controles de calidad de hormigón armado, estudios de mecánica de suelos y doble certificación hidrosanitaria y eléctrica.
+              El respaldo de {EURODESIGN_CONFIG.builder} es su portafolio. Tower Eurodesign tiene entrega en junio 2027. El mismo sello reúne Le Blanc, Soho, Nordic, Le Grand, Residence, Suites, La Foret y la casa residencial Hacienda del Urubó.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9a7b45]/10 text-[#9a7b45]">
-                  <HardHat size={20} />
-                </div>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-stone-900">
-                  Obra Gruesa Consolidada
-                </h3>
-                <p className="mt-1.5 text-xs font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Hormigonado estructural al 100% en losa piso 18. Cero riesgo de ejecución en cimientos o fundaciones.
-                </p>
-              </div>
+            <button
+              type="button"
+              onClick={() => setZoomPlanImage("/eurodesign/legado.jpg")}
+              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-[#f4f1ea] shadow-md"
+              aria-label="Ampliar el portafolio Nuestro legado de Eurodesign"
+            >
+              <img
+                src="/eurodesign/legado.jpg"
+                alt="Portafolio Nuestro legado de Eurodesign: Tower, Le Blanc, Soho, Nordic, Le Grand, Residence, Suites, La Foret y Hacienda del Urubó"
+                className="mx-auto w-full"
+              />
+            </button>
+            <p className="mt-2 text-center text-[11px] font-light text-stone-500">
+              Página del brochure. Toca la imagen para verla completa.
+            </p>
 
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9a7b45]/10 text-[#9a7b45]">
-                  <Zap size={20} />
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {EURODESIGN_LEGADO.map((project) => (
+                <div key={project.name} className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9a7b45]">Eurodesign</p>
+                  <h3 className="mt-1 font-serif text-lg font-semibold text-stone-900">{project.name}</h3>
+                  {project.detail ? <p className="mt-1 text-xs font-light text-stone-500">{project.detail}</p> : null}
                 </div>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-stone-900">
-                  Diseño Bioclimático
-                </h3>
-                <p className="mt-1.5 text-xs font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Fachadas con celosías acústicas y ventanales térmicos que reducen la radiación solar y el gasto en aire acondicionado.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9a7b45]/10 text-[#9a7b45]">
-                  <ShieldCheck size={20} />
-                </div>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-stone-900">
-                  Garantía Post-Venta
-                </h3>
-                <p className="mt-1.5 text-xs font-light text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                  Póliza de garantía quinquenal en estructura portante y servicio de acompañamiento técnico post-entrega.
-                </p>
-              </div>
+              ))}
             </div>
           </section>
 
@@ -1801,7 +1796,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           <section id="cierre" ref={closeRef} className="mt-20 scroll-mt-6 border-t border-stone-200 pt-12 text-center">
             <ShieldCheck size={28} className="mx-auto text-[#9a7b45]" />
             <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a7b45]">
-              Garantía &amp; Respaldo · {EURODESIGN_CONFIG.builder} · Entrega {EURODESIGN_DELIVERY}
+              Nuestro legado · {EURODESIGN_CONFIG.builder} · Entrega {EURODESIGN_DELIVERY}
             </p>
             <h2 className="mt-3 font-serif text-3xl font-light text-stone-900 md:text-4xl">
               Asegura tu departamento con obra gruesa al 100% en Equipetrol Norte.
@@ -2052,14 +2047,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 type="button"
                 onClick={() => setZoomPlanImage(null)}
                 className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white hover:bg-[#9a7b45] transition cursor-pointer"
-                aria-label="Cerrar plano"
+                aria-label="Cerrar imagen"
               >
                 <X size={20} />
               </button>
               <div className="max-h-[82vh] overflow-auto flex items-center justify-center p-2">
                 <img
                   src={zoomPlanImage}
-                  alt="Plano arquitectónico ampliado"
+                  alt="Imagen ampliada"
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
