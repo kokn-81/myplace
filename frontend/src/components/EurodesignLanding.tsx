@@ -99,7 +99,7 @@ const AMENITY_SLIDES = [
     category: "Interiores de Lujo",
     title: "Master Suite & Living Panorámico",
     description:
-      "Terminaciones de categoría superior con cocina integrada, cajonería alta y baja de piso a techo, mesones de cuarzo y ventanales de aluminio acústico.",
+      "Cocina integrada, mobiliario alto y bajo, y mesón de piedra sinterizada o granito.",
   },
   {
     src: "/eurodesign/amenities/amenity_rooftop_overview.jpg",
@@ -145,11 +145,11 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 550,
     rentMax: 700,
     yieldRange: "10,2% – 11,4% anual",
-    image: "/eurodesign/modelo-04-1d-48m2.jpg",
+    image: "/eurodesign/modelos/1d-03-57.jpg",
     code: "M04",
     description:
       "Distribución espacial optimizada con cocina americana, living luminoso, balcón hacia Equipetrol y dormitorio máster con vestidor.",
-    pills: ["Balcón aterrazado", "Cocina con cuarzo", "Vestidor máster", "Aire acondicionado"],
+    pills: ["Balcón", "Mesón de piedra o granito", "Aire split frío-calor", "Box de ducha"],
     matchUnit: (u) => u.rooms === 1,
   },
   {
@@ -162,7 +162,7 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
     rentMin: 900,
     rentMax: 1200,
     yieldRange: "10,5% – 11,8% anual",
-    image: "/eurodesign/modelo-01-2d-82m2.jpg",
+    image: "/eurodesign/modelos/2d-01-82.jpg",
     code: "M01",
     description:
       "Semipiso de gran categoría con amplia master suite con vestidor, segundo dormitorio completo, dos baños, cocina con isla y terraza panorámica.",
@@ -220,56 +220,30 @@ const EURODESIGN_MODELOS: {
   { id: "d05p4", rooms: 1, name: "Modelo 05", area: "58,00 m²", units: "Piso 4 · 405", full: "/eurodesign/fichas/1d-05-58.jpg", preview: "/eurodesign/modelos/1d-05-58.jpg" },
   { id: "d06p4", rooms: 1, name: "Modelo 06", area: "97,60 m²", units: "Piso 4 · 406", full: "/eurodesign/fichas/1d-06-976.jpg", preview: "/eurodesign/modelos/1d-06-976.jpg" },
   { id: "d07p4", rooms: 1, name: "Modelo 07", area: "64,00 m²", units: "Piso 4 · 407", full: "/eurodesign/fichas/1d-07-64.jpg", preview: "/eurodesign/modelos/1d-07-64.jpg" },
-  { id: "m01", rooms: 2, name: "Modelo 01", area: "82 m²", units: "501 – 1701", full: "/eurodesign/modelo-01-2d-82m2.jpg", preview: "/eurodesign/modelos/modelo-01.jpg" },
-  { id: "m02", rooms: 2, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/modelo-02-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-02.jpg" },
-  { id: "m08", rooms: 2, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/modelo-08-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-08.jpg" },
+  { id: "d01", rooms: 2, name: "Modelo 01", area: "82,00 m²", units: "501 – 1701", full: "/eurodesign/fichas/2d-01-82.jpg", preview: "/eurodesign/modelos/2d-01-82.jpg" },
+  { id: "d02", rooms: 2, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/fichas/2d-02-843.jpg", preview: "/eurodesign/modelos/2d-02-843.jpg" },
+  { id: "d08", rooms: 2, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/fichas/2d-08-846.jpg", preview: "/eurodesign/modelos/2d-08-846.jpg" },
+  { id: "d01p4", rooms: 2, name: "Modelo 01", area: "81,20 m²", units: "Piso 4 · 401", full: "/eurodesign/fichas/2d-01-812.jpg", preview: "/eurodesign/modelos/2d-01-812.jpg" },
+  { id: "d02p4", rooms: 2, name: "Modelo 02", area: "128,50 m²", units: "Piso 4 · 402", full: "/eurodesign/fichas/2d-02-1285.jpg", preview: "/eurodesign/modelos/2d-02-1285.jpg" },
+  { id: "d08p4", rooms: 2, name: "Modelo 08", area: "100,00 m²", units: "Piso 4 · 408", full: "/eurodesign/fichas/2d-08-100.jpg", preview: "/eurodesign/modelos/2d-08-100.jpg" },
 ];
 
-const EQUIPMENT_SECTIONS = [
-  {
-    id: "cocina",
-    title: "Cocina & Sala de Estar",
-    subtitle: "Diseño europeo de concepto abierto y equipamiento empotrado",
-    image: "/eurodesign/amenities/amenity_living_panoramico.jpg",
-    items: [
-      "Mesón importado de cuarzo blanco de alta densidad",
-      "Cocina encimera & campana extractora de acero inoxidable instaladas",
-      "Bacha de lavaplatos & grifería monocomando níquel cepillada",
-      "Cajonería alta y baja en melamina europea con cantos de PVC",
-      "Pisos de porcelanato rectificado de gran formato",
-      "Aire acondicionado inverter instalado sin costo adicional",
-      "Cerradura digital inteligente de acceso biométrico",
-    ],
-  },
-  {
-    id: "dormitorio",
-    title: "Dormitorio Máster & Suites",
-    subtitle: "Confort térmico y vestidores completos de piso a techo",
-    image: "/eurodesign/amenities/amenity_sala_lounge.jpg",
-    items: [
-      "Ropero empotrado de melamina europea con cajonería y divisiones internas",
-      "Walking closet en master suites",
-      "Pisos de porcelanato de alta resistencia",
-      "Equipo de aire acondicionado inverter instalado",
-      "Ventanales de piso a techo con perfiles de aluminio acústico",
-      "Puntos de iluminación cálida indirecta y tomas USB integradas",
-    ],
-  },
-  {
-    id: "bano",
-    title: "Baños Completos",
-    subtitle: "Box de vidrio templado y grifería monocomando",
-    image: "/eurodesign/amenities/amenity_lobby_lounge.jpg",
-    items: [
-      "Box de baño con paño fijo y puerta de vidrio templado de seguridad",
-      "Mesón importado de cuarzo con bacha embutida",
-      "Ducha y grifería monocomando de níquel cepillado",
-      "Inodoro ecológico de doble descarga de bajo consumo",
-      "Mueble inferior suspendido con cajonería oculta",
-      "Espejo panorámico iluminado y extractor de aire instalado",
-      "Revestimiento cerámico completo de piso a techo",
-    ],
-  },
+const EURODESIGN_EQUIPAMIENTO = [
+  "Extractor de cocina",
+  "Horno eléctrico",
+  "Cocina a gas",
+  "Termotanque eléctrico",
+  "Microondas de empotrar en mueble",
+  "Aires acondicionados tipo split, frío-calor, en dormitorios y sala",
+  "Mesones de cocina en piedra sinterizada o granito",
+  "Lavandería de porcelanato, según el modelo",
+  "Mobiliario alto y bajo en cocina",
+  "Espejos con iluminación LED en baños",
+  "Box de ducha",
+  "Accesorios de baño y mueble bajo mesón",
+  "Luminaria decorativa en áreas de circulación exterior",
+  "Intercomunicador en cada departamento",
+  "Sistema contra incendios",
 ];
 
 export default function EurodesignLanding({ property, onClose }: Props) {
@@ -317,7 +291,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     { id: "lugar", label: "Ubicación", icon: MapPin, hint: "Equipetrol Norte y accesos" },
     { id: "amenidades", label: "Áreas Sociales", icon: Sparkles, hint: "Piscina Piso 18 & Sky Bar" },
     { id: "tipologias", label: "Tipologías", icon: Layers, hint: "1D, 2D y Locales Comerciales" },
-    { id: "equipamiento", label: "Equipamiento", icon: CheckCircle2, hint: "100% Equipado llave en mano" },
+    { id: "equipamiento", label: "Equipamiento", icon: CheckCircle2, hint: "Detalle del brochure" },
     { id: "constructora", label: "Constructora", icon: ShieldCheck, hint: "Nuestro legado · Entrega junio 2027" },
     { id: "pago", label: "Formas de Pago", icon: TrendingUp, hint: "Contado $1.480/m² y Cuotas Preventa" },
     { id: "disponibilidad", label: "Disponibilidad en Vivo", icon: Building2, hint: "Inventario y cotizador interactivo" },
@@ -1223,44 +1197,51 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Entrega llave en mano con materiales de estándar europeo.
+              Detalle de equipamiento.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En Tower Eurodesign cada departamento se entrega completamente terminado y equipado: cajonería completa en melamina europea con cantos de PVC, mesones de cuarzo blanco, climatización instalada y cerraduras biométricas de acceso digital.
+              El baño y la lista salen del brochure. La foto muestra el baño. Al tocarla, o al tocar la lámina, se abre la imagen completa.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {EQUIPMENT_SECTIONS.map((sec) => (
-                <div
-                  key={sec.id}
-                  className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="h-44 w-full overflow-hidden bg-stone-100">
-                      <img
-                        src={sec.image}
-                        alt={sec.title}
-                        className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-serif text-lg font-semibold text-stone-900">{sec.title}</h3>
-                      <p className="mt-0.5 text-xs text-stone-500 font-light">{sec.subtitle}</p>
+            <button
+              type="button"
+              onClick={() => setZoomPlanImage("/eurodesign/bano.jpg")}
+              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md"
+              aria-label="Ampliar el baño"
+            >
+              <img
+                src="/eurodesign/bano.jpg"
+                alt="Baño con mesón, espejo iluminado y box de ducha"
+                className="w-full"
+              />
+            </button>
+            <p className="mt-2 text-center text-[11px] font-light text-stone-500">Baño. Toca para verlo completo.</p>
 
-                      <ul className="mt-4 space-y-2 border-t border-stone-100 pt-3 text-xs text-stone-700 font-light">
-                        {sec.items.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
-                            <span className="[text-align:justify] [text-justify:inter-word]">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+            <button
+              type="button"
+              onClick={() => setZoomPlanImage("/eurodesign/equipamiento.jpg")}
+              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-[#f4f1ea] shadow-md"
+              aria-label="Ampliar el detalle de equipamiento"
+            >
+              <img
+                src="/eurodesign/equipamiento.jpg"
+                alt="Detalle de equipamiento de Tower Eurodesign"
+                className="mx-auto max-h-[78vh] w-full object-contain"
+              />
+            </button>
+            <p className="mt-2 text-center text-[11px] font-light text-stone-500">
+              Lámina del brochure. Toca para verla completa.
+            </p>
+
+            <ul className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {EURODESIGN_EQUIPAMIENTO.map((item) => (
+                <li key={item} className="flex items-start gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm font-light text-stone-700">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
+                  <span>{item}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
 
           {/* 6. CONSTRUCTORA — NUESTRO LEGADO (brochure) */}
