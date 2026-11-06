@@ -200,15 +200,29 @@ const EURODESIGN_LEGADO: { name: string; detail?: string }[] = [
   { name: "Hacienda del Urubó", detail: "Casa residencial" },
 ];
 
-const EURODESIGN_MODELOS = [
-  { id: "m01", rooms: 2 as const, name: "Modelo 01", area: "82 m²", units: "501 – 1701", full: "/eurodesign/modelo-01-2d-82m2.jpg", preview: "/eurodesign/modelos/modelo-01.jpg" },
-  { id: "m02", rooms: 2 as const, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/modelo-02-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-02.jpg" },
-  { id: "m03", rooms: 1 as const, name: "Modelo 03", area: "57 m²", units: "503 – 1703", full: "/eurodesign/modelo-03-1d-57m2.jpg", preview: "/eurodesign/modelos/modelo-03.jpg" },
-  { id: "m04", rooms: 1 as const, name: "Modelo 04", area: "48,50 m²", units: "504 – 1704", full: "/eurodesign/modelo-04-1d-48m2.jpg", preview: "/eurodesign/modelos/modelo-04.jpg" },
-  { id: "m05", rooms: 1 as const, name: "Modelo 05", area: "58 m²", units: "Piso 4 · 405", full: "/eurodesign/modelo-05-1d-35m2.jpg", preview: "/eurodesign/modelos/modelo-05.jpg" },
-  { id: "m06", rooms: 1 as const, name: "Modelo 06", area: "97,60 m²", units: "Piso 4 · 406", full: "/eurodesign/modelo-06-1d-48m2.jpg", preview: "/eurodesign/modelos/modelo-06.jpg" },
-  { id: "m07", rooms: 1 as const, name: "Modelo 07", area: "57 m²", units: "507 – 1707", full: "/eurodesign/modelo-07-1d-57m2.jpg", preview: "/eurodesign/modelos/modelo-07.jpg" },
-  { id: "m08", rooms: 2 as const, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/modelo-08-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-08.jpg" },
+const EURODESIGN_MODELOS: {
+  id: string;
+  rooms: 1 | 2;
+  name: string;
+  area: string;
+  units: string;
+  full: string;
+  preview: string;
+  note?: string;
+}[] = [
+  { id: "d03", rooms: 1, name: "Modelo 03", area: "57,00 m²", units: "503 – 1703", full: "/eurodesign/fichas/1d-03-57.jpg", preview: "/eurodesign/modelos/1d-03-57.jpg" },
+  { id: "d04", rooms: 1, name: "Modelo 04", area: "48,50 m²", units: "504 – 1704", full: "/eurodesign/fichas/1d-04-485.jpg", preview: "/eurodesign/modelos/1d-04-485.jpg" },
+  { id: "d05", rooms: 1, name: "Modelo 05", area: "35,00 m²", units: "505 – 1705", note: "Vendido", full: "/eurodesign/fichas/1d-05-35.jpg", preview: "/eurodesign/modelos/1d-05-35.jpg" },
+  { id: "d06", rooms: 1, name: "Modelo 06", area: "48,30 m²", units: "506 – 1706", note: "Vendido", full: "/eurodesign/fichas/1d-06-483.jpg", preview: "/eurodesign/modelos/1d-06-483.jpg" },
+  { id: "d07", rooms: 1, name: "Modelo 07", area: "57,00 m²", units: "507 – 1707", full: "/eurodesign/fichas/1d-07-57.jpg", preview: "/eurodesign/modelos/1d-07-57.jpg" },
+  { id: "d03p4", rooms: 1, name: "Modelo 03", area: "92,20 m²", units: "Piso 4 · 403", full: "/eurodesign/fichas/1d-03-922.jpg", preview: "/eurodesign/modelos/1d-03-922.jpg" },
+  { id: "d04p4", rooms: 1, name: "Modelo 04", area: "92,80 m²", units: "Piso 4 · 404", full: "/eurodesign/fichas/1d-04-928.jpg", preview: "/eurodesign/modelos/1d-04-928.jpg" },
+  { id: "d05p4", rooms: 1, name: "Modelo 05", area: "58,00 m²", units: "Piso 4 · 405", full: "/eurodesign/fichas/1d-05-58.jpg", preview: "/eurodesign/modelos/1d-05-58.jpg" },
+  { id: "d06p4", rooms: 1, name: "Modelo 06", area: "97,60 m²", units: "Piso 4 · 406", full: "/eurodesign/fichas/1d-06-976.jpg", preview: "/eurodesign/modelos/1d-06-976.jpg" },
+  { id: "d07p4", rooms: 1, name: "Modelo 07", area: "64,00 m²", units: "Piso 4 · 407", full: "/eurodesign/fichas/1d-07-64.jpg", preview: "/eurodesign/modelos/1d-07-64.jpg" },
+  { id: "m01", rooms: 2, name: "Modelo 01", area: "82 m²", units: "501 – 1701", full: "/eurodesign/modelo-01-2d-82m2.jpg", preview: "/eurodesign/modelos/modelo-01.jpg" },
+  { id: "m02", rooms: 2, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/modelo-02-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-02.jpg" },
+  { id: "m08", rooms: 2, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/modelo-08-2d-84m2.jpg", preview: "/eurodesign/modelos/modelo-08.jpg" },
 ];
 
 const EQUIPMENT_SECTIONS = [
@@ -1040,10 +1054,26 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               Espacios concebidos para alta rotación y confort superior.
             </h2>
                         <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Departamentos de 1 y 2 dormitorios. Si un tipo tiene más de un modelo, el carrusel se desliza. Al tocar la foto se abre la ficha completa.
+              El plano muestra dónde está cada departamento. Después elige 1 o 2 dormitorios. La foto encuadra solo el interior. Al tocarla se abre la ficha completa.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => setZoomPlanImage("/eurodesign/plano-distribucion.jpg")}
+              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-[#f4f1ea] shadow-md"
+              aria-label="Ampliar el plano de distribución"
+            >
+              <img
+                src="/eurodesign/plano-distribucion.jpg"
+                alt="Plano de distribución de Tower Eurodesign, guía para ubicar cada modelo"
+                className="mx-auto max-h-[78vh] w-full object-contain"
+              />
+            </button>
+            <p className="mt-2 text-center text-[11px] font-light text-stone-500">
+              Plano de distribución. Toca para verlo completo.
+            </p>
+
+            <div className="mt-8 grid grid-cols-2 gap-3">
               {([1, 2] as const).map((rooms) => {
                 const isSelected = tipologiaRooms === rooms;
                 const displayPrice = rooms === 1 ? minPrice1Dorm : minPrice2Dorms;
@@ -1057,20 +1087,20 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       setModeloIndex(0);
                       setSelectedAmbId(rooms === 1 ? "1dorm" : "2dorm");
                     }}
-                    className={`cursor-pointer rounded-2xl border p-5 text-left transition-all ${
+                    className={`cursor-pointer rounded-2xl border p-4 text-left transition-all ${
                       isSelected
                         ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
                         : "border-stone-200 bg-white hover:border-[#9a7b45]/50 hover:shadow-sm"
                     }`}
                   >
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">
                       {rooms === 1 ? "1 Dormitorio" : "2 Dormitorios"}
                     </span>
-                    <p className="mt-3 font-serif text-2xl font-bold text-stone-900">
+                    <p className="mt-2 font-serif text-xl font-bold text-stone-900">
                       Desde USD {formatEurodesignUsd(displayPrice)}
                     </p>
-                    <p className="mt-1 text-xs font-light text-stone-500">
-                      {count} modelos · desliza para ver cada planta
+                    <p className="mt-1 text-[11px] font-light leading-snug text-stone-500">
+                      {count} modelos · desliza
                     </p>
                   </button>
                 );
@@ -1083,43 +1113,33 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               const current = slides[index];
               const go = (dir: number) => setModeloIndex((index + dir + slides.length) % slides.length);
               return (
-                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 p-4 sm:p-5">
-                    <div>
-                      <div className="flex items-center gap-2">
+                <div className="mt-4 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm">
+                  <div className="flex items-start justify-between gap-3 border-b border-stone-100 px-4 py-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold tracking-wider text-white">
                           {current.name.toUpperCase()}
                         </span>
-                        <span className="font-serif text-lg font-medium text-stone-900">
-                          {tipologiaRooms === 1 ? "1 dormitorio" : "2 dormitorios"} · {current.area}
-                        </span>
+                        {current.note ? (
+                          <span className="rounded border border-stone-300 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                            {current.note}
+                          </span>
+                        ) : null}
                       </div>
-                      <p className="mt-1 text-xs font-light text-stone-500">Unidades {current.units}</p>
+                      <p className="mt-1 font-serif text-lg font-medium leading-tight text-stone-900">
+                        {tipologiaRooms === 1 ? "1 dormitorio" : "2 dormitorios"} · {current.area}
+                      </p>
+                      <p className="mt-0.5 text-xs font-light text-stone-500">Unidades {current.units}</p>
                     </div>
                     {slides.length > 1 && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => go(-1)}
-                          className="inline-flex cursor-pointer items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 shadow-2xs transition hover:bg-stone-50 active:scale-95"
-                          aria-label="Modelo anterior"
-                        >
-                          <ChevronLeft size={14} /> Anterior
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => go(1)}
-                          className="inline-flex cursor-pointer items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-[#9a7b45] active:scale-95"
-                          aria-label="Modelo siguiente"
-                        >
-                          Siguiente <ChevronRight size={14} />
-                        </button>
-                      </div>
+                      <p className="shrink-0 pt-1 text-[11px] font-medium text-stone-400">
+                        {index + 1}/{slides.length}
+                      </p>
                     )}
                   </div>
 
                   <div
-                    className="relative aspect-[16/9] w-full overflow-hidden bg-[#f7f5f0]"
+                    className="relative w-full overflow-hidden bg-white"
                     onTouchStart={(event) => {
                       modeloTouchX.current = event.changedTouches[0].clientX;
                     }}
@@ -1132,7 +1152,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                     }}
                   >
                     <div
-                      className="flex h-full transition-transform duration-500 ease-out"
+                      className="flex items-start transition-transform duration-500 ease-out"
                       style={{ transform: `translateX(-${index * 100}%)` }}
                     >
                       {slides.map((slide) => (
@@ -1140,13 +1160,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                           key={slide.id}
                           type="button"
                           onClick={() => setZoomPlanImage(slide.full)}
-                          className="relative h-full min-w-full cursor-zoom-in"
+                          className="min-w-full cursor-zoom-in"
                           aria-label={`Ver ${slide.name} completo`}
                         >
                           <img
                             src={slide.preview}
-                            alt={`${slide.name}, ${slide.area}`}
-                            className="h-full w-full object-cover object-center"
+                            alt={`${slide.name}, ${slide.area}, solo el departamento`}
+                            className="mx-auto w-full max-w-lg"
                           />
                         </button>
                       ))}
@@ -1156,35 +1176,37 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                         <button
                           type="button"
                           onClick={() => go(-1)}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2 text-stone-700 shadow-md"
+                          className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md"
                           aria-label="Modelo anterior"
                         >
-                          <ChevronLeft size={18} />
+                          <ChevronLeft size={22} />
                         </button>
                         <button
                           type="button"
                           onClick={() => go(1)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2 text-stone-700 shadow-md"
+                          className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md"
                           aria-label="Modelo siguiente"
                         >
-                          <ChevronRight size={18} />
+                          <ChevronRight size={22} />
                         </button>
                       </>
                     )}
-                    <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-stone-900/40 px-2.5 py-1">
+                  </div>
+                  {slides.length > 1 && (
+                    <div className="flex items-center justify-center gap-1.5 px-4 py-3">
                       {slides.map((slide, dot) => (
                         <button
                           key={slide.id}
                           type="button"
                           onClick={() => setModeloIndex(dot)}
-                          className={`h-1.5 cursor-pointer rounded-full ${dot === index ? "w-5 bg-white" : "w-1.5 bg-white/50"}`}
+                          className={`h-2 cursor-pointer rounded-full ${dot === index ? "w-5 bg-[#9a7b45]" : "w-2 bg-stone-300"}`}
                           aria-label={slide.name}
                         />
                       ))}
                     </div>
-                  </div>
-                  <p className="border-t border-stone-100 px-4 py-3 text-xs font-light text-stone-500">
-                    La vista muestra el departamento. Toca la imagen para ver la ficha completa.
+                  )}
+                  <p className="border-t border-stone-100 px-4 py-3 text-center text-[11px] font-light text-stone-500">
+                    Desliza para el siguiente. Toca la imagen para ver la ficha completa.
                   </p>
                 </div>
               );
@@ -2051,7 +2073,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               >
                 <X size={20} />
               </button>
-              <div className="max-h-[82vh] overflow-auto flex items-center justify-center p-2">
+              <div className="flex max-h-[82vh] items-start justify-center overflow-auto p-1 sm:p-2">
                 <img
                   src={zoomPlanImage}
                   alt="Imagen ampliada"
