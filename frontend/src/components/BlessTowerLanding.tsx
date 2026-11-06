@@ -243,6 +243,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const [showHdPlanModal, setShowHdPlanModal] = useState(false);
   const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [showSectionMenu, setShowSectionMenu] = useState(false);
+  const [showFloatingNav, setShowFloatingNav] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
 
   // Inventario en vivo
@@ -259,6 +260,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const [paymentPlan, setPaymentPlan] = useState<"contado" | "plan40" | "plan30">("contado");
 
   const editorialScrollRef = useRef<HTMLDivElement>(null);
+  const navBarRef = useRef<HTMLDivElement>(null);
 
   // Sincronización en vivo inicial
   useEffect(() => {
@@ -445,6 +447,29 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
 
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkNavVisibility = () => {
+      const nav = navBarRef.current;
+      if (!nav) return;
+      const past = nav.getBoundingClientRect().bottom < 80;
+      setShowFloatingNav(past);
+      if (!past) setShowSectionMenu(false);
+    };
+
+    const desktop = editorialScrollRef.current;
+    const mobile = desktop?.parentElement;
+    desktop?.addEventListener("scroll", checkNavVisibility, { passive: true });
+    mobile?.addEventListener("scroll", checkNavVisibility, { passive: true });
+    window.addEventListener("scroll", checkNavVisibility, { passive: true });
+    checkNavVisibility();
+
+    return () => {
+      desktop?.removeEventListener("scroll", checkNavVisibility);
+      mobile?.removeEventListener("scroll", checkNavVisibility);
+      window.removeEventListener("scroll", checkNavVisibility);
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -713,7 +738,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           </div>
 
           {/* Barra de Secciones Inicial */}
-          <div className="pt-4 border-t border-stone-200">
+          <div ref={navBarRef} className="pt-4 border-t border-stone-200">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2.5">
               Navegación del Proyecto
             </p>
@@ -1597,7 +1622,8 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
       </div>
       )}
 
-      {/* 4.2 Burbuja flotante de menú de secciones */}
+      {/* 4.2 Burbuja flotante de menú de secciones. Solo después de pasar la barra. */}
+      {showFloatingNav && (
       <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
         <button
           onClick={() => setShowSectionMenu(!showSectionMenu)}
@@ -1652,6 +1678,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           )}
         </AnimatePresence>
       </div>
+      )}
 
       {/* 4.3 Modal Zoom HD de Planos */}
       <AnimatePresence>
