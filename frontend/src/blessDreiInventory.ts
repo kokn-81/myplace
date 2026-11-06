@@ -68,15 +68,15 @@ export const BLESS_DREI_CONFIG = {
 };
 
 export const BLESS_DREI_PLANO_MAP: Record<string, string> = {
-  "A": "/bless_drei/modelos_pages/page_2.jpg",
-  "B": "/bless_drei/modelos_pages/page_2.jpg",
-  "C": "/bless_drei/modelos_pages/page_3.jpg",
-  "D": "/bless_drei/modelos_pages/page_3.jpg",
-  "E": "/bless_drei/modelos_pages/page_4.jpg",
-  "F": "/bless_drei/modelos_pages/page_4.jpg",
-  "G": "/bless_drei/modelos_pages/page_6.jpg",
-  "H": "/bless_drei/modelos_pages/page_6.jpg",
-  "I": "/bless_drei/modelos_pages/page_7.jpg"
+  "A": "/bless_drei/fichas/a.jpg",
+  "B": "/bless_drei/fichas/b.jpg",
+  "C": "/bless_drei/fichas/c.jpg",
+  "D": "/bless_drei/fichas/d.jpg",
+  "E": "/bless_drei/fichas/e.jpg",
+  "F": "/bless_drei/fichas/f.jpg",
+  "G": "/bless_drei/fichas/g.jpg",
+  "H": "/bless_drei/fichas/h.jpg",
+  "I": "/bless_drei/fichas/i.jpg"
 };
 
 export function formatBlessUsd(val: number): string {

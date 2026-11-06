@@ -119,7 +119,7 @@ const TYPOLOGIES_DATA = [
       "Dormitorio máster privado con ropero empotrado a medida",
       "Living-comedor social conectado a terraza panorámica",
       "Cocina de concepto abierto con barra desayunadora",
-      "Máxima rentabilidad y plusvalía en el eje norte de la ciudad",
+      "Ubicación sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo",
     ],
   },
   {
@@ -409,9 +409,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
     const balancePayment = saldoContraEntrega + parkingBalance;
 
     const pricePerM2 = activeUnit.superficieM2 > 0 ? Math.round(unitTotalPrice / activeUnit.superficieM2) : 1500;
-    const marketValueAtDelivery = Math.round(activeUnit.superficieM2 * 2100) + (hasParking ? Math.round(parkingPrice * 1.15) : 0);
-    const capitalGain = Math.max(1000, marketValueAtDelivery - totalPrice);
-    const gainPercentage = Math.max(1, Math.round((capitalGain / totalPrice) * 100));
 
     return {
       unitTotalPrice,
@@ -420,8 +417,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
       initialPayment,
       balancePayment,
       pricePerM2,
-      capitalGain,
-      gainPercentage,
       reserva: BLESS_TOWER_CONFIG.reservaUsd,
     };
   }, [activeUnit, paymentPlan, includeParking, parkingPrice]);
@@ -700,7 +695,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Vive en <span className="italic font-normal">Bless Tower.</span>
             </h2>
             <p className="text-sm md:text-base text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word] pt-2">
-              Una torre icónica de 30 niveles que redefine el horizonte norte de Santa Cruz de la Sierra. Emplazada estratégicamente sobre la Av. Cristo Redentor entre el 2° y 3° Anillo, Bless Tower combina arquitectura vanguardista, comodidades de hotel boutique en su rooftop con piscina sinfín y una ingeniería de acabados pensada para maximizar la plusvalía y la renta ejecutiva.
+              Una torre icónica de 30 niveles que redefine el horizonte norte de Santa Cruz de la Sierra. Emplazada estratégicamente sobre la Av. Cristo Redentor entre el 2° y 3° Anillo, Bless Tower combina arquitectura vanguardista, comodidades de hotel boutique en su rooftop con piscina sinfín y una ingeniería de acabados pensada para la renta ejecutiva.
             </p>
           </div>
 
@@ -1172,7 +1167,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-white">Pago al Contado (100%)</h4>
               <p className="text-xs text-stone-300">
-                Obtén la tarifa de preventa más baja y asegura la mayor plusvalía proyectada a la entrega de obra.
+                Obtén la tarifa de preventa más baja. El precio queda congelado desde la reserva.
               </p>
               <div className="pt-2 border-t border-white/10 text-xs text-[#e8d5a8]">
                 <strong className="text-white">VENTAJA COMERCIAL:</strong> Ahorro neto inmediato de hasta un 15% comparado con el precio de lista.
@@ -1468,7 +1463,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {/* Columna 1: Inversión Total */}
                 <div className="flex flex-col justify-between">
                   <div className="min-h-[28px] flex items-end">
@@ -1537,23 +1532,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* Columna 4: Plusvalía Proyectada */}
-                <div className="flex flex-col justify-between">
-                  <div className="min-h-[28px] flex items-end">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                      Plusvalía Proyectada
-                    </p>
-                  </div>
-                  <div className="mt-1">
-                    <p className="font-serif text-lg sm:text-2xl font-bold text-[#9a7b45] leading-tight">
-                      <span className="block text-xs font-mono font-normal text-[#9a7b45]/80">+USD</span>
-                      <span className="block mt-0.5">{formatBlessUsd(activeFinancials.capitalGain)}</span>
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-1">
-                      +{activeFinancials.gainPercentage}% estimado a entrega
-                    </p>
-                  </div>
-                </div>
               </div>
 
               {/* Paso 5: Botón WhatsApp de Acción Inmediata */}
@@ -1769,23 +1747,17 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 </div>
               </div>
 
-              {/* Bloque 3: Escenario Financiero Estimado */}
               <div className="space-y-2 pt-2 border-t border-stone-200">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45] bg-[#9a7b45]/15 px-2.5 py-0.5 rounded-full border border-[#9a7b45]/30">
-                  Bloque 3 · Estimación de Rentas
+                  Bloque 3 · Lo que no se cita
                 </span>
-                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                  <div className="p-2.5 rounded-lg bg-white border border-stone-200">
-                    <p className="text-[10px] text-stone-500 uppercase">Renta Mensual Estimada</p>
-                    <p className="font-serif text-sm font-bold text-stone-900 mt-0.5">$450 – $750 USD</p>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-white border border-stone-200">
-                    <p className="text-[10px] text-stone-500 uppercase">Plusvalía a Entrega</p>
-                    <p className="font-serif text-sm font-bold text-emerald-600 mt-0.5">+20% a +25%</p>
-                  </div>
-                </div>
-                <div className="p-3 rounded-lg bg-stone-100 text-[10px] text-stone-500 leading-relaxed italic mt-2">
-                  Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. No constituyen una promesa o garantía contractual de rentabilidad fija.
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
+                </p>
+                <div className="p-2.5 rounded-lg bg-white border border-stone-200 text-xs">
+                  <p className="text-[10px] text-stone-500 uppercase">Renta mensual de referencia</p>
+                  <p className="font-serif text-sm font-bold text-stone-900 mt-0.5">$450 – $750 USD</p>
+                  <p className="mt-1 text-[10px] text-stone-500">Referencia de zona, no una renta prometida.</p>
                 </div>
               </div>
             </motion.div>

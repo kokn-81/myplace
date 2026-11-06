@@ -289,7 +289,7 @@ export default function TriventoLanding({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#F8F3E7] font-sans text-[#1C1917] md:flex-row md:overflow-hidden">
-      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-[calc(56%+1rem)] md:top-7">
+      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button type="button" onClick={() => setShowInsights(true)} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9A7B45] shadow-xl" aria-label="Insights asesor" title="Insights asesor">
           <TrendingUp size={18} />
         </button>
@@ -669,7 +669,7 @@ export default function TriventoLanding({ onClose }: Props) {
                 <div className="border-b border-white/10 pb-3 text-xs text-[#E8D5A8]">
                   Unidad {activeUnit.codigo} · Piso {activeUnit.piso} · Modelo {Number(activeUnit.modelo)} · {activeUnit.posicion} · {formatTriventoM2(activeUnit.m2Total)} m²
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
                     <div className="flex min-h-[28px] items-end"><p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Inversión total</p></div>
                     <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span><span className="mt-0.5 block">{formatTriventoUsd(financials.total)}</span></p>

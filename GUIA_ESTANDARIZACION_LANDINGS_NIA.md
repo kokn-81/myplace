@@ -1,5 +1,5 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.1  
+**Versión:** 1.2  
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
 
@@ -20,8 +20,14 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 9. **Insights** es un modal centrado (`max-w-2xl`, fondo blanco), no un cajón naranja lateral.
 10. **El botón de reserva** es `bg-stone-900` y en hover `#9a7b45`.
 11. **`#pago`:** la primera opción va en tarjeta negra con insignia dorada y “Ventaja comercial”. Las otras, en tarjeta blanca. El precio de esa sección es USD/m², no la cuota en dólares de una unidad todavía no elegida.
-12. **`#disponibilidad`:** cuatro pasos (tipología, piso, opcional, plan). La tarjeta tiene cuatro columnas con `USD` arriba y el número abajo. En contado, el saldo es `—` y “Sin saldo pendiente”. La cuarta columna es plusvalía proyectada **solo si ese proyecto tiene permiso de publicarla**. Trivento IV no la publica.
+12. **`#disponibilidad`:** cuatro pasos (tipología, piso, opcional, plan). La tarjeta de cotización tiene **tres** columnas: inversión total, cuota inicial y saldo contra entrega. `USD` arriba y el número abajo. En contado, el saldo es `—` y “Sin saldo pendiente”. **Ningún proyecto publica plusvalía proyectada.** No hay cuarta columna, ni porcentaje, ni “valor a la entrega”, ni comparación del precio de preventa contra un precio terminado inventado. No se calcula `capitalGain`, `gainPercentage` ni `marketValueAtDelivery`.
 13. **Lo que no se copia de ONA:** oraciones, nombres, metrajes, precios, cantidad de planes, monto de reserva, parqueos y fotos. Si el material oficial trae dos planes, se muestran dos, con el mismo dibujo de tarjeta.
+14. **`#lugar`:** la imagen es el mapa o plano de ubicación del brochure oficial, dentro de un marco y sin estirarla. El texto va junto a la imagen, no encima.
+15. **`#amenidades`:** el título y el texto van debajo de la foto. No tapan la imagen. Si el brochure trae el nombre del ambiente impreso en la foto, se recorta para que no quede doble rótulo.
+16. **`#tipologias`:** la vista previa muestra solo el departamento, centrado (`object-contain`). El clic abre la ficha completa (plano, tabla y posición en el piso) en un modal con scroll. No se usa la hoja entera del brochure como miniatura.
+17. **`#equipamiento`:** cada grupo es una tarjeta con foto del ambiente y la lista oficial debajo, igual que cocina, sala y el resto. No se deja una lista suelta. No se inventan acabados que el brochure no publica.
+18. **`#constructora`:** se muestra el logo de la constructora, tomado del material oficial.
+19. **Paso 2 (elegir piso):** hay un control para abrir la imagen oficial de distribución de pisos, para ver dónde queda la unidad en el edificio.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 
@@ -201,7 +207,7 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 * **Estructura visual estandarizada:**
   * **Banner superior en vivo:** Precio base preventa `Desde $X USD/m²` calculado automáticamente sobre el inventario disponible con badge de sincronización y botón para actualizar en tiempo real.
   * **3 Tarjetas apiladas horizontalmente a todo el ancho (`space-y-4`):**
-    1. **Opción 1: Contado (100%)** - Tarjeta destacada oscura (`bg-stone-900 text-white shadow-lg`) con badge dorado `MAYOR DESCUENTO`, precio por m² resaltado en tipografía serif con comparativa vs la zona, y bloque editorial inferior `VENTAJA COMERCIAL:` explicando el ahorro y la plusvalía máxima.
+    1. **Opción 1: Contado (100%)** - Tarjeta destacada oscura (`bg-stone-900 text-white shadow-lg`) con badge dorado `MAYOR DESCUENTO`, precio por m² resaltado en tipografía serif, y bloque editorial inferior `VENTAJA COMERCIAL:` explicando el ahorro del plan. No se promete plusvalía ni se compara contra un “valor terminado” que el material no publica.
     2. **Opción 2: Anticipo Alto (ej. 70% o 60%) + Saldo contra Entrega** - Tarjeta clara (`bg-white shadow-sm border border-stone-200`) con badge `EQUILIBRIO FINANCIERO`, precio por m² y bloque editorial `VENTAJA COMERCIAL:` con el balance entre liquidez y descuento.
     3. **Opción 3: Anticipo Mínimo (ej. 30% o 40%) + Saldo contra Entrega** - Tarjeta clara con badge `ENTRADA CÓMODA` / `ENTRADA ACCESIBLE`, precio por m² y bloque editorial `VENTAJA COMERCIAL:` detallando el menor desembolso de entrada y congelamiento de unidad.
 * **Regla Estricta de Formas de Pago:** En la sección `#pago` **NO se deben mostrar montos monetarios en dólares para la cuota inicial**, ya que el usuario aún no ha seleccionado una unidad. Los planes se presentan conceptualmente en porcentajes claros de desembolso (ej. 100% contado, 70% firma / 30% entrega, 30% firma / 70% entrega) y precio referencial por m². Los montos exactos en dólares (cuota inicial, saldo y total) se calculan y muestran exclusivamente en la sección `#disponibilidad` (Paso 4) una vez que el usuario ha elegido su departamento y piso.
@@ -223,18 +229,17 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Opción B: Parqueo Simple (+ USD 15.000) con baulera.
   * Opción C: Parqueo Doble (+ USD 22.000) con baulera.
   * Al seleccionar, se actualiza automáticamente la inversión total unificada.
-* **Paso 4:** Selección de Plan de Pago con recálculo dinámico en Tarjeta de Resumen Financiero (`grid-cols-2 sm:grid-cols-4`):
-  * **Regla Obligatoria de Alineación Vertical:** Para evitar desorden visual cuando los títulos se dividen en 1 o 2 líneas (ej. "SALDO CONTRA ENTREGA" vs "INVERSIÓN TOTAL"), los encabezados de las 4 columnas deben ubicarse dentro de un contenedor de altura mínima uniforme (`min-h-[28px] flex items-end`). Esto garantiza que todos los montos numéricos principales compartan exactamente la misma línea de base horizontal en cualquier pantalla.
-  * **Regla Estricta de Formato de Montos (USD Arriba, Número Abajo):** En las 4 columnas de la tarjeta, el símbolo de moneda (`USD` o `+USD`) debe ubicarse obligatoriamente en su propia línea arriba, y el valor numérico formateado abajo (`<span className="block">USD</span><span className="block mt-0.5">{monto}</span>`). Esto previene desbordes en columnas móviles y garantiza una estética editorial 100% simétrica y ordenada en todos los proyectos.
+* **Paso 4:** Selección de Plan de Pago con recálculo dinámico en Tarjeta de Resumen Financiero (`grid-cols-1 sm:grid-cols-3`):
+  * **Regla Obligatoria de Alineación Vertical:** Para evitar desorden visual cuando los títulos se dividen en 1 o 2 líneas (ej. "SALDO CONTRA ENTREGA" vs "INVERSIÓN TOTAL"), los encabezados de las 3 columnas deben ubicarse dentro de un contenedor de altura mínima uniforme (`min-h-[28px] flex items-end`). Esto garantiza que todos los montos numéricos principales compartan exactamente la misma línea de base horizontal en cualquier pantalla.
+  * **Regla Estricta de Formato de Montos (USD Arriba, Número Abajo):** En las 3 columnas de la tarjeta, el símbolo de moneda (`USD`) debe ubicarse obligatoriamente en su propia línea arriba, y el valor numérico formateado abajo (`<span className="block">USD</span><span className="block mt-0.5">{monto}</span>`). Esto previene desbordes en columnas móviles y garantiza una estética editorial simétrica en todos los proyectos.
   * **Regla Obligatoria para Pago al Contado (100%):** En la columna "Saldo contra Entrega", está **terminantemente prohibido mostrar "USD 0"** y la fecha de entrega de obra. Cuando la modalidad seleccionada sea "Contado (100%)" o el saldo pendiente sea cero:
     * Arriba se muestra `USD` y abajo un guion estilizado (`—`) en lugar de `USD 0`.
     * El subtítulo descriptivo inferior debe mostrar `Sin saldo pendiente` en lugar de la fecha de entrega de obra (evitando fechas absurdas como "En Junio 2028" cuando la unidad ya se pagó al 100%).
-  * **Regla de Cálculo de Plusvalía con Opcionales:** Al calcular el valor estimado de mercado a la entrega (`marketValueAtDelivery`), se debe incorporar el valor estimado a la entrega de los parqueos o bauleras seleccionados, asegurando que la plusvalía neta (`capitalGain`) y el porcentaje sean siempre positivos y coherentes con la valorización de la zona.
+  * **Prohibido publicar plusvalía proyectada:** no existe columna de ganancia, ni porcentaje de reventa, ni valor de mercado estimado a la entrega. El parqueo suma al total, a la cuota y al saldo. No se le inventa un valor futuro.
   * **Columnas de la Tarjeta:**
     1. *Inversión Total:* `USD` arriba, monto total unificado (departamento + parqueo/baulera) abajo, y precio real por m² en el pie.
     2. *Cuota Inicial (%):* `USD` arriba, monto a la firma del contrato abajo, y "A la firma del contrato" en el pie.
     3. *Saldo contra Entrega:* `USD` arriba, monto pendiente abajo (o `—` si es contado), y fecha de entrega (o `Sin saldo pendiente`) en el pie.
-    4. *Plusvalía Proyectada:* `+USD` arriba, ganancia neta estimada abajo, y porcentaje en dólares en el pie.
 * **Paso 5:** Botón de acción principal: `RESERVAR UNIDAD [X] EN PISO [Y] VÍA WHATSAPP`.
   * Genera automáticamente un mensaje estructurado con todos los datos seleccionados para el agente comercial.
 
@@ -266,12 +271,10 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 * **Estructura en 3 Bloques Secuenciales:**
   1. *Bloque 1: Ventajas Comerciales Clave (Qué destacar):* Argumentos diferenciales de arquitectura, ingeniería, sostenibilidad y ahorros en expensas.
   2. *Bloque 2: Desventajas Transparentes & Manejo de Objeciones:* Respuestas sólidas a objeciones reales de la zona (ej. tiempos de entrega, cuota de reserva, competencia).
-  3. *Bloque 3: Escenario Financiero Estimado de Mercado (Plusvalía y Alquileres de Referencia):*
-     * Ubicación obligatoria: **Siempre después de las ventajas y desventajas de la zona**.
-     * Desglose de plusvalía estimada de preventa a entrega de obra (crecimiento de valor proyectado por m²).
-     * Rango referencial de alquiler amoblado mensual / Airbnb según demanda real en el cuadrante urbano.
-     * **Disclaimer de Cumplimiento & Transparencia NIA (Obligatorio):**
-       > *"Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. No constituyen una promesa o garantía contractual de rentabilidad fija. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario."*
+  3. *Bloque 3: Lo que no se cita.*
+     * Ubicación: después de las ventajas y las objeciones.
+     * **No se cita plusvalía proyectada** ni un porcentaje de reventa. Si el brochure no publica ese número, el asesor tampoco.
+     * Un rango de alquiler solo se muestra si el material oficial lo publica, y se rotula como referencia de zona, no como renta prometida.
 
 ---
 

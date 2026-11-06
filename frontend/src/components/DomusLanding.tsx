@@ -207,26 +207,15 @@ export default function DomusLanding({ property, onClose }: Props) {
       planLabel = "40% Inicial + Saldo a Entrega";
     }
 
-    // Plusvalía estimada a la entrega (valor estimado de mercado terminado en Equipetrol: $1.900/m²)
-    const deliveryEstimatedM2 = 1900;
-    const deliveryEstimatedValue = Math.round(activeUnit.areaM2 * deliveryEstimatedM2);
-    const estimatedGain = Math.max(0, deliveryEstimatedValue - totalPrice);
-    const estimatedGainPct = Math.round((estimatedGain / totalPrice) * 100);
-
     const rentEstimateUsd = Math.round(activeUnit.areaM2 * 14.5);
     const rentEstimateRange = `USD ${Math.round(rentEstimateUsd * 0.9)} – ${Math.round(rentEstimateUsd * 1.15)} / mes`;
-    const rentYield = Math.round(((rentEstimateUsd * 12) / totalPrice) * 1000) / 10;
 
     return {
       totalPrice,
       pricePerM2,
       initialPayment,
       planLabel,
-      deliveryEstimatedValue,
-      estimatedGain,
-      estimatedGainPct,
       rentEstimateRange,
-      rentYield,
     };
   }, [activeUnit, selectedPlan]);
 
@@ -290,7 +279,7 @@ export default function DomusLanding({ property, onClose }: Props) {
       amenidades: { src: projectConfig.amenities[0]?.image || g[2] || hero, label: "Áreas Sociales" },
       tipologias: { src: projectConfig.typologies[0]?.planImage || g[3] || hero, label: "Tipologías" },
       pago: { src: g[4] || hero, label: "Formas de Pago" },
-      inversion: { src: g[0] || hero, label: "Rentabilidad & Plusvalía" },
+      inversion: { src: g[0] || hero, label: "Inversión" },
       disponibilidad: { src: g[1] || hero, label: "Disponibilidad" },
       cierre: { src: hero, label: "Contacto & Reserva" },
     };
@@ -853,7 +842,7 @@ export default function DomusLanding({ property, onClose }: Props) {
                   Plan 100% Contado
                 </h3>
                 <p className="mt-2 text-sm text-stone-600 font-light leading-relaxed">
-                  Accedes al valor por m² más competitivo de {projectConfig.name} (${projectConfig.pricePerM2Cash} USD/m²). Descuento inmediato y mayor margen de plusvalía a la entrega.
+                  Accedes al valor por m² más competitivo de {projectConfig.name} (${projectConfig.pricePerM2Cash} USD/m²). El descuento del contado queda congelado hasta la entrega.
                 </p>
                 <div className="mt-4 flex items-baseline gap-2">
                   <span className="font-serif text-3xl text-stone-900 font-medium">${projectConfig.pricePerM2Cash}</span>
@@ -904,7 +893,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#8a6d3b]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#8a6d3b]">
-                Rentabilidad & Plusvalía
+                Inversión
               </p>
             </div>
 
@@ -912,7 +901,7 @@ export default function DomusLanding({ property, onClose }: Props) {
               Por qué invertir en {projectConfig.name} es una decisión rentable y segura.
             </h2>
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              {projectConfig.zone} concentra la mayor demanda corporativa y turística de Santa Cruz. Comprar a precio de preventa (${projectConfig.pricePerM2Cash} USD/m²) frente al precio de venta terminado en la zona genera una ganancia inmediata de capital acumulada a la entrega.
+              {projectConfig.zone} concentra la mayor demanda corporativa y turística de Santa Cruz. El contado de preventa sale a ${projectConfig.pricePerM2Cash} USD/m².
             </p>
 
             <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-md">
@@ -922,15 +911,15 @@ export default function DomusLanding({ property, onClose }: Props) {
                 </span>
               </div>
               <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                Alta plusvalía proyectada y retorno en dólares.
+                Preventa en dólares, con el precio congelado desde la reserva.
               </h3>
               <p className="mt-2 text-xs text-stone-600 font-light leading-relaxed [text-align:justify] [text-justify:inter-word]">
-                El respaldo de Alborada Group con más de 7 torres consolidadas garantiza calidad de ejecución y entrega. El inversor ingresa en el punto óptimo de valorización, permitiendo vender con alta ganancia a la entrega o generar ingresos por alquiler de hasta USD 1.200 mensuales.
+                El respaldo de Alborada Group con más de 7 torres consolidadas garantiza calidad de ejecución y entrega. No se publica una plusvalía proyectada.
               </p>
 
               <div className="mt-5 rounded-xl border-2 border-[#8a6d3b] bg-[#fbf8f2] p-5 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 bg-[#8a6d3b] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-bl-lg">
-                  Plusvalía Domus
+                  Precio de preventa
                 </div>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="text-xs font-semibold uppercase tracking-wider text-[#6c5328]">
@@ -943,7 +932,7 @@ export default function DomusLanding({ property, onClose }: Props) {
                 <ul className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-800 font-light border-t border-[#8a6d3b]/20 pt-3">
                   <li>• Entrada departamento: <strong className="text-stone-900 block mt-0.5">Desde USD {formatDomusUsd(projectConfig.priceFromUsd)}</strong></li>
                   <li>• Retorno anual por renta: <strong className="text-[#6c5328] block mt-0.5">9,5% – 11,0% en USD</strong></li>
-                  <li>• Plusvalía a la entrega: <strong className="text-stone-900 block mt-0.5">+25% a +35% proyectada</strong></li>
+                  <li>• Entrega: <strong className="text-stone-900 block mt-0.5">{projectConfig.delivery}</strong></li>
                 </ul>
               </div>
             </div>

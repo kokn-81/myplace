@@ -476,11 +476,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
     const initialPayment = unitInitial + parkingInitial;
     const balancePayment = unitBalance + parkingBalance;
 
-    const parkingValueAtDelivery = hasParking ? Math.round(parkingPrice * 1.1) : 0;
-    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2050) + parkingValueAtDelivery;
-    const capitalGain = Math.max(1000, marketValueAtDelivery - totalPrice);
-    const gainPercentage = Math.max(1, Math.round((capitalGain / totalPrice) * 100));
-
     return {
       unitTotalPrice,
       unitInitial,
@@ -492,12 +487,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       initialPayment,
       balancePayment,
       pricePerM2,
-      marketValueAtDelivery,
-      capitalGain,
-      gainPercentage,
-      rentMonthlyMin: currentAmbiente.rentMin,
-      rentMonthlyMax: currentAmbiente.rentMax,
-      yieldRange: currentAmbiente.yieldRange,
     };
   }, [activeUnit, selectedPlan, currentAmbiente, selectedParkingOption, parkingPrice]);
 
@@ -820,7 +809,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 </div>
               </div>
               <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                La oportunidad de ingresar en etapa de obra fina antes de la entrega en {GARDEN_ZEN_CONFIG.delivery} asegura la máxima plusvalía acumulada frente al valor terminado de Equipetrol Norte.
+                La oportunidad de ingresar en etapa de obra fina congela el precio de preventa antes de la entrega en {GARDEN_ZEN_CONFIG.delivery}.
               </p>
             </div>
 
@@ -1478,13 +1467,13 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     <p className="font-serif text-2xl font-light text-[#e8d5a8]">
                       ${formatGardenZenUsd(minCashPerM2)} <span className="text-xs font-sans text-stone-300">USD/m²</span>
                     </p>
-                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
+
                   </div>
                 </div>
                 <div className="mt-4 border-t border-white/10 pt-3">
                   <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Accedes al valor por m² más bajo de todo el proyecto ($1.400 USD/m²). Ahorras hasta $100 USD/m² respecto a planes diferidos y aseguras la mayor tasa de retorno y plusvalía neta al recibir tu llave en {GARDEN_ZEN_CONFIG.delivery}.
+                    Accedes al valor por m² más bajo de todo el proyecto ($1.400 USD/m²). Ahorras hasta $100 USD/m² respecto a planes diferidos y congelas ese precio hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}.
                   </p>
                 </div>
               </div>
@@ -1509,7 +1498,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     <p className="font-serif text-2xl font-light text-stone-900">
                       ${formatGardenZenUsd(minPlan70PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
                     </p>
-                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
+
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
@@ -1540,7 +1529,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                     <p className="font-serif text-2xl font-light text-stone-900">
                       ${formatGardenZenUsd(minPlan30PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
                     </p>
-                    <p className="text-[11px] text-stone-400">vs $1.650 en Equipetrol Norte</p>
+
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
@@ -1901,7 +1890,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               {/* Tarjeta de Resumen Financiero Total */}
               {activeFinancials && activeUnit && (
                 <div className="mt-5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-b border-stone-100 pb-4">
+                  <div className="grid grid-cols-1 gap-3 border-b border-stone-100 pb-4 sm:grid-cols-3">
                     <div className="flex flex-col justify-between">
                       <div className="min-h-[28px] flex items-end">
                         <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
@@ -1967,22 +1956,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                       </div>
                     </div>
 
-                    <div className="flex flex-col justify-between">
-                      <div className="min-h-[28px] flex items-end">
-                        <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold leading-tight">
-                          Plusvalía Proyectada
-                        </p>
-                      </div>
-                      <div className="mt-1">
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-emerald-600 leading-tight">
-                          <span className="block">+USD</span>
-                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.capitalGain)}</span>
-                        </p>
-                        <p className="text-[10px] text-emerald-700 font-medium mt-1">
-                          +{activeFinancials.gainPercentage}% en dólares
-                        </p>
-                      </div>
-                    </div>
                   </div>
 
                   {/* PASO 5: BOTÓN DE RESERVA WHATSAPP */}
@@ -2328,54 +2301,19 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* BLOQUE 3: ESCENARIO FINANCIERO ESTIMADO (PLUSVALÍA Y ALQUILERES) */}
                 <div className="rounded-2xl border border-stone-200 bg-[#f4f9f5] p-4 text-xs">
-                  <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-3">
+                  <div className="border-b border-stone-200/80 pb-2 mb-3">
                     <p className="font-bold uppercase tracking-wider text-[#816127]">
-                      Escenario Financiero Estimado · Plusvalía &amp; Alquileres de Referencia
+                      Alquileres de referencia
                     </p>
-                    <span className="text-[10px] bg-stone-200/80 text-stone-700 px-2 py-0.5 rounded-full font-medium">
-                      Proyección orientativa
-                    </span>
                   </div>
+                  <p className="font-light leading-relaxed [text-align:justify]">
+                    No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
+                  </p>
 
-                  {/* 1. Plusvalía de Preventa a Entrega */}
-                  <div>
-                    <p className="font-semibold text-stone-800 text-[11px] uppercase tracking-wider">
-                      1. Plusvalía Proyectada al Momento de Entrega (Marzo 2027 · $1.800 USD/m² Equipetrol Norte)
-                    </p>
-                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-4 gap-2 text-stone-700">
-                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                        <p className="text-[10px] text-stone-500 uppercase">Mono (40,5 m²)</p>
-                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $56.672</p>
-                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 16.228</p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,6% plusvalía)</p>
-                      </div>
-                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                        <p className="text-[10px] text-stone-500 uppercase">1 Dorm (46,1 m²)</p>
-                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $64.540</p>
-                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 18.440</p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,5% plusvalía)</p>
-                      </div>
-                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                        <p className="text-[10px] text-stone-500 uppercase">2 Dorms (83,3 m²)</p>
-                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $115.388</p>
-                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 34.552</p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">(+29,9% plusvalía)</p>
-                      </div>
-                      <div className="rounded-xl border border-stone-200/80 bg-white p-2 text-center">
-                        <p className="text-[10px] text-stone-500 uppercase">3 Dorms (106 m²)</p>
-                        <p className="text-[11px] text-stone-400 mt-0.5">Preventa: $148.568</p>
-                        <p className="font-serif text-sm font-bold text-emerald-700 mt-1">+USD 42.232</p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">(+28,4% plusvalía)</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 2. Alquileres de Referencia en la Zona */}
                   <div className="mt-4 border-t border-stone-200/80 pt-3">
                     <p className="font-semibold text-stone-800 text-[11px] uppercase tracking-wider">
-                      2. Rango Estimado de Alquiler en Equipetrol Norte (Amoblado / Airbnb)
+                      Rango estimado de alquiler en Equipetrol Norte (amoblado / Airbnb)
                     </p>
                     <p className="mt-1 text-[11px] text-stone-500 font-light leading-relaxed">
                       Estimaciones de renta mensual basadas en tarifas de mercado para departamentos a estrenar en el cuadrante Equipetrol / Sirari:
@@ -2406,7 +2344,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
                   {/* 3. Disclaimer de Transparencia NIA */}
                   <div className="mt-4 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
-                    <strong className="font-semibold text-stone-800">Nota de Cumplimiento &amp; Transparencia NIA:</strong> Los valores de plusvalía y alquiler proyectados son estimaciones analíticas orientativas basadas en el comportamiento histórico de la zona y precios de mercado vigentes. <strong>No constituyen una promesa o garantía contractual de rentabilidad fija</strong>. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
+                    El rango de alquiler es una referencia de zona. No es una renta prometida.
                   </div>
                 </div>
               </div>

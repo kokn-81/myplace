@@ -449,10 +449,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         ? 0
         : Math.round(activeUnit.cuotas.balance40 + extraPrice * 0.4);
 
-    const marketValueAtDelivery = Math.round(activeUnit.areaM2 * 2100) + (extraPrice > 0 ? extraPrice * 1.2 : 0);
-    const capitalGain = Math.max(0, marketValueAtDelivery - totalPrice);
-    const gainPercentage = Math.round((capitalGain / totalPrice) * 100);
-
     return {
       totalPrice,
       baseTotal,
@@ -461,9 +457,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       pricePerM2,
       initialPayment,
       balancePayment,
-      marketValueAtDelivery,
-      capitalGain,
-      gainPercentage,
     };
   }, [activeUnit, selectedPlan, parkingOption]);
 
@@ -790,7 +783,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 </div>
               </div>
               <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                La oportunidad de ingresar en preventa desde <strong>$1.480 USD/m²</strong> con obra gruesa consolidada en losa 18 asegura el máximo margen de plusvalía frente al valor de mercado terminado ($2.100 USD/m²) con entrega formal en {EURODESIGN_DELIVERY}.
+                La preventa arranca desde <strong>$1.480 USD/m²</strong>, con obra gruesa consolidada en losa 18 y entrega formal en {EURODESIGN_DELIVERY}.
               </p>
             </div>
 
@@ -1302,7 +1295,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En Tower Eurodesign tu dinero rinde más asegurando una plusvalía de hasta el 41% frente al precio terminado ($2.100 USD/m²) con entrega formal en {EURODESIGN_DELIVERY}.
+              En Tower Eurodesign el contado sale a $1.480 USD/m². La entrega formal es en {EURODESIGN_DELIVERY}.
             </p>
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-3.5 sm:px-4.5 shadow-xs">
@@ -1349,13 +1342,13 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </div>
                   <div className="text-right">
                     <p className="font-serif text-2xl font-light text-[#e8d5a8]">$1.480 <span className="text-xs font-sans text-stone-300">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+
                   </div>
                 </div>
                 <div className="mt-4 border-t border-white/10 pt-3">
                   <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Aseguras el valor por m² más competitivo de todo Equipetrol Norte ($1.480 USD/m²). Ahorras hasta USD 10.000 respecto al plan diferido y aseguras un 41% de plusvalía con la estructura y obra gruesa ya consolidadas en piso 18.
+                    Aseguras el valor por m² más bajo del proyecto ($1.480 USD/m²). Ahorras hasta USD 10.000 respecto al plan diferido, con la estructura y la obra gruesa ya consolidadas en piso 18.
                   </p>
                 </div>
               </div>
@@ -1374,7 +1367,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </div>
                   <div className="text-right">
                     <p className="font-serif text-2xl font-light text-stone-900">$1.530 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
@@ -1399,7 +1392,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </div>
                   <div className="text-right">
                     <p className="font-serif text-2xl font-light text-stone-900">$1.580 <span className="text-xs font-sans text-stone-500">USD/m²</span></p>
-                    <p className="text-[11px] text-stone-400">vs $2.100 terminado en Equipetrol</p>
+
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
@@ -1679,7 +1672,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               {/* Tarjeta de Resumen Financiero Total */}
               {activeFinancials && activeUnit && (
                 <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-b border-stone-100 pb-4">
+                  <div className="grid grid-cols-1 gap-3 border-b border-stone-100 pb-4 sm:grid-cols-3">
                     <div className="flex flex-col justify-between">
                       <div className="min-h-[28px] flex items-end">
                         <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
@@ -1745,22 +1738,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                       </div>
                     </div>
 
-                    <div className="flex flex-col justify-between">
-                      <div className="min-h-[28px] flex items-end">
-                        <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-semibold leading-tight">
-                          Plusvalía Proyectada
-                        </p>
-                      </div>
-                      <div className="mt-1">
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-emerald-600 leading-tight">
-                          <span className="block">+USD</span>
-                          <span className="block mt-0.5">{formatEurodesignUsd(activeFinancials.capitalGain)}</span>
-                        </p>
-                        <p className="text-[10px] text-emerald-700 font-medium mt-1">
-                          +{activeFinancials.gainPercentage}% en dólares
-                        </p>
-                      </div>
-                    </div>
                   </div>
 
                   {/* PASO 5: BOTÓN DE RESERVA WHATSAPP */}
@@ -1987,19 +1964,15 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* 3. ESCENARIO FINANCIERO ESTIMADO (DESPUÉS DE PROS Y CONTRAS) */}
                 <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4">
-                  <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-3">
+                  <div className="border-b border-stone-200/80 pb-2 mb-3">
                     <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
-                      3. Escenario Financiero Estimado · Plusvalía &amp; Alquileres de Referencia
+                      Alquileres de referencia
                     </p>
-                    <span className="text-[10px] bg-stone-200/80 text-stone-700 px-2 py-0.5 rounded-full font-medium">
-                      Proyección orientativa
-                    </span>
                   </div>
 
                   <p className="font-light leading-relaxed [text-align:justify]">
-                    El valor de preventa arranca en <strong>$1.480 USD/m² al contado</strong> frente a un precio de mercado terminado en Equipetrol Norte de <strong>$2.100 USD/m²</strong>, lo que proyecta hasta un <strong>41% de plusvalía bruta</strong> al momento de entrega en {EURODESIGN_DELIVERY}.
+                    No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
                   </p>
 
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -2022,7 +1995,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
                   {/* Disclaimer de Transparencia NIA */}
                   <div className="mt-3 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
-                    <strong className="font-semibold text-stone-800">Nota de Cumplimiento &amp; Transparencia NIA:</strong> Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. <strong>No constituyen una promesa o garantía contractual de rentabilidad fija</strong>. El rendimiento real dependerá de la tasa de ocupación, calidad de amoblado, régimen de expensas y gestión operativa del propietario.
+                    El rango de alquiler es una referencia de zona. No es una renta prometida.
                   </div>
                 </div>
               </div>

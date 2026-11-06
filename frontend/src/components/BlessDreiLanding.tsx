@@ -49,119 +49,102 @@ interface Props {
 
 const AMENITY_SLIDES = [
   {
-    src: "/bless_drei/social_3.jpg",
-    category: "Piscina Infinity en Rooftop",
-    title: "Piscina Panorámica Iluminada con Vista a Equipetrol",
-    description:
-      "Piscina sinfín con cascada decorativa y solárium en el piso más alto. Un entorno exclusivo para desconectar de noche o disfrutar del sol con vista a la zona más cotizada de Santa Cruz.",
+    src: "/bless_drei/social/piscina.jpg",
+    category: "Piso 6",
+    title: "Piscina",
+    description: "Piscina en el nivel de áreas sociales, con solárium y vista abierta.",
   },
   {
-    src: "/bless_drei/social_1.jpg",
-    category: "Productividad & Lounge",
-    title: "Co-Work Climatizado & Lounge Social",
-    description:
-      "Espacio de trabajo moderno con boxes privados, iluminación decorativa cálida, mesas de trabajo ergonómicas y Wi-Fi de alta velocidad para ejecutivos y nómadas digitales.",
+    src: "/bless_drei/social/gimnasio.jpg",
+    category: "Piso 6",
+    title: "Gimnasio al aire libre",
+    description: "Gimnasio exterior en la terraza de áreas sociales.",
   },
   {
-    src: "/bless_drei/ingreso_boutique.jpg",
-    category: "Acceso & Distinción",
-    title: "Lobby Boutique con Iluminación Chevron",
-    description:
-      "Ingreso imponente a nivel calle con diseño arquitectónico contemporáneo, conserjería permanente, cerraduras digitales y circuito cerrado de cámaras.",
+    src: "/bless_drei/social/cowork.jpg",
+    category: "Piso 6",
+    title: "Co-work",
+    description: "Sala de trabajo compartido con mesas y escritorio.",
   },
   {
-    src: "/bless_drei/fachada_2.jpg",
-    category: "Arquitectura & Terrazas",
-    title: "Torre Boutique en el Corazón de Equipetrol",
-    description:
-      "Perspectiva exterior que destaca la volumetría de la torre, los balcones aterrazados en cada unidad y la integración de áreas comunes en altura.",
+    src: "/bless_drei/social/reuniones.jpg",
+    category: "Piso 6",
+    title: "Sala de reuniones",
+    description: "Sala cerrada para reuniones, con mesa y vista a la ciudad.",
+  },
+  {
+    src: "/bless_drei/social/churrasquera.jpg",
+    category: "Piso 6",
+    title: "Churrasquera",
+    description: "Churrasquera con barra y mesón para el uso de los residentes.",
+  },
+  {
+    src: "/bless_drei/social/eventos.jpg",
+    category: "Piso 6",
+    title: "Salón de eventos",
+    description: "Salón de eventos con comedor y estar.",
   },
 ];
 
-const TYPOLOGIES_DATA = [
-  {
-    id: "mono",
-    title: "Monoambiente Studio",
-    area: "32,4 a 36,8 m²",
-    image: "/bless_drei/modelos_pages/page_2.jpg",
-    cashPrice: 38168,
-    tagline:
-      "Espacio integrado de máxima rentabilidad para alquiler temporal (Airbnb) o residencia ejecutiva en Equipetrol.",
-    highlights: [
-      "Ambiente social y dormitorio unificados con excelente iluminación",
-      "Cocina americana de diseño con mesón de granito",
-      "Baño completo con box de vidrio templado y grifería monomando",
-      "Balcón aterrazado con vista abierta al vecindario",
-    ],
-  },
-  {
-    id: "1d",
-    title: "1 Dormitorio Master",
-    area: "48,2 a 55,6 m²",
-    image: "/bless_drei/modelos_pages/page_6.jpg",
-    cashPrice: 59000,
-    tagline:
-      "La tipología más demandada de Equipetrol, con suite independiente y living comedor amplio.",
-    highlights: [
-      "Habitación independiente con ropero empotrado a medida",
-      "Living comedor social con conexión directa a terraza",
-      "Cocina equipada con cajonería alta y baja",
-      "Excelente tasa de ocupación anual para inversores",
-    ],
-  },
+type ModeloRoom = "mono" | "1d";
+
+const BLESS_MODELOS: {
+  id: string;
+  rooms: ModeloRoom;
+  name: string;
+  area: string;
+  where: string;
+  preview: string;
+  full: string;
+}[] = [
+  { id: "a", rooms: "mono", name: "Modelo A", area: "30,94 m²", where: "Basamento · pisos 1 a 5 · fachada posterior", preview: "/bless_drei/modelos/a.jpg", full: "/bless_drei/fichas/a.jpg" },
+  { id: "b", rooms: "mono", name: "Modelo B", area: "33,18 m²", where: "Basamento · pisos 1 a 5 · fachada posterior", preview: "/bless_drei/modelos/b.jpg", full: "/bless_drei/fichas/b.jpg" },
+  { id: "c", rooms: "mono", name: "Modelo C", area: "37,47 m²", where: "Torre · pisos 13 y 14 · fachada posterior", preview: "/bless_drei/modelos/c.jpg", full: "/bless_drei/fichas/c.jpg" },
+  { id: "d", rooms: "mono", name: "Modelo D", area: "37,85 m²", where: "Torre · pisos 13 y 14 · fachada frontal", preview: "/bless_drei/modelos/d.jpg", full: "/bless_drei/fichas/d.jpg" },
+  { id: "e", rooms: "mono", name: "Modelo E", area: "41,66 m²", where: "Torre · pisos 7 a 12 · fachada frontal", preview: "/bless_drei/modelos/e.jpg", full: "/bless_drei/fichas/e.jpg" },
+  { id: "f", rooms: "mono", name: "Modelo F", area: "41,80 m²", where: "Torre · pisos 7 a 12 · fachada posterior", preview: "/bless_drei/modelos/f.jpg", full: "/bless_drei/fichas/f.jpg" },
+  { id: "h", rooms: "mono", name: "Modelo H", area: "45,07 m²", where: "Basamento · pisos 1 a 5 · fachada frontal", preview: "/bless_drei/modelos/h.jpg", full: "/bless_drei/fichas/h.jpg" },
+  { id: "g", rooms: "1d", name: "Modelo G", area: "42,35 m²", where: "Basamento · pisos 1 a 5 · fachada posterior", preview: "/bless_drei/modelos/g.jpg", full: "/bless_drei/fichas/g.jpg" },
+  { id: "i", rooms: "1d", name: "Modelo I", area: "46,17 m²", where: "Basamento · pisos 1 a 5 · fachada frontal", preview: "/bless_drei/modelos/i.jpg", full: "/bless_drei/fichas/i.jpg" },
 ];
 
 const EQUIPAMIENTO_SLIDES = [
   {
     id: "cocina",
-    room: "COCINA & COMEDOR",
-    title: "Cocina de Concepto Abierto Equipada",
-    tagline: "Diseño ergonómico, cajonería completa y mesón de granito",
+    room: "COCINA",
+    title: "Cocina",
     image: "/bless_drei/interior_3.jpg",
-    items: [
-      "Muebles superiores e inferiores en melamina con cantos de PVC",
-      "Mesón de granito pulido de alta durabilidad con bacha de acero inoxidable",
-      "Mesa desayunadora / comedor integrada con acabado mármol",
-      "Cocina encimera y campana extractora de primera marca instaladas",
-    ],
+    items: ["Cocina encimera", "Extractor eléctrico de cocina"],
   },
   {
-    id: "living",
-    room: "LIVING SOCIAL",
-    title: "Living Confort con Ventanal de Piso a Techo",
-    tagline: "Amplitud visual y conexión directa a terraza",
+    id: "sala",
+    room: "SALA",
+    title: "Sala y dormitorios",
     image: "/bless_drei/interior_1.jpg",
-    items: [
-      "Espacio social integrado con iluminación cálida sectorizada",
-      "Ventanales corredizos herméticos con salida a balcón aterrazado",
-      "Piso de porcelanato esmaltado de alto tráfico en todo el ambiente",
-      "Equipo de aire acondicionado split inverter instalado",
-    ],
+    items: ["Aires acondicionados en dormitorios y salas", "Luminaria LED"],
   },
   {
-    id: "espacio",
-    room: "ESPACIO SOCIAL & TV",
-    title: "Muro de TV en Piedra y Espacio Integrado",
-    tagline: "Diseño interior contemporáneo de revista",
-    image: "/bless_drei/interior_2.jpg",
+    id: "cuarto",
+    room: "DEPARTAMENTO",
+    title: "Baño y agua caliente",
+    image: "/bless_drei/bano.jpg",
     items: [
-      "Revestimiento vertical tipo piedra y panelado para pantalla plana",
-      "Transición fluida entre la cocina, comedor y sala de estar",
-      "Puntos eléctricos y de fibra óptica empotrados y canalizados",
-      "Aislamiento termoacústico en muros y ventanales",
+      "Espejo con iluminación LED en baños",
+      "Box de baños con vidrio templado",
+      "Grifería y accesorios sanitarios importados",
+      "Extractor mecánico en baños",
+      "Calefón eléctrico/gas",
     ],
   },
   {
     id: "acceso",
-    room: "ACCESO DIGITAL & SERVICIOS",
-    title: "Ingreso Inteligente y Servicios Listos",
-    tagline: "Seguridad digital para residentes y huéspedes",
-    image: "/bless_drei/ingreso_boutique.jpg",
+    room: "EDIFICIO",
+    title: "Acceso y vigilancia",
+    image: "/bless_drei/fachada_principal.jpg",
     items: [
-      "Cerradura inteligente digital para acceso sin llaves (clave/tarjeta)",
-      "Calefón instalado para suministro continuo de agua caliente",
-      "Portería y control de accesos con videovigilancia 24/7",
-      "Ascensor moderno de última generación y bajo consumo",
+      "Cerradura inteligente en la puerta de ingreso",
+      "Intercomunicador en cada departamento",
+      "Vigilancia en el edificio 24/7",
     ],
   },
 ];
@@ -180,18 +163,18 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
   {
     id: "mono",
     name: "Monoambiente",
-    shortName: "Monoambiente · 32 a 36 m²",
+    shortName: "Monoambiente · 30,94 a 45,07 m²",
     tipologia: "Monoambiente",
-    areaRange: "32,4 a 36,8 m²",
+    areaRange: "30,94 a 45,07 m²",
     basePrice: 38168,
     matchUnit: (u) => u.tipologia === "Monoambiente",
   },
   {
     id: "1d",
     name: "1 Dormitorio",
-    shortName: "1 Dormitorio · 48 a 55 m²",
+    shortName: "1 Dormitorio · 42,35 a 46,17 m²",
     tipologia: "1 Dormitorio",
-    areaRange: "48,2 a 55,6 m²",
+    areaRange: "42,35 a 46,17 m²",
     basePrice: 59000,
     matchUnit: (u) => u.tipologia === "1 Dormitorio",
   },
@@ -200,8 +183,10 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
 export default function BlessDreiLanding({ property, onClose }: Props) {
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [amenityIndex, setAmenityIndex] = useState(0);
-  const [selectedTypologyId, setSelectedTypologyId] = useState<string>("mono");
-  const [showHdPlanModal, setShowHdPlanModal] = useState(false);
+  const [modeloRooms, setModeloRooms] = useState<ModeloRoom>("mono");
+  const [modeloIndex, setModeloIndex] = useState(0);
+  const modeloTouchX = useRef<number | null>(null);
+  const [zoom, setZoom] = useState<{ src: string; title: string; caption: string } | null>(null);
   const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
@@ -361,9 +346,6 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
     const balancePayment = saldoContraEntrega + parkingBalance;
 
     const pricePerM2 = activeUnit.superficieM2 > 0 ? Math.round(unitTotalPrice / activeUnit.superficieM2) : 1500;
-    const marketValueAtDelivery = Math.round(activeUnit.superficieM2 * 2150) + (hasParking ? Math.round(parkingPrice * 1.15) : 0);
-    const capitalGain = Math.max(1000, marketValueAtDelivery - totalPrice);
-    const gainPercentage = Math.max(1, Math.round((capitalGain / totalPrice) * 100));
 
     return {
       unitTotalPrice,
@@ -372,8 +354,6 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
       initialPayment,
       balancePayment,
       pricePerM2,
-      capitalGain,
-      gainPercentage,
       reserva: BLESS_DREI_CONFIG.reservaUsd,
     };
   }, [activeUnit, paymentPlan, includeParking, parkingPrice]);
@@ -502,7 +482,6 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
     }
   }, [activeSection]);
 
-  const currentTypology = TYPOLOGIES_DATA.find((t) => t.id === selectedTypologyId) || TYPOLOGIES_DATA[0];
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
@@ -611,11 +590,11 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             </div>
             <div className="mt-2.5 space-y-1.5 text-xs">
               <div className="flex justify-between items-center">
-                <span className="text-stone-300">Monoambiente (32 a 36 m²):</span>
+                <span className="text-stone-300">Monoambiente (30,94 a 45,07 m²):</span>
                 <span className="font-serif font-bold text-white">Desde USD {formatBlessUsd(minPriceMono)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-stone-300">1 Dormitorio (48 a 55 m²):</span>
+                <span className="text-stone-300">1 Dormitorio (42,35 a 46,17 m²):</span>
                 <span className="font-serif font-bold text-white">Desde USD {formatBlessUsd(minPrice1Dorm)}</span>
               </div>
             </div>
@@ -719,8 +698,16 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               En el Corazón de Equipetrol
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Situado en la Calle Alejandro Ramírez entre 3° y 4° Anillo, a escasos metros de la emblemática Av. San Martín. Esta ubicación te sitúa en el epicentro de cafés de especialidad, restaurantes de autor, hoteles cinco estrellas y bancos, con un entorno residencial tranquilo y alta plusvalía consolidada.
+              Situado en la Calle Alejandro Ramírez entre 3° y 4° Anillo, a escasos metros de la Av. San Martín. El barrio es Equipetrol.
             </p>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            <img
+              src="/bless_drei/ubicacion.jpg"
+              alt="Mapa de Bless Drei en la calle Alejandro Ramírez, Equipetrol"
+              className="block h-auto w-full"
+            />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
@@ -773,48 +760,46 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             </p>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-lg text-white">
-            <div className="aspect-[16/10] w-full relative">
+          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            <div className="relative">
               <img
                 src={AMENITY_SLIDES[amenityIndex].src}
                 alt={AMENITY_SLIDES[amenityIndex].title}
-                className="w-full h-full object-cover brightness-[0.88]"
+                className="aspect-[16/10] w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-              <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 space-y-1.5">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#e8d5a8]">
-                  {AMENITY_SLIDES[amenityIndex].category}
-                </span>
-                <h4 className="font-serif text-xl md:text-2xl font-normal text-white">
-                  {AMENITY_SLIDES[amenityIndex].title}
-                </h4>
-                <p className="text-xs text-stone-300 max-w-xl leading-relaxed">
-                  {AMENITY_SLIDES[amenityIndex].description}
-                </p>
-              </div>
-
               <button
                 onClick={() => setAmenityIndex((prev) => (prev > 0 ? prev - 1 : AMENITY_SLIDES.length - 1))}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-all backdrop-blur-sm"
+                className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md"
                 aria-label="Anterior amenidad"
               >
                 <ChevronLeft size={18} />
               </button>
               <button
                 onClick={() => setAmenityIndex((prev) => (prev < AMENITY_SLIDES.length - 1 ? prev + 1 : 0))}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-all backdrop-blur-sm"
+                className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md"
                 aria-label="Siguiente amenidad"
               >
                 <ChevronRight size={18} />
               </button>
             </div>
-            <div className="flex justify-center gap-1.5 p-3 bg-stone-950">
-              {AMENITY_SLIDES.map((_, i) => (
+            <div className="space-y-1.5 px-5 py-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">
+                {AMENITY_SLIDES[amenityIndex].category}
+              </span>
+              <h4 className="font-serif text-xl font-normal text-stone-900 md:text-2xl">
+                {AMENITY_SLIDES[amenityIndex].title}
+              </h4>
+              <p className="max-w-xl text-xs leading-relaxed text-stone-600">
+                {AMENITY_SLIDES[amenityIndex].description}
+              </p>
+            </div>
+            <div className="flex justify-center gap-1.5 px-3 pb-3">
+              {AMENITY_SLIDES.map((slide, i) => (
                 <button
-                  key={i}
+                  key={slide.title}
                   onClick={() => setAmenityIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#9a7b45]" : "w-1.5 bg-stone-700"}`}
-                  aria-label={`Slide ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#9a7b45]" : "w-1.5 bg-stone-300"}`}
+                  aria-label={slide.title}
                 />
               ))}
             </div>
@@ -834,73 +819,96 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Plantas Arquitectónicas en Equipetrol
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Diseñadas para maximizar el metraje útil con acabados durables y terrazas privadas. Haz clic sobre cada tipología para visualizar el plano oficial con sus medidas correspondientes.
+              La foto muestra solo el departamento. Toca la imagen para ver la ficha con medidas, plano y en qué parte del piso queda.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            {TYPOLOGIES_DATA.map((t) => {
-              const isSelected = selectedTypologyId === t.id;
+          <div className="grid grid-cols-2 gap-3">
+            {([
+              ["mono", "Monoambiente"],
+              ["1d", "1 Dormitorio"],
+            ] as const).map(([id, label]) => {
+              const isSelected = modeloRooms === id;
+              const count = BLESS_MODELOS.filter((m) => m.rooms === id).length;
               return (
-                <div
-                  key={t.id}
-                  onClick={() => setSelectedTypologyId(t.id)}
-                  className={`p-4 rounded-xl cursor-pointer transition-all border ${
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setModeloRooms(id);
+                    setModeloIndex(0);
+                    setSelectedAmbId(id);
+                  }}
+                  className={`rounded-2xl border p-4 text-left transition-all ${
                     isSelected
-                      ? "bg-white border-[#9a7b45] shadow-md ring-1 ring-[#9a7b45]"
-                      : "bg-white/80 border-stone-200 hover:border-stone-300 hover:bg-white"
+                      ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]"
+                      : "border-stone-200 bg-white/80 hover:border-stone-300"
                   }`}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{t.area}</p>
-                  <h4 className="font-serif text-lg font-bold text-stone-900 mt-1">{t.title}</h4>
-                  <p className="text-xs text-[#9a7b45] font-semibold mt-1">
-                    Desde USD {formatBlessUsd(t.cashPrice)}
-                  </p>
-                  <p className="text-[11px] text-stone-500 mt-2 line-clamp-2">{t.tagline}</p>
-                  <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] font-semibold">
-                    <span className={isSelected ? "text-[#9a7b45]" : "text-stone-400"}>
-                      {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
-                    </span>
-                  </div>
-                </div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{label}</p>
+                  <p className="mt-1 text-[11px] text-stone-500">{count} modelos · desliza</p>
+                </button>
               );
             })}
           </div>
 
-          {/* Visor de Plano Arquitectónico 2D */}
-          <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9a7b45]">Plano Arquitectónico Oficial</span>
-                <h4 className="font-serif text-xl font-bold text-stone-900">{currentTypology.title}</h4>
-                <p className="text-xs text-stone-500">{currentTypology.area} de superficie útil</p>
-              </div>
-              <button
-                onClick={() => setShowHdPlanModal(true)}
-                className="px-3 py-1.5 rounded-lg bg-stone-900 text-white text-xs font-semibold hover:bg-stone-800 transition-all flex items-center gap-1.5"
-              >
-                Ver HD
-              </button>
-            </div>
-
-            <div className="aspect-[16/11] rounded-xl overflow-hidden bg-stone-50 border border-stone-100 flex items-center justify-center p-3">
-              <img
-                src={currentTypology.image}
-                alt={currentTypology.title}
-                className="max-h-full max-w-full object-contain filter drop-shadow-md cursor-pointer hover:scale-[1.02] transition-transform"
-                onClick={() => setShowHdPlanModal(true)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-stone-100">
-              {currentTypology.highlights.map((h, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-stone-600">
-                  <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-                  <span>{h}</span>
+          {(() => {
+            const slides = BLESS_MODELOS.filter((m) => m.rooms === modeloRooms);
+            const index = ((modeloIndex % slides.length) + slides.length) % slides.length;
+            const current = slides[index];
+            const go = (dir: number) => setModeloIndex((index + dir + slides.length) % slides.length);
+            return (
+              <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+                <div className="flex items-start justify-between gap-3 border-b border-stone-100 px-4 py-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{current.name}</p>
+                    <h4 className="font-serif text-xl font-medium text-stone-900">{current.area}</h4>
+                    <p className="text-xs text-stone-500">{current.where}</p>
+                  </div>
+                  <p className="pt-1 text-[11px] text-stone-400">{index + 1}/{slides.length}</p>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div
+                  className="relative bg-white"
+                  onTouchStart={(event) => {
+                    modeloTouchX.current = event.changedTouches[0].clientX;
+                  }}
+                  onTouchEnd={(event) => {
+                    if (modeloTouchX.current == null || slides.length < 2) return;
+                    const dx = event.changedTouches[0].clientX - modeloTouchX.current;
+                    if (dx > 40) go(-1);
+                    if (dx < -40) go(1);
+                    modeloTouchX.current = null;
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setZoom({ src: current.full, title: current.name, caption: `${current.area} · ${current.where}` })}
+                    className="flex min-h-[320px] w-full cursor-zoom-in items-center justify-center px-6 py-6"
+                    aria-label={`Ver ficha de ${current.name}`}
+                  >
+                    <img
+                      src={current.preview}
+                      alt={`${current.name}, ${current.area}, solo el departamento`}
+                      className="mx-auto max-h-[460px] w-auto max-w-full object-contain"
+                    />
+                  </button>
+                  {slides.length > 1 && (
+                    <>
+                      <button type="button" onClick={() => go(-1)} className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo anterior">
+                        <ChevronLeft size={22} />
+                      </button>
+                      <button type="button" onClick={() => go(1)} className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo siguiente">
+                        <ChevronRight size={22} />
+                      </button>
+                    </>
+                  )}
+                </div>
+                <p className="border-t border-stone-100 px-4 py-3 text-center text-[11px] text-stone-500">
+                  Desliza para el siguiente. Toca la imagen para ver la ficha completa.
+                </p>
+              </div>
+            );
+          })()}
         </section>
 
         {/* ----------------------------------------------------
@@ -916,58 +924,28 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Entrega Completa Llave en Mano
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Sin costos imprevistos al recibir las llaves. Cada unidad en Bless Drei se entrega dotada con 12 componentes de equipamiento y terminaciones de categoría residencial superior.
+              Cada unidad se entrega con el equipamiento que publica el brochure.
             </p>
           </div>
 
-          {/* Grilla Oficial de los 12 Equipamientos Incluidos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {[
-              { title: "Aires Acondicionados", desc: "Instalados en dormitorios y salas de estar" },
-              { title: "Cerradura Inteligente", desc: "Acceso digital en puerta principal de ingreso" },
-              { title: "Calefón Eléctrico / a Gas", desc: "Suministro continuo de agua caliente en cocina y baños" },
-              { title: "Intercomunicador", desc: "Comunicación directa en cada departamento" },
-              { title: "Vigilancia 24/7", desc: "Circuito cerrado y control de seguridad en todo el edificio" },
-              { title: "Espejo LED en Baños", desc: "Iluminación integrada decorativa y funcional" },
-              { title: "Grifería Sanitaria Importada", desc: "Grifería y accesorios de primera línea" },
-              { title: "Luminaria LED Completa", desc: "Puntos de luz empotrados de máxima eficiencia" },
-              { title: "Cocina Encimera", desc: "Empotrada sobre mesón de granito pulido" },
-              { title: "Box de Baños", desc: "Mamparas de vidrio templado de seguridad" },
-              { title: "Extractor Eléctrico", desc: "Campana extractora de humos en cocina" },
-              { title: "Extractor Mecánico", desc: "Ventilación activa y extracción en baños" },
-            ].map((item, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-xs flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#9a7b45]/10 text-[#9a7b45] text-xs font-bold font-mono">
-                  {idx + 1}
-                </span>
-                <div>
-                  <h4 className="text-xs font-bold text-stone-900">{item.title}</h4>
-                  <p className="text-[11px] text-stone-500 font-light mt-0.5">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Recintos de detalle */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {EQUIPAMIENTO_SLIDES.map((eq) => (
-              <div key={eq.id} className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-3">
-                <div className="aspect-video rounded-lg overflow-hidden bg-stone-100">
-                  <img src={eq.image} alt={eq.title} className="w-full h-full object-cover" />
+              <div key={eq.id} className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+                <div className="flex min-h-[220px] items-center justify-center bg-white">
+                  <img src={eq.image} alt={eq.title} className={eq.id === "cuarto" ? "max-h-[280px] w-full object-contain" : "h-[210px] w-full object-cover"} />
                 </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9a7b45]">{eq.room}</span>
+                <div className="space-y-2 px-4 py-4">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{eq.room}</span>
                   <h4 className="font-serif text-base font-bold text-stone-900">{eq.title}</h4>
-                  <p className="text-[11px] text-stone-500">{eq.tagline}</p>
+                  <ul className="grid grid-cols-1 gap-1.5 border-t border-stone-100 pt-2 text-xs text-stone-600 sm:grid-cols-2">
+                    {eq.items.map((item) => (
+                      <li key={item} className="flex items-start gap-1.5">
+                        <span className="font-bold text-[#9a7b45]">·</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1.5 pt-1 border-t border-stone-100 text-xs text-stone-600">
-                  {eq.items.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-1.5">
-                      <span className="text-[#9a7b45] font-bold">·</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
@@ -982,6 +960,11 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               <Building2 size={13} />
               Respaldo y Trayectoria Constructiva
             </span>
+            <img
+              src="/bless_drei/logo-altavida.jpg"
+              alt="Alta Vida Desarrollos Inmobiliarios"
+              className="h-28 w-auto rounded-xl"
+            />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
                 Alta Vida SRL · Desarrolladora Inmobiliaria
@@ -1010,7 +993,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#9a7b45]">16 Niveles</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Torre Boutique en Equipetrol</p>
-              <p className="text-[11px] text-stone-500 mt-1">Escala humana, piscina sinfín y sky lounge</p>
+              <p className="text-[11px] text-stone-500 mt-1">Áreas sociales en el piso 6, según el esquema del brochure</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#9a7b45]">100%</p>
@@ -1062,7 +1045,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-white">Pago al Contado (100%)</h4>
               <p className="text-xs text-stone-300">
-                Asegura el precio por metro cuadrado más competitivo de Equipetrol y maximiza tu plusvalía a la entrega.
+                Asegura el precio por metro cuadrado más competitivo de Equipetrol.
               </p>
               <div className="pt-2 border-t border-white/10 text-xs text-[#e8d5a8]">
                 <strong className="text-white">VENTAJA COMERCIAL:</strong> Ahorro financiero directo de hasta un 15% sobre la lista oficial.
@@ -1146,7 +1129,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
               Paso 1 · Elige la Tipología
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {AMBIENTE_OPTIONS.map((amb) => {
                 const isSelected = selectedAmbId === amb.id;
                 return (
@@ -1176,7 +1159,17 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               <span className="font-semibold uppercase tracking-wider text-stone-500">
                 Paso 2 · Selecciona un Piso ({floorsForAmbiente.filter((f) => f.isAvailable).length} pisos con disponibilidad)
               </span>
-              <span className="text-stone-400 text-[11px]">Verde = Disponible · Gris = Agotado</span>
+              <button
+                type="button"
+                onClick={() => setZoom({
+                  src: "/bless_drei/esquema-pisos.jpg",
+                  title: "Distribución de pisos",
+                  caption: "Pisos 7 a 14: monoambientes. Piso 6: áreas sociales. Pisos 1 a 5: monoambientes y 1 dormitorio. Planta baja y subsuelo: parqueos.",
+                })}
+                className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45] hover:text-[#816127]"
+              >
+                Ver distribución de pisos
+              </button>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 p-2 rounded-xl bg-white border border-stone-200">
               {floorsForAmbiente.map((f) => {
@@ -1321,7 +1314,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             </div>
           </div>
 
-          {/* Tarjeta de Resumen Financiero: 4 Columnas con regla USD arriba, número abajo */}
+          {/* Tarjeta de resumen: inversión, cuota inicial y saldo. Sin plusvalía. */}
           {activeFinancials && (
             <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-xl space-y-4">
               <div className="flex items-center justify-between text-xs pb-3 border-b border-white/10">
@@ -1333,7 +1326,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {/* Columna 1: Inversión Total */}
                 <div className="flex flex-col justify-between">
                   <div className="min-h-[28px] flex items-end">
@@ -1402,23 +1395,6 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* Columna 4: Plusvalía Proyectada */}
-                <div className="flex flex-col justify-between">
-                  <div className="min-h-[28px] flex items-end">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                      Plusvalía Proyectada
-                    </p>
-                  </div>
-                  <div className="mt-1">
-                    <p className="font-serif text-lg sm:text-2xl font-bold text-[#9a7b45] leading-tight">
-                      <span className="block text-xs font-mono font-normal text-[#9a7b45]/80">+USD</span>
-                      <span className="block mt-0.5">{formatBlessUsd(activeFinancials.capitalGain)}</span>
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-1">
-                      +{activeFinancials.gainPercentage}% estimado a entrega
-                    </p>
-                  </div>
-                </div>
               </div>
 
               {/* Paso 5: Botón WhatsApp de Acción Inmediata */}
@@ -1547,25 +1523,23 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
       {/* 4.3 Modal Zoom HD de Planos */}
       <AnimatePresence>
-        {showHdPlanModal && (
-          <div className="fixed inset-0 z-[130] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="relative max-w-4xl w-full bg-stone-900 rounded-2xl p-4 shadow-2xl border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-white pb-2 border-b border-white/10">
+        {zoom && (
+          <div className="fixed inset-0 z-[130] overflow-y-auto bg-black/90 p-4" onClick={() => setZoom(null)}>
+            <div className="mx-auto my-4 w-full max-w-3xl rounded-2xl border border-white/10 bg-stone-900 p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+              <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2 text-white">
                 <div>
-                  <h4 className="font-serif text-lg font-bold">{currentTypology.title}</h4>
-                  <p className="text-xs text-stone-400">{currentTypology.area} · Plano Arquitectónico</p>
+                  <h4 className="font-serif text-lg font-bold">{zoom.title}</h4>
+                  <p className="text-xs text-stone-400">{zoom.caption}</p>
                 </div>
                 <button
-                  onClick={() => setShowHdPlanModal(false)}
-                  className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
-                  aria-label="Cerrar modal"
+                  onClick={() => setZoom(null)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white"
+                  aria-label="Cerrar"
                 >
                   <X size={16} />
                 </button>
               </div>
-              <div className="aspect-[16/10] bg-black rounded-xl overflow-hidden flex items-center justify-center p-2">
-                <img src={currentTypology.image} alt={currentTypology.title} className="max-h-full max-w-full object-contain" />
-              </div>
+              <img src={zoom.src} alt={zoom.title} className="mx-auto w-full bg-white" />
             </div>
           </div>
         )}
@@ -1604,7 +1578,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 <ul className="space-y-2 text-xs text-stone-700 pt-1">
                   <li className="flex items-start gap-1.5">
                     <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Ubicación AAA en Equipetrol:</strong> A pasos de la Av. San Martín, zona con la mayor plusvalía y demanda de renta corporativa de Bolivia.</span>
+                    <span><strong>Ubicación en Equipetrol:</strong> Sobre la calle Alejandro Ramírez, a metros de la Av. San Martín, entre 3° y 4° anillo.</span>
                   </li>
                   <li className="flex items-start gap-1.5">
                     <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
@@ -1612,7 +1586,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   </li>
                   <li className="flex items-start gap-1.5">
                     <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Equipamiento llave en mano:</strong> Cajonería, roperos, aire acondicionado y cerradura digital incluidos en el contrato.</span>
+                    <span><strong>Equipamiento del brochure:</strong> Aire acondicionado, cocina encimera, cerradura inteligente e intercomunicador. No se agregan acabados que el brochure no lista.</span>
                   </li>
                 </ul>
               </div>
@@ -1629,7 +1603,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                   </div>
                   <div className="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
                     <p className="font-semibold text-stone-900">Objeción: "¿Fecha de entrega?"</p>
-                    <p className="text-stone-600 mt-1">Respuesta: Febrero 2028. Es el plazo ideal para congelar precio en preventa antes del salto de plusvalía de la obra fina.</p>
+                    <p className="text-stone-600 mt-1">Respuesta: Febrero 2028, según el material del proyecto.</p>
                   </div>
                 </div>
               </div>
@@ -1637,21 +1611,11 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               {/* Bloque 3: Escenario Financiero Estimado */}
               <div className="space-y-2 pt-2 border-t border-stone-200">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45] bg-[#9a7b45]/15 px-2.5 py-0.5 rounded-full border border-[#9a7b45]/30">
-                  Bloque 3 · Estimación de Rentas
+                  Bloque 3 · Lo que no se cita
                 </span>
-                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                  <div className="p-2.5 rounded-lg bg-white border border-stone-200">
-                    <p className="text-[10px] text-stone-500 uppercase">Renta Mensual Equipetrol</p>
-                    <p className="font-serif text-sm font-bold text-stone-900 mt-0.5">$500 – $850 USD</p>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-white border border-stone-200">
-                    <p className="text-[10px] text-stone-500 uppercase">Plusvalía a Entrega</p>
-                    <p className="font-serif text-sm font-bold text-emerald-600 mt-0.5">+22% a +28%</p>
-                  </div>
-                </div>
-                <div className="p-3 rounded-lg bg-stone-100 text-[10px] text-stone-500 leading-relaxed italic mt-2">
-                  Los valores de plusvalía y alquiler proyectados son estimaciones analíticas basadas en el comportamiento histórico de la zona y valores de mercado vigentes. No constituyen una promesa o garantía contractual de rentabilidad fija.
-                </div>
+                <p className="pt-1 text-xs text-stone-600">
+                  No cites una plusvalía proyectada ni un porcentaje de reventa. El brochure no publica ese número.
+                </p>
               </div>
             </motion.div>
           </div>
