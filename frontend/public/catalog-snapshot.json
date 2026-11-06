@@ -1047,5 +1047,36 @@
       "coworking",
       "lobby"
     ]
+  },
+  {
+    "id": "beton-brut-ii",
+    "titulo": "BÉTON BRUT II · Equipetrol",
+    "title": "BÉTON BRUT II · Equipetrol",
+    "operacion": "Venta",
+    "operation": "Venta",
+    "tipo": "Proyecto (preventa)",
+    "type": "Proyecto (preventa)",
+    "tipo_inmueble": "Proyecto (preventa)",
+    "precio_usd": 97546,
+    "moneda": "$ (USD)",
+    "ciudad": "Santa Cruz de la Sierra",
+    "zona": "Equipetrol",
+    "lat": -17.7663,
+    "lng": -63.1957,
+    "habitaciones": 1,
+    "banos": 1,
+    "superficie_m2": 57.38,
+    "estado": "Publicado",
+    "ocupacion": "Disponible",
+    "complejo_nombre": "BÉTON BRUT II",
+    "descripcion": "Cuarenta departamentos de 1, 2 y 3 dormitorios en Equipetrol, calle 8, entre el 2° y el 3° anillo. Entrega en diciembre 2028.",
+    "imagenes": "/beton_brut/fachada.jpg, /beton_brut/lobby.jpg, /beton_brut/social/piscina.jpg, /beton_brut/living.jpg",
+    "amenidades": [
+      "piscina",
+      "churrasquera",
+      "coworking",
+      "sauna",
+      "seguridad"
+    ]
   }
 ]

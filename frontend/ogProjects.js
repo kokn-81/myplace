@@ -94,6 +94,18 @@ export const PROJECTS = {
     canonicalPath: "/trivento",
     appUrl: "/?proyecto=trivento-iv",
   },
+  "beton-brut-ii": {
+    id: "beton-brut-ii",
+    title: "Béton Brut II · Preventa en Equipetrol",
+    description:
+      "Departamentos de 1, 2 y 3 dormitorios en Equipetrol, calle 8, desde USD 97.546. Entrega en diciembre 2028.",
+    image: `${SITE}/beton_brut/fachada.jpg`,
+    imageAlt: "Fachada de Béton Brut II en Equipetrol",
+    imageWidth: 2000,
+    imageHeight: 1176,
+    canonicalPath: "/beton-brut-ii",
+    appUrl: "/?proyecto=beton-brut-ii",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -129,6 +141,10 @@ const PATH_ALIASES = {
   "trivento-iv": "trivento",
   triventoiv: "trivento",
   "trivento-4": "trivento",
+  "beton-brut-ii": "beton-brut-ii",
+  "beton-brut": "beton-brut-ii",
+  betonbrut: "beton-brut-ii",
+  betonbrut2: "beton-brut-ii",
 };
 
 function fromQuery(value) {
@@ -140,6 +156,7 @@ function fromQuery(value) {
   if (q.includes("euro")) return PROJECTS.eurodesign;
   if (PROJECTS[q]) return PROJECTS[q];
   if (q.includes("domus")) return PROJECTS["domus-black"];
+  if (q.includes("beton")) return PROJECTS["beton-brut-ii"];
   return null;
 }
 

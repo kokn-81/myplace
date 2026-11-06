@@ -1,5 +1,5 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.2  
+**Versión:** 1.3  
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
 
@@ -22,12 +22,19 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 11. **`#pago`:** la primera opción va en tarjeta negra con insignia dorada y “Ventaja comercial”. Las otras, en tarjeta blanca. El precio de esa sección es USD/m², no la cuota en dólares de una unidad todavía no elegida.
 12. **`#disponibilidad`:** cuatro pasos (tipología, piso, opcional, plan). La tarjeta de cotización tiene **tres** columnas: inversión total, cuota inicial y saldo contra entrega. `USD` arriba y el número abajo. En contado, el saldo es `—` y “Sin saldo pendiente”. **Ningún proyecto publica plusvalía proyectada.** No hay cuarta columna, ni porcentaje, ni “valor a la entrega”, ni comparación del precio de preventa contra un precio terminado inventado. No se calcula `capitalGain`, `gainPercentage` ni `marketValueAtDelivery`.
 13. **Lo que no se copia de ONA:** oraciones, nombres, metrajes, precios, cantidad de planes, monto de reserva, parqueos y fotos. Si el material oficial trae dos planes, se muestran dos, con el mismo dibujo de tarjeta.
-14. **`#lugar`:** la imagen es el mapa o plano de ubicación del brochure oficial, dentro de un marco y sin estirarla. El texto va junto a la imagen, no encima.
+14. **`#lugar`:** la imagen es el mapa o plano de ubicación del brochure oficial, a ancho completo (`block h-auto w-full`), dentro de un marco y sin estirarla. No se limita con `max-w-md`: un mapa vertical o apaisado tiene que ocupar la tarjeta. El texto va junto a la imagen, no encima.
 15. **`#amenidades`:** el título y el texto van debajo de la foto. No tapan la imagen. Si el brochure trae el nombre del ambiente impreso en la foto, se recorta para que no quede doble rótulo.
 16. **`#tipologias`:** la vista previa muestra solo el departamento, centrado (`object-contain`). El clic abre la ficha completa (plano, tabla y posición en el piso) en un modal con scroll. No se usa la hoja entera del brochure como miniatura.
 17. **`#equipamiento`:** cada grupo es una tarjeta con foto del ambiente y la lista oficial debajo, igual que cocina, sala y el resto. No se deja una lista suelta. No se inventan acabados que el brochure no publica.
 18. **`#constructora`:** se muestra el logo de la constructora, tomado del material oficial.
 19. **Paso 2 (elegir piso):** hay un control para abrir la imagen oficial de distribución de pisos, para ver dónde queda la unidad en el edificio.
+20. **Seña.** Si el material oficial no publica un monto de reserva, la barra inferior no inventa uno. Muestra el precio desde y la entrega, y dice que la seña la confirma el asesor.
+21. **Sin Google Sheet.** Si no hay planilla en vivo, los precios salen de la lista oficial y la página muestra la fecha de esa lista. No se escribe “en vivo” ni se simula una sincronización.
+22. **Colaboradores.** Si el brochure dice “colaboradores” y no nombra un solo desarrollador, se muestran esos logos con esa palabra. No se inventa un cargo. Si un logo trae impresa la palabra constructora, sí se puede repetir.
+23. **Adicionales.** Parqueo, moto o baulera usan solo el precio publicado. Si el documento no pone precio, ese adicional no entra en la cotización.
+24. **Unidad vendida.** Si la lista marca la unidad como vendida y no publica su precio, la ficha no calcula ni muestra un número.
+25. **Código de unidad.** Si el código es piso + letra (1D, 2D, 3D), el botón de piso dice “Unidad 1D”. Suelto, 1D, 2D y 3D se leen como dormitorios.
+26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual y en Insights. La página habla del proyecto.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 

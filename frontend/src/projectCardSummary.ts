@@ -5,6 +5,7 @@ import { EURODESIGN_DELIVERY, EURODESIGN_UNITS } from "./eurodesignInventory";
 import { BLESS_TOWER_BASELINE_UNITS, BLESS_TOWER_CONFIG } from "./blessTowerInventory";
 import { BLESS_DREI_BASELINE_UNITS, BLESS_DREI_CONFIG } from "./blessDreiInventory";
 import { TRIVENTO_CONFIG, TRIVENTO_MODELS } from "./triventoInventory";
+import { BETON_BRUT_CONFIG } from "./betonBrutInventory";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -86,6 +87,14 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     bedrooms: uniqueBedrooms(TRIVENTO_MODELS.map((model) => model.dormitorios)),
     sourceUrl: TRIVENTO_CONFIG.driveUrl,
   },
+  "beton-brut-ii": {
+    name: BETON_BRUT_CONFIG.name,
+    builder: "Mediterráneo Constructora",
+    address: BETON_BRUT_CONFIG.address,
+    delivery: BETON_BRUT_CONFIG.delivery,
+    bedrooms: [1, 2, 3],
+    sourceUrl: BETON_BRUT_CONFIG.brochurePdfUrl,
+  },
   ...Object.fromEntries(Object.values(DOMUS_PROJECTS_CONFIG).map((project) => [project.id, {
     name: project.name,
     builder: project.developer,
@@ -109,6 +118,9 @@ const PROJECT_ALIASES: Record<string, string> = {
   blessdrei: "bless-drei",
   trivento: "trivento-iv",
   triventoiv: "trivento-iv",
+  "beton-brut": "beton-brut-ii",
+  betonbrut: "beton-brut-ii",
+  betonbrut2: "beton-brut-ii",
   domus: "domus-black",
   "domus-lux": "domus-luxury",
 };

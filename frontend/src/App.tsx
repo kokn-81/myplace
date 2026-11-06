@@ -70,6 +70,9 @@ export default function App() {
           <Route path="/trivento" element={<MapPage />} />
           <Route path="/trivento-iv" element={<MapPage />} />
           <Route path="/triventoiv" element={<MapPage />} />
+          <Route path="/beton-brut-ii" element={<MapPage />} />
+          <Route path="/beton-brut" element={<MapPage />} />
+          <Route path="/betonbrut" element={<MapPage />} />
           <Route path="/eurodesign" element={<MapPage />} />
           <Route path="/euro-design" element={<MapPage />} />
           <Route path="/domus" element={<MapPage />} />

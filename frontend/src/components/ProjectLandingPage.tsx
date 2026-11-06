@@ -8,6 +8,7 @@ import GardenZenLanding from "./GardenZenLanding";
 import BlessTowerLanding from "./BlessTowerLanding";
 import BlessDreiLanding from "./BlessDreiLanding";
 import TriventoLanding from "./TriventoLanding";
+import BetonBrutLanding from "./BetonBrutLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -28,6 +29,20 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isTrivento) {
     return <TriventoLanding property={property} onClose={onClose} />;
+  }
+
+  const betonTitle = `${property.title || ""} ${property.complejoNombre || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  const isBetonBrut =
+    property.id === "beton-brut-ii" ||
+    Boolean(property.id && String(property.id).toLowerCase().includes("beton-brut")) ||
+    Boolean(property.id && String(property.id).toLowerCase().includes("betonbrut")) ||
+    betonTitle.includes("beton brut");
+
+  if (isBetonBrut) {
+    return <BetonBrutLanding property={property} onClose={onClose} />;
   }
 
   if (property.title?.toLowerCase().includes("ona")) {

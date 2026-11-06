@@ -97,6 +97,18 @@
       "destination": "/api/project-og?project=trivento"
     },
     {
+      "source": "/beton-brut-ii",
+      "destination": "/api/project-og?project=beton-brut-ii"
+    },
+    {
+      "source": "/beton-brut",
+      "destination": "/api/project-og?project=beton-brut-ii"
+    },
+    {
+      "source": "/betonbrut",
+      "destination": "/api/project-og?project=beton-brut-ii"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

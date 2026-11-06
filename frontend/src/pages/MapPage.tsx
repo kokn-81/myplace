@@ -941,6 +941,66 @@ export const isTriventoSlug = (value: string): boolean => {
   return q === "trivento" || q === "trivento-iv" || q === "triventoiv" || q === "trivento-4" || q.includes("trivento");
 };
 
+export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
+  id: "beton-brut-ii",
+  title: "BÉTON BRUT II · Equipetrol",
+  price: 97546,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Calle 8, Equipetrol, entre 2° y 3° anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7663,
+  lng: -63.1957,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Cuarenta departamentos de 1, 2 y 3 dormitorios en Equipetrol, calle 8, entre el 2° y el 3° anillo. Entrega en diciembre 2028. Lista de precios al 25/10/2026.",
+  amenities: ["piscina", "churrasquera", "coworking", "sauna", "seguridad"],
+  images: [
+    "/beton_brut/fachada.jpg",
+    "/beton_brut/fachada_torre.jpg",
+    "/beton_brut/lobby.jpg",
+    "/beton_brut/living.jpg",
+    "/beton_brut/social/piscina.jpg",
+    "/beton_brut/social/chef.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59175015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "BÉTON BRUT II",
+  ocupacion: "Disponible",
+  superficieM2: 57.38,
+  amoblado: false,
+  fechaEntrega: "Diciembre 2028",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  totalUnidades: 40,
+  unidadesDisponibles: 36,
+  reservaUsd: 0,
+  planesPago: "Contado USD 1.700/m² o plan 30-60 a USD 1.800/m². Parqueo USD 13.000. La lista no publica seña.",
+};
+
+const normalizeBeton = (value: string) =>
+  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+export const isBetonBrutProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeBeton(String(p.id));
+  const sTitle = normalizeBeton(String(p.title || (p as any).titulo || ""));
+  const sCmp = normalizeBeton(String(p.complejoNombre || (p as any).complejo_nombre || ""));
+  return sId === "beton-brut-ii" || sId.startsWith("beton-brut") || sId.startsWith("betonbrut") || sTitle.includes("beton brut") || sCmp.includes("beton brut");
+};
+
+export const isBetonBrutSlug = (value: string): boolean => {
+  const q = normalizeBeton(value.trim());
+  return q === "beton-brut-ii" || q === "beton-brut" || q === "betonbrut" || q === "betonbrut-ii" || q === "betonbrut2" || q.includes("beton brut") || q.includes("beton-brut");
+};
+
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
@@ -982,6 +1042,9 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isTriventoSlug(q)) {
     return isTriventoProperty(p);
   }
+  if (isBetonBrutSlug(q)) {
+    return isBetonBrutProperty(p);
+  }
   if (
     q.includes("domus") ||
     q.startsWith("domus-") ||
@@ -1009,7 +1072,8 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isGardenZenProperty(p) ||
     isBlessTowerProperty(p) ||
     isBlessDreiProperty(p) ||
-    isTriventoProperty(p)
+    isTriventoProperty(p) ||
+    isBetonBrutProperty(p)
   );
 };
 
@@ -1048,6 +1112,11 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   const trivento = (list && list.find((p) => String(p.id) === "trivento-iv" || isTriventoProperty(p))) || SYNTHETIC_TRIVENTO_PROPERTY;
   if (trivento && !priorityItems.some((p) => String(p.id) === String(trivento.id))) {
     priorityItems.push(trivento);
+  }
+
+  const betonBrut = (list && list.find((p) => String(p.id) === "beton-brut-ii" || isBetonBrutProperty(p))) || SYNTHETIC_BETON_BRUT_PROPERTY;
+  if (betonBrut && !priorityItems.some((p) => String(p.id) === String(betonBrut.id))) {
+    priorityItems.push(betonBrut);
   }
 
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
@@ -1094,7 +1163,8 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
     isGardenZenProperty(p) ||
     isBlessTowerProperty(p) ||
     isBlessDreiProperty(p) ||
-    isTriventoProperty(p)
+    isTriventoProperty(p) ||
+    isBetonBrutProperty(p)
   )
     return true;
   return (
@@ -1398,6 +1468,7 @@ export default function MapPage() {
       const isBT = isBlessTowerProperty(property);
       const isBD = isBlessDreiProperty(property);
       const isTrivento = isTriventoProperty(property);
+      const isBeton = isBetonBrutProperty(property);
       const pathname = window.location.pathname.toLowerCase();
 
       if (isOna) {
@@ -1423,6 +1494,10 @@ export default function MapPage() {
       } else if (isTrivento) {
         if (!options?.skipHistoryPush && !pathname.startsWith("/trivento")) {
           window.history.pushState({ modal: "trivento-iv", propertyId: property.id }, "", "/trivento");
+        }
+      } else if (isBeton) {
+        if (!options?.skipHistoryPush && !pathname.startsWith("/beton-brut") && !pathname.startsWith("/betonbrut")) {
+          window.history.pushState({ modal: "beton-brut-ii", propertyId: property.id }, "", "/beton-brut-ii");
         }
       } else if (isDom) {
         const domId = String(property.id).toLowerCase();
@@ -1482,6 +1557,7 @@ export default function MapPage() {
     const isBTPath = pathname.startsWith("/bless-tower") || pathname.startsWith("/blesstower");
     const isBDPath = pathname.startsWith("/bless-drei") || pathname.startsWith("/blessdrei");
     const isTriventoPath = pathname.startsWith("/trivento");
+    const isBetonPath = pathname.startsWith("/beton-brut") || pathname.startsWith("/betonbrut");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1506,6 +1582,8 @@ export default function MapPage() {
         ? "bless-drei"
         : isTriventoPath
         ? "trivento-iv"
+        : isBetonPath
+        ? "beton-brut-ii"
         : isDomusPath
         ? domusSlug || "domus-black"
         : isZenPath
@@ -1514,6 +1592,9 @@ export default function MapPage() {
     
     if (proyecto && !selectedProperty && isTriventoSlug(proyecto)) {
       selectProperty(SYNTHETIC_TRIVENTO_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isBetonBrutSlug(proyecto)) {
+      selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -1560,6 +1641,8 @@ export default function MapPage() {
       document.title = "Bless Drei · Preventa Exclusiva en Equipetrol | N.I.A";
     } else if (selectedProperty && isTriventoProperty(selectedProperty)) {
       document.title = "Trivento IV · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isBetonBrutProperty(selectedProperty)) {
+      document.title = "Béton Brut II · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isDomusProperty(selectedProperty)) {
       document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
@@ -1586,7 +1669,8 @@ export default function MapPage() {
               isGardenZenProperty(current) ||
               isBlessTowerProperty(current) ||
               isBlessDreiProperty(current) ||
-              isTriventoProperty(current)
+              isTriventoProperty(current) ||
+              isBetonBrutProperty(current)
             ) {
               setCurrentIndex(0);
             }
@@ -1597,6 +1681,8 @@ export default function MapPage() {
         const target = properties.find((p) => isTargetProject(p, proyecto));
         if (isTriventoSlug(proyecto)) {
           selectProperty(SYNTHETIC_TRIVENTO_PROPERTY, { skipHistoryPush: true });
+        } else if (isBetonBrutSlug(proyecto)) {
+          selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
         } else if (target) {
           selectProperty(target, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
@@ -1633,7 +1719,8 @@ export default function MapPage() {
         isGardenZenProperty(target) ||
         isBlessTowerProperty(target) ||
         isBlessDreiProperty(target) ||
-        isTriventoProperty(target)
+        isTriventoProperty(target) ||
+        isBetonBrutProperty(target)
       ) {
         setCurrentIndex(0);
       }
@@ -1651,7 +1738,9 @@ export default function MapPage() {
         pathname.startsWith("/domus") ||
         pathname.startsWith("/proyecto") ||
         pathname.startsWith("/p/") ||
-        pathname.startsWith("/trivento");
+        pathname.startsWith("/trivento") ||
+        pathname.startsWith("/beton-brut") ||
+        pathname.startsWith("/betonbrut");
 
       const url = new URL(window.location.href);
       const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
@@ -4180,7 +4269,8 @@ export default function MapPage() {
           isGardenZenProperty(selectedProperty) ||
           isBlessTowerProperty(selectedProperty) ||
           isBlessDreiProperty(selectedProperty) ||
-          isTriventoProperty(selectedProperty)) ? (
+          isTriventoProperty(selectedProperty) ||
+          isBetonBrutProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div
