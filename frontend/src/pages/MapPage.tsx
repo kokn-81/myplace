@@ -53,6 +53,9 @@ import {
 const MapCanvas = lazy(() => import("../components/MapCanvas"));
 import type { BuildingGroupData } from "../components/MapCanvas";
 import ProjectLandingPage from "../components/ProjectLandingPage";
+import ProjectCardSummary from "../components/ProjectCardSummary";
+import { getProjectCardSummary } from "../projectCardSummary";
+import { ONA_DELIVERY } from "../onaInventory";
 
 const MAPBOX_TOKEN =
   process.env.VITE_MAPBOX_TOKEN ||
@@ -271,9 +274,9 @@ export const SYNTHETIC_ONA_PROPERTY: Property = {
   ocupacion: "Disponible",
   superficieM2: 32.3,
   amoblado: false,
-  fechaEntrega: "Diciembre 2026",
+  fechaEntrega: ONA_DELIVERY,
   totalUnidades: 54,
-  unidadesDisponibles: 38,
+  unidadesDisponibles: null,
   reservaUsd: 1000,
   planesPago: "Reserva USD 1.000, Contado con descuento, 40% inicial o 60% inicial",
 };
@@ -3963,6 +3966,7 @@ export default function MapPage() {
         </div>
       )}
       {visibleProperties.map((p, index) => {
+        const projectCardSummary = getProjectCardSummary(p);
         const coverUrl = p.images[0];
         const isCollection = isCloudinaryCollectionUrl(coverUrl);
         const displayOffer = selectPropertyOffer(p, searchIntent);
@@ -4038,7 +4042,10 @@ export default function MapPage() {
 
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
-
+          {projectCardSummary ? (
+            <ProjectCardSummary reference={p.id} summary={projectCardSummary} />
+          ) : (
+          <>
           <div className="mb-2 flex items-center justify-between gap-1.5 min-w-0">
             <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
               <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--accent-main)]">
@@ -4142,6 +4149,8 @@ export default function MapPage() {
               ) : null}
             </div>
           </div>
+          </>
+          )}
         </div>
         </motion.div>
       )})}
