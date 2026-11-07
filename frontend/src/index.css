@@ -122,10 +122,14 @@
     padding: 0.75rem !important;
   }
 
-  .nia-catalog-filters {
-    max-height: min(43dvh, 22rem);
-    overflow-y: auto;
-    overscroll-behavior: contain;
+  .nia-catalog-guide {
+    isolation: isolate;
+  }
+
+  .nia-catalog-options {
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
 
   .nia-project-landing {
@@ -154,9 +158,6 @@
     }
     .nia-property-carousel {
       bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
-    }
-    .nia-catalog-filters {
-      max-height: min(40dvh, calc(100dvh - 18rem));
     }
   }
 

@@ -57,7 +57,7 @@ import type { BuildingGroupData } from "../components/MapCanvas";
 import ProjectLandingPage from "../components/ProjectLandingPage";
 import ProjectCardSummary from "../components/ProjectCardSummary";
 import { getProjectCardSummary } from "../projectCardSummary";
-import CatalogFilters, { CatalogSort } from "../components/CatalogFilters";
+import CatalogFilters, { CatalogGuideStep, CatalogSort } from "../components/CatalogFilters";
 import { LocalSearchCriteria } from "../localSearch";
 import { catalogPrice, sortCatalogResults, propertyPath, propertyIdFromLocation } from "../catalogPresentation";
 import { useInventoryRevision, refreshProjectInventories } from "../projectInventory";
@@ -1292,6 +1292,7 @@ export default function MapPage() {
   const inventoryRevision = useInventoryRevision();
   const [searchCriteria, setSearchCriteria] = useState<LocalSearchCriteria>({});
   const [sortOrder, setSortOrder] = useState<CatalogSort>("recommended");
+  const [filterStep, setFilterStep] = useState<CatalogGuideStep>("category");
   useEffect(() => { void refreshProjectInventories(); }, []);
   const catalogProperties = useMemo(() => properties.map(p => {
     const summary = getProjectCardSummary(p);
@@ -1825,6 +1826,7 @@ export default function MapPage() {
   });
 
   const resetGuidedSearch = () => {
+    setFilterStep("category");
     setSearchCriteria({});
     setSortOrder("recommended");
     setSelectedBuildingGroup(null);
@@ -2098,6 +2100,7 @@ export default function MapPage() {
 
 
   const clearAiFilters = () => {
+    setFilterStep("category");
     setSearchCriteria({});
     setSortOrder("recommended");
     setAiFilteredIds(null);
@@ -2126,6 +2129,7 @@ export default function MapPage() {
     if (!trimmed) { clearAiFilters(); return; }
     hasSearchInteractionRef.current = true;
     const result = localSearchCatalog(trimmed, catalogProperties);
+    setFilterStep("results");
     setSearchCriteria(result.criteria);
     setAiFilteredIds(result.ids);
     setActiveSearchIntent(result.intent);
@@ -2905,6 +2909,7 @@ export default function MapPage() {
   };
 
   const renderCompactFilter = (_variant: "mobile" | "desktop") => <CatalogFilters
+    step={filterStep} onStep={setFilterStep}
     criteria={searchCriteria} sort={sortOrder} onSort={value => { setSortOrder(value); setCurrentIndex(0); }}
     years={deliveryYears} count={filteredProperties.length} category={guidedOperation}
     projectCount={localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(isProjectOrPreventa).length}
