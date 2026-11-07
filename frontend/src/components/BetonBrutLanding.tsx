@@ -339,13 +339,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
-      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <a href={BETON_BRUT_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9a7b45] shadow-xl" aria-label="Descargar Brochure">
-          <Download size={18} />
-        </a>
-        <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
-          {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
-        </button>
+      <div className="fixed right-4 top-4 z-[120] md:right-7 md:top-7">
         {onClose && (
           <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl" aria-label="Cerrar">
             <X size={18} />
@@ -354,31 +348,31 @@ export default function BetonBrutLanding({ onClose }: Props) {
       </div>
 
       <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
-        <div className="relative flex w-full flex-col md:min-h-0 md:flex-1">
+        <div className="relative min-h-[240px] flex-1 md:min-h-0">
           <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
-          <div className="relative h-[280px] w-full md:h-auto md:min-h-0 md:flex-1">
+          <div className="relative h-[300px] w-full md:absolute md:inset-0 md:h-auto">
             <img src="/beton_brut/fachada-completa.jpg" alt="Fachada completa de Béton Brut II" className="absolute inset-0 h-full w-full object-contain object-center" />
           </div>
         </div>
-        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-10 md:pb-8">
-          <img src="/beton_brut/logo-blanco.png" alt="Béton Brut II" className="mb-3 h-10 w-auto" />
+        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
+          <img src="/beton_brut/logo-blanco.png" alt="Béton Brut II" className="mb-3 h-10 w-auto md:mb-2 md:h-8" />
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
             <Sparkles size={12} />
             Preventa · 40 departamentos · Equipetrol
           </span>
-          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white sm:text-5xl md:text-6xl">Béton Brut II</h1>
+          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2 md:text-4xl">Béton Brut II</h1>
           <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">Calle 8 · Equipetrol, entre 2° y 3° anillo</p>
-          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3">
+          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
             <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
               <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BETON_BRUT_CONFIG.delivery}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-stone-400">Lista de precios</p>
-              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BETON_BRUT_CONFIG.priceListLabel}</p>
+              <p className="text-[10px] uppercase tracking-wider text-stone-400">Colaborador</p>
+              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">Beton Fortia S.R.L.</p>
             </div>
           </div>
-          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md">
+          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md md:hidden">
             <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
               <span className="font-semibold text-[#e8d5a8]">Contado, lista oficial</span>
               <span>{freeCount} libres de {BETON_UNITS.length}</span>
@@ -401,7 +395,8 @@ export default function BetonBrutLanding({ onClose }: Props) {
                 Hormigón, metal y vidrio
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
-                Cuarenta departamentos. <span className="font-normal italic">Nada más.</span>
+                Vive en Béton Brut II.
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Cuarenta departamentos. Nada más.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
                 Béton Brut II está en Equipetrol, sobre la calle 8, entre el 2° y el 3° anillo. El edificio muestra el hormigón, el metal y el vidrio tal como son. Hay departamentos de 1, 2 y 3 dormitorios. La entrega publicada es diciembre de 2028.
@@ -493,6 +488,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{currentModel.name}</p>
                   <h4 className="font-serif text-xl text-stone-900">{formatBetonM2(currentModel.areaM2)} m²</h4>
                   <p className="text-xs text-stone-500">{currentModel.where}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-stone-600">{currentModel.detail}</p>
                 </div>
                 <p className="pt-1 text-[11px] text-stone-400">{slideIndex + 1}/{slides.length}</p>
               </div>
@@ -507,8 +503,8 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   touchX.current = null;
                 }}
               >
-                <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex min-h-[320px] w-full cursor-zoom-in items-center justify-center px-6 py-6" aria-label={`Ver ficha de ${currentModel.name}`}>
-                  <img src={currentModel.preview} alt={`${currentModel.name}, solo el departamento`} className="mx-auto max-h-[460px] w-auto max-w-full object-contain" />
+                <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex w-full cursor-zoom-in items-center justify-center px-4 py-4" aria-label={`Ver ficha de ${currentModel.name}`}>
+                  <img src={currentModel.preview} alt={`${currentModel.name}, solo el departamento`} className="mx-auto h-auto max-h-[min(420px,calc(100dvh-520px))] w-full object-contain" />
                 </button>
                 {slides.length > 1 && (
                   <>
@@ -517,11 +513,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   </>
                 )}
               </div>
-              <div className="space-y-1 border-t border-stone-100 px-4 py-3 text-center">
-                <p className="text-xs text-stone-600">{currentModel.detail}</p>
-                {currentModel.areaNote ? <p className="text-[11px] text-stone-500">{currentModel.areaNote}</p> : null}
-                <p className="text-[11px] text-stone-500">Desliza para el siguiente. Toca la imagen para ver la ficha completa.</p>
-              </div>
+              {currentModel.areaNote ? <p className="border-t border-stone-100 px-4 py-3 text-center text-[11px] text-stone-500">{currentModel.areaNote}</p> : null}
             </div>
           </section>
 
@@ -586,9 +578,9 @@ export default function BetonBrutLanding({ onClose }: Props) {
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Plan 30-60</span>
-              <h4 className="mt-3 font-serif text-2xl">30% inicial · 40% contra entrega</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">30% inicial, cuotas hasta el 60% y 40% contra entrega</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">USD {formatBetonUsd(BETON_BRUT_CONFIG.planPerM2)}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">30% a la firma. Cuotas mensuales hasta completar el 60%, en un plazo de hasta 24 meses. El 40% restante se paga contra entrega, en {BETON_BRUT_CONFIG.delivery}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">30% a la firma. El siguiente 30% se paga en cuotas mensuales, hasta completar el 60%, en un plazo de hasta 24 meses. El saldo del 40% se paga contra entrega, en {BETON_BRUT_CONFIG.delivery}.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
               <p>Parqueo vehicular: USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingCarUsd)}. Parqueo de moto: USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingMotoUsd)}. Son adicionales y no entran en el precio por metro.</p>
@@ -629,6 +621,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{slideIndex + 1} / {slides.length}</p>
                     <p className="font-serif text-lg text-stone-900">{currentModel.name}</p>
                     <p className="text-xs text-stone-500">{formatBetonM2(currentModel.areaM2)} m² · {currentModel.where}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-stone-600">{currentModel.detail}</p>
                     <p className="mt-1 text-sm font-semibold text-[#9a7b45]">
                       {(() => {
                         const freeUnits = unitsForModel(currentModel.id).filter((unit) => unit.precioContado != null);
@@ -643,9 +636,9 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   </button>
                 </div>
                 <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex w-full cursor-zoom-in items-center justify-center bg-[#f7f5f0] px-4 py-4" aria-label={`Ver ficha de ${currentModel.name}`}>
-                  <img src={currentModel.preview} alt={`${currentModel.name}, el departamento`} className="mx-auto max-h-[280px] w-auto max-w-full object-contain" />
+                  <img src={currentModel.preview} alt={`${currentModel.name}, el departamento`} className="mx-auto h-auto max-h-[min(280px,32vh)] w-full object-contain" />
                 </button>
-                <p className="px-4 py-3 text-center text-xs text-stone-600">{currentModel.detail}</p>
+
               </div>
             </div>
 
@@ -749,12 +742,12 @@ export default function BetonBrutLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Da el paso y conversemos tu unidad.</h3>
-            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600 [text-align:justify]">
-              {soldCount} de {BETON_UNITS.length} unidades figuran vendidas al {BETON_BRUT_CONFIG.priceListLabel}. Quedan {freeCount}, desde USD {formatBetonUsd(fromAny)} al contado, con entrega en {BETON_BRUT_CONFIG.delivery}. La seña no está publicada: el asesor la confirma en la conversación.
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Si tienes dudas, conversemos.</h3>
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
+              Mándame un mensaje y conversamos. Te asesoro y te ayudo a reservar tu departamento.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Escribir y reservar mi unidad <ArrowRight size={14} />
+              Escribir y reservar mi departamento <ArrowRight size={14} />
             </button>
           </section>
         </div>
@@ -766,12 +759,16 @@ export default function BetonBrutLanding({ onClose }: Props) {
             <p className="text-xs text-stone-700">Desde USD {formatBetonUsd(fromAny)} · {BETON_BRUT_CONFIG.delivery}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">La lista no publica una seña</p>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <button type="button" onClick={handleShare} className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-wider">
+          <div className="flex shrink-0 items-center gap-1.5">
+            <a href={BETON_BRUT_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-800">
+              <Download size={14} className="text-[#9a7b45]" />
+              Brochure
+            </a>
+            <button type="button" onClick={handleShare} className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider">
               {shareFeedback ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
-              Compartir
+              <span className="hidden sm:inline">Compartir</span>
             </button>
-            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-lg bg-[#1C1917] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
+            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-lg bg-[#1C1917] px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
               Elegir unidad
             </button>
           </div>

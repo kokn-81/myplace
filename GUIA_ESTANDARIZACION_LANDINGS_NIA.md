@@ -1,5 +1,5 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.5
+**Versión:** 1.6
 
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
@@ -15,8 +15,8 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 3. **Hero fijo.** La foto de fachada no cambia con el scroll. La foto de ubicación vive dentro de `#lugar`.
 4. **Contenido del panel derecho** centrado en `max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`, con `pb-32 md:pb-44`. Cada sección después de `#intro` abre con `mt-20 border-t border-stone-200/80 pt-10`.
 5. **Orden fijo:** `#intro`, `#lugar`, `#amenidades`, `#tipologias`, `#equipamiento`, `#constructora`, `#pago`, `#disponibilidad`, `#cierre`.
-6. **Tres controles superiores** circulares blancos, a la derecha: brochure, compartir y cerrar.
-7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Reserva con USD {monto del proyecto}” y botón Compartir. Se oculta en `#cierre`. El monto es el de ese proyecto.
+6. **Un solo control superior:** el círculo blanco de cerrar (X), a la derecha. Brochure, compartir y elegir unidad no van arriba: viven en la barra inferior.
+7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Desde USD {precio} · {entrega}”, más Brochure, Compartir y Elegir unidad. Se oculta en `#cierre`. Si no hay seña publicada, no se inventa un monto de reserva.
 8. **Menú de secciones** circular negro, icono `#e8d5a8`, en `bottom-20 right-4`. El ítem activo usa fondo `#9a7b45/15` y texto `#816127`.
 9. **Sin Insights.** Ninguna landing incluye un botón ni un modal de Insights o modo asesor.
 10. **El botón de reserva** es `bg-stone-900` y en hover `#9a7b45`.
@@ -37,8 +37,11 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 25. **Código de unidad.** Si el código es piso + letra (1D, 2D, 3D), el botón de piso dice “Unidad 1D”. Suelto, 1D, 2D y 3D se leen como dormitorios.
 26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual. La página habla del proyecto.
 27. **Paso 1 (tipología).** Si hay varias plantas, no se listan en una grilla que alarga la página. Van en un carrusel: flechas y deslizamiento. Debajo del modelo activo se ve la foto del departamento, y cambia al pasar al siguiente. El clic en esa foto abre la ficha. El filtro de dormitorios puede quedar arriba, en una sola fila.
-28. **Títulos.** Cada sección habla al comprador: deseo, decisión o lugar. No describen el documento (“el brochure los presenta”, “los dos publicados”, “la lista dice qué queda”). Sin signos de exclamación y sin una oferta que el material no publica.
-29. **Fachada completa.** La portada y la foto de la ficha muestran el edificio entero, de la cubierta a la planta baja. No se usa un recorte de la calle que corte los pisos de arriba. Si el marco es más angosto que la foto, la imagen va en `object-contain` para que no se recorte el volumen.
+28. **Títulos.** Cada sección habla al comprador: deseo, decisión o lugar. No describen el documento (“el brochure los presenta”, “los dos publicados”, “la lista dice qué queda”). Sin signos de exclamación y sin una oferta que el material no publica. El título de la portada no entra aquí: siempre es “Vive en [nombre del edificio].”
+29. **Fachada completa.** La portada y la foto de la ficha muestran el edificio entero, de la cubierta a la planta baja. No se usa un recorte de la calle que corte los pisos de arriba. Si el marco es más angosto que la foto, la imagen va en `object-contain` para que no se recorte el volumen. En escritorio la fachada ocupa el alto libre de la columna: el bloque de datos no la reduce a una estampa.
+30. **Ficha del hero.** Al lado de Entrega va el colaborador o la constructora, no una caja de “lista de precios”. Si el brochure dice colaboradores, se pone el primero de esa lista.
+31. **Plan en cuotas.** El título nombra las tres partes publicadas: inicial, cuotas hasta el porcentaje del plan, y saldo contra entrega. No se deja fuera el tramo de cuotas.
+32. **Planta del departamento.** La vista de tipologías y la del paso 1 muestran la distribución completa, escalada para caber en la tarjeta (`object-contain`, alto máximo en vh). No se recorta el departamento.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 
@@ -326,7 +329,7 @@ Las landings ofrecen brochure, compartir y cerrar. No incluyen Insights ni un mo
 
 Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 
-- [ ] ¿Los botones superiores son exactamente 3 iconos circulares (brochure, compartir y cerrar), sin etiquetas de texto?
+- [ ] ¿Arriba solo queda el círculo de cerrar, y Brochure, Compartir y Elegir unidad están en la barra inferior?
 - [ ] ¿El botón "Inicio" de la barra de navegación se desplaza al `#intro` sin recargar la página ni cerrar la landing?
 - [ ] ¿El botón flotante de secciones es circular y solo muestra el icono (`Menu`/`X`), sin texto?
 - [ ] ¿El panel derecho en escritorio utiliza anchos amplios (`md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`) sin comprimir tarjetas a 3 columnas?
