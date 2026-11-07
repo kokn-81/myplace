@@ -268,7 +268,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
     fetchBlessTowerLiveUnits().then((res) => {
       if (res && res.length > 0) {
         setUnits(res);
-        setLastPriceUpdateText("Sincronizado en vivo");
+        setLastPriceUpdateText("Sincronizado");
       }
     });
   }, []);
@@ -552,7 +552,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const currentTypology = TYPOLOGIES_DATA.find((t) => t.id === selectedTypologyId) || TYPOLOGIES_DATA[0];
 
   return (
-    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f8f4ef] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
       {/* ========================================================
           1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
           ======================================================== */}
@@ -562,7 +562,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           href={BLESS_TOWER_CONFIG.brochurePdfUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#9a7b45] hover:bg-stone-50 transition-all hover:scale-105"
+          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#c17a42] hover:bg-stone-50 transition-all hover:scale-105"
           title="Descargar Brochure Oficial en PDF"
           aria-label="Descargar Brochure"
         >
@@ -593,77 +593,44 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
       {/* ========================================================
           2. PANEL IZQUIERDO: ESCENOGRAFÍA DINÁMICA (44% Desktop)
           ======================================================== */}
-      <div className="relative min-h-[480px] shrink-0 bg-stone-950 md:h-screen md:min-h-0 md:w-[44%]">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key="/bless_tower/fachada_principal.jpg"
-            src="/bless_tower/fachada_principal.jpg"
-            alt="Bless Tower"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="absolute inset-0 w-full h-full object-cover brightness-[0.82]"
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/30 pointer-events-none" />
-
-        <div className="absolute bottom-6 left-6 right-6 z-10 text-white md:bottom-8 md:left-8 md:right-8 lg:bottom-10 lg:left-10 lg:right-10">
-        <div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-[#9a7b45]/15 text-[#e8d5a8] border border-[#e8d5a8]/40 backdrop-blur-md">
+      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#f8e6d4] md:h-screen md:w-[44%]">
+        <div className="relative min-h-0 flex-1">
+          <img src="/bless_tower/fachada_principal.jpg" alt="Fachada completa de Bless Tower" className="absolute inset-0 h-full w-full object-contain object-center" />
+        </div>
+        <div className="relative z-10 shrink-0 bg-[#f8e6d4] px-5 pb-3.5 pt-3 text-stone-900 md:px-8 md:pb-5 md:pt-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#c17a42]/35 bg-white/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#8e4e24] md:px-3 md:py-1 md:text-[11px]">
             <Sparkles size={12} />
-            Preventa Exclusiva · 30 Niveles · {BLESS_TOWER_CONFIG.zone}
+            Preventa · 30 niveles · {BLESS_TOWER_CONFIG.zone}
           </span>
-          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white sm:text-5xl md:text-6xl">
-            Bless Tower
-          </h1>
-          <p className="text-stone-300 text-xs md:text-sm mt-1 max-w-sm">
-            Av. Cristo Redentor entre 2° y 3° Anillo · Santa Cruz de la Sierra
-          </p>
-        </div>
-
-        <div className="mt-4 space-y-3">
-          <div className="grid grid-cols-2 gap-3 max-w-sm">
-            <div className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/10">
-              <p className="text-[10px] text-stone-400 uppercase tracking-wider">Constructora</p>
-              <p className="text-xs md:text-sm font-semibold text-white mt-0.5 flex items-center gap-1">
-                <Building2 size={13} className="text-[#9a7b45]" />
-                {BLESS_TOWER_CONFIG.builder}
-              </p>
+          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#1C1917] md:mt-2 md:text-4xl">Bless Tower</h1>
+          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-600 md:text-sm">Av. Cristo Redentor entre 2° y 3° Anillo · Santa Cruz de la Sierra</p>
+          <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
+            <div className="rounded-xl border border-[#ebd3c0] bg-white/80 p-2 md:p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-500">Entrega</p>
+              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{BLESS_TOWER_CONFIG.delivery}</p>
             </div>
-            <div className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/10">
-              <p className="text-[10px] text-stone-400 uppercase tracking-wider">Entrega</p>
-              <p className="text-xs md:text-sm font-semibold text-white mt-0.5">
-                {BLESS_TOWER_CONFIG.delivery}
-              </p>
+            <div className="rounded-xl border border-[#ebd3c0] bg-white/80 p-2 md:p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-500">Constructora</p>
+              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{BLESS_TOWER_CONFIG.builder}</p>
             </div>
           </div>
-
-          {/* Tarjeta inferior de precios dinámicos */}
-          <div className="p-4 rounded-xl bg-black/55 backdrop-blur-md border border-white/15 max-w-sm">
-            <div className="flex items-center justify-between text-[11px] text-stone-300 pb-2 border-b border-white/10">
-              <span className="font-semibold text-[#e8d5a8]">Precios al contado</span>
-              <span className="inline-flex items-center gap-1 text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Disponibilidad
-              </span>
-            </div>
-            <div className="mt-2.5 space-y-1.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-stone-300">Monoambiente (28 a 38 m²):</span>
-                <span className="font-serif font-bold text-white">{startingPrice(minPriceMono)}</span>
+          <div className="mt-2 max-w-sm rounded-xl border border-[#ebd3c0] bg-white/80 p-2.5 md:hidden">
+            <p className="border-b border-[#ebd3c0] pb-1.5 text-[10px] font-semibold text-[#8e4e24]">Precios al contado</p>
+            <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
+              <div>
+                <p className="text-[10px] text-stone-500">Monoambiente</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPriceMono).replace("Desde ", "")}</p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-stone-300">1 Dormitorio (41 a 63 m²):</span>
-                <span className="font-serif font-bold text-white">{startingPrice(minPrice1Dorm)}</span>
+              <div>
+                <p className="text-[10px] text-stone-500">1 dormitorio</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPrice1Dorm).replace("Desde ", "")}</p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-stone-300">2 Dormitorios (76 a 87 m²):</span>
-                <span className="font-serif font-bold text-white">{startingPrice(minPrice2Dorms)}</span>
+              <div>
+                <p className="text-[10px] text-stone-500">2 dormitorios</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPrice2Dorms).replace("Desde ", "")}</p>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
 
@@ -680,7 +647,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="intro" className="scroll-mt-6 space-y-6">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#c17a42]">
               <Sparkles size={13} />
               Tu vida, con otra perspectiva
             </span>
@@ -720,7 +687,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               rel="noopener noreferrer"
               className="px-5 py-3 rounded-xl bg-white text-stone-800 border border-stone-200 text-xs font-semibold uppercase tracking-wider hover:bg-stone-50 transition-all flex items-center gap-2"
             >
-              <Download size={15} className="text-[#9a7b45]" />
+              <Download size={15} className="text-[#c17a42]" />
               Descargar Brochure PDF
             </a>
           </div>
@@ -744,7 +711,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               <button onClick={() => scrollToSection("equipamiento")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Equipamiento</button>
               <button onClick={() => scrollToSection("constructora")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Constructora</button>
               <button onClick={() => scrollToSection("pago")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Formas de Pago</button>
-              <button onClick={() => scrollToSection("disponibilidad")} className="px-3 py-1.5 rounded-lg bg-[#9a7b45] text-white font-semibold hover:bg-[#816127] transition-all">Disponibilidad en Vivo</button>
+              <button onClick={() => scrollToSection("disponibilidad")} className="px-3 py-1.5 rounded-lg bg-[#c17a42] text-white font-semibold hover:bg-[#8e4e24] transition-all">Disponibilidad en Vivo</button>
             </div>
           </div>
         </section>
@@ -754,7 +721,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <MapPin size={13} />
               Ubicación Privilegiada
             </span>
@@ -791,7 +758,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               href="https://maps.google.com/?q=-17.7665,-63.1785"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#9a7b45] hover:text-[#816127] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#c17a42] hover:text-[#8e4e24] transition-colors"
             >
               <MapPin size={14} />
               Ver Ubicación en Google Maps
@@ -805,7 +772,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <Sparkles size={13} />
               Áreas Sociales & Bienestar
             </span>
@@ -827,7 +794,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
               <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 space-y-1.5">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#e8d5a8]">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#f3d2b0]">
                   {AMENITY_SLIDES[amenityIndex].category}
                 </span>
                 <h4 className="font-serif text-xl md:text-2xl font-normal text-white">
@@ -860,7 +827,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 <button
                   key={i}
                   onClick={() => setAmenityIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#9a7b45]" : "w-1.5 bg-stone-700"}`}
+                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#c17a42]" : "w-1.5 bg-stone-700"}`}
                   aria-label={`Slide ${i + 1}`}
                 />
               ))}
@@ -873,7 +840,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="tipologias" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <Layers size={13} />
               Tipologías Residenciales
             </span>
@@ -895,18 +862,18 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   onClick={() => setSelectedTypologyId(t.id)}
                   className={`p-4 rounded-xl cursor-pointer transition-all border ${
                     isSelected
-                      ? "bg-white border-[#9a7b45] shadow-md ring-1 ring-[#9a7b45]"
+                      ? "bg-white border-[#c17a42] shadow-md ring-1 ring-[#c17a42]"
                       : "bg-white/80 border-stone-200 hover:border-stone-300 hover:bg-white"
                   }`}
                 >
                   <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{t.area}</p>
                   <h4 className="font-serif text-lg font-bold text-stone-900 mt-1">{t.title}</h4>
-                  <p className="text-xs text-[#9a7b45] font-semibold mt-1">
+                  <p className="text-xs text-[#c17a42] font-semibold mt-1">
                     {startingPrice(t.id === "mono" ? minPriceMono : t.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
                   </p>
                   <p className="text-[11px] text-stone-500 mt-2 line-clamp-2">{t.tagline}</p>
                   <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] font-semibold">
-                    <span className={isSelected ? "text-[#9a7b45]" : "text-stone-400"}>
+                    <span className={isSelected ? "text-[#c17a42]" : "text-stone-400"}>
                       {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
                     </span>
                   </div>
@@ -919,7 +886,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9a7b45]">Plano Arquitectónico Oficial</span>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#c17a42]">Plano Arquitectónico Oficial</span>
                 <h4 className="font-serif text-xl font-bold text-stone-900">{currentTypology.title}</h4>
                 <p className="text-xs text-stone-500">{currentTypology.area} · revisa el metraje de cada modelo</p>
               </div>
@@ -956,7 +923,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <CheckCircle2 size={13} />
               Equipamiento incluido y acabados
             </span>
@@ -985,7 +952,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               { title: "Extractor Mecánico", desc: "Ventilación de baños mediante extractor" },
             ].map((item, idx) => (
               <div key={idx} className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-xs flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#9a7b45]/10 text-[#9a7b45] text-xs font-bold font-mono">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#c17a42]/10 text-[#c17a42] text-xs font-bold font-mono">
                   {idx + 1}
                 </span>
                 <div>
@@ -1000,7 +967,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xs space-y-4">
             <div className="border-b border-stone-100 pb-3 flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45]">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#c17a42]">
                   Conoce lo que recibes
                 </span>
                 <h4 className="font-serif text-lg font-bold text-stone-900">
@@ -1014,7 +981,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs text-stone-600 font-light">
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Revestimientos &amp; Pisos
                 </strong>
                 <p>• Piso y zócalos de porcelanato.</p>
@@ -1023,7 +990,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
 
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Mesones &amp; Grifería
                 </strong>
                 <p>• Mesones de cocina en <strong>granito negro</strong> pulido.</p>
@@ -1032,7 +999,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
 
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Carpintería &amp; Muebles
                 </strong>
                 <p>• Cajonería alta en melamina con nicho de puerta de vidrio y luz LED.</p>
@@ -1042,7 +1009,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
 
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Dormitorios &amp; Roperos
                 </strong>
                 <p>• Ropero empotrado de piso a techo.</p>
@@ -1050,7 +1017,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
 
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Aberturas &amp; Aislamiento
                 </strong>
                 <p>• Puerta principal con estructura de madera reforzada.</p>
@@ -1059,7 +1026,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
 
               <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
+                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#c17a42]">
                   Revoques &amp; Pintura
                 </strong>
                 <p>• Revoque de mortero fino planchado en interior y exterior.</p>
@@ -1074,7 +1041,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <Building2 size={13} />
               Conoce a la desarrolladora
             </span>
@@ -1086,7 +1053,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 href="https://web.altavidasrl.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-[#9a7b45] font-semibold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-[#c17a42] font-semibold hover:underline"
               >
                 <span>web.altavidasrl.com</span>
                 <ExternalLink size={13} />
@@ -1099,24 +1066,24 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9a7b45]">+10 Años</p>
+              <p className="font-serif text-3xl font-bold text-[#c17a42]">+10 Años</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Experiencia inmobiliaria</p>
               <p className="text-[11px] text-stone-500 mt-1">Desarrollando proyectos desde 2014</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9a7b45]">30 Niveles</p>
+              <p className="font-serif text-3xl font-bold text-[#c17a42]">30 Niveles</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Tu vida en altura</p>
               <p className="text-[11px] text-stone-500 mt-1">Piscina y áreas sociales para disfrutar</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9a7b45]">5 ciudades</p>
+              <p className="font-serif text-3xl font-bold text-[#c17a42]">5 ciudades</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Presencia en Bolivia</p>
               <p className="text-[11px] text-stone-500 mt-1">Santa Cruz, Tarija, Potosí, Oruro y Cochabamba</p>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#fbf9f4] border border-[#e8d5a8]/80 text-xs text-stone-700 space-y-1.5">
-            <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#9a7b45]">
+          <div className="p-4 rounded-xl bg-[#fbf6f1] border border-[#f3d2b0]/80 text-xs text-stone-700 space-y-1.5">
+            <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#c17a42]">
               Antes de tomar tu decisión
             </p>
             <p className="font-light leading-relaxed [text-align:justify]">
@@ -1130,7 +1097,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             ---------------------------------------------------- */}
         <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
               <CreditCard size={13} />
               Encuentra tu forma de comprar
             </span>
@@ -1143,9 +1110,9 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           </div>
 
           {/* Banner de precio base por m2 */}
-          <div className="p-3.5 rounded-xl bg-[#fbf9f4] border border-[#e8d5a8] flex items-center justify-between text-xs">
-            <span className="text-stone-700">Precio preventa oficial en vivo:</span>
-            <span className="font-serif font-bold text-[#9a7b45] text-sm">Desde ${minCashPerM2} USD/m²</span>
+          <div className="p-3.5 rounded-xl bg-[#fbf6f1] border border-[#f3d2b0] flex items-center justify-between text-xs">
+            <span className="text-stone-700">Precio preventa oficial:</span>
+            <span className="font-serif font-bold text-[#c17a42] text-sm">Desde ${minCashPerM2} USD/m²</span>
           </div>
 
           {/* 3 Tarjetas apiladas horizontalmente a todo el ancho */}
@@ -1153,7 +1120,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             {/* Opción 1: Contado */}
             <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-lg space-y-3">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#9a7b45] text-stone-950">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#c17a42] text-stone-950">
                   Mayor Descuento · 100% Contado
                 </span>
                 <span className="text-xs text-stone-400">A la firma de contrato</span>
@@ -1162,7 +1129,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               <p className="text-xs text-stone-300">
                 Aprovecha la tarifa de contado pagando el 100% a la firma del contrato. Una opción para definir el desembolso de tu departamento desde el comienzo.
               </p>
-              <div className="pt-2 border-t border-white/10 text-xs text-[#e8d5a8]">
+              <div className="pt-2 border-t border-white/10 text-xs text-[#f3d2b0]">
                 <strong className="text-white">VENTAJA COMERCIAL:</strong> Accedes a la tarifa de contado. Compara su importe con las otras modalidades para tu unidad.
               </div>
             </div>
@@ -1219,7 +1186,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
         <section id="disponibilidad" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#c17a42] flex items-center gap-1.5">
                 <Calculator size={13} />
                 Disponibilidad en Vivo & Cotizador
               </span>
@@ -1254,13 +1221,13 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                     onClick={() => setSelectedAmbId(amb.id)}
                     className={`p-3 rounded-xl text-left transition-all border ${
                       isSelected
-                        ? "bg-white border-[#9a7b45] shadow-md ring-1 ring-[#9a7b45]"
+                        ? "bg-white border-[#c17a42] shadow-md ring-1 ring-[#c17a42]"
                         : "bg-white/80 border-stone-200 hover:border-stone-300"
                     }`}
                   >
                     <p className="text-xs font-bold text-stone-900">{amb.name}</p>
                     <p className="text-[11px] text-stone-500 mt-0.5">{amb.areaRange}</p>
-                    <p className="text-xs font-semibold text-[#9a7b45] mt-1">
+                    <p className="text-xs font-semibold text-[#c17a42] mt-1">
                       {startingPrice(amb.id === "mono" ? minPriceMono : amb.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
                     </p>
                   </button>
@@ -1329,14 +1296,14 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                     >
                       <div className="flex items-center justify-between text-xs font-bold">
                         <span>{u.codigo}</span>
-                        <span className={`text-[10px] font-semibold ${isSelected ? "text-[#e8d5a8]" : isLibre ? "text-emerald-600" : "text-stone-400"}`}>
+                        <span className={`text-[10px] font-semibold ${isSelected ? "text-[#f3d2b0]" : isLibre ? "text-emerald-600" : "text-stone-400"}`}>
                           {u.estado}
                         </span>
                       </div>
                       <p className={`text-[11px] mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
                         Modelo {u.modelo} · {u.superficieM2} m²
                       </p>
-                      <p className={`text-xs font-bold mt-1 ${isSelected ? "text-white" : "text-[#9a7b45]"}`}>
+                      <p className={`text-xs font-bold mt-1 ${isSelected ? "text-white" : "text-[#c17a42]"}`}>
                         USD {formatBlessUsd(u.precioContado)}
                       </p>
                     </button>
@@ -1350,7 +1317,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Car size={16} className="text-[#9a7b45]" />
+                <Car size={16} className="text-[#c17a42]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-stone-900">
                   Paso 3 · Opcional de Parqueo y Baulera
                 </span>
@@ -1362,7 +1329,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   onChange={(e) => setIncludeParking(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-10 h-5 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9a7b45]"></div>
+                <div className="w-10 h-5 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#c17a42]"></div>
               </label>
             </div>
 
@@ -1373,7 +1340,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   onClick={() => setParkingOption("simple")}
                   className={`p-3 rounded-lg border text-left text-xs transition-all ${
                     parkingOption === "simple"
-                      ? "border-[#9a7b45] bg-[#fbf9f4] font-semibold text-stone-900"
+                      ? "border-[#c17a42] bg-[#fbf6f1] font-semibold text-stone-900"
                       : "border-stone-200 hover:bg-stone-50 text-stone-600"
                   }`}
                 >
@@ -1385,7 +1352,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   onClick={() => setParkingOption("combo")}
                   className={`p-3 rounded-lg border text-left text-xs transition-all ${
                     parkingOption === "combo"
-                      ? "border-[#9a7b45] bg-[#fbf9f4] font-semibold text-stone-900"
+                      ? "border-[#c17a42] bg-[#fbf6f1] font-semibold text-stone-900"
                       : "border-stone-200 hover:bg-stone-50 text-stone-600"
                   }`}
                 >
@@ -1411,7 +1378,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 }`}
               >
                 <p className="text-xs font-bold">100% Contado</p>
-                <p className={`text-[11px] mt-0.5 ${paymentPlan === "contado" ? "text-[#e8d5a8]" : "text-[#9a7b45]"}`}>
+                <p className={`text-[11px] mt-0.5 ${paymentPlan === "contado" ? "text-[#f3d2b0]" : "text-[#c17a42]"}`}>
                   Tarifa más baja
                 </p>
               </button>
@@ -1448,7 +1415,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           {activeFinancials && (
             <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-xl space-y-4">
               <div className="flex items-center justify-between text-xs pb-3 border-b border-white/10">
-                <span className="font-semibold text-[#e8d5a8]">
+                <span className="font-semibold text-[#f3d2b0]">
                   Resumen · Unidad {activeUnit?.codigo} (Piso {selectedFloor}, Modelo {activeUnit?.modelo})
                 </span>
                 <span className="text-stone-400">
@@ -1534,7 +1501,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 </p>
                 <button
                   onClick={contactWhatsApp}
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md transition-all hover:bg-[#9a7b45] active:scale-95"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md transition-all hover:bg-[#c17a42] active:scale-95"
                 >
                   <MessageCircle size={16} />
                   Reservar Unidad {activeUnit?.codigo} vía WhatsApp
@@ -1560,7 +1527,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>
               <button
                 onClick={contactWhatsApp}
-                className="font-semibold text-[#9a7b45] hover:underline flex items-center gap-1"
+                className="font-semibold text-[#c17a42] hover:underline flex items-center gap-1"
               >
                 Quiero conocer mis opciones
                 <ArrowRight size={12} />
@@ -1576,12 +1543,12 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           ======================================================== */}
       {/* 4.1 Barra inferior flotante de conversión rápida */}
       {activeSection !== "cierre" && (
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f8f4ef]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
         <div>
           <p className="text-xs text-stone-600">
             Reserva con <span className="font-semibold text-stone-900">USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}</span>
           </p>
-          <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Da el primer paso hacia tu hogar</p>
+          <p className="hidden text-[10px] font-medium text-[#c17a42] sm:block">Da el primer paso hacia tu hogar</p>
         </div>
         <button
           onClick={handleShare}
@@ -1602,7 +1569,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           title="Menú de Secciones"
           aria-label="Secciones"
         >
-          {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
+          {showSectionMenu ? <X size={18} className="text-[#f3d2b0]" /> : <Menu size={18} className="text-[#f3d2b0]" />}
         </button>
 
         <AnimatePresence>
@@ -1637,7 +1604,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                     onClick={() => scrollToSection(sec.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors ${
                       activeSection === sec.id
-                        ? "bg-[#9a7b45] text-white font-semibold"
+                        ? "bg-[#c17a42] text-white font-semibold"
                         : "text-stone-700 hover:bg-stone-100"
                     }`}
                   >
