@@ -122,6 +122,53 @@
     padding: 0.75rem !important;
   }
 
+  .nia-catalog-filters {
+    max-height: min(43dvh, 22rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .nia-project-landing {
+    width: 100%;
+    max-width: 100vw;
+    height: 100dvh;
+  }
+
+  @media (max-width: 1023px) {
+    .nia-project-landing {
+      display: block !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+    .nia-project-landing > [class*="md:h-screen"] {
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow-y: visible !important;
+    }
+    .nia-project-landing > [class*="md:h-screen"]:not([class*="flex-1"]) {
+      min-height: 34rem;
+    }
+    .nia-project-landing > [class*="md:h-screen"]:last-of-type {
+      min-height: 0;
+    }
+    .nia-property-carousel {
+      bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+    }
+    .nia-catalog-filters {
+      max-height: min(40dvh, calc(100dvh - 18rem));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .nia-project-landing .grid[class*="grid-cols-"] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nia-property-card {
+      max-width: calc(100vw - 2rem) !important;
+    }
+  }
+
   @media (max-width: 640px) and (orientation: portrait) {
     .nia-project-card .nia-property-card-media {
       width: 35% !important;

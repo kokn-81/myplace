@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isProjectOrPreventa } from "./pages/MapPage";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isProjectOrPreventa } from "./projectIdentity";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
 

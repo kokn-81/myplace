@@ -480,18 +480,9 @@ function MapCanvas({
       if (!map || !supercluster) return;
 
       try {
-        const leaves = supercluster.getLeaves(clusterId, 1);
-        if (leaves.length > 0 && leaves[0].properties?.topProperty) {
-          onSelectProperty(leaves[0].properties.topProperty);
-        }
-      } catch {
-        // ignore
-      }
-
-      try {
         const expansionZoom = supercluster.getClusterExpansionZoom(clusterId);
         const currentZoom = map.getZoom();
-        const nextZoom = Math.min(Math.max(currentZoom + 1.8, expansionZoom), 16.5);
+        const nextZoom = Math.min(Math.max(currentZoom + 1.8, expansionZoom), 20);
         map.easeTo({
           center: [lng, lat],
           zoom: nextZoom,
@@ -509,7 +500,7 @@ function MapCanvas({
         });
       }
     },
-    [supercluster, onSelectProperty]
+    [supercluster]
   );
 
   const renderedMarkers = useMemo(() => {

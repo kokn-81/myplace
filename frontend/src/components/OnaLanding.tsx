@@ -1,3 +1,4 @@
+import { useInventory, onaInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -363,7 +364,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [amenityIndex, setAmenityIndex] = useState(0);
-  const [units, setUnits] = useState<OnaUnit[]>(ONA_UNITS);
+  const [units, setUnits] = useInventory(onaInventory);
   const [rooms, setRooms] = useState<OnaRooms>("1");
   const [modelIndex, setModelIndex] = useState(0);
   const [selectedModelId, setSelectedModelId] = useState(ONA_MODELS[0].id);
@@ -382,7 +383,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const soldCount = units.filter((unit) => unit.status === "vendido").length;
   const reservedCount = units.filter((unit) => unit.status === "reservado").length;
   const freeCount = availableUnits.length;
-  const ratePool = availableUnits.length > 0 ? availableUnits : units;
+  const ratePool = availableUnits;
   const minCashPerM2 = ratePool.length ? Math.min(...ratePool.map((unit) => unit.cashPerM2)) : null;
   const minPlan60PerM2 = ratePool.length ? Math.min(...ratePool.map((unit) => unit.plan60.perM2)) : null;
   const minPlan40PerM2 = ratePool.length ? Math.min(...ratePool.map((unit) => unit.plan40.perM2)) : null;
@@ -427,7 +428,7 @@ export default function OnaLanding({ property, onClose }: Props) {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible?.target?.id) setActiveSection(visible.target.id);
       },
-      { root: window.matchMedia("(min-width: 768px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
+      { root: window.matchMedia("(min-width: 1024px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
     );
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
@@ -584,7 +585,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const mapsQuery = `${property.lat || -17.763513},${property.lng || -63.177111}`;
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
           {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
@@ -614,7 +615,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{ONA_DELIVERY}</p>
             </div>
             <div className="rounded-xl border border-[#e6dcc4] bg-white/80 p-2 md:p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-500">Colaborador</p>
+              <p className="text-[10px] uppercase tracking-wider text-stone-500">Constructora</p>
               <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{ONA_BUILDER}</p>
             </div>
           </div>
@@ -848,7 +849,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Mayor descuento</span>
               <h4 className="mt-3 font-serif text-2xl">Pago al contado (100%)</h4>
               {minCashPerM2 != null && <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">Desde USD {formatOnaUsd(minCashPerM2)}/m²</p>}
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">Accedes al valor por m² más bajo de todo el proyecto. Ahorras respecto a los planes diferidos y congelas ese precio hasta la entrega en {ONA_DELIVERY}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">El valor varía según la unidad y la vista. Elige tu departamento en el cotizador para conocer su tarifa exacta y comparar las modalidades de pago.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Equilibrio financiero</span>
@@ -1022,7 +1023,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       </div>
 
       {activeSection !== "cierre" && (
-        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
           <div>
             <p className="text-xs text-stone-700">{fromAny == null ? ONA_DELIVERY : `Desde USD ${formatOnaUsd(fromAny)} · ${ONA_DELIVERY}`}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva USD {formatOnaUsd(ONA_RESERVE_USD)}</p>

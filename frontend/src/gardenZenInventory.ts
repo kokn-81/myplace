@@ -344,14 +344,14 @@ export const GARDEN_ZEN_BASELINE_UNITS: GardenZenUnit[] = [
     "roomsLabel": "1 Dormitorio",
     "areaM2": 58.57,
     "status": "vendido",
-    "cashTotal": 97000,
-    "initial70Total": 99000,
-    "initial30Total": 102000,
-    "cashPerM2": 1656,
-    "initial70PerM2": 1690,
-    "initial30PerM2": 1742,
-    "cuotaInicial30": 30600,
-    "cuotaInicial70": 69300,
+    "cashTotal": 83462,
+    "initial70Total": 84927,
+    "initial30Total": 87855,
+    "cashPerM2": 1425,
+    "initial70PerM2": 1450,
+    "initial30PerM2": 1500,
+    "cuotaInicial30": 26357,
+    "cuotaInicial70": 59449,
     "planoUrl": "/garden_zen/plano_1dorm_b1.jpg"
   },
   {
@@ -816,26 +816,6 @@ export const GARDEN_ZEN_BASELINE_UNITS: GardenZenUnit[] = [
   },
   {
     "projectId": "garden-zen",
-    "floor": 2,
-    "floorLabel": "Piso 2",
-    "unitNumber": "204",
-    "modelo": "B1",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 58.57,
-    "status": "vendido",
-    "cashTotal": 83462,
-    "initial70Total": 84927,
-    "initial30Total": 87855,
-    "cashPerM2": 1425,
-    "initial70PerM2": 1450,
-    "initial30PerM2": 1500,
-    "cuotaInicial30": 26357,
-    "cuotaInicial70": 59449,
-    "planoUrl": "/garden_zen/plano_1dorm_b1.jpg"
-  },
-  {
-    "projectId": "garden-zen",
     "floor": 5,
     "floorLabel": "Piso 5",
     "unitNumber": "504",
@@ -963,7 +943,7 @@ export const GARDEN_ZEN_BASELINE_UNITS: GardenZenUnit[] = [
     "rooms": 1,
     "roomsLabel": "1 Dormitorio",
     "areaM2": 46.98,
-    "status": "disponible",
+    "status": "vendido",
     "cashTotal": 69127,
     "initial70Total": 70989,
     "initial30Total": 74714,
@@ -1493,6 +1473,26 @@ export const GARDEN_ZEN_BASELINE_UNITS: GardenZenUnit[] = [
     "cuotaInicial30": 19320,
     "cuotaInicial70": 42873,
     "planoUrl": "/garden_zen/plano_mono_m1.jpg"
+  },
+  {
+    "projectId": "garden-zen",
+    "floor": 11,
+    "floorLabel": "Piso 11",
+    "unitNumber": "1206",
+    "modelo": "M1",
+    "rooms": 0,
+    "roomsLabel": "Monoambiente",
+    "areaM2": 40.48,
+    "status": "disponible",
+    "cashTotal": 59600,
+    "initial70Total": 61247,
+    "initial30Total": 64399,
+    "cashPerM2": 1472,
+    "initial70PerM2": 1513,
+    "initial30PerM2": 1591,
+    "cuotaInicial30": 19320,
+    "cuotaInicial70": 42873,
+    "planoUrl": "/garden_zen/plano_mono_m1.jpg"
   }
 ];
 
@@ -1526,7 +1526,7 @@ export function parseGardenZenLiveCsv(csvText: string): GardenZenUnit[] {
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {
     const cells = splitCsvLine(lines[i]);
-    if (cells.some((c) => c.toLowerCase().includes("tipo") || c.toLowerCase().includes("modelo") || c.toLowerCase().includes("nro"))) {
+    if (cells.some((c) => c.trim().toLowerCase() === "modelo") && cells.some((c) => c.trim().toLowerCase().startsWith("nro"))) {
       headerIdx = i;
       break;
     }
@@ -1542,6 +1542,8 @@ export function parseGardenZenLiveCsv(csvText: string): GardenZenUnit[] {
     const unitNumber = (r[2] || "").trim();
     const floor = parseInt(r[3], 10) || 0;
     const areaM2 = parseFloat(r[4]) || 0;
+    // Never interpret headings, exchange-rate notes or other tables as apartments.
+    if (!/^\d{3,4}$/.test(unitNumber) || floor < 1 || areaM2 <= 0) continue;
 
     let price30 = 0;
     let price70 = 0;

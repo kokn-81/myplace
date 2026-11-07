@@ -31,15 +31,28 @@ test("Garden Zen floor plans and typologies are mapped properly", () => {
   const dorms2 = GARDEN_ZEN_BASELINE_UNITS.filter((u) => u.rooms === 2);
   const dorms3 = GARDEN_ZEN_BASELINE_UNITS.filter((u) => u.rooms === 3);
 
-  assert.equal(monos.length, 22);
-  assert.equal(dorms1.length, 29);
+  assert.equal(monos.length, 23);
+  assert.equal(dorms1.length, 28);
   assert.equal(dorms2.length, 8);
   assert.equal(dorms3.length, 2);
+  assert.equal(new Set(GARDEN_ZEN_BASELINE_UNITS.map(unit => unit.unitNumber)).size, GARDEN_ZEN_BASELINE_UNITS.length);
 
   // Check plans
   for (const u of GARDEN_ZEN_BASELINE_UNITS) {
     assert.ok(u.planoUrl.startsWith("/garden_zen/"));
   }
+});
+
+test("official exchange-rate heading cannot become an apartment or a USD 70 price", () => {
+  const csv = `GARDEN ZEN,,,,,PRECIOS OFICIAL,,,,PRECIOS USD,,
+ENTREGA MARZO 2027,,,,,Tipo de cambio Bs. 6.97,,,,9.73,,
+TIPO,MODELO,NRO.,PISO,ÁREA FÍSICA TOTAL,PRECIO 30%,PRECIO 50%,PRECIO 70%,PRECIO CONTADO,PRECIO USD 30%,PRECIO USD 70%,PRECIO USD CONTADO
+Monoambiente,MP,205,2,52.58,"$105,700","$103,100","$100,500","$97,800","$95,700","$93,600","$91,600"`;
+  const units = parseGardenZenLiveCsv(csv);
+  assert.equal(units.length, 1);
+  assert.equal(units[0].unitNumber, "205");
+  assert.equal(units[0].cashTotal, 91600);
+  assert.equal(units[0].cashPerM2, 1742);
 });
 
 test("formatGardenZenUsd formats numbers properly", () => {

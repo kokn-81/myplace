@@ -286,7 +286,7 @@ export default function TriventoLanding({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#F8F3E7] font-sans text-[#1C1917] md:flex-row md:overflow-hidden">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#F8F3E7] font-sans text-[#1C1917] md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <a href={TRIVENTO_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9A7B45] shadow-xl" aria-label="Descargar brochure" title="Descargar brochure">
           <Download size={18} />
@@ -721,7 +721,7 @@ export default function TriventoLanding({ onClose }: Props) {
             initial={{ y: 72, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 72, opacity: 0 }}
-            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#F7F5F0]/95 px-4 py-3 backdrop-blur md:left-[44%]"
+            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#F7F5F0]/95 px-4 py-3 backdrop-blur lg:left-[44%]"
           >
             <p className="truncate text-xs text-stone-700">
               Desde USD {formatTriventoUsd(minTicket)} · Entrega {TRIVENTO_CONFIG.delivery}
@@ -740,7 +740,7 @@ export default function TriventoLanding({ onClose }: Props) {
       </AnimatePresence>
 
       {showFloatingNav && (
-        <div className="fixed bottom-24 left-4 z-[115] md:left-[calc(44%+1rem)]">
+        <div className="fixed bottom-24 left-4 z-[115] lg:left-[calc(44%+1rem)]">
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-stone-900 text-[#C19A6B] shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={20} /> : <Menu size={20} />}
           </button>

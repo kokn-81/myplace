@@ -1,3 +1,4 @@
+import { useInventory, domusInventories } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -70,7 +71,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     DOMUS_PROJECTS_CONFIG[activeProjectId] || DOMUS_PROJECTS_CONFIG["domus-black"];
 
   // Units state for active project
-  const [units, setUnits] = useState<DomusUnit[]>(() => DOMUS_BASELINE_UNITS[activeProjectId] || []);
+  const [units, setUnits] = useInventory(domusInventories[activeProjectId]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
 
@@ -98,7 +99,7 @@ export default function DomusLanding({ property, onClose }: Props) {
       setActiveLabel("Fachada Principal");
       setAmenityIndex(0);
       const baseUnits = DOMUS_BASELINE_UNITS[activeProjectId] || [];
-      setUnits(baseUnits);
+      // The shared inventory keeps the card, typologies and quote in sync.
 
       // Fetch live sheet updates
       fetchDomusLiveUnits(activeProjectId).then((live) => {
@@ -340,7 +341,7 @@ export default function DomusLanding({ property, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-[#fbfaf8] text-stone-800 font-sans overflow-hidden"
+      className="nia-project-landing fixed inset-0 z-[100] flex flex-col md:flex-row bg-[#fbfaf8] text-stone-800 font-sans overflow-hidden"
     >
       {/* PANEL IZQUIERDO: Visual Editorial Interactivo (Desktop fijo / Mobile top) */}
       <div className="w-full md:w-[48%] lg:w-[50%] shrink-0 h-[42vh] md:h-screen relative overflow-hidden bg-stone-950">

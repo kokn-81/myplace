@@ -1,5 +1,6 @@
 import { Property } from "./types";
 import { normalizeGeoText } from "./geographicLocations";
+import { getProjectAvailableUnits } from "./projectInventory";
 
 export const normalizeOfferOperation = (operation?: string) => {
   const value = String(operation || "").toLowerCase();
@@ -18,6 +19,10 @@ export interface LocalSearchCriteria {
   zone?: string | null;
   city?: string | null;
   maxBudget?: number | null;
+  minBudget?: number | null;
+  budgetCurrency?: string | null;
+  deliveryYear?: string | null;
+  ring?: string | null;
   amenities?: string[];
 }
 
@@ -178,11 +183,19 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
       textForBudget = "";
     }
   }
-  const budgetMatch = textForBudget.replace(/\./g, "").match(/(?:menos de|hasta|<|maximo|max|presupuesto de)\s*(\d{2,7})\s*(\$|usd|bs|bolivianos)?/i) ||
-    textForBudget.replace(/\./g, "").match(/(\d{2,7})\s*(\$|usd|bs|bolivianos)/i);
-  if (budgetMatch && Number(budgetMatch[1]) > 50) {
-    criteria.maxBudget = Number(budgetMatch[1]);
+  const budgetText = normalizeGeoText(textForBudget).replace(/(\d)[.,](?=\d{3}(?:\D|$))/g, "$1");
+  const budgetMatch = budgetText.match(/(?:menos de|hasta|<|maximo|max|presupuesto de)\s*(?:usd|us\$|\$|bs)?\s*(\d+(?:[.,]\d+)?)\s*(mil|k|millones?)?\b/i) ||
+    budgetText.match(/(?:usd|us\$|\$|bs)\s*(\d{2,}(?:[.,]\d+)?)\s*(mil|k)?\b/i) ||
+    budgetText.match(/(\d{2,}(?:[.,]\d+)?)\s*(mil|k)?\s*(?:usd|\$|bs|bolivianos)\b/i);
+  if (budgetMatch) {
+    const multiplier = /millon/.test(budgetMatch[2] || "") ? 1000000 : /mil|k/.test(budgetMatch[2] || "") ? 1000 : 1;
+    const value = Number(budgetMatch[1].replace(",", ".")) * multiplier;
+    if (value > 50) { criteria.maxBudget = value; criteria.budgetCurrency = /\bbs\b|bolivianos/.test(budgetText) ? "Bs" : "USD"; }
   }
+  const ring = query.match(/\b([1-9])\s*(?:er|do|to|mo|vo|no|º|°)?\s*anillo\b/);
+  if (ring) criteria.ring = ring[1];
+  const delivery = query.match(/(?:entrega|entregar|terminado)\s*(?:en\s*)?(20\d{2})/);
+  if (delivery) criteria.deliveryYear = delivery[1];
 
   // 8. Amenities
   const amenities: string[] = [];
@@ -195,6 +208,7 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
   // 9. Free-text & Building Keywords
   // Strip recognized tokens and gather remaining words
   let leftover = query;
+  leftover = leftover.replace(/\b[1-9]\s*(?:er|do|to|mo|vo|no|º|°)?\s*anillo\b/g, " ").replace(/\b(entrega|entregar|terminado)\s*(?:en\s*)?20\d{2}/g, " ");
   if (criteria.referenceId) {
     leftover = leftover.replace(/(?:#\s*ref(?:erencia)?\.?|ref(?:erencia)?\.?|#|id)\s*[:#.]*\s*[a-z0-9_-]+/gi, " ");
     leftover = leftover.replace(new RegExp(`\\b${criteria.referenceId}\\b`, "gi"), " ");
@@ -203,7 +217,7 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
     .replace(/\b(anticretico|anticreticos|anticretica|anticresis|alquiler|alquilar|alquilo|renta|rent|venta|vender|comprar|compro|compra|inversion|invertir|preventa)\b/gi, " ")
     .replace(/\b(departamento|departamentos|depa|depas|depto|deptos|monoambiente|monoambientes|studio|studios|suite|suites|casa|casas|chalet|chalets|vivienda|viviendas|terreno|terrenos|lote|lotes|comercial|comerciales|oficina|oficinas|local|locales|galpon|galpones)\b/gi, " ")
     .replace(/\b(\d+\s*dorms?|\d+\s*dormitorios?|\d+\s*hab(?:itacion(?:es)?)?|un\s*dormitorio|dos\s*dormitorios|tres\s*dormitorios|cuatro\s*dormitorios)\b/gi, " ")
-    .replace(/\b(menos de|hasta|<|maximo|max|presupuesto de|\$|usd|bs|bolivianos|\d+)\b/gi, " ")
+    .replace(/\b(menos de|hasta|<|maximo|max|presupuesto de|cerca|mil|millones|millon|k|\$|usd|bs|bolivianos|\d+)\b/gi, " ")
     .replace(/\b(piscina|churrasquera|parrillero|amoblado|amoblada|garaje|parqueo|estacionamiento)\b/gi, " ")
     .replace(/\b(santa cruz|cochabamba|cbba|la paz)\b/gi, " ");
 
@@ -219,9 +233,9 @@ export const extractSearchCriteria = (rawQuery: string): LocalSearchCriteria => 
   return criteria;
 };
 
-export const localSearchCatalog = (rawQuery: string, catalog: Property[]): LocalSearchResult => {
+export const localSearchCatalog = (rawQuery: string, catalog: Property[], appliedCriteria?: LocalSearchCriteria): LocalSearchResult => {
   const trimmed = rawQuery.trim();
-  if (!trimmed) {
+  if (!trimmed && !appliedCriteria) {
     return {
       ids: catalog.map((p) => p.id),
       matchedProperties: catalog,
@@ -230,7 +244,7 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
     };
   }
 
-  const criteria = extractSearchCriteria(rawQuery);
+  const criteria = appliedCriteria || extractSearchCriteria(rawQuery);
   const hasCriteria = Boolean(
     criteria.referenceId ||
     criteria.operation ||
@@ -239,6 +253,9 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
     criteria.zone ||
     criteria.city ||
     criteria.maxBudget ||
+    criteria.minBudget ||
+    criteria.deliveryYear ||
+    criteria.ring ||
     (criteria.amenities && criteria.amenities.length > 0) ||
     (criteria.keywords && criteria.keywords.length > 0)
   );
@@ -253,6 +270,7 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
   }
 
   const matched = catalog.filter((p) => {
+    const projectUnits = getProjectAvailableUnits(p.id);
     // 1. Reference ID filter
     if (criteria.referenceId) {
       const targetRef = criteria.referenceId.toLowerCase();
@@ -288,12 +306,12 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
     }
 
     // 3. Property Type filter
-    if (criteria.propertyType && !matchesPropertyType(p.type, criteria.propertyType)) {
+    if (criteria.propertyType && !matchesPropertyType(p.type, criteria.propertyType) && !(projectUnits && criteria.propertyType === "Departamento")) {
       return false;
     }
 
     // 4. Bedrooms filter
-    if (criteria.bedrooms && !matchesBedrooms(p.rooms, p.title, p.description, criteria.bedrooms)) {
+    if (!projectUnits && criteria.bedrooms && !matchesBedrooms(p.rooms, p.title, p.description, criteria.bedrooms)) {
       return false;
     }
 
@@ -315,11 +333,19 @@ export const localSearchCatalog = (rawQuery: string, catalog: Property[]): Local
     }
 
     // 7. Budget filter
-    if (criteria.maxBudget) {
-      const price = p.price;
-      if (price > criteria.maxBudget) {
-        return false;
-      }
+    const eligiblePrice = (price: number) => price > 0 && (!criteria.minBudget || price >= criteria.minBudget) && (!criteria.maxBudget || price <= criteria.maxBudget);
+    if (projectUnits && (criteria.bedrooms || criteria.maxBudget || criteria.minBudget)) {
+      if (criteria.budgetCurrency === "Bs") return false;
+      if (!projectUnits.some(unit => (!criteria.bedrooms || matchesBedrooms(unit.rooms, "", "", criteria.bedrooms)) && eligiblePrice(unit.price))) return false;
+    } else if (criteria.maxBudget || criteria.minBudget) {
+      const offers = p.offers?.filter(o => (!o.status || o.status === "Publicado") && (!criteria.operation || normalizeOfferOperation(o.operation) === criteria.operation)) || [];
+      const prices = offers.length ? offers : [p];
+      if (!prices.some(o => (!criteria.budgetCurrency || normalizeGeoText(o.currency).includes(normalizeGeoText(criteria.budgetCurrency))) && eligiblePrice(o.price))) return false;
+    }
+    if (criteria.deliveryYear && !String(p.fechaEntrega || "").includes(criteria.deliveryYear)) return false;
+    if (criteria.ring) {
+      const text = normalizeGeoText(`${p.area} ${p.zone || ""} ${p.description || ""}`);
+      if (!new RegExp(`${criteria.ring}\\s*(?:er|do|to|mo|vo|no|º|°)?\\s*anillo`).test(text)) return false;
     }
 
     // 8. Amenities filter

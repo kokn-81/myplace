@@ -1,3 +1,4 @@
+import { useInventory, blessTowerInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -90,13 +91,15 @@ const AMENITY_SLIDES = [
   },
 ];
 
+const startingPrice = (amount: number) => amount > 0 ? `Desde USD ${formatBlessUsd(amount)}` : "Sin unidades disponibles";
+
 const TYPOLOGIES_DATA = [
   {
     id: "mono",
     title: "Monoambientes para tu independencia",
     area: "28,5 a 38,4 m²",
     image: "/bless_tower/modelos_pages/page_2.jpg",
-    cashPrice: 43026,
+
     tagline:
       "Un espacio propio con cocina, baño y balcón para organizar tu vida a tu ritmo.",
     highlights: [
@@ -111,7 +114,7 @@ const TYPOLOGIES_DATA = [
     title: "1 dormitorio, más privacidad",
     area: "41,3 a 63,1 m²",
     image: "/bless_tower/modelos_pages/page_8.jpg",
-    cashPrice: 58000,
+
     tagline:
       "Separa tu descanso de la vida social con un dormitorio independiente y espacios para compartir.",
     highlights: [
@@ -126,7 +129,7 @@ const TYPOLOGIES_DATA = [
     title: "2 dormitorios para compartir",
     area: "76,2 a 87,4 m²",
     image: "/bless_tower/modelos_pages/page_16.jpg",
-    cashPrice: 110000,
+
     tagline:
       "Dos dormitorios y espacios comunes para compartir, con privacidad para cada uno.",
     highlights: [
@@ -245,7 +248,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const [shareFeedback, setShareFeedback] = useState(false);
 
   // Inventario en vivo
-  const [units, setUnits] = useState<BlessTowerUnit[]>(BLESS_TOWER_BASELINE_UNITS);
+  const [units, setUnits] = useInventory(blessTowerInventory);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
   const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
 
@@ -295,17 +298,17 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
 
   const minPriceMono = useMemo(() => {
     const list = availableUnits.filter((u) => u.tipologia === "Monoambiente" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 43026;
+    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
   }, [availableUnits]);
 
   const minPrice1Dorm = useMemo(() => {
     const list = availableUnits.filter((u) => u.tipologia === "1 Dormitorio" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 58000;
+    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
   }, [availableUnits]);
 
   const minPrice2Dorms = useMemo(() => {
     const list = availableUnits.filter((u) => u.tipologia === "2 Dormitorios" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 110000;
+    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
   }, [availableUnits]);
 
   const minCashPerM2 = useMemo(() => {
@@ -373,7 +376,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
 
   // Cálculos financieros
   const activeFinancials = useMemo(() => {
-    if (!activeUnit) return null;
+    if (!activeUnit || activeUnit.estado !== "LIBRE") return null;
 
     let unitTotalPrice = activeUnit.precioContado;
     let cuotaInicialPct = 100;
@@ -549,7 +552,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const currentTypology = TYPOLOGIES_DATA.find((t) => t.id === selectedTypologyId) || TYPOLOGIES_DATA[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
       {/* ========================================================
           1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
           ======================================================== */}
@@ -648,15 +651,15 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             <div className="mt-2.5 space-y-1.5 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-stone-300">Monoambiente (28 a 38 m²):</span>
-                <span className="font-serif font-bold text-white">Desde USD {formatBlessUsd(minPriceMono)}</span>
+                <span className="font-serif font-bold text-white">{startingPrice(minPriceMono)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-stone-300">1 Dormitorio (41 a 63 m²):</span>
-                <span className="font-serif font-bold text-white">Desde USD {formatBlessUsd(minPrice1Dorm)}</span>
+                <span className="font-serif font-bold text-white">{startingPrice(minPrice1Dorm)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-stone-300">2 Dormitorios (76 a 87 m²):</span>
-                <span className="font-serif font-bold text-white">Desde USD {formatBlessUsd(minPrice2Dorms)}</span>
+                <span className="font-serif font-bold text-white">{startingPrice(minPrice2Dorms)}</span>
               </div>
             </div>
           </div>
@@ -899,7 +902,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{t.area}</p>
                   <h4 className="font-serif text-lg font-bold text-stone-900 mt-1">{t.title}</h4>
                   <p className="text-xs text-[#9a7b45] font-semibold mt-1">
-                    Desde USD {formatBlessUsd(t.cashPrice)}
+                    {startingPrice(t.id === "mono" ? minPriceMono : t.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
                   </p>
                   <p className="text-[11px] text-stone-500 mt-2 line-clamp-2">{t.tagline}</p>
                   <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] font-semibold">
@@ -1258,7 +1261,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                     <p className="text-xs font-bold text-stone-900">{amb.name}</p>
                     <p className="text-[11px] text-stone-500 mt-0.5">{amb.areaRange}</p>
                     <p className="text-xs font-semibold text-[#9a7b45] mt-1">
-                      Desde USD {formatBlessUsd(amb.id === "mono" ? minPriceMono : amb.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
+                      {startingPrice(amb.id === "mono" ? minPriceMono : amb.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
                     </p>
                   </button>
                 );
@@ -1573,7 +1576,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           ======================================================== */}
       {/* 4.1 Barra inferior flotante de conversión rápida */}
       {activeSection !== "cierre" && (
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
         <div>
           <p className="text-xs text-stone-600">
             Reserva con <span className="font-semibold text-stone-900">USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}</span>

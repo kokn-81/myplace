@@ -133,17 +133,17 @@ export const ONA_UNITS: OnaUnit[] = [
     totalM2: 32.3,
     view: 'Vista Lateral',
     status: 'disponible',
-    cashPerM2: 1250,
-    cash: 40375,
+    cashPerM2: 1300,
+    cash: 41990,
     plan60: {
-      perM2: 1300,
-      initial: 25194,
-      total: 41990
+      perM2: 1350,
+      initial: 26163,
+      total: 43605
     },
     plan40: {
-      perM2: 1350,
-      initial: 17442,
-      total: 43605
+      perM2: 1400,
+      initial: 18088,
+      total: 45220
     }
   },
   {
@@ -242,7 +242,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'vendido',
+    status: 'reservado',
     cashPerM2: 1300,
     cash: 41990,
     plan60: {
@@ -352,18 +352,18 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'disponible',
-    cashPerM2: 1265,
-    cash: 40859.5,
+    status: 'reservado',
+    cashPerM2: 1315,
+    cash: 42474.5,
     plan60: {
-      perM2: 1315,
-      initial: 25484.7,
-      total: 42474.5
+      perM2: 1365,
+      initial: 26453.7,
+      total: 44089.5
     },
     plan40: {
-      perM2: 1365,
-      initial: 17635.8,
-      total: 44089.5
+      perM2: 1415,
+      initial: 18281.8,
+      total: 45704.5
     }
   },
   {
@@ -418,7 +418,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 54.14,
     view: 'Vista Lateral',
-    status: 'disponible',
+    status: 'reservado',
     cashPerM2: 1320,
     cash: 71464.8,
     plan60: {
@@ -572,18 +572,18 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'disponible',
-    cashPerM2: 1295,
-    cash: 41828.5,
+    status: 'reservado',
+    cashPerM2: 1345,
+    cash: 43443.5,
     plan60: {
-      perM2: 1345,
-      initial: 26066.1,
-      total: 43443.5
+      perM2: 1395,
+      initial: 27035.1,
+      total: 45058.5
     },
     plan40: {
-      perM2: 1395,
-      initial: 18023.4,
-      total: 45058.5
+      perM2: 1445,
+      initial: 18669.4,
+      total: 46673.5
     }
   },
   {
@@ -594,7 +594,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'disponible',
+    status: 'reservado',
     cashPerM2: 1345,
     cash: 43443.5,
     plan60: {
@@ -704,7 +704,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'disponible',
+    status: 'reservado',
     cashPerM2: 1355,
     cash: 43766.5,
     plan60: {
@@ -792,7 +792,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'vendido',
+    status: 'reservado',
     cashPerM2: 1365,
     cash: 44089.5,
     plan60: {
@@ -814,7 +814,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: null,
     totalM2: 32.3,
     view: 'Vista Lateral',
-    status: 'disponible',
+    status: 'vendido',
     cashPerM2: 1365,
     cash: 44089.5,
     plan60: {
@@ -990,7 +990,7 @@ export const ONA_UNITS: OnaUnit[] = [
     balconyM2: 5.55,
     totalM2: 92,
     view: 'Vista Av. Los Cusis',
-    status: 'vendido',
+    status: 'disponible',
     cashPerM2: 1360,
     cash: 125120,
     plan60: {
@@ -1354,7 +1354,7 @@ export function parseOnaCsvText(csvText: string): OnaUnit[] {
   return units.length > 0 ? units : ONA_UNITS;
 }
 
-const ONA_LIVE_CACHE_KEY = "ona.live_inventory_cache.v1";
+const ONA_LIVE_CACHE_KEY = "ona.live_inventory_cache.v2";
 
 export async function fetchOnaLiveUnits(): Promise<{ units: OnaUnit[]; source: "live_sheet" | "cached" | "snapshot" }> {
   if (typeof window === "undefined") {

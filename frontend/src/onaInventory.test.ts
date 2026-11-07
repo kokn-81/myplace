@@ -3,10 +3,11 @@ import test from "node:test";
 
 import { ONA_BUILDER, ONA_DELIVERY, ONA_PARKINGS, ONA_RESERVE_USD, ONA_UNITS, formatOnaUsd } from "./onaInventory";
 
-test("la tabla de ONA es la 1.a fase, sin precios inventados", () => {
+test("la tabla de ONA refleja la disponibilidad y tarifas oficiales actualizadas", () => {
   assert.equal(ONA_UNITS.length, 54);
-  assert.equal(ONA_UNITS.filter((unit) => unit.status === "disponible").length, 27);
-  assert.equal(ONA_UNITS.filter((unit) => unit.status === "vendido").length, 27);
+  assert.equal(ONA_UNITS.filter((unit) => unit.status === "disponible").length, 22);
+  assert.equal(ONA_UNITS.filter((unit) => unit.status === "vendido").length, 25);
+  assert.equal(ONA_UNITS.filter((unit) => unit.status === "reservado").length, 7);
   assert.equal(ONA_PARKINGS.length, 26);
   assert.equal(ONA_PARKINGS.filter((spot) => spot.status === "disponible").length, 22);
   assert.deepEqual(
@@ -20,11 +21,11 @@ test("la tabla de ONA es la 1.a fase, sin precios inventados", () => {
   assert.equal(ONA_BUILDER, "Palacios Antunez");
 
   const entry = ONA_UNITS.find((unit) => unit.floor === 2 && unit.tipo === "3");
-  assert.equal(entry?.cash, 40375);
-  assert.equal(entry?.plan60.initial, 25194);
-  assert.equal(entry?.plan60.total, 41990);
-  assert.equal(entry?.plan40.initial, 17442);
-  assert.equal(entry?.plan40.total, 43605);
+  assert.equal(entry?.cash, 41990);
+  assert.equal(entry?.plan60.initial, 26163);
+  assert.equal(entry?.plan60.total, 43605);
+  assert.equal(entry?.plan40.initial, 18088);
+  assert.equal(entry?.plan40.total, 45220);
   assert.equal(formatOnaUsd(40375), "40.375");
   assert.equal(formatOnaUsd(67687.5), "67.687,50");
   assert.ok(ONA_PARKINGS.every((spot) => spot.includesStorage));

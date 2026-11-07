@@ -1,3 +1,4 @@
+import { useInventory, eurodesignInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -277,7 +278,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   const [parkingOption, setParkingOption] = useState<"none" | "parking" | "baulera" | "parking_baulera">("none");
 
   const [shareFeedback, setShareFeedback] = useState(false);
-  const [units, setUnits] = useState<EurodesignUnit[]>(EURODESIGN_UNITS);
+  const [units, setUnits] = useInventory(eurodesignInventory);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
   const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
   const availableUnitsCount = useMemo(() => units.filter((u) => u.status === "disponible").length, [units]);
@@ -648,7 +649,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
+      className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
       {/* Botones Flotantes Superiores: Solo Logos según el Manual de NIA */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
@@ -1908,7 +1909,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       </div>
 
       {activeSectionId !== "cierre" && (
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
         <div>
           <p className="text-xs text-stone-600">
             Reserva con <span className="font-semibold text-stone-900">USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}</span>

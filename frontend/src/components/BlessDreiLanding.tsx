@@ -1,3 +1,4 @@
+import { useInventory, blessDreiInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -191,7 +192,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
   const [shareFeedback, setShareFeedback] = useState(false);
 
   // Inventario en vivo
-  const [units, setUnits] = useState<BlessDreiUnit[]>(BLESS_DREI_BASELINE_UNITS);
+  const [units, setUnits] = useInventory(blessDreiInventory);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
   const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
 
@@ -310,7 +311,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
   // Cálculos financieros
   const activeFinancials = useMemo(() => {
-    if (!activeUnit) return null;
+    if (!activeUnit || activeUnit.estado !== "LIBRE") return null;
 
     let unitTotalPrice = activeUnit.precioContado;
     let cuotaInicialPct = 100;
@@ -482,7 +483,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
       {/* ========================================================
           1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
           ======================================================== */}
@@ -1436,7 +1437,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           ======================================================== */}
       {/* 4.1 Barra inferior flotante de conversión rápida */}
       {activeSection !== "cierre" && (
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
         <div>
           <p className="text-xs text-stone-600">
             Reserva con <span className="font-semibold text-stone-900">USD {formatBlessUsd(BLESS_DREI_CONFIG.reservaUsd)}</span>

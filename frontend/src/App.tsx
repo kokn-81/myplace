@@ -85,6 +85,7 @@ export default function App() {
           <Route path="/domus-lux" element={<MapPage />} />
           <Route path="/domus-insignia" element={<MapPage />} />
           <Route path="/domus-smart" element={<MapPage />} />
+          <Route path="/departamento/:id" element={<MapPage />} />
           <Route path="/proyecto/:slug" element={<MapPage />} />
           <Route path="/p/:slug" element={<MapPage />} />
           <Route path="/c/:slug" element={<ContextPage />} />

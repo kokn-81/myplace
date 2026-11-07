@@ -1,3 +1,4 @@
+import { useInventory, gardenZenInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -241,7 +242,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   const [selectedParkingCode, setSelectedParkingCode] = useState<string>("P01");
 
   const [shareFeedback, setShareFeedback] = useState(false);
-  const [units, setUnits] = useState<GardenZenUnit[]>(GARDEN_ZEN_BASELINE_UNITS);
+  const [units, setUnits] = useInventory(gardenZenInventory);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
   const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
 
@@ -621,7 +622,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
+      className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
       {/* Botones Flotantes Superiores: Solo Logos según el Manual de NIA */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
@@ -1463,7 +1464,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 <div className="mt-4 border-t border-white/10 pt-3">
                   <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Accedes al valor por m² más bajo de todo el proyecto ($1.400 USD/m²). Ahorras hasta $100 USD/m² respecto a planes diferidos y congelas ese precio hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}.
+                    Compra al contado desde USD {formatGardenZenUsd(minCashPerM2)}/m². El precio depende del departamento, piso y modalidad: compáralos en el cotizador y encuentra el plan que se ajuste a ti.
                   </p>
                 </div>
               </div>
@@ -1494,7 +1495,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                 <div className="mt-3.5 border-t border-stone-100 pt-3">
                   <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
                   <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El balance perfecto entre liquidez y descuento. Congelas tu unidad con un precio preferencial con $50 USD/m² de bonificación sobre el precio estándar y abonas el 30% restante recién cuando la obra fina esté 100% concluida en {GARDEN_ZEN_CONFIG.delivery}.
+                    Asegura tu departamento con un 70% de anticipo y distribuye tu inversión: el 30% restante se paga contra entrega. Consulta el precio de tu unidad en el cotizador.
                   </p>
                 </div>
               </div>
@@ -1849,7 +1850,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   }`}
                 >
                   <p className="text-xs font-bold">Pago Contado (100%)</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.400 · Máximo Descuento</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.cashPerM2 || minCashPerM2)}/m² · Unidad elegida</p>
                 </button>
                 <button
                   type="button"
@@ -1861,7 +1862,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   }`}
                 >
                   <p className="text-xs font-bold">Plan 70% Anticipo</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.450 · 30% contra entrega</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.initial70PerM2 || minPlan70PerM2)}/m² · 30% contra entrega</p>
                 </button>
                 <button
                   type="button"
@@ -1873,7 +1874,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   }`}
                 >
                   <p className="text-xs font-bold">Plan 30% Anticipo</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">PM² $1.500 · 70% contra entrega</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.initial30PerM2 || minPlan30PerM2)}/m² · 70% contra entrega</p>
                 </button>
               </div>
 
@@ -2047,7 +2048,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]"
+            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]"
           >
             <div>
               <p className="text-xs text-stone-600">

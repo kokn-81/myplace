@@ -1,3 +1,5 @@
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -55,6 +57,10 @@ import type { BuildingGroupData } from "../components/MapCanvas";
 import ProjectLandingPage from "../components/ProjectLandingPage";
 import ProjectCardSummary from "../components/ProjectCardSummary";
 import { getProjectCardSummary } from "../projectCardSummary";
+import CatalogFilters, { CatalogSort } from "../components/CatalogFilters";
+import { LocalSearchCriteria } from "../localSearch";
+import { catalogPrice, sortCatalogResults, propertyPath, propertyIdFromLocation } from "../catalogPresentation";
+import { useInventoryRevision, refreshProjectInventories } from "../projectInventory";
 import { ONA_DELIVERY } from "../onaInventory";
 
 const MAPBOX_TOKEN =
@@ -222,25 +228,7 @@ export const QUICK_FILTER_OPTIONS = [
   },
 ] as const;
 
-export const isOnaProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").toLowerCase();
 
-  // Descartar alquileres o reventas secundarias de terceros en otros edificios
-  if (sId === "1325") return false;
-
-  return (
-    sId === "5" ||
-    sId === "ona" ||
-    sId === "ona-residences" ||
-    sId.startsWith("ona-") ||
-    sTitle.includes("ona residences") ||
-    sCmp.includes("ona residences") ||
-    (sTitle.includes("ona") && (sTitle.includes("cusis") || sTitle.includes("banzer") || sTitle.includes("preventa")))
-  );
-};
 
 export const SYNTHETIC_ONA_PROPERTY: Property = {
   id: "5",
@@ -349,19 +337,7 @@ export const SYNTHETIC_SWISSOTEL_PROPERTY: Property = {
   amoblado: true,
 };
 
-export const isEurodesignProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").toLowerCase();
-  return (
-    sId === "1816" ||
-    sId === "eurodesign" ||
-    sId === "tower-eurodesign" ||
-    sTitle.includes("tower eurodesign") ||
-    sCmp.includes("tower eurodesign")
-  );
-};
+
 
 export const SYNTHETIC_EURODESIGN_PROPERTY: Property = {
   id: "1816",
@@ -757,18 +733,7 @@ export const SYNTHETIC_GARDEN_ZEN_PROPERTY: Property = {
   planesPago: "Reserva con 30%, 70% o 100% Contado con descuento",
 };
 
-export const isGardenZenProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  return (
-    sId === "garden-zen" ||
-    sId.startsWith("garden-zen") ||
-    sTitle.includes("garden zen") ||
-    sCmp.includes("garden zen")
-  );
-};
+
 
 export const SYNTHETIC_BLESS_TOWER_PROPERTY: Property = {
   id: "bless-tower",
@@ -814,18 +779,7 @@ export const SYNTHETIC_BLESS_TOWER_PROPERTY: Property = {
   planesPago: "Reserva con USD 2.000 · Contado con descuento, Cuotas 40% inicial o Plan Tradicional",
 };
 
-export const isBlessTowerProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  return (
-    sId === "bless-tower" ||
-    sId.startsWith("bless-tower") ||
-    sTitle.includes("bless tower") ||
-    sCmp.includes("bless tower")
-  );
-};
+
 
 export const SYNTHETIC_BLESS_DREI_PROPERTY: Property = {
   id: "bless-drei",
@@ -871,18 +825,7 @@ export const SYNTHETIC_BLESS_DREI_PROPERTY: Property = {
   planesPago: "Reserva con USD 2.000 · Contado con descuento o Cuotas 50% inicial",
 };
 
-export const isBlessDreiProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  return (
-    sId === "bless-drei" ||
-    sId.startsWith("bless-drei") ||
-    sTitle.includes("bless drei") ||
-    sCmp.includes("bless drei")
-  );
-};
+
 
 export const SYNTHETIC_TRIVENTO_PROPERTY: Property = {
   id: "trivento-iv",
@@ -928,18 +871,9 @@ export const SYNTHETIC_TRIVENTO_PROPERTY: Property = {
   planesPago: "Contado 100% o crédito 50% inicial y 50% contra entrega",
 };
 
-export const isTriventoProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  return sId === "trivento-iv" || sId.startsWith("trivento") || sTitle.includes("trivento") || sCmp.includes("trivento");
-};
 
-export const isTriventoSlug = (value: string): boolean => {
-  const q = value.trim().toLowerCase();
-  return q === "trivento" || q === "trivento-iv" || q === "triventoiv" || q === "trivento-4" || q.includes("trivento");
-};
+
+
 
 export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
   id: "beton-brut-ii",
@@ -986,97 +920,19 @@ export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
   planesPago: "Contado USD 1.700/m² o plan 30-60 a USD 1.800/m². Parqueo USD 13.000. La lista no publica seña.",
 };
 
-const normalizeBeton = (value: string) =>
-  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-export const isBetonBrutProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = normalizeBeton(String(p.id));
-  const sTitle = normalizeBeton(String(p.title || (p as any).titulo || ""));
-  const sCmp = normalizeBeton(String(p.complejoNombre || (p as any).complejo_nombre || ""));
-  return sId === "beton-brut-ii" || sId.startsWith("beton-brut") || sId.startsWith("betonbrut") || sTitle.includes("beton brut") || sCmp.includes("beton brut");
-};
 
-export const isBetonBrutSlug = (value: string): boolean => {
-  const q = normalizeBeton(value.trim());
-  return q === "beton-brut-ii" || q === "beton-brut" || q === "betonbrut" || q === "betonbrut-ii" || q === "betonbrut2" || q.includes("beton brut") || q.includes("beton-brut");
-};
 
-export const isDomusProperty = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  const sId = String(p.id).toLowerCase();
-  if (sId.startsWith("domus-") || sId === "domus") return true;
-  const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
-  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  const officialDomusNames = [
-    "domus black",
-    "domus gold",
-    "domus onix",
-    "domus insignia",
-    "domus luxury",
-    "domus tower",
-    "domus infinity",
-  ];
-  return officialDomusNames.some(
-    (name) => sTitle.startsWith(name) || sCmp === name || sCmp.startsWith(name)
-  );
-};
 
-export const isTargetOna = (p: Property, query: string): boolean => {
-  if (!query) return false;
-  const q = query.trim().toLowerCase();
-  if (q === "ona" || q === "5") {
-    return isOnaProperty(p);
-  }
-  if (q === "eurodesign" || q === "tower-eurodesign" || q === "tower_eurodesign" || q === "1816") {
-    return isEurodesignProperty(p);
-  }
-  if (q === "garden-zen" || q.includes("garden zen") || q === "zen" || q === "garden") {
-    return isGardenZenProperty(p);
-  }
-  if (q === "bless-tower" || q === "blesstower" || q.includes("bless tower")) {
-    return isBlessTowerProperty(p);
-  }
-  if (q === "bless-drei" || q === "blessdrei" || q.includes("bless drei")) {
-    return isBlessDreiProperty(p);
-  }
-  if (isTriventoSlug(q)) {
-    return isTriventoProperty(p);
-  }
-  if (isBetonBrutSlug(q)) {
-    return isBetonBrutProperty(p);
-  }
-  if (
-    q.includes("domus") ||
-    q.startsWith("domus-") ||
-    ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(q)
-  ) {
-    if (isDomusProperty(p)) {
-      if (q === "domus") return true;
-      const sId = String(p.id).toLowerCase();
-      const sTitle = String(p.title || "").toLowerCase();
-      const cleanQ = q.replace(/^domus[-_\s]*/, "");
-      return sId.includes(cleanQ) || sTitle.includes(cleanQ);
-    }
-  }
-  return String(p.id).toLowerCase() === q || Boolean(p.title && p.title.toLowerCase().includes(q));
-};
 
-export const isTargetProject = isTargetOna;
 
-export const isProjectOrPreventa = (p: Property | null | undefined): boolean => {
-  if (!p) return false;
-  return (
-    isOnaProperty(p) ||
-    isEurodesignProperty(p) ||
-    isDomusProperty(p) ||
-    isGardenZenProperty(p) ||
-    isBlessTowerProperty(p) ||
-    isBlessDreiProperty(p) ||
-    isTriventoProperty(p) ||
-    isBetonBrutProperty(p)
-  );
-};
+
+
+
+
+
+
+
 
 const prioritizeRecommended = (list: Property[]): Property[] => {
   const priorityItems: Property[] = [];
@@ -1278,7 +1134,7 @@ const renderMedia = (url: string, className: string, alt: string, controls = fal
 );
 
 const formatPropertyPrice = (price: number, currency?: string) => {
-  const symbol = currency?.toLowerCase().includes("bs") ? "Bs" : "$";
+  const symbol = currency?.toLowerCase().includes("bs") ? "Bs" : "USD";
   return `${symbol} ${Number(price || 0).toLocaleString("es-BO")}`;
 };
 
@@ -1433,6 +1289,15 @@ export default function MapPage() {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const desktopMenuRef = useRef<HTMLDivElement>(null);
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
+  const inventoryRevision = useInventoryRevision();
+  const [searchCriteria, setSearchCriteria] = useState<LocalSearchCriteria>({});
+  const [sortOrder, setSortOrder] = useState<CatalogSort>("recommended");
+  useEffect(() => { void refreshProjectInventories(); }, []);
+  const catalogProperties = useMemo(() => properties.map(p => {
+    const summary = getProjectCardSummary(p);
+    return summary ? { ...p, fechaEntrega: summary.delivery, description: `${p.description} ${summary.address}`, price: catalogPrice(p) || 0 } : p;
+  }), [properties, inventoryRevision]);
+  const deliveryYears = useMemo(() => Array.from(new Set(catalogProperties.flatMap(p => p.fechaEntrega?.match(/20\d{2}/g) || []))).sort(), [catalogProperties]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [lastViewedProperty, setLastViewedProperty] = useState<Property | null>(null);
   const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
@@ -1462,62 +1327,9 @@ export default function MapPage() {
     focusPropertyLocation(property, 16.2);
 
     if (typeof window !== "undefined") {
-      const isOna = isOnaProperty(property);
-      const isEuro = isEurodesignProperty(property);
-      const isDom = isDomusProperty(property);
-      const isZen = isGardenZenProperty(property);
-      const isBT = isBlessTowerProperty(property);
-      const isBD = isBlessDreiProperty(property);
-      const isTrivento = isTriventoProperty(property);
-      const isBeton = isBetonBrutProperty(property);
-      const pathname = window.location.pathname.toLowerCase();
-
-      if (isOna) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/ona")) {
-          window.history.pushState({ modal: "ona", propertyId: property.id }, "", "/ona");
-        }
-      } else if (isEuro) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/eurodesign")) {
-          window.history.pushState({ modal: "eurodesign", propertyId: property.id }, "", "/eurodesign");
-        }
-      } else if (isZen) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/gardenzen") && !pathname.startsWith("/garden-zen")) {
-          window.history.pushState({ modal: "garden-zen", propertyId: property.id }, "", "/gardenzen");
-        }
-      } else if (isBT) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/bless-tower") && !pathname.startsWith("/blesstower")) {
-          window.history.pushState({ modal: "bless-tower", propertyId: property.id }, "", "/bless-tower");
-        }
-      } else if (isBD) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/bless-drei") && !pathname.startsWith("/blessdrei")) {
-          window.history.pushState({ modal: "bless-drei", propertyId: property.id }, "", "/bless-drei");
-        }
-      } else if (isTrivento) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/trivento")) {
-          window.history.pushState({ modal: "trivento-iv", propertyId: property.id }, "", "/trivento");
-        }
-      } else if (isBeton) {
-        if (!options?.skipHistoryPush && !pathname.startsWith("/beton-brut") && !pathname.startsWith("/betonbrut")) {
-          window.history.pushState({ modal: "beton-brut-ii", propertyId: property.id }, "", "/beton-brut-ii");
-        }
-      } else if (isDom) {
-        const domId = String(property.id).toLowerCase();
-        if (!options?.skipHistoryPush && !pathname.startsWith("/domus")) {
-          window.history.pushState({ modal: domId, propertyId: property.id }, "", `/domus/${domId}`);
-        }
-      } else {
-        const url = new URL(window.location.href);
-        const currentParam = url.searchParams.get("proyecto") || url.searchParams.get("project") || url.searchParams.get("p");
-        if (currentParam) {
-          url.searchParams.delete("proyecto");
-          url.searchParams.delete("project");
-          url.searchParams.delete("p");
-          const cleanSearch = url.searchParams.toString();
-          const targetUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
-          if (!options?.skipHistoryPush) {
-            window.history.replaceState(null, "", targetUrl || "/");
-          }
-        }
+      const path = propertyPath(property);
+      if (!options?.skipHistoryPush && window.location.pathname !== path) {
+        window.history.pushState({ propertyId: property.id }, "", path);
       }
     }
 
@@ -1540,7 +1352,7 @@ export default function MapPage() {
       }
 
       setProperties((current) => current.map((item) => (item.id === detail.id ? detail : item)));
-      setSelectedProperty(detail);
+      setSelectedProperty(current => current?.id === detail.id ? detail : current);
       setLastViewedProperty(detail);
     } catch (error) {
       console.error("Error cargando detalle del inmueble:", error);
@@ -1551,6 +1363,12 @@ export default function MapPage() {
   useEffect(() => {
     if (typeof window === "undefined" || hasSearchInteractionRef.current) return;
     
+    if (window.location.pathname.startsWith("/departamento/")) {
+      const id = propertyIdFromLocation(new URL(window.location.href));
+      const target = properties.find(p => p.id === id);
+      if (target && !selectedProperty) { void selectProperty(target, { skipHistoryPush: true }); hasSearchInteractionRef.current = true; }
+      return;
+    }
     const params = new URLSearchParams(window.location.search);
     const pathname = window.location.pathname.toLowerCase();
     const isOnaPath = pathname.startsWith("/ona");
@@ -1657,7 +1475,7 @@ export default function MapPage() {
 
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
-      const proyecto = params.get("proyecto") || params.get("project") || params.get("p");
+      const proyecto = propertyIdFromLocation(new URL(window.location.href));
 
       if (!proyecto) {
         setSelectedProperty((current) => {
@@ -1729,33 +1547,10 @@ export default function MapPage() {
     setSelectedProperty(null);
 
     if (typeof window !== "undefined") {
-      const pathname = window.location.pathname.toLowerCase();
-      const isProjectRoute =
-        pathname.startsWith("/ona") ||
-        pathname.startsWith("/eurodesign") ||
-        pathname.startsWith("/gardenzen") ||
-        pathname.startsWith("/garden-zen") ||
-        pathname.startsWith("/zen") ||
-        pathname.startsWith("/domus") ||
-        pathname.startsWith("/proyecto") ||
-        pathname.startsWith("/p/") ||
-        pathname.startsWith("/trivento") ||
-        pathname.startsWith("/beton-brut") ||
-        pathname.startsWith("/betonbrut");
-
       const url = new URL(window.location.href);
-      const hasProjectParam = url.searchParams.has("proyecto") || url.searchParams.has("project") || url.searchParams.has("p");
-
-      if (isProjectRoute) {
-        window.history.pushState(null, "", "/");
-      } else if (hasProjectParam) {
-        url.searchParams.delete("proyecto");
-        url.searchParams.delete("project");
-        url.searchParams.delete("p");
-        const cleanSearch = url.searchParams.toString();
-        const cleanUrl = url.pathname + (cleanSearch ? `?${cleanSearch}` : "") + url.hash;
-        window.history.replaceState(null, "", cleanUrl || "/");
-      }
+      ["proyecto", "project", "p"].forEach(key => url.searchParams.delete(key));
+      const query = url.searchParams.toString();
+      window.history.pushState(null, "", "/" + (query ? `?${query}` : ""));
     }
 
   }, [selectedProperty, lastViewedProperty, focusPropertyLocation]);
@@ -2030,6 +1825,9 @@ export default function MapPage() {
   });
 
   const resetGuidedSearch = () => {
+    setSearchCriteria({});
+    setSortOrder("recommended");
+    setSelectedBuildingGroup(null);
     setGuidedStage("operation");
     setGuidedOperation("");
     setGuidedPropertyType("");
@@ -2300,6 +2098,8 @@ export default function MapPage() {
 
 
   const clearAiFilters = () => {
+    setSearchCriteria({});
+    setSortOrder("recommended");
     setAiFilteredIds(null);
     setAiFilterHistory([]);
     setAiClarification("");
@@ -2322,113 +2122,28 @@ export default function MapPage() {
 
   // [OPALO-BRIDGE] Motor de Filtrado Semantico acumulativo
   const runNiaSearch = async (query: string, options?: { candidateIds?: number[] | null; replaceHistory?: string[] }) => {
-    const trimmedQuery = query.trim();
-    if (!trimmedQuery) {
-      clearAiFilters();
-      return;
-    }
-
-    const queryIntent = detectSearchIntent([trimmedQuery]);
-    const previousFilteredIds = aiFilteredIds;
+    const trimmed = query.trim();
+    if (!trimmed) { clearAiFilters(); return; }
     hasSearchInteractionRef.current = true;
-    setIsAsking(true);
+    const result = localSearchCatalog(trimmed, catalogProperties);
+    setSearchCriteria(result.criteria);
+    setAiFilteredIds(result.ids);
+    setActiveSearchIntent(result.intent);
+    setAiFilterHistory([trimmed]);
     setAiClarification("");
-    setLocationChoices([]);
-    setLocationQuestion("");
-    setCustomLocationText("");
-    setIsCustomLocationOpen(false);
-
-    const applyMapFocus = async (matchedProperties: Array<{ lat?: number | null; lng?: number | null; area?: string | null }>) => {
-      const locationLabel = extractRequestedLocation(trimmedQuery);
-      const resultFocus = focusFromProperties(matchedProperties, locationLabel);
-      if (resultFocus) {
-        setMapFocus(resultFocus);
-        return;
-      }
-      try {
-        const resolution = await geocodeRequestedLocation(trimmedQuery, aiFilterHistory, MAPBOX_TOKEN);
-        if (!resolution) return;
-        if (resolution.choices && resolution.choices.length > 1) {
-          setLocationQuestion(`A que ${resolution.requestedLocation || "ubicacion"} te refieres?`);
-          setLocationChoices(resolution.choices);
-          return;
-        }
-        if (resolution.focus) setMapFocus(resolution.focus);
-      } catch (error) {
-        console.warn("No se pudo mover el mapa a la ubicacion solicitada:", error);
-      }
-    };
-
-    // PHASE 3: Evaluacion Instantanea Local Multicriterio (< 5ms) sobre el catalogo cargado en memoria
-    const localResult = localSearchCatalog(trimmedQuery, properties);
-    if (localResult.ids.length > 0) {
-      setAiFilteredIds(localResult.ids);
-      if (localResult.intent) setActiveSearchIntent(localResult.intent);
-      else if (queryIntent) setActiveSearchIntent(queryIntent);
-      setShowSuggested(false);
-      setCurrentIndex(0);
-      void applyMapFocus(localResult.matchedProperties);
-    }
-
-    try {
-      const candidateIds = options?.candidateIds === undefined
-        ? aiFilteredIds?.map((id) => Number(id)).filter((id) => !Number.isNaN(id))
-        : options.candidateIds || undefined;
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mensaje: trimmedQuery,
-          candidate_ids: candidateIds && candidateIds.length > 0 ? candidateIds : undefined,
-          user_id: resolveNiaUserId(user?.uid),
-        }),
-      });
-
-      if (!res.ok) throw new Error("Fallo en la red neuronal");
-
-      const data = await res.json();
-      const searchLogId = Number(data.search_log_id);
-      if (Number.isFinite(searchLogId) && searchLogId > 0) setLastSearchLogId(searchLogId);
-
-      if (data.needs_clarification) {
-        setAiClarification(data.clarification || "Necesito un dato mas para buscar bien.");
-        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
-        setGeminiQuery(`${trimmedQuery} `);
-        return;
-      }
-
-      if (data.ids && Array.isArray(data.ids)) {
-        const stringIds = data.ids.map((id: number | string) => id.toString());
-        setAiFilteredIds(stringIds);
-        setShowSuggested(false);
-        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
-        if (queryIntent) setActiveSearchIntent(queryIntent);
-        setAiClarification("");
-        setGeminiQuery("");
-        setCurrentIndex(0);
-        const matched = stringIds
-          .map((id: string) => properties.find((property) => property.id === id))
-          .filter((property): property is Property => Boolean(property));
-        await applyMapFocus(matched);
-      } else if (localResult.ids.length === 0) {
-        setAiFilteredIds([]);
-        setShowSuggested(false);
-        setAiFilterHistory((current) => options?.replaceHistory ?? [...current, trimmedQuery]);
-        if (queryIntent) setActiveSearchIntent(queryIntent);
-        setAiClarification("");
-        await applyMapFocus([]);
-      }
-    } catch (err) {
-      console.warn("Fallo o timeout en red neuronal (conservando resultados locales instantaneos):", err);
-      if (localResult.ids.length === 0) {
-        setAiClarification(previousFilteredIds?.length ? "No pude aplicar ese filtro ahora. Mantengo tus resultados anteriores." : "No pude conectar con NIA ahora. Te muestro el catalogo disponible.");
-        if (!previousFilteredIds?.length) setAiFilteredIds(null);
-      }
-    } finally {
-      setIsAsking(false);
-    }
+    setShowSuggested(false);
+    setSelectedBuildingGroup(null);
+    setCurrentIndex(0);
+    setGuidedStage("operation");
+    setGuidedPropertyType("");
+    setGuidedBedrooms("");
+    setGuidedZones([]);
+    setGuidedBudget("");
+    setSelectedAmenities([]);
+    // Preserve the submitted text so the customer can see and edit the search.
+    const focus = focusFromProperties(result.matchedProperties, trimmed);
+    if (focus) setMapFocus(focus);
   };
-
 
   const submitGuidedSearch = async (overrides?: { zone?: string; city?: string; budget?: string; propertyType?: string; bedrooms?: string }) => {
     const query = buildGuidedSearchQuery({
@@ -2837,102 +2552,11 @@ export default function MapPage() {
 
   const handleAskGemini = async (e: React.FormEvent) => {
     e.preventDefault();
-    const custom = geminiQuery.trim();
-    if (guidedStage === "sell") return;
-    if (guidedStage === "propertyType") {
-      if (!custom) return;
-      handlePropertyTypeSelect(custom);
-      return;
-    }
-    if (guidedStage === "city") {
-      if (!custom) return;
-      handleCitySelect(custom);
-      return;
-    }
-    if (guidedStage === "bedrooms") {
-      if (!custom) return;
-      handleBedroomsSelect(custom);
-      return;
-    }
-    if (guidedStage === "zone") {
-      if (!custom) {
-        handleZonesConfirm();
-        return;
-      }
-      const parts = custom.split(/[,+y]/).map((s) => s.trim()).filter(Boolean);
-      if (parts.length > 0) {
-        parts.forEach((part) => handleZoneSelect(part));
-      }
-      handleZonesConfirm();
-      return;
-    }
-    if (guidedStage === "budget") {
-      if (!custom) return;
-      await handleBudgetSelect(custom);
-      return;
-    }
     await runNiaSearch(geminiQuery);
   };
   const exactProperties = useMemo(() => {
-    let list: Property[] = [];
-    if (aiFilteredIds !== null) {
-      const propertyById = new Map(properties.map((property) => [property.id, property]));
-      list = aiFilteredIds
-        .map((id) => propertyById.get(id))
-        .filter((property): property is Property => Boolean(property));
-    } else {
-      list = properties;
-    }
-
-    if (guidedOperation || guidedPropertyType || guidedBedrooms || guidedCity || guidedZones.length > 0 || guidedBudget) {
-      const normCity = guidedCity ? normalizeGeoText(guidedCity) : "";
-      const normZones = guidedZones.length > 0 ? guidedZones.map(normalizeGeoText) : [];
-      const cleanBudget = guidedBudget ? guidedBudget.replace(/\./g, "").replace(/,/g, "") : "";
-      const budgetMatch = cleanBudget.match(/(\d+)/);
-      const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
-
-      list = list.filter((p) => {
-        if (!propertyMatchesOperation(p, guidedOperation)) return false;
-
-        if (guidedPropertyType && !matchesPropertyType(p.type, guidedPropertyType)) {
-          return false;
-        }
-
-        if (guidedBedrooms && !matchesBedrooms(p.rooms, p.title, p.description, guidedBedrooms)) {
-          return false;
-        }
-
-        if (guidedCity) {
-          if (!isPropertyInCity(p, guidedCity)) return false;
-        }
-
-        if (normZones.length > 0) {
-          const textZone = normalizeGeoText(`${p.zone || ""} ${p.area || ""} ${p.title || ""}`);
-          const inZone = normZones.some((nz) => textZone.includes(nz));
-          if (!inZone) return false;
-        }
-
-        if (maxBudget !== null) {
-          const offer = selectPropertyOffer(p, getOperationIntent(guidedOperation));
-          const price = offer?.price ?? p.price;
-          if (price > maxBudget) return false;
-        }
-
-        return true;
-      });
-    }
-
-    if (selectedAmenities.length > 0) {
-      list = list.filter((p) => {
-        return selectedAmenities.every((amenityId) => {
-          const filterDef = QUICK_FILTER_OPTIONS.find((opt) => opt.id === amenityId);
-          return filterDef ? filterDef.matches(p) : true;
-        });
-      });
-    }
-
-    return list;
-  }, [properties, aiFilteredIds, guidedOperation, guidedPropertyType, guidedBedrooms, guidedCity, guidedZones, guidedBudget, selectedAmenities]);
+    return localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(p => propertyMatchesOperation(p, guidedOperation));
+  }, [catalogProperties, searchCriteria, guidedOperation]);
 
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
@@ -2983,15 +2607,10 @@ export default function MapPage() {
     } else if (showSuggested) {
       list = suggestedProperties;
     }
-    return prioritizeRecommended(list);
-  }, [exactProperties, suggestedProperties, showSuggested]);
+    return sortCatalogResults(list, sortOrder, searchCriteria.bedrooms, searchCriteria.minBudget, searchCriteria.maxBudget);
+  }, [exactProperties, suggestedProperties, showSuggested, sortOrder, searchCriteria, inventoryRevision]);
 
-  const mapCanvasProperties = useMemo(() => {
-    if (isGuidedActive || hasActiveResults) {
-      return filteredProperties;
-    }
-    return properties;
-  }, [isGuidedActive, hasActiveResults, filteredProperties, properties]);
+  const mapCanvasProperties = filteredProperties;
 
   const isSuggestedProperty = (prop: Property) =>
     suggestedProperties.some((sp) => sp.id === prop.id) && !exactProperties.some((ep) => ep.id === prop.id);
@@ -3040,7 +2659,7 @@ export default function MapPage() {
   const carouselSwipeStartX = useRef<number | null>(null);
   const isCompactCarouselViewport = () => {
     if (typeof window === "undefined") return false;
-    return window.innerWidth < 768 || (window.innerHeight <= 560 && window.innerWidth < 760);
+    return window.innerWidth < 1024;
   };
 
   const [isMobileCarousel, setIsMobileCarousel] = useState(isCompactCarouselViewport);
@@ -3276,106 +2895,23 @@ export default function MapPage() {
   };
 
   const handleShare = async (property?: Property | null) => {
-    const targetProp = property || selectedProperty;
-    if (targetProp && isOnaProperty(targetProp)) {
-      const shareUrl = `${window.location.origin}/?proyecto=ona`;
-      const shareText = "Departamentos de 1 y 2 dormitorios en Los Cusis desde USD 40.375. Conoce ONA Residences:";
-      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-        try {
-          await navigator.share({
-            title: "ONA Residences · Preventa en Los Cusis",
-            text: shareText,
-            url: shareUrl,
-          });
-          return;
-        } catch (error) {
-          if ((error as DOMException)?.name === "AbortError") return;
-        }
-      }
-      try {
-        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-        setShareHint("Enlace copiado");
-        setTimeout(() => setShareHint(""), 2500);
-      } catch {
-        setShareHint("Error al copiar");
-      }
-      return;
-    }
-
-    const draft = currentLeadContext(property);
-    const event = await recordLeadEvent({
-      action: "share",
-      propertyRef: draft.propertyRef,
-      operacion: draft.operacion,
-      zona: draft.zona,
-      presupuesto: draft.presupuesto,
-      extraFilters: draft.extraFilters,
-      firebaseUid: user?.uid,
-    });
-    if (!event) return;
-    const result = await shareLeadUrl(draft.title || "NIA", event.url);
+    const target = property || selectedProperty;
+    const draft = currentLeadContext(target);
+    void recordLeadEvent({ action: "share", propertyRef: draft.propertyRef, operacion: draft.operacion, zona: draft.zona, presupuesto: draft.presupuesto, firebaseUid: user?.uid }).catch(() => {});
+    const url = target ? `${window.location.origin}${propertyPath(target)}` : window.location.origin;
+    const result = await shareLeadUrl(target?.title || "NIA", url);
     if (result === "copied") setShareHint("Enlace copiado");
     else if (result === "shared") setShareHint("");
   };
 
-  const renderCompactFilter = (variant: "mobile" | "desktop") => {
-    if (!hasActiveResults && !aiClarification) return null;
-    return (
-      <div className={`flex flex-col items-center justify-center gap-1.5 ${variant === "desktop" ? "mt-2" : ""}`}>
-        <div className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[var(--accent-main)]/40 bg-[var(--surface-panel)]/95 py-1 pl-3 pr-1 shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.92)]">
-          <span className="min-w-0 max-w-[11.5rem] truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--text-main)] md:max-w-[18rem]">
-            {aiClarification || compactSearchLabel}
-          </span>
-          {!aiClarification && (
-            <span className="shrink-0 rounded-full bg-[var(--accent-main)]/20 px-2 py-0.5 text-[10px] font-black tabular-nums text-[var(--accent-main)]">
-              {filteredProperties.length}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={() => beginContact(currentLeadContext(null))}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--accent-main)] transition-colors hover:bg-[var(--accent-main)]/15"
-            title="Contactar"
-            aria-label="Contactar"
-          >
-            <MessageCircle size={14} />
-          </button>
-          <button
-            type="button"
-            onClick={clearAiFilters}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
-            title="Limpiar filtros"
-            aria-label="Limpiar filtros"
-          >
-            <FilterX size={14} />
-          </button>
-        </div>
-
-        {/* SUGERENCIAS DE FILTROS CONTINUAS (NUNCA SE ACABAN LAS OPCIONES) */}
-        <div className="flex max-w-[95vw] overflow-x-auto no-scrollbar items-center justify-center gap-1.5 py-0.5 px-2">
-          {QUICK_FILTER_OPTIONS.map((filter) => {
-            const isSelected = selectedAmenities.includes(filter.id);
-            return (
-              <button
-                key={filter.id}
-                type="button"
-                onClick={() => toggleAmenityFilter(filter.id)}
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm ${
-                  isSelected
-                    ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-[#2F241D] scale-105"
-                    : "border-[var(--border-soft)] bg-[var(--surface-panel)]/90 text-[var(--text-main)] hover:border-[var(--accent-main)]/60 hover:text-[var(--accent-main)]"
-                }`}
-                title={`Filtrar por ${filter.label}`}
-              >
-                <span>{filter.label}</span>
-                {isSelected && <span className="ml-0.5 text-[9px]">✕</span>}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+  const renderCompactFilter = (_variant: "mobile" | "desktop") => <CatalogFilters
+    criteria={searchCriteria} sort={sortOrder} onSort={value => { setSortOrder(value); setCurrentIndex(0); }}
+    years={deliveryYears} count={filteredProperties.length} category={guidedOperation}
+    projectCount={localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(isProjectOrPreventa).length}
+    apartmentCount={localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(p => !isProjectOrPreventa(p)).length}
+    onCategory={category => { setGuidedOperation(category as GuidedOperation); setSelectedBuildingGroup(null); setCurrentIndex(0); setAiFilteredIds(properties.map(p => p.id)); }}
+    onChange={criteria => { setSearchCriteria(criteria); setGeminiQuery(""); setSelectedBuildingGroup(null); setCurrentIndex(0); setAiFilteredIds(properties.map(p => p.id)); }}
+  />;
 
   return (
     // CONTENEDOR MAESTRO: 100% Pantalla
@@ -3508,7 +3044,7 @@ export default function MapPage() {
               value={geminiQuery}
               onChange={(e) => setGeminiQuery(e.target.value)}
               disabled={isAsking}
-              placeholder={searchPlaceholder}
+              placeholder="Ej. 2 dormitorios hasta 100 mil en Equipetrol"
               className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-stone-100 outline-none placeholder-stone-400 disabled:opacity-50"
             />
 
@@ -3567,113 +3103,8 @@ export default function MapPage() {
           </AnimatePresence>
         </div>
       </div>
-      <div className="nia-mobile-guide-toggle absolute left-4 right-4 top-[4.75rem] z-30 flex flex-col items-center gap-2 md:hidden">
-        {!showGuidedChoices ? (
-          renderCompactFilter("mobile")
-        ) : (
-          <>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {guidedStage !== "operation" && (
-                <button
-                  type="button"
-                  onClick={goPrevGuidedStep}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-stone-900/90 text-stone-200 shadow-lg backdrop-blur transition-colors hover:bg-stone-800 hover:text-white"
-                  aria-label="Anterior"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-              )}
-              {guidedStage === "operation" ? (
-                <div className="inline-flex items-center p-1 rounded-full bg-stone-950/80 backdrop-blur-xl border border-white/15 shadow-2xl gap-1.5">
-                  {visibleGuidedChoiceOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => handleGuidedChoice(option)}
-                      className={onboardingButtonClass("mobile", isChoiceSelected(option))}
-                    >
-                      {option === "Proyectos" ? (
-                        <span className="inline-flex items-center gap-2">
-                          <Sparkles size={14} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
-                          <span>Proyectos</span>
-                          <span
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
-                              isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
-                            }`}
-                          >
-                            {projectCount}
-                          </span>
-                        </span>
-                      ) : option === "Departamentos" ? (
-                        <span className="inline-flex items-center gap-2">
-                          <Building2 size={14} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
-                          <span>Departamentos</span>
-                          <span
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
-                              isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
-                            }`}
-                          >
-                            {deptoCount}
-                          </span>
-                        </span>
-                      ) : (
-                        option
-                      )}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                guidedStage !== "sell" &&
-                visibleGuidedChoiceOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => handleGuidedChoice(option)}
-                    className={onboardingButtonClass("mobile", isChoiceSelected(option))}
-                  >
-                    {option}
-                  </button>
-                ))
-              )}
-              {guidedStage === "zone" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleZonesConfirm}
-                    className="rounded-full border border-[#E6CDB8]/45 bg-gradient-to-r from-[#7A3218] to-[#A34A28] px-4 py-2 text-[11px] font-bold text-white shadow-lg backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
-                  >
-                    Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => goToGuidedStage("city")}
-                    className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/90 px-3 py-1.5 text-[10px] font-bold text-[var(--text-muted)] hover:text-[var(--accent-main)] hover:border-[var(--accent-main)]/50 transition-colors flex items-center gap-1"
-                    title="Cambiar ciudad seleccionada"
-                  >
-                    <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
-                  </button>
-                </>
-              )}
-              {guidedStage !== "sell" && visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
-                <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-3 py-1.5 text-[11px] font-medium text-[var(--text-muted)]">
-                  Sin opciones para "{geminiQuery}". Presiona Buscar.
-                </span>
-              )}
-            </div>
-            {guidedStage === "sell" && (
-              <div className="w-full rounded-2xl border border-[var(--accent-main)]/45 bg-[var(--surface-panel)]/95 px-4 py-3 text-center shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.94)]">
-                <p className="mb-3 text-sm font-semibold text-[var(--text-main)]">Si quieres vender tu inmueble, escribenos por WhatsApp y te ayudamos.</p>
-                <button
-                  type="button"
-                  onClick={() => beginContact({ operacion: "Vender", extraFilters: { source: "sell" } })}
-                  className={`${onboardingButtonClass("mobile", true)} inline-flex items-center gap-2`}
-                >
-                  <MessageCircle size={14} /> Contactar
-                </button>
-              </div>
-            )}
-          </>
-        )}
+      <div className="nia-mobile-guide-toggle absolute left-4 right-4 top-[4.75rem] z-30 md:hidden">
+        {renderCompactFilter("mobile")}
       </div>
       {locationQuestion && !isGuidedSearchOpen && (
         <div className="nia-mobile-location-question absolute left-4 right-4 top-[7.25rem] z-30 rounded-2xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/96 p-3 text-left shadow-[var(--shadow-warm)] backdrop-blur-xl md:hidden dark:bg-[rgba(27,20,17,0.94)]">
@@ -3725,7 +3156,7 @@ export default function MapPage() {
               value={geminiQuery}
               onChange={(e) => setGeminiQuery(e.target.value)}
               disabled={isAsking}
-              placeholder={searchPlaceholder}
+              placeholder="Ej. 2 dormitorios hasta 100 mil en Equipetrol"
               className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
             />
 
@@ -3744,110 +3175,7 @@ export default function MapPage() {
               <span className="hidden md:inline">Buscar</span>
             </button>
           </form>
-          {showGuidedChoices ? (
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-            {guidedStage !== "operation" && (
-              <button
-                type="button"
-                onClick={goPrevGuidedStep}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-stone-900/90 text-stone-200 shadow-sm backdrop-blur transition-colors hover:bg-stone-800 hover:text-white"
-                aria-label="Anterior"
-              >
-                <ChevronLeft size={16} />
-              </button>
-            )}
-            {guidedStage === "sell" ? (
-              <div className="flex max-w-xl flex-col items-center gap-2 rounded-2xl border border-[var(--accent-main)]/45 bg-[var(--surface-panel)]/92 px-4 py-3 text-center shadow-sm backdrop-blur dark:bg-[rgba(27,20,17,0.88)]">
-                <p className="text-sm font-semibold text-[var(--text-main)]">Si quieres vender tu inmueble, escribenos por WhatsApp y te ayudamos.</p>
-                <button
-                  type="button"
-                  onClick={() => beginContact({ operacion: "Vender", extraFilters: { source: "sell" } })}
-                  className={`${onboardingButtonClass("desktop", true)} inline-flex items-center gap-2`}
-                >
-                  <MessageCircle size={14} /> Contactar
-                </button>
-              </div>
-            ) : guidedStage === "operation" ? (
-              <div className="inline-flex items-center p-1 rounded-full bg-stone-950/80 backdrop-blur-xl border border-white/15 shadow-2xl gap-1.5">
-                {visibleGuidedChoiceOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => handleGuidedChoice(option)}
-                    className={onboardingButtonClass("desktop", isChoiceSelected(option))}
-                  >
-                    {option === "Proyectos" ? (
-                      <span className="inline-flex items-center gap-2">
-                        <Sparkles size={13} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
-                        <span>Proyectos</span>
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
-                            isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
-                          }`}
-                        >
-                          {projectCount}
-                        </span>
-                      </span>
-                    ) : option === "Departamentos" ? (
-                      <span className="inline-flex items-center gap-2">
-                        <Building2 size={13} className={isChoiceSelected(option) ? "text-white" : "text-[#C4896A]"} />
-                        <span>Departamentos</span>
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors ${
-                            isChoiceSelected(option) ? "bg-white/25 text-white" : "bg-white/10 text-stone-300"
-                          }`}
-                        >
-                          {deptoCount}
-                        </span>
-                      </span>
-                    ) : (
-                      option
-                    )}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <>
-                {visibleGuidedChoiceOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => handleGuidedChoice(option)}
-                    className={onboardingButtonClass("desktop", isChoiceSelected(option))}
-                  >
-                    {option}
-                  </button>
-                ))}
-                {guidedStage === "zone" && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handleZonesConfirm}
-                      className="rounded-full border border-[#E6CDB8]/45 bg-gradient-to-r from-[#7A3218] to-[#A34A28] px-4 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur transition-all hover:brightness-110 flex items-center gap-1"
-                    >
-                      Continuar {guidedZones.length > 0 ? `(${guidedZones.length})` : ""} →
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => goToGuidedStage("city")}
-                      className="rounded-full border border-white/15 bg-stone-900/90 px-3 py-1.5 text-[10px] font-bold text-stone-300 hover:text-white hover:border-[#A34A28]/60 transition-colors flex items-center gap-1"
-                      title="Cambiar ciudad seleccionada"
-                    >
-                      <span>📍 {guidedCity || "Santa Cruz"} (Cambiar)</span>
-                    </button>
-                  </>
-                )}
-                {visibleGuidedChoiceOptions.length === 0 && geminiQuery.trim() && (
-                  <span className="rounded-full border border-white/15 bg-stone-900/95 px-3 py-1 text-xs font-medium text-stone-300">
-                    Sin opciones para "{geminiQuery}". Presiona <strong className="text-[#C4896A]">Buscar</strong> para consultar con IA.
-                  </span>
-                )}
-              </>
-            )}
-          </div>
-          ) : (
-            renderCompactFilter("desktop")
-          )}
+          {renderCompactFilter("desktop")}
         </>
         {locationQuestion && !isGuidedSearchOpen && (
           <div className="mt-3 rounded-xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/95 p-3 text-left shadow-[0_18px_42px_rgba(58,33,25,0.18)] backdrop-blur-xl dark:bg-[rgba(27,20,17,0.94)]">
@@ -3994,7 +3322,7 @@ export default function MapPage() {
       )}
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
-      {!selectedProperty && (visibleProperties.length > 0 || hasFinishedAiSearch) && (
+      {!selectedProperty && (visibleProperties.length > 0 || hasActiveResults) && (
         <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
 
           {visibleProperties.length > 0 && (
@@ -4022,7 +3350,7 @@ export default function MapPage() {
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                 className="flex h-full w-full items-center justify-center gap-4 md:gap-7"
               >
-              {visibleProperties.length === 0 && hasFinishedAiSearch && (
+              {visibleProperties.length === 0 && hasActiveResults && (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--accent-main)]/40 bg-[var(--surface-panel)]/95 px-6 py-5 text-center shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.95)] max-w-md w-full mx-auto">
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent-main)]/15 text-[var(--accent-main)]">
             <Sparkles size={18} />
@@ -4133,7 +3461,7 @@ export default function MapPage() {
         {/* PANEL DERECHO: Informacion (50% del ancho) con mas margen de respiro */}
         <div className="nia-property-card-body relative flex h-full min-w-0 flex-1 flex-col justify-center bg-[var(--surface-panel)] p-4 text-[var(--text-main)] dark:bg-[var(--surface-panel)] dark:text-[var(--text-main)] md:w-[50%] md:flex-none md:p-5">
           {projectCardSummary ? (
-            <ProjectCardSummary reference={p.id} summary={projectCardSummary} />
+            <ProjectCardSummary reference={p.id} summary={projectCardSummary} price={catalogPrice(p, searchCriteria.bedrooms, searchCriteria.minBudget, searchCriteria.maxBudget)} />
           ) : (
           <>
           <div className="mb-2 flex items-center justify-between gap-1.5 min-w-0">
@@ -4484,10 +3812,10 @@ export default function MapPage() {
             </div>
 
             {/* CONTENIDO EDITORIAL (Maxima Legibilidad) */}
-            <div className="w-full max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-12 shrink-0">
+            <div className="w-full max-w-6xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-12 shrink-0">
 
                 {/* Columna Izquierda: Informacion Extendida */}
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   {isPromotedProperty(selectedProperty) && (
                     <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)]/40 bg-[var(--surface-control)]/70 px-3 py-1">
                       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--accent-main)]">
@@ -4757,6 +4085,14 @@ export default function MapPage() {
                   )}
 
                   {/* BLOQUE EXCLUSIVO PARA DEPARTAMENTO */}
+                  {Number.isFinite(selectedProperty.lat) && Number.isFinite(selectedProperty.lng) && (
+                    <section className="my-6 min-w-0">
+                      <h3 className="mb-3 text-lg font-semibold">Ubicación</h3>
+                      <iframe title={`Mapa de ${selectedProperty.title}`} className="h-64 w-full rounded-2xl border-0" loading="lazy" src={`https://maps.google.com/maps?q=${selectedProperty.lat},${selectedProperty.lng}&z=16&output=embed`} />
+                      <a className="mt-2 inline-block text-sm underline" href={`https://www.google.com/maps/search/?api=1&query=${selectedProperty.lat},${selectedProperty.lng}`} target="_blank" rel="noreferrer">Abrir ubicación en Google Maps</a>
+                      <a className="ml-4 inline-block text-sm underline" href={propertyPath(selectedProperty)}>Enlace de este departamento</a>
+                    </section>
+                  )}
                   {selectedProperty.type === "Departamento" && (() => {
                     const depto = parseDepartamentoDetails(selectedProperty.datosEspecificosJson, {
                       rooms: selectedProperty.rooms,
@@ -5331,10 +4667,10 @@ export default function MapPage() {
                     })}
                   </div>
 
-                  {/* Bloque de Descripcion */}
+                  {/* Bloque de Descripción */}
                   <div className="mb-12">
                     <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-4 border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-2">
-                      Descripcion de la Propiedad
+                      Descripción de la Propiedad
                     </h4>
                     <p className="text-[var(--text-main)] dark:text-[var(--text-muted)] leading-7 text-[15px] whitespace-pre-wrap font-normal">
                        {selectedProperty.description || "Esta propiedad exclusiva cuenta con acabados de primera calidad y diseno de vanguardia. Contacte a nuestro equipo para obtener el dossier completo y coordinar una visita privada."}
@@ -5359,10 +4695,10 @@ export default function MapPage() {
                   )}
                </div>
 
-               {/* Columna Derecha: Ficha Tecnica (Sticky) */}
-               <div className="w-full md:w-[380px] shrink-0">
+               {/* Columna Derecha: Ficha Técnica (Sticky) */}
+               <div className="w-full lg:w-[380px] shrink-0">
                   <div className="bg-[var(--surface-panel)] dark:bg-[var(--surface-panel)] border border-[var(--border-strong)]/40 dark:border-[var(--border-soft)] rounded-xl p-8 sticky top-8 shadow-[var(--shadow-warm)]">
-                     <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-6">Ficha Tecnica</h4>
+                     <h4 className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-xs font-bold uppercase tracking-[0.2em] mb-6">Ficha Técnica</h4>
 
                      <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3">
@@ -5600,7 +4936,7 @@ export default function MapPage() {
                               <>
                                 <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3">
                                    <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Bed size={16}/> Habitaciones</span>
-                                   <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.rooms} dorms</span>
+                                   <span className="text-[var(--text-main)] dark:text-[var(--text-main)] text-sm font-semibold leading-none">{selectedProperty.rooms === 0 ? "Monoambiente" : `${selectedProperty.rooms} ${selectedProperty.rooms === 1 ? "dormitorio" : "dormitorios"}`}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-[var(--border-soft)] dark:border-[var(--border-soft)] pb-3">
                                    <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-center gap-3 text-sm"><Bath size={16}/> Baños</span>

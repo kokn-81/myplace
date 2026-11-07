@@ -301,7 +301,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible?.target?.id) setActiveSection(visible.target.id);
       },
-      { root: window.matchMedia("(min-width: 768px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
+      { root: window.matchMedia("(min-width: 1024px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
     );
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
@@ -418,7 +418,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
   const amenity = AMENITY_SLIDES[amenityIndex];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
           {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
@@ -809,7 +809,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
       </div>
 
       {activeSection !== "cierre" && (
-        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
           <div>
             <p className="text-xs text-stone-700">Desde USD {formatBetonUsd(fromAny)} · {BETON_BRUT_CONFIG.delivery}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Consulta el monto de reserva</p>
