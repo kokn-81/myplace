@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
@@ -174,6 +174,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
+  const modelTouch = useRef<number | null>(null);
   const [activeSection, setActiveSection] = useState("intro");
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
@@ -271,9 +272,18 @@ export default function BetonBrutLanding({ onClose }: Props) {
   };
 
   const shiftModel = (dir: number) => {
+    if (slides.length < 2) return;
     const next = (slideIndex + dir + slides.length) % slides.length;
     setModelIndex(next);
     chooseModel(slides[next]);
+  };
+
+  const onModelSwipe = (event: TouchEvent) => {
+    if (modelTouch.current == null || slides.length < 2) return;
+    const dx = event.changedTouches[0].clientX - modelTouch.current;
+    if (dx > 40) shiftModel(-1);
+    if (dx < -40) shiftModel(1);
+    modelTouch.current = null;
   };
 
   const handleShare = async () => {
@@ -422,7 +432,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Calle 8, entre el 2° y el 3° anillo.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol, sobre la calle que ya recorres.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               El mapa del brochure sitúa el proyecto en Equipetrol. Alrededor marca la Av. San Martín, la Av. La Salle, la Parroquia Sagrado Corazón, el Hotel Los Tajibos y el eje comercial de la zona. La dirección publicada es calle 8. El brochure no da un número de puerta.
             </p>
@@ -436,7 +446,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El último nivel es de todos.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Arriba, la terraza se vive en compañía.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               El área social está amoblada y equipada: piscina mirador, dos churrasqueras, sauna, sala de TV y karaoke, cowork, bar con cocina de chef, y lavado y secado.
             </p>
@@ -461,7 +471,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="tipologias" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">1, 2 y 3 dormitorios.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige el metraje en el que te ves.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               Toca la imagen para abrir la ficha: el plano, la superficie y la posición en el piso. Los pisos 1 a 5 repiten seis departamentos. Los pisos 6 y 7 tienen cinco, con otra planta.
             </p>
@@ -513,7 +523,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Lo que publica la especificación técnica.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Llegas y la cocina ya está lista.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               Cocina, baños, el departamento y el acceso, con los acabados que nombra la especificación técnica. La altura libre es 2,65 m.
             </p>
@@ -538,7 +548,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Colaboradores</span>
             <img src="/beton_brut/logo-negro.png" alt="Béton Brut II" className="h-14 w-auto" />
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El brochure los presenta juntos.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tres firmas detrás de tu edificio.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               Tres marcas firman el proyecto: Beton Fortia S.R.L., Eduardo Roca y Mediterráneo Constructora.
             </p>
@@ -560,9 +570,9 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Dos caminos, los dos publicados.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Contado o en cuotas. Eliges tú.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              El precio de esta sección es el valor por metro. El monto de una unidad aparece cuando la eliges. La lista no publica una seña.
+              Contado es la tarifa más baja. El plan 30-60 reparte el saldo hasta la entrega en {BETON_BRUT_CONFIG.delivery}. El monto de tu unidad aparece cuando la eliges.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Ventaja comercial</span>
@@ -588,7 +598,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
           <section id="disponibilidad" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-              <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige la unidad que sigue libre.</h3>
+              <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Encuentra la unidad y apártala.</h3>
             </div>
             <p className="text-xs text-stone-500">Precios de la lista oficial del {BETON_BRUT_CONFIG.priceListLabel}. En verde está lo que puedes tomar. En gris ya se vendió y no mostramos un precio que la lista no publicó.</p>
 
@@ -602,19 +612,36 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   </button>
                 ))}
               </div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {slides.map((model) => {
-                  const free = unitsForModel(model.id).some((unit) => unit.estado === "LIBRE");
-                  const price = Math.min(...unitsForModel(model.id).filter((unit) => unit.precioContado != null).map((unit) => unit.precioContado as number));
-                  const selected = selectedModelId === model.id;
-                  return (
-                    <button key={model.id} type="button" onClick={() => chooseModel(model)} className={`rounded-xl border p-3 text-left ${selected ? "border-[#9a7b45] bg-white ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
-                      <p className="text-sm font-bold">{model.name}</p>
-                      <p className="text-[11px] text-stone-500">{formatBetonM2(model.areaM2)} m² · {model.where}</p>
-                      <p className="mt-1 text-xs font-semibold text-[#9a7b45]">{free && Number.isFinite(price) ? `Desde USD ${formatBetonUsd(price)}` : "Vendido"}</p>
-                    </button>
-                  );
-                })}
+              <div
+                className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
+                onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }}
+                onTouchEnd={onModelSwipe}
+              >
+                <div className="flex items-center gap-1 border-b border-stone-100 px-2 py-3">
+                  <button type="button" onClick={() => shiftModel(-1)} disabled={slides.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 disabled:opacity-30" aria-label="Modelo anterior">
+                    <ChevronLeft size={22} />
+                  </button>
+                  <div className="min-w-0 flex-1 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{slideIndex + 1} / {slides.length}</p>
+                    <p className="font-serif text-lg text-stone-900">{currentModel.name}</p>
+                    <p className="text-xs text-stone-500">{formatBetonM2(currentModel.areaM2)} m² · {currentModel.where}</p>
+                    <p className="mt-1 text-sm font-semibold text-[#9a7b45]">
+                      {(() => {
+                        const freeUnits = unitsForModel(currentModel.id).filter((unit) => unit.precioContado != null);
+                        if (freeUnits.length === 0) return "Vendido";
+                        const price = Math.min(...freeUnits.map((unit) => unit.precioContado as number));
+                        return `Desde USD ${formatBetonUsd(price)}`;
+                      })()}
+                    </p>
+                  </div>
+                  <button type="button" onClick={() => shiftModel(1)} disabled={slides.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 disabled:opacity-30" aria-label="Modelo siguiente">
+                    <ChevronRight size={22} />
+                  </button>
+                </div>
+                <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex w-full cursor-zoom-in items-center justify-center bg-[#f7f5f0] px-4 py-4" aria-label={`Ver ficha de ${currentModel.name}`}>
+                  <img src={currentModel.preview} alt={`${currentModel.name}, el departamento`} className="mx-auto max-h-[280px] w-auto max-w-full object-contain" />
+                </button>
+                <p className="px-4 py-3 text-center text-xs text-stone-600">{currentModel.detail}</p>
               </div>
             </div>
 
@@ -718,7 +745,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">La lista dice qué queda.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Da el paso y conversemos tu unidad.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600 [text-align:justify]">
               {soldCount} de {BETON_UNITS.length} unidades figuran vendidas al {BETON_BRUT_CONFIG.priceListLabel}. Quedan {freeCount}, desde USD {formatBetonUsd(fromAny)} al contado, con entrega en {BETON_BRUT_CONFIG.delivery}. La seña no está publicada: el asesor la confirma en la conversación.
             </p>

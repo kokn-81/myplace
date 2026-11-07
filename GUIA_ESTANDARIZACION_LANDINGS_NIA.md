@@ -36,6 +36,8 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 24. **Unidad vendida.** Si la lista marca la unidad como vendida y no publica su precio, la ficha no calcula ni muestra un número.
 25. **Código de unidad.** Si el código es piso + letra (1D, 2D, 3D), el botón de piso dice “Unidad 1D”. Suelto, 1D, 2D y 3D se leen como dormitorios.
 26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual. La página habla del proyecto.
+27. **Paso 1 (tipología).** Si hay varias plantas, no se listan en una grilla que alarga la página. Van en un carrusel: flechas y deslizamiento. Debajo del modelo activo se ve la foto del departamento, y cambia al pasar al siguiente. El clic en esa foto abre la ficha. El filtro de dormitorios puede quedar arriba, en una sola fila.
+28. **Títulos.** Cada sección habla al comprador: deseo, decisión o lugar. No describen el documento (“el brochure los presenta”, “los dos publicados”, “la lista dice qué queda”). Sin signos de exclamación y sin una oferta que el material no publica.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 
