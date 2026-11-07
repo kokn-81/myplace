@@ -49,91 +49,91 @@ const AMENITY_SLIDES = [
   {
     src: "/bless_tower/piscina_infinity.jpg",
     category: "Piscina en Rooftop",
-    title: "Piscina Panorámica en el Nivel 30",
+    title: "Tu pausa, con vista a la ciudad",
     description:
-      "Piscina sinfín con cascada decorativa y vista abierta de 360° sobre toda la ciudad de Santa Cruz. Un oasis en las alturas diseñado para desconectar con el atardecer.",
+      "Un baño, una vista abierta y un momento para ti. Disfruta de una piscina sinfín con panorámicas de Santa Cruz, sin salir de tu edificio.",
   },
   {
     src: "/bless_tower/social_2.jpg",
     category: "Área Gourmet",
-    title: "Doble Churrasquera & Sky Lounge",
+    title: "Un buen encuentro empieza aquí",
     description:
-      "Espacios de parrilla completamente equipados con mesones de granito, mobiliario de diseño y terrazas semicubiertas para tus celebraciones.",
+      "Dos churrasqueras y un estar social para compartir una parrillada con amigos o reunir a la familia. Más espacio para los encuentros que disfrutas.",
   },
   {
     src: "/bless_tower/social_1.jpg",
     category: "Fitness & Bienestar",
-    title: "Gimnasio Panorámico de Alta Gama",
+    title: "Entrena sin alejarte de casa",
     description:
-      "Área de cardio y fuerza con máquinas profesionales y vista panorámica. Entrena con la mejor iluminación natural sin salir de tu edificio.",
+      "Hazle un lugar al movimiento en tu día. Un gimnasio equipado dentro del edificio para mantener tu rutina cerca de tu departamento.",
   },
   {
     src: "/bless_tower/cowork_real.jpg",
     category: "Productividad",
-    title: "Co-Work Climatizado de Alta Productividad",
+    title: "Tu espacio para concentrarte",
     description:
-      "Ambiente corporativo con estaciones individuales, coffee bar y conexión de alta velocidad. Trabaja o atiende clientes con total comodidad.",
+      "Cambia de ambiente sin cambiar de dirección. Un cowork para dedicarle tiempo a tus proyectos y separar el trabajo de tu espacio de descanso.",
   },
   {
     src: "/bless_tower/lobby_interior.jpg",
     category: "Acceso & Prestigio",
-    title: "Lobby de Doble Altura con Recepción AV",
+    title: "Llegar también se disfruta",
     description:
-      "Ingreso imponente con concierge permanente, cerraduras digitales y circuito cerrado de cámaras para darte total tranquilidad y prestigio.",
+      "Un lobby para recibir a tus visitas y sentir que llegaste a casa. La experiencia de vivir en Bless Tower empieza desde el ingreso.",
   },
   {
     src: "/bless_tower/sala_juegos.jpg",
     category: "Entretenimiento",
-    title: "Sala de Juegos & Gamer Lounge",
+    title: "Tu próxima partida, en casa",
     description:
-      "Espacio lúdico equipado con consolas PlayStation, pantalla gigante y zona de relax para compartir con amigos y familia.",
+      "Desconéctate de la rutina y comparte una buena partida. Una sala de juegos dentro de tu edificio para disfrutar con amigos y familia.",
   },
 ];
 
 const TYPOLOGIES_DATA = [
   {
     id: "mono",
-    title: "Monoambientes Inteligentes",
+    title: "Monoambientes para tu independencia",
     area: "28,5 a 38,4 m²",
     image: "/bless_tower/modelos_pages/page_2.jpg",
     cashPrice: 43026,
     tagline:
-      "Distribución ultraeficiente ideal para inversión de alta rotación, renta en Airbnb o primera vivienda independiente.",
+      "Un espacio propio con cocina, baño y balcón para organizar tu vida a tu ritmo.",
     highlights: [
-      "Ambiente integrado con excelente entrada de luz natural",
-      "Cocina americana con cajonería y mesón de granito",
+      "Ambiente integrado para descansar, cocinar y compartir",
+      "Cocina con cajonería y mesón de granito negro",
       "Baño completo con box de vidrio templado",
       "Aires acondicionados instalados y cerradura inteligente",
     ],
   },
   {
     id: "1d",
-    title: "1 Dormitorio Ejecutivo",
+    title: "1 dormitorio, más privacidad",
     area: "41,3 a 63,1 m²",
     image: "/bless_tower/modelos_pages/page_8.jpg",
     cashPrice: 58000,
     tagline:
-      "Espacios amplios y suite independiente, pensados para ejecutivos, parejas y nómadas digitales exigentes.",
+      "Separa tu descanso de la vida social con un dormitorio independiente y espacios para compartir.",
     highlights: [
-      "Dormitorio máster privado con ropero empotrado a medida",
-      "Living-comedor social conectado a terraza panorámica",
-      "Cocina de concepto abierto con barra desayunadora",
+      "Dormitorio independiente con ropero empotrado",
+      "Living-comedor y balcón, según el modelo",
+      "Cocina y comedor integrados para tu día a día",
       "Ubicación sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo",
     ],
   },
   {
     id: "2d",
-    title: "2 Dormitorios Confort & Suite",
+    title: "2 dormitorios para compartir",
     area: "76,2 a 87,4 m²",
     image: "/bless_tower/modelos_pages/page_16.jpg",
     cashPrice: 110000,
     tagline:
-      "El equilibrio perfecto entre privacidad familiar y vida urbana premium con 2 habitaciones completas.",
+      "Dos dormitorios y espacios comunes para compartir, con privacidad para cada uno.",
     highlights: [
-      "Suite principal con vestidor y baño privado independiente",
-      "Segundo dormitorio con ropero empotrado y baño compartido",
-      "Living espacioso con vista despejada a la Av. Cristo Redentor",
-      "Lavandería y servicios completamente independizados",
+      "Dormitorio principal con vestidor y baño privado",
+      "Segundo dormitorio con baño propio",
+      "Living-comedor y balcones para disfrutar de tu casa",
+      "Modelos X e Y en los pisos 24 y 25",
     ],
   },
 ];
@@ -639,10 +639,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           {/* Tarjeta inferior de precios dinámicos */}
           <div className="p-4 rounded-xl bg-black/55 backdrop-blur-md border border-white/15 max-w-sm">
             <div className="flex items-center justify-between text-[11px] text-stone-300 pb-2 border-b border-white/10">
-              <span className="font-semibold text-[#e8d5a8]">Precios Preventa en Vivo</span>
+              <span className="font-semibold text-[#e8d5a8]">Precios al contado</span>
               <span className="inline-flex items-center gap-1 text-emerald-400">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Oficial Sheet
+                Disponibilidad
               </span>
             </div>
             <div className="mt-2.5 space-y-1.5 text-xs">
@@ -679,26 +679,26 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
               <Sparkles size={13} />
-              Experiencia Residencial & Preventa
+              Tu vida, con otra perspectiva
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1C1917] leading-tight">
               Vive en <span className="italic font-normal">Bless Tower.</span>
             </h2>
             <p className="text-sm md:text-base text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word] pt-2">
-              Una torre icónica de 30 niveles que redefine el horizonte norte de Santa Cruz de la Sierra. Emplazada estratégicamente sobre la Av. Cristo Redentor entre el 2° y 3° Anillo, Bless Tower combina arquitectura vanguardista, comodidades de hotel boutique en su rooftop con piscina sinfín y una ingeniería de acabados pensada para la renta ejecutiva.
+              Una piscina con vista a la ciudad, un gimnasio cerca de tu puerta y un cowork para trabajar sin salir de casa. En Bless Tower, eliges entre monoambientes y departamentos de 1 y 2 dormitorios sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo.
             </p>
           </div>
 
           {/* Tarjeta de Tracción */}
           <div className="p-4 rounded-xl bg-white border border-[#E7E5E4] shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Tracción de Preventa · Entrega Diciembre 2027</p>
+              <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Preventa · Entrega diciembre 2027</p>
               <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                {soldUnitsCount} de {units.length} unidades colocadas
+                {soldUnitsCount} de {units.length} unidades vendidas o reservadas
               </p>
             </div>
             <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Alta Demanda · Fase 1
+              Elige tu unidad
             </span>
           </div>
 
@@ -756,29 +756,29 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Ubicación Privilegiada
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              En el Eje Corporativo y Comercial del Norte
+              Tu día a día, mejor conectado.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Ubicado sobre la Av. Cristo Redentor entre 2° y 3° Anillo, Bless Tower ofrece conectividad inmediata con los centros empresariales, universidades y clínicas de mayor prestigio en Santa Cruz de la Sierra. La zona goza de cota topográfica alta con excelente drenaje pluvial pavimentado, garantizando accesibilidad y valorización permanente.
+              Vive sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo, en un entorno de comercios y servicios para organizar tu día. Frente a Audi (Hansa), Bless Tower te ofrece una dirección fácil de ubicar y una conexión con la vida urbana de Santa Cruz.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">3 min</p>
+              <p className="font-serif text-xl font-bold text-stone-900">Sobre</p>
               <p className="text-[11px] text-stone-500 mt-0.5">Av. Cristo Redentor</p>
             </div>
             <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">5 min</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Equipetrol Norte</p>
+              <p className="font-serif text-xl font-bold text-stone-900">2° y 3°</p>
+              <p className="text-[11px] text-stone-500 mt-0.5">Entre anillos</p>
             </div>
             <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">7 min</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Mall Las Brisas</p>
+              <p className="font-serif text-xl font-bold text-stone-900">Frente a</p>
+              <p className="text-[11px] text-stone-500 mt-0.5">Audi (Hansa)</p>
             </div>
             <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">12 min</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Aeropuerto Viru Viru</p>
+              <p className="font-serif text-xl font-bold text-stone-900">Santa Cruz</p>
+              <p className="text-[11px] text-stone-500 mt-0.5">Vive la ciudad</p>
             </div>
           </div>
 
@@ -807,10 +807,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Áreas Sociales & Bienestar
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Un Club Residencial en las Alturas
+              Tu tiempo libre también vive aquí.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Diseñadas para ofrecer una experiencia hotelera sin salir de casa. El rooftop del Piso 30 se convierte en el epicentro social de la torre con vistas sin obstáculos hacia el norte y el centro de la ciudad.
+              Piscina sinfín, dos churrasqueras, fogatero y sala de juegos para compartir. Gimnasio y cowork para mantener tu rutina. Espacios que amplían tu casa y hacen que cada día tenga más opciones.
             </p>
           </div>
 
@@ -875,10 +875,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Tipologías Residenciales
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Plantas Diseñadas al Milímetro
+              Un espacio para la vida que quieres.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Cada metro cuadrado ha sido optimizado para garantizar ventilación cruzada, entrada de luz natural y una circulación fluida. Selecciona una tipología para examinar su plano acotado sin salir de la sección.
+              Monoambientes y departamentos de 1 y 2 dormitorios para distintas formas de vivir. Compara sus distribuciones, balcones y espacios de guardado, y encuentra el lugar en el que te imaginas cada día.
             </p>
           </div>
 
@@ -918,7 +918,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               <div>
                 <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9a7b45]">Plano Arquitectónico Oficial</span>
                 <h4 className="font-serif text-xl font-bold text-stone-900">{currentTypology.title}</h4>
-                <p className="text-xs text-stone-500">{currentTypology.area} de superficie útil total</p>
+                <p className="text-xs text-stone-500">{currentTypology.area} · revisa el metraje de cada modelo</p>
               </div>
               <button
                 onClick={() => setShowHdPlanModal(true)}
@@ -955,13 +955,13 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
               <CheckCircle2 size={13} />
-              Equipamiento 100% Incluido &amp; Acabados Interiores
+              Equipamiento incluido y acabados
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Llave en Mano sin Costos Ocultos
+              Lo esencial de tu hogar ya está incluido.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              En Bless Tower no tienes que presupuestar gastos adicionales en carpintería, mesones o climatización. Cada departamento se entrega completamente dotado con 12 componentes de equipamiento y especificaciones técnicas de primer nivel arquitectónico.
+              Imagina tu cocina con muebles y mesones instalados, el ropero listo para organizar tus cosas y los aires acondicionados incluidos en sala y dormitorios. Conoce el equipamiento y los acabados con los que se entrega tu departamento.
             </p>
           </div>
 
@@ -970,16 +970,16 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             {[
               { title: "Aires Acondicionados", desc: "Instalados en dormitorios y salas de estar" },
               { title: "Cerradura Inteligente", desc: "Acceso digital con código y tarjeta en puerta principal" },
-              { title: "Calefón Eléctrico / a Gas", desc: "Suministro continuo de agua caliente en cocina y baños" },
+              { title: "Calefón Eléctrico / a Gas", desc: "Agua caliente mediante calefón eléctrico o a gas" },
               { title: "Intercomunicador", desc: "Comunicación directa en cada departamento" },
-              { title: "Vigilancia 24/7", desc: "Circuito cerrado y control de seguridad en todo el edificio" },
+              { title: "Vigilancia 24/7", desc: "Vigilancia en el edificio las 24 horas" },
               { title: "Espejo LED en Baños", desc: "Iluminación integrada decorativa y funcional" },
-              { title: "Grifería Sanitaria Importada", desc: "Grifería y accesorios de primera línea" },
-              { title: "Luminaria LED Completa", desc: "Puntos de luz empotrados de máxima eficiencia" },
+              { title: "Grifería Sanitaria Importada", desc: "Grifería y accesorios sanitarios incluidos" },
+              { title: "Luminaria LED", desc: "Iluminación LED incluida en el equipamiento" },
               { title: "Cocina Encimera", desc: "Empotrada sobre mesón de granito negro" },
               { title: "Box de Baños", desc: "Mamparas de vidrio templado de seguridad" },
               { title: "Extractor Eléctrico", desc: "Campana extractora de humos en cocina" },
-              { title: "Extractor Mecánico", desc: "Ventilación activa y extracción en baños" },
+              { title: "Extractor Mecánico", desc: "Ventilación de baños mediante extractor" },
             ].map((item, idx) => (
               <div key={idx} className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-xs flex items-start gap-3">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#9a7b45]/10 text-[#9a7b45] text-xs font-bold font-mono">
@@ -998,14 +998,14 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             <div className="border-b border-stone-100 pb-3 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45]">
-                  Especificaciones Constructivas
+                  Conoce lo que recibes
                 </span>
                 <h4 className="font-serif text-lg font-bold text-stone-900">
-                  Calidad en Cada Detalle de Acabados
+                  Detalles que hacen tu casa más cómoda
                 </h4>
               </div>
               <span className="text-xs bg-stone-100 text-stone-600 px-3 py-1 rounded-full font-medium">
-                Normativa de Entrega
+                Acabados incluidos
               </span>
             </div>
 
@@ -1014,8 +1014,8 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
                   Revestimientos &amp; Pisos
                 </strong>
-                <p>• Piso y zócalos de porcelanato de alto tránsito.</p>
-                <p>• Muros de baños revestidos íntegramente con porcelanato.</p>
+                <p>• Piso y zócalos de porcelanato.</p>
+                <p>• Revestimiento de muros de baños con porcelanato.</p>
                 <p>• Revestimiento de cocina en salpicadero de porcelanato.</p>
               </div>
 
@@ -1033,7 +1033,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                   Carpintería &amp; Muebles
                 </strong>
                 <p>• Cajonería alta en melamina con nicho de puerta de vidrio y luz LED.</p>
-                <p>• Cajonería baja de cocina en melamina reforzada.</p>
+                <p>• Cajonería baja de cocina en melamina.</p>
                 <p>• Rack de TV en sala de estar con <strong>detalle de ripado</strong>.</p>
                 <p>• Mueble flotante de melamina bajo el lavabo.</p>
               </div>
@@ -1042,7 +1042,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#9a7b45]">
                   Dormitorios &amp; Roperos
                 </strong>
-                <p>• Ropero empotrado de piso a techo a medida.</p>
+                <p>• Ropero empotrado de piso a techo.</p>
                 <p>• Divisiones internas completas, tubo metálico y rieles corredizos.</p>
               </div>
 
@@ -1073,11 +1073,11 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
               <Building2 size={13} />
-              Respaldo y Solvencia Constructiva
+              Conoce a la desarrolladora
             </span>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-                Alta Vida SRL · Desarrolladora Inmobiliaria
+                Un hogar se elige también por quién lo construye.
               </h3>
               <a
                 href="https://web.altavidasrl.com/"
@@ -1090,34 +1090,34 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </a>
             </div>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Fundada en 2014, <strong>Alta Vida SRL</strong> es una de las empresas de desarrollo inmobiliario con mayor proyección y dinamismo en Bolivia, sumando más de 10 años de experiencia transformando entornos urbanos. Con presencia corporativa en <strong>5 ciudades</strong> (Santa Cruz, Tarija, Potosí, Oruro y Cochabamba), destaca por su modelo de integración vertical: ingeniería, cálculo estructural, supervisión técnica en obra y comercialización directa con total transparencia y seguridad jurídica.
+              Detrás de Bless Tower está <strong>Alta Vida SRL</strong>, una desarrolladora fundada en 2014, con más de 10 años de experiencia y presencia en <strong>5 ciudades</strong> de Bolivia. Conoce su trayectoria y su equipo de planificación, diseño, construcción y comercialización para tomar tu decisión con más información.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#9a7b45]">+10 Años</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Trayectoria Nacional</p>
-              <p className="text-[11px] text-stone-500 mt-1">Desde 2014 en 5 ciudades de Bolivia</p>
+              <p className="text-xs font-semibold text-stone-900 mt-1">Experiencia inmobiliaria</p>
+              <p className="text-[11px] text-stone-500 mt-1">Desarrollando proyectos desde 2014</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#9a7b45]">30 Niveles</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Hito Arquitectónico</p>
-              <p className="text-[11px] text-stone-500 mt-1">La torre residencial más alta de Av. Cristo Redentor</p>
+              <p className="text-xs font-semibold text-stone-900 mt-1">Tu vida en altura</p>
+              <p className="text-[11px] text-stone-500 mt-1">Piscina y áreas sociales para disfrutar</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#9a7b45]">100%</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Ingeniería &amp; Certeza</p>
-              <p className="text-[11px] text-stone-500 mt-1">Control directo de obra y respaldo legal</p>
+              <p className="font-serif text-3xl font-bold text-[#9a7b45]">5 ciudades</p>
+              <p className="text-xs font-semibold text-stone-900 mt-1">Presencia en Bolivia</p>
+              <p className="text-[11px] text-stone-500 mt-1">Santa Cruz, Tarija, Potosí, Oruro y Cochabamba</p>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-[#fbf9f4] border border-[#e8d5a8]/80 text-xs text-stone-700 space-y-1.5">
             <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#9a7b45]">
-              Compromiso Alta Vida SRL
+              Antes de tomar tu decisión
             </p>
             <p className="font-light leading-relaxed [text-align:justify]">
-              &quot;Somos creadores de valor en Bolivia. Nuestro compromiso es materializar proyectos residenciales que combinen vanguardia arquitectónica, funcionalidad y confort, entregando a cada inversor un activo seguro y de alta plusvalía patrimonial.&quot;
+              Conoce la trayectoria de la desarrolladora, revisa los planos y consulta las condiciones de compra. Un hogar se elige mejor cuando sabes qué incluye y quién está detrás del proyecto.
             </p>
           </div>
         </section>
@@ -1129,13 +1129,13 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45] flex items-center gap-1.5">
               <CreditCard size={13} />
-              Formas de Pago Transparentes
+              Encuentra tu forma de comprar
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Modalidades Flexibles de Preventa
+              Tu hogar, con un plan a tu medida.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Elige el esquema financiero que mejor se adapte a tu estrategia patrimonial. Todos los planes congelan el precio de preventa desde la reserva formal.
+              Compara la tarifa de contado con las opciones de pago durante obra y contra entrega. Elige cómo distribuir tu inversión y conoce los montos de tu departamento antes de dar el siguiente paso.
             </p>
           </div>
 
@@ -1157,10 +1157,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-white">Pago al Contado (100%)</h4>
               <p className="text-xs text-stone-300">
-                Obtén la tarifa de preventa más baja. El precio queda congelado desde la reserva.
+                Aprovecha la tarifa de contado pagando el 100% a la firma del contrato. Una opción para definir el desembolso de tu departamento desde el comienzo.
               </p>
               <div className="pt-2 border-t border-white/10 text-xs text-[#e8d5a8]">
-                <strong className="text-white">VENTAJA COMERCIAL:</strong> Ahorro neto inmediato de hasta un 15% comparado con el precio de lista.
+                <strong className="text-white">VENTAJA COMERCIAL:</strong> Accedes a la tarifa de contado. Compara su importe con las otras modalidades para tu unidad.
               </div>
             </div>
 
@@ -1168,16 +1168,16 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-800">
-                  Equilibrio Financiero · 40 / 60
+                  Avanza en cuotas · 40 / 60
                 </span>
                 <span className="text-xs text-stone-500">40% en obra · 60% entrega</span>
               </div>
               <h4 className="font-serif text-xl font-bold text-stone-900">40% Durante Construcción + 60% Contra Entrega</h4>
               <p className="text-xs text-stone-600">
-                Distribuye el 40% durante el avance de obra y cancela el 60% restante al recibir tus llaves (apto para crédito bancario).
+                Avanza hacia tu hogar pagando el 40% durante la obra y deja el 60% restante para la entrega de tus llaves.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Excelente balance entre liquidez operativa y precio preferencial.
+                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Repartes una parte de la compra durante la construcción y planificas el saldo para la entrega.
               </div>
             </div>
 
@@ -1191,10 +1191,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-stone-900">30% de Entrada + 70% Contra Entrega</h4>
               <p className="text-xs text-stone-600">
-                Accede a la preventa con el desembolso inicial más bajo y financia el 70% restante con cualquier entidad bancaria a la entrega.
+                Empieza con el 30% a la firma y paga el 70% restante al recibir tu departamento. Una opción para dejar la mayor parte del desembolso para la entrega.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Menor barrera de entrada para asegurar tu unidad en pisos altos.
+                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Concentras el 70% del pago en la entrega y organizas tus recursos con ese horizonte.
               </div>
             </div>
           </div>
@@ -1203,9 +1203,9 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="p-4 rounded-xl bg-white border border-stone-200 text-xs space-y-2">
             <p className="font-semibold text-stone-800 uppercase tracking-wider text-[11px]">Cronograma de Pagos</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-stone-600">
-              <div><strong>Hito 1 (Hoy):</strong> Reserva de USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)} para congelar unidad y precio.</div>
+              <div><strong>Hito 1 (Hoy):</strong> Consulta la disponibilidad y las condiciones de la reserva de USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}.</div>
               <div><strong>Hito 2 (Contrato):</strong> Integración de cuota inicial a la firma (descontando la reserva).</div>
-              <div><strong>Hito 3 (Diciembre 2027):</strong> Saldo contra entrega de llaves (apto crédito bancario).</div>
+              <div><strong>Hito 3 (Diciembre 2027):</strong> Saldo contra entrega de llaves, según el plan elegido.</div>
             </div>
           </div>
         </section>
@@ -1230,10 +1230,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </button>
             </div>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Configura tu Departamento en Tiempo Real
+              Encuentra el tuyo y da el siguiente paso.
             </h3>
             <p className="text-sm text-[#57534E]">
-              Elige tu ambiente, selecciona un piso disponible y calcula tu plan de pagos al instante con precios oficiales.
+              Elige la distribución que va contigo, encuentra un piso disponible y compara tus opciones de pago. Tu próximo hogar empieza a tomar forma con cada elección.
             </p>
           </div>
 
@@ -1548,10 +1548,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <div className="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-stone-900">
               <ShieldCheck size={20} className="text-emerald-600" />
-              <h4 className="font-serif text-lg font-bold">Garantía y Certeza Jurídica</h4>
+              <h4 className="font-serif text-lg font-bold">Hablemos de tu próximo hogar.</h4>
             </div>
             <p className="text-xs text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              La reserva inicial de USD 2.000 se acredita en su totalidad al monto de la cuota inicial a la firma del contrato de preventa. Toda la documentación legal, planos aprobados y contratos marco están a disposición para revisión notarial y bancaria.
+              Elige tu modelo y conversemos sobre la disponibilidad, el plan de pago y la reserva de USD 2.000. Consulta cómo se acredita ese monto a tu compra y revisa la documentación del proyecto antes de firmar.
             </p>
             <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500">
               <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>
@@ -1559,7 +1559,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 onClick={contactWhatsApp}
                 className="font-semibold text-[#9a7b45] hover:underline flex items-center gap-1"
               >
-                Consultar con Asesor Comercial
+                Quiero conocer mis opciones
                 <ArrowRight size={12} />
               </button>
             </div>
@@ -1578,7 +1578,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           <p className="text-xs text-stone-600">
             Reserva con <span className="font-semibold text-stone-900">USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}</span>
           </p>
-          <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Congela el precio de preventa hoy</p>
+          <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Da el primer paso hacia tu hogar</p>
         </div>
         <button
           onClick={handleShare}
