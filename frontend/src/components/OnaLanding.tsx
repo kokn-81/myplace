@@ -596,40 +596,46 @@ export default function OnaLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
-        <div className="relative md:min-h-0 md:flex-1">
-          <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
-          <div className="relative w-full md:absolute md:inset-0">
-            <img src="/ona/fachada-dia.jpg" alt="Fachada completa de ONA Residences" className="block h-auto w-full object-contain object-center md:absolute md:inset-0 md:h-full md:w-full" />
-          </div>
+      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#f5f4ef] md:h-screen md:w-[44%]">
+        <div className="relative min-h-0 flex-1">
+          <img src="/ona/fachada-dia.jpg" alt="Fachada completa de ONA Residences" className="absolute inset-0 h-full w-full object-contain object-center" />
         </div>
-        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
-          <img src="/ona/ona-emblem.jpg" alt="ONA Residences" className="mb-3 h-10 w-auto md:mb-2 md:h-8" />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
+        <div className="relative z-10 shrink-0 bg-stone-950 px-5 pb-3.5 pt-3 text-white md:px-8 md:pb-5 md:pt-4">
+          <img src="/ona/ona-emblem.jpg" alt="ONA Residences" className="mb-2 h-8 w-auto" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8] md:px-3 md:py-1 md:text-[11px]">
             <Sparkles size={12} />
             Preventa · 1.ª fase · {ONA_ZONE}
           </span>
-          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2 md:text-4xl">ONA Residences</h1>
-          <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">{ONA_ADDRESS} entre Banzer y Beni</p>
-          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
+          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-white md:mt-2 md:text-4xl">ONA Residences</h1>
+          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-300 md:text-sm">{ONA_ADDRESS} entre Banzer y Beni</p>
+          <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
+            <div className="rounded-xl border border-white/10 bg-black/40 p-2 backdrop-blur-md md:p-3">
               <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{ONA_DELIVERY}</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
+            <div className="rounded-xl border border-white/10 bg-black/40 p-2 backdrop-blur-md md:p-3">
               <p className="text-[10px] uppercase tracking-wider text-stone-400">Colaborador</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{ONA_BUILDER}</p>
             </div>
           </div>
-          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md md:hidden">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
+          <div className="mt-2 max-w-sm rounded-xl border border-white/15 bg-black/55 p-2.5 backdrop-blur-md md:hidden">
+            <div className="flex items-center justify-between border-b border-white/10 pb-1.5 text-[10px] text-stone-300">
               <span className="font-semibold text-[#e8d5a8]">Precios al contado</span>
               <span>{freeCount} libres de {units.length}</span>
             </div>
-            <div className="mt-2.5 space-y-1.5 text-xs">
-              <div className="flex items-center justify-between"><span className="text-stone-300">1 dormitorio</span><span className="font-serif font-bold">{from1 == null ? "Agotado" : `Desde USD ${formatOnaUsd(from1)}`}</span></div>
-              <div className="flex items-center justify-between"><span className="text-stone-300">2 dormitorios</span><span className="font-serif font-bold">{from2 == null ? "Agotado" : `Desde USD ${formatOnaUsd(from2)}`}</span></div>
-              <div className="flex items-center justify-between"><span className="text-stone-300">Suite 92 m²</span><span className="font-serif font-bold">{fromSuite == null ? "Agotado" : `Desde USD ${formatOnaUsd(fromSuite)}`}</span></div>
+            <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
+              <div>
+                <p className="text-[10px] text-stone-400">1 dormitorio</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight">{from1 == null ? "Agotado" : `USD ${formatOnaUsd(from1)}`}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-stone-400">2 dormitorios</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight">{from2 == null ? "Agotado" : `USD ${formatOnaUsd(from2)}`}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-stone-400">Suite 92 m²</p>
+                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight">{fromSuite == null ? "Agotado" : `USD ${formatOnaUsd(fromSuite)}`}</p>
+              </div>
             </div>
           </div>
         </div>
