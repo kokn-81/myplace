@@ -46,44 +46,44 @@ const AMENITY_SLIDES = [
   {
     src: "/beton_brut/social/piscina.jpg",
     category: "Terraza",
-    title: "Piscina mirador",
-    description: "Piscina en el último nivel, con solárium amoblado: reposeras, sombrillas y mobiliario exterior. Sonorización Bose.",
+    title: "Piscina con vista, tiempo para ti",
+    description: "Date un respiro al aire libre. Piscina mirador en el último nivel, solárium con reposeras y sombrillas, y sonido Bose para acompañar la tarde.",
   },
   {
     src: "/beton_brut/social/churrasquera.jpg",
     category: "Terraza",
-    title: "Churrasqueras",
-    description: "Dos churrasqueras amobladas, equipadas con refrigeración y sonorización Bose.",
+    title: "Churrasqueras para compartir",
+    description: "Invita, enciende la parrilla y disfruta. Dos churrasqueras con mobiliario, refrigeración y sonido Bose para reunir a los tuyos alrededor de una buena comida.",
   },
   {
     src: "/beton_brut/social/sauna.jpg",
     category: "Bienestar",
-    title: "Sauna",
-    description: "Sauna seco equipado, dentro del área social.",
+    title: "Tu pausa en el sauna",
+    description: "Regálate un momento para bajar el ritmo al volver a casa. Sauna seco equipado, integrado al área social de tu edificio.",
   },
   {
     src: "/beton_brut/social/karaoke.jpg",
     category: "Área social",
-    title: "Sala de TV y karaoke",
-    description: "Sala amoblada, con pantalla de 65\" y sistema de audio Bose con karaoke.",
+    title: "Una noche de karaoke en casa",
+    description: "La próxima reunión puede ser en tu edificio. Sala amoblada con pantalla de 65 pulgadas y sistema de audio Bose con karaoke para compartir películas, música y buenos momentos.",
   },
   {
     src: "/beton_brut/social/cowork.jpg",
     category: "Área social",
-    title: "Cowork",
-    description: "Espacio de trabajo amoblado, con 8 estaciones, mesa colaborativa y mesa de diseño.",
+    title: "Tu espacio para trabajar, en casa",
+    description: "Concentrarte también tiene su lugar. Cowork amoblado con 8 estaciones, mesa colaborativa y mesa de diseño, sin tener que salir del edificio.",
   },
   {
     src: "/beton_brut/social/chef.jpg",
     category: "Área social",
-    title: "Bar y cocina de chef",
-    description: "Isla central con amoblamiento alto y bajo, encimera de inducción Cata de 90 cm, horno Cata de 90 litros, cervecera, vinera y sonido Bose.",
+    title: "Cocina de chef para tus encuentros",
+    description: "Haz de una cena un buen plan. Bar con cocina de chef, isla central, encimera y horno Cata, cervecera, vinera y sonido Bose para disfrutar en compañía.",
   },
   {
     src: "/beton_brut/lobby.jpg",
     category: "Ingreso",
-    title: "Recibidor en doble altura",
-    description: "El recibidor del área social entra en doble altura. La luz natural baja por los halls de distribución de todos los niveles.",
+    title: "Una bienvenida con luz y amplitud",
+    description: "Una llegada que se siente distinta. Recibidor de doble altura en el área social y luz natural que acompaña los halls de distribución de todos los niveles.",
   },
 ];
 
@@ -91,7 +91,7 @@ const EQUIPAMIENTO = [
   {
     id: "cocina",
     room: "Cocina",
-    title: "Cocina equipada",
+    title: "Cocina para disfrutar cada día",
     image: "/beton_brut/cocina.jpg",
     items: [
       "Módulos altos y bajos, y mesón desayunador amoblado según tipología",
@@ -106,7 +106,7 @@ const EQUIPAMIENTO = [
   {
     id: "bano",
     room: "Baño",
-    title: "Baños",
+    title: "Un baño para bajar el ritmo",
     image: "/beton_brut/bano.jpg",
     items: [
       "Piso y revestimiento en porcelanato Portobello 60 × 120 cm, acabado travertino",
@@ -121,7 +121,7 @@ const EQUIPAMIENTO = [
   {
     id: "depto",
     room: "Departamento",
-    title: "El departamento",
+    title: "Confort en cada ambiente",
     image: "/beton_brut/living.jpg",
     items: [
       "Altura libre de 2,65 m",
@@ -138,7 +138,7 @@ const EQUIPAMIENTO = [
   {
     id: "edificio",
     room: "Edificio",
-    title: "Acceso y servicios",
+    title: "Comodidad desde que llegas",
     image: "/beton_brut/social/ascensores.jpg",
     items: [
       "Puertas Línea Infinito con marcos de madera",
@@ -457,7 +457,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
           </div>
           <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md md:hidden">
             <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
-              <span className="font-semibold text-[#e8d5a8]">Contado, lista oficial</span>
+              <span className="font-semibold text-[#e8d5a8]">Precios al contado</span>
               <span>{freeCount} libres de {BETON_UNITS.length}</span>
             </div>
             <div className="mt-2.5 space-y-1.5 text-xs">
@@ -475,14 +475,14 @@ export default function BetonBrutLanding({ onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Hormigón, metal y vidrio
+                Arquitectura con carácter
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Béton Brut II.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">Cuarenta departamentos. Nada más.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">La exclusividad de solo 40 hogares.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Béton Brut II está en Equipetrol, sobre la calle 8, entre el 2° y el 3° anillo. El edificio muestra el hormigón, el metal y el vidrio tal como son. Hay departamentos de 1, 2 y 3 dormitorios. La entrega publicada es diciembre de 2028.
+                Hormigón a la vista, metal y vidrio en un edificio de solo 40 departamentos. Elige entre 1, 2 o 3 dormitorios y disfruta de Equipetrol desde un hogar con identidad propia, cocina equipada y espacios para compartir. Entrega en diciembre de 2028.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -514,23 +514,23 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol, sobre la calle que ya recorres.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Vive donde Equipetrol se disfruta.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              El mapa del brochure sitúa el proyecto en Equipetrol. Alrededor marca la Av. San Martín, la Av. La Salle, la Parroquia Sagrado Corazón, el Hotel Los Tajibos y el eje comercial de la zona. La dirección publicada es calle 8. El brochure no da un número de puerta.
+              Haz de la gastronomía, los servicios y los encuentros de Equipetrol parte de tu día a día. Tu próxima dirección está en calle 8, entre el 2° y el 3° anillo, en el entorno de la Av. San Martín, la Av. La Salle, Los Tajibos y la Parroquia Sagrado Corazón.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/beton_brut/ubicacion.jpg" alt="Mapa de Béton Brut II en Equipetrol, entre el 2° y el 3° anillo" className="block h-auto w-full" />
             </div>
             <a href={`https://maps.google.com/?q=${BETON_BRUT_CONFIG.lat},${BETON_BRUT_CONFIG.lng}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Abrir Equipetrol en Google Maps <ArrowRight size={14} />
+              Explorar mi próxima ubicación <ArrowRight size={14} />
             </a>
           </section>
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Arriba, la terraza se vive en compañía.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu casa también se vive en la terraza.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              El área social está amoblada y equipada: piscina mirador, dos churrasqueras, sauna, sala de TV y karaoke, cowork, bar con cocina de chef, y lavado y secado.
+              Del trabajo al descanso, sin salir del edificio. Un cowork para concentrarte, piscina y sauna para desconectarte, y churrasqueras, karaoke y cocina de chef para reunir a los tuyos. Espacios amoblados y equipados para disfrutar más de estar en casa.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -555,7 +555,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
             <div className="shrink-0">
               <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige el metraje en el que te ves.</h3>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">El espacio para vivir a tu manera.</h3>
             </div>
             <div className="grid shrink-0 grid-cols-3 gap-2">
               {ROOM_FILTERS.map((filter) => (
@@ -587,9 +587,9 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Llegas y la cocina ya está lista.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Abre la puerta. Empieza a disfrutar.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Cocina, baños, el departamento y el acceso, con los acabados que nombra la especificación técnica. La altura libre es 2,65 m.
+              Tu departamento se entrega con cocina amoblada y equipada, climatización inverter en todos los ambientes y acabados que se sienten al vivirlos: piedra sinterizada, porcelanato Portobello y grifería grafito.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPAMIENTO.map((group) => (
@@ -612,9 +612,9 @@ export default function BetonBrutLanding({ onClose }: Props) {
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Colaboradores</span>
             <img src="/beton_brut/logo-negro.png" alt="Béton Brut II" className="h-14 w-auto" />
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tres firmas detrás de tu edificio.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Conoce a quienes dan forma a tu hogar.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Tres marcas firman el proyecto: Beton Fortia S.R.L., Eduardo Roca y Mediterráneo Constructora.
+              Detrás de Béton Brut II están Beton Fortia S.R.L., Eduardo Roca y Mediterráneo Constructora. Conoce a los colaboradores que forman parte del proyecto que estás eligiendo.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="flex min-h-36 items-center justify-center rounded-xl border border-stone-200 bg-white p-4">
@@ -634,25 +634,25 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Contado o en cuotas. Eliges tú.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Da el paso. Elige cómo pagarlo.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Contado es la tarifa más baja. El plan 30-60 reparte el saldo hasta la entrega en {BETON_BRUT_CONFIG.delivery}. El monto de tu unidad aparece cuando la eliges.
+              Elige el ahorro del contado o distribuye tu inversión con el plan 30-60. Compara las dos opciones y encuentra la forma de llegar a tu departamento, con entrega en {BETON_BRUT_CONFIG.delivery}.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Ventaja comercial</span>
-              <h4 className="mt-3 font-serif text-2xl">Contado</h4>
+              <h4 className="mt-3 font-serif text-2xl">Contado: aprovecha la mejor tarifa</h4>
               <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">USD {formatBetonUsd(BETON_BRUT_CONFIG.cashPerM2)}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">100% a la firma del contrato. Es la tarifa más baja de la lista del {BETON_BRUT_CONFIG.priceListLabel}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Accede al menor precio por metro del proyecto pagando el 100% a la firma del contrato. Precios de la lista del {BETON_BRUT_CONFIG.priceListLabel}.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Plan 30-60</span>
-              <h4 className="mt-3 font-serif text-2xl leading-snug">30% inicial, cuotas hasta el 60% y 40% contra entrega</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">30% inicial, cuotas hasta el 60% y 40% al recibir tu hogar</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">USD {formatBetonUsd(BETON_BRUT_CONFIG.planPerM2)}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">30% a la firma. El siguiente 30% se paga en cuotas mensuales, hasta completar el 60%, en un plazo de hasta 24 meses. El saldo del 40% se paga contra entrega, en {BETON_BRUT_CONFIG.delivery}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Empieza con el 30% a la firma y avanza con cuotas mensuales por otro 30%, hasta completar el 60%, en un plazo de hasta 24 meses. Reserva el 40% restante para la entrega de tu departamento, en {BETON_BRUT_CONFIG.delivery}.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
-              <p>Parqueo vehicular: USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingCarUsd)}. Parqueo de moto: USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingMotoUsd)}. Son adicionales y no entran en el precio por metro.</p>
-              <p>El subsuelo publica 15 bauleras. La lista no les pone precio, así que no se cotizan acá.</p>
+              <p>Completa tu compra con parqueo vehicular por USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingCarUsd)} o parqueo de moto por USD {formatBetonUsd(BETON_BRUT_CONFIG.parkingMotoUsd)}. Se cotizan por separado.</p>
+              <p>El edificio cuenta con 15 bauleras en subsuelo. Consulta su precio y disponibilidad con el asesor.</p>
             </div>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -663,8 +663,8 @@ export default function BetonBrutLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
             <div className="shrink-0">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Encuentra la unidad y apártala.</h3>
-              <p className="mt-1 text-xs text-stone-500">Lista del {BETON_BRUT_CONFIG.priceListLabel}. En verde, lo que puedes tomar. En gris, vendido.</p>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Haz tuyo uno de solo 40 hogares.</h3>
+              <p className="mt-1 text-xs text-stone-500">Disponibilidad al {BETON_BRUT_CONFIG.priceListLabel}. Verde: disponible · Gris: vendido.</p>
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -797,12 +797,12 @@ export default function BetonBrutLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Si tienes dudas, conversemos.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección empieza aquí.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Mándame un mensaje y conversamos. Te asesoro y te ayudo a reservar tu departamento.
+              Cuéntanos qué estás buscando. Te ayudamos a comparar modelos, confirmar la disponibilidad y conocer los pasos para reservar en Béton Brut II.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Escribir y reservar mi departamento <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>
@@ -812,7 +812,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
           <div>
             <p className="text-xs text-stone-700">Desde USD {formatBetonUsd(fromAny)} · {BETON_BRUT_CONFIG.delivery}</p>
-            <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">La lista no publica una seña</p>
+            <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Consulta el monto de reserva</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
             <a href={BETON_BRUT_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-800">
