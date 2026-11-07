@@ -1,5 +1,5 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.6
+**Versión:** 1.7
 
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
@@ -15,8 +15,8 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 3. **Hero fijo.** La foto de fachada no cambia con el scroll. La foto de ubicación vive dentro de `#lugar`.
 4. **Contenido del panel derecho** centrado en `max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`, con `pb-32 md:pb-44`. Cada sección después de `#intro` abre con `mt-20 border-t border-stone-200/80 pt-10`.
 5. **Orden fijo:** `#intro`, `#lugar`, `#amenidades`, `#tipologias`, `#equipamiento`, `#constructora`, `#pago`, `#disponibilidad`, `#cierre`.
-6. **Un solo control superior:** el círculo blanco de cerrar (X), a la derecha. Brochure, compartir y elegir unidad no van arriba: viven en la barra inferior.
-7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Desde USD {precio} · {entrega}”, más Brochure, Compartir y Elegir unidad. Se oculta en `#cierre`. Si no hay seña publicada, no se inventa un monto de reserva.
+6. **Arriba, a la derecha:** dos círculos blancos, compartir y cerrar (X). El brochure no va arriba.
+7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Desde USD {precio} · {entrega}”, más Brochure y Elegir unidad. Se oculta en `#cierre`. Si no hay seña publicada, no se inventa un monto de reserva.
 8. **Menú de secciones** circular negro, icono `#e8d5a8`, en `bottom-20 right-4`. El ítem activo usa fondo `#9a7b45/15` y texto `#816127`.
 9. **Sin Insights.** Ninguna landing incluye un botón ni un modal de Insights o modo asesor.
 10. **El botón de reserva** es `bg-stone-900` y en hover `#9a7b45`.
@@ -329,7 +329,7 @@ Las landings ofrecen brochure, compartir y cerrar. No incluyen Insights ni un mo
 
 Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 
-- [ ] ¿Arriba solo queda el círculo de cerrar, y Brochure, Compartir y Elegir unidad están en la barra inferior?
+- [ ] ¿Arriba están compartir y cerrar, y en la barra inferior quedan Brochure y Elegir unidad?
 - [ ] ¿El botón "Inicio" de la barra de navegación se desplaza al `#intro` sin recargar la página ni cerrar la landing?
 - [ ] ¿El botón flotante de secciones es circular y solo muestra el icono (`Menu`/`X`), sin texto?
 - [ ] ¿El panel derecho en escritorio utiliza anchos amplios (`md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`) sin comprimir tarjetas a 3 columnas?

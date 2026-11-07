@@ -339,7 +339,10 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
-      <div className="fixed right-4 top-4 z-[120] md:right-7 md:top-7">
+      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
+        <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
+          {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
+        </button>
         {onClose && (
           <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl" aria-label="Cerrar">
             <X size={18} />
@@ -764,10 +767,6 @@ export default function BetonBrutLanding({ onClose }: Props) {
               <Download size={14} className="text-[#9a7b45]" />
               Brochure
             </a>
-            <button type="button" onClick={handleShare} className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider">
-              {shareFeedback ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
-              <span className="hidden sm:inline">Compartir</span>
-            </button>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-lg bg-[#1C1917] px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
               Elegir unidad
             </button>
