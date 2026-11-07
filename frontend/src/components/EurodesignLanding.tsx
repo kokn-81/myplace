@@ -44,6 +44,7 @@ import {
   parseEurodesignCsvText,
 } from "../eurodesignInventory";
 import type { Property } from "../types";
+import { EURODESIGN_MODELOS, availableEurodesignModelUnits, matchesEurodesignModel, type EurodesignModel } from "../eurodesignModels";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
 
 interface Props {
@@ -188,71 +189,86 @@ const AMBIENTE_OPTIONS: AmbienteOption[] = [
   },
 ];
 
-const EURODESIGN_LEGADO: { name: string; detail?: string }[] = [
-  { name: "Tower", detail: "Entrega junio 2027" },
-  { name: "Le Blanc" },
-  { name: "Soho" },
-  { name: "Nordic" },
-  { name: "Le Grand" },
-  { name: "Residence" },
-  { name: "Suites" },
-  { name: "La Foret" },
-  { name: "Hacienda del Urubó", detail: "Casa residencial" },
+const EQUIPMENT_SLIDES = [
+  {
+    id: "cocina",
+    title: "Una cocina lista para tu día a día",
+    image: "/eurodesign/amenities/amenity_living_panoramico.jpg",
+    alt: "Cocina integrada y sala de Tower Eurodesign",
+    items: [
+      "Cocina a gas, extractor y horno eléctrico",
+      "Microondas de empotrar en mueble",
+      "Mesones de piedra sinterizada o granito",
+      "Mobiliario alto y bajo en cocina",
+    ],
+  },
+  {
+    id: "bano",
+    title: "Tu espacio para empezar y cerrar el día",
+    image: "/eurodesign/bano.jpg",
+    alt: "Baño con espejo iluminado, mueble bajo mesón y box de ducha",
+    items: [
+      "Espejos con iluminación LED",
+      "Box de ducha",
+      "Accesorios de baño y mueble bajo mesón",
+      "Termotanque eléctrico",
+    ],
+  },
+  {
+    id: "confort",
+    title: "El confort se siente en cada ambiente",
+    image: "/eurodesign/modelos/2d-01-82.jpg",
+    alt: "Distribución interior con dormitorios, sala y lavandería de Tower Eurodesign",
+    items: [
+      "Aires acondicionados tipo split, frío-calor, en dormitorios y sala",
+      "Lavandería de porcelanato, según el modelo de departamento",
+    ],
+  },
+  {
+    id: "accesos",
+    title: "Detalles que te acompañan al llegar",
+    image: "/eurodesign/amenities/amenity_lobby_recepcion.jpg",
+    alt: "Acceso y recepción de Tower Eurodesign",
+    items: [
+      "Intercomunicador en cada departamento",
+      "Sistema contra incendios",
+      "Luminaria decorativa en áreas de circulación exterior",
+    ],
+  },
 ];
 
-const EURODESIGN_MODELOS: {
+type SwipeStart = { current: { x: number; y: number } | null };
+
+function finishCarouselSwipe(event: React.TouchEvent, start: SwipeStart, move: (direction: number) => void) {
+  if (!start.current) return;
+  const { clientX, clientY } = event.changedTouches[0];
+  const dx = clientX - start.current.x;
+  const dy = clientY - start.current.y;
+  start.current = null;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+}
+
+interface QuoteModel {
   id: string;
-  rooms: 1 | 2;
   name: string;
   area: string;
-  units: string;
-  full: string;
   preview: string;
-  note?: string;
-}[] = [
-  { id: "d03", rooms: 1, name: "Modelo 03", area: "57,00 m²", units: "503 – 1703", full: "/eurodesign/fichas/1d-03-57.jpg", preview: "/eurodesign/modelos/1d-03-57.jpg" },
-  { id: "d04", rooms: 1, name: "Modelo 04", area: "48,50 m²", units: "504 – 1704", full: "/eurodesign/fichas/1d-04-485.jpg", preview: "/eurodesign/modelos/1d-04-485.jpg" },
-  { id: "d05", rooms: 1, name: "Modelo 05", area: "35,00 m²", units: "505 – 1705", note: "Vendido", full: "/eurodesign/fichas/1d-05-35.jpg", preview: "/eurodesign/modelos/1d-05-35.jpg" },
-  { id: "d06", rooms: 1, name: "Modelo 06", area: "48,30 m²", units: "506 – 1706", note: "Vendido", full: "/eurodesign/fichas/1d-06-483.jpg", preview: "/eurodesign/modelos/1d-06-483.jpg" },
-  { id: "d07", rooms: 1, name: "Modelo 07", area: "57,00 m²", units: "507 – 1707", full: "/eurodesign/fichas/1d-07-57.jpg", preview: "/eurodesign/modelos/1d-07-57.jpg" },
-  { id: "d03p4", rooms: 1, name: "Modelo 03", area: "92,20 m²", units: "Piso 4 · 403", full: "/eurodesign/fichas/1d-03-922.jpg", preview: "/eurodesign/modelos/1d-03-922.jpg" },
-  { id: "d04p4", rooms: 1, name: "Modelo 04", area: "92,80 m²", units: "Piso 4 · 404", full: "/eurodesign/fichas/1d-04-928.jpg", preview: "/eurodesign/modelos/1d-04-928.jpg" },
-  { id: "d05p4", rooms: 1, name: "Modelo 05", area: "58,00 m²", units: "Piso 4 · 405", full: "/eurodesign/fichas/1d-05-58.jpg", preview: "/eurodesign/modelos/1d-05-58.jpg" },
-  { id: "d06p4", rooms: 1, name: "Modelo 06", area: "97,60 m²", units: "Piso 4 · 406", full: "/eurodesign/fichas/1d-06-976.jpg", preview: "/eurodesign/modelos/1d-06-976.jpg" },
-  { id: "d07p4", rooms: 1, name: "Modelo 07", area: "64,00 m²", units: "Piso 4 · 407", full: "/eurodesign/fichas/1d-07-64.jpg", preview: "/eurodesign/modelos/1d-07-64.jpg" },
-  { id: "d01", rooms: 2, name: "Modelo 01", area: "82,00 m²", units: "501 – 1701", full: "/eurodesign/fichas/2d-01-82.jpg", preview: "/eurodesign/modelos/2d-01-82.jpg" },
-  { id: "d02", rooms: 2, name: "Modelo 02", area: "84,30 m²", units: "502 – 1702", full: "/eurodesign/fichas/2d-02-843.jpg", preview: "/eurodesign/modelos/2d-02-843.jpg" },
-  { id: "d08", rooms: 2, name: "Modelo 08", area: "84,60 m²", units: "508 – 1708", full: "/eurodesign/fichas/2d-08-846.jpg", preview: "/eurodesign/modelos/2d-08-846.jpg" },
-  { id: "d01p4", rooms: 2, name: "Modelo 01", area: "81,20 m²", units: "Piso 4 · 401", full: "/eurodesign/fichas/2d-01-812.jpg", preview: "/eurodesign/modelos/2d-01-812.jpg" },
-  { id: "d02p4", rooms: 2, name: "Modelo 02", area: "128,50 m²", units: "Piso 4 · 402", full: "/eurodesign/fichas/2d-02-1285.jpg", preview: "/eurodesign/modelos/2d-02-1285.jpg" },
-  { id: "d08p4", rooms: 2, name: "Modelo 08", area: "100,00 m²", units: "Piso 4 · 408", full: "/eurodesign/fichas/2d-08-100.jpg", preview: "/eurodesign/modelos/2d-08-100.jpg" },
-];
-
-const EURODESIGN_EQUIPAMIENTO = [
-  "Extractor de cocina",
-  "Horno eléctrico",
-  "Cocina a gas",
-  "Termotanque eléctrico",
-  "Microondas de empotrar en mueble",
-  "Aires acondicionados tipo split, frío-calor, en dormitorios y sala",
-  "Mesones de cocina en piedra sinterizada o granito",
-  "Lavandería de porcelanato, según el modelo",
-  "Mobiliario alto y bajo en cocina",
-  "Espejos con iluminación LED en baños",
-  "Box de ducha",
-  "Accesorios de baño y mueble bajo mesón",
-  "Luminaria decorativa en áreas de circulación exterior",
-  "Intercomunicador en cada departamento",
-  "Sistema contra incendios",
-];
+  full: string;
+  model?: EurodesignModel;
+  unitNumber?: string;
+}
 
 export default function EurodesignLanding({ property, onClose }: Props) {
   const [activeImage, setActiveImage] = useState("/eurodesign/fachada-dia.jpg");
   const [activeLabel, setActiveLabel] = useState("Fachada Principal");
   const [amenityIndex, setAmenityIndex] = useState(0);
+  const [equipmentIndex, setEquipmentIndex] = useState(0);
+  const equipmentTouch = useRef<{ x: number; y: number } | null>(null);
+  const quoteTouch = useRef<{ x: number; y: number } | null>(null);
 
   // Estados del cotizador en cascada (estilo Apple Store)
   const [selectedAmbId, setSelectedAmbId] = useState<string>("1dorm");
+  const [selectedQuoteModelId, setSelectedQuoteModelId] = useState("d03");
   const [tipologiaRooms, setTipologiaRooms] = useState<1 | 2>(1);
   const [modeloIndex, setModeloIndex] = useState(0);
   const modeloTouchX = useRef<number | null>(null);
@@ -383,10 +399,40 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     [selectedAmbId]
   );
 
+  const quoteModels = useMemo<QuoteModel[]>(() => {
+    if (selectedAmbId === "locales") {
+      return units.filter((unit) => unit.floor === 0).map((unit) => ({
+        id: unit.unitNumber,
+        name: unit.unitNumber,
+        area: `${unit.areaM2.toLocaleString("es-BO")} m² · Planta baja`,
+        preview: "/eurodesign/amenities/amenity_locales_comerciales.jpg",
+        full: "/eurodesign/page-32-locales-comerciales.jpg",
+        unitNumber: unit.unitNumber,
+      }));
+    }
+    const rooms = selectedAmbId === "2dorm" ? 2 : 1;
+    return EURODESIGN_MODELOS.filter((model) => model.rooms === rooms).map((model) => ({
+      ...model,
+      area: `${model.area} · ${model.id.endsWith("p4") ? "Piso 4" : "Pisos 5 a 17"}`,
+      model,
+    }));
+  }, [selectedAmbId, units]);
+  const quoteModelIndex = Math.max(0, quoteModels.findIndex((model) => model.id === selectedQuoteModelId));
+  const quoteModel = quoteModels[quoteModelIndex];
+  const moveQuoteModel = (direction: number) => {
+    if (quoteModels.length < 2) return;
+    setSelectedQuoteModelId(quoteModels[(quoteModelIndex + direction + quoteModels.length) % quoteModels.length].id);
+  };
+
   const unitsInAmbiente = useMemo(
-    () => units.filter(currentAmbiente.matchUnit),
-    [units, currentAmbiente]
+    () => units.filter((unit) => quoteModel?.model
+      ? matchesEurodesignModel(quoteModel.model, unit)
+      : quoteModel?.unitNumber === unit.unitNumber),
+    [units, quoteModel]
   );
+  const quoteAvailableUnits = quoteModel?.model
+    ? availableEurodesignModelUnits(quoteModel.model, units)
+    : unitsInAmbiente.filter((unit) => unit.status === "disponible");
 
   const floorsForAmbiente = useMemo(() => {
     const floorsMap = new Map<number, { isAvailable: boolean; availableCount: number; unit?: EurodesignUnit }>();
@@ -413,13 +459,12 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     } else if (floorsForAmbiente.length > 0) {
       setSelectedFloor(floorsForAmbiente[0].floor);
     }
-  }, [selectedAmbId, floorsForAmbiente]);
+  }, [floorsForAmbiente]);
 
   const activeUnit = useMemo(() => {
     return (
       unitsInAmbiente.find((u) => u.floor === selectedFloor && u.status === "disponible") ||
-      unitsInAmbiente.find((u) => u.floor === selectedFloor) ||
-      unitsInAmbiente[0]
+      unitsInAmbiente.find((u) => u.status === "disponible")
     );
   }, [unitsInAmbiente, selectedFloor]);
 
@@ -592,6 +637,10 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   };
 
   const currentSlide = AMENITY_SLIDES[amenityIndex];
+  const equipmentSlide = EQUIPMENT_SLIDES[equipmentIndex];
+  const moveEquipment = (direction: number) => {
+    setEquipmentIndex((index) => (index + direction + EQUIPMENT_SLIDES.length) % EQUIPMENT_SLIDES.length);
+  };
 
   return (
     <motion.div
@@ -691,7 +740,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                 <Calendar size={12} /> Entrega de Obra
               </p>
               <p className="mt-0.5 font-serif text-xs sm:text-sm font-semibold text-white">
-                {EURODESIGN_DELIVERY} (Fase Final)
+                {EURODESIGN_DELIVERY}
               </p>
             </div>
           </div>
@@ -1008,27 +1057,22 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Espacios concebidos para alta rotación y confort superior.
+              Encuentra el espacio que va contigo.
             </h2>
-                        <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              El plano muestra dónde está cada departamento. Después elige 1 o 2 dormitorios. La foto encuadra solo el interior. Al tocarla se abre la ficha completa.
+            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
+              Uno o dos dormitorios, distintas distribuciones y espacio para tu forma de vivir. Recorre los modelos y descubre en cuál te ves.
             </p>
 
             <button
               type="button"
               onClick={() => setZoomPlanImage("/eurodesign/plano-distribucion.jpg")}
-              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-[#f4f1ea] shadow-md"
-              aria-label="Ampliar el plano de distribución"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-800 shadow-sm transition hover:border-[#9a7b45] hover:text-[#816127]"
+              aria-label="Ver plano de distribución del edificio"
             >
-              <img
-                src="/eurodesign/plano-distribucion.jpg"
-                alt="Plano de distribución de Tower Eurodesign, guía para ubicar cada modelo"
-                className="mx-auto max-h-[78vh] w-full object-contain"
-              />
+              <Layers size={16} className="text-[#9a7b45]" />
+              Ver plano de distribución
+              <Maximize2 size={14} />
             </button>
-            <p className="mt-2 text-center text-[11px] font-light text-stone-500">
-              Plano de distribución. Toca para verlo completo.
-            </p>
 
             <div className="mt-8 grid grid-cols-2 gap-3">
               {([1, 2] as const).map((rooms) => {
@@ -1180,51 +1224,74 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Detalle de equipamiento.
+              Llegas a casa. Lo esencial ya está resuelto.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              El baño y la lista salen del brochure. La foto muestra el baño. Al tocarla, o al tocar la lámina, se abre la imagen completa.
+              Cocina equipada, climatización en sala y dormitorios y baños con detalles que se disfrutan todos los días. Descubre lo que incluye tu departamento, ambiente por ambiente.
             </p>
 
-            <button
-              type="button"
-              onClick={() => setZoomPlanImage("/eurodesign/bano.jpg")}
-              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md"
-              aria-label="Ampliar el baño"
+            <div
+              role="region"
+              aria-roledescription="carrusel"
+              aria-label="Equipamiento incluido"
+              tabIndex={0}
+              className="mt-6 touch-pan-y overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm focus-visible:outline-2 focus-visible:outline-[#9a7b45]"
+              onTouchStart={(event) => { equipmentTouch.current = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; }}
+              onTouchEnd={(event) => finishCarouselSwipe(event, equipmentTouch, moveEquipment)}
+              onTouchCancel={() => { equipmentTouch.current = null; }}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                  event.preventDefault();
+                  moveEquipment(event.key === "ArrowRight" ? 1 : -1);
+                }
+              }}
             >
-              <img
-                src="/eurodesign/bano.jpg"
-                alt="Baño con mesón, espejo iluminado y box de ducha"
-                className="w-full"
-              />
-            </button>
-            <p className="mt-2 text-center text-[11px] font-light text-stone-500">Baño. Toca para verlo completo.</p>
+              <div className="aspect-[16/10] overflow-hidden bg-[#f7f5f0] sm:aspect-[16/9]">
+                <motion.img
+                  key={equipmentSlide.id}
+                  src={equipmentSlide.image}
+                  alt={equipmentSlide.alt}
+                  initial={{ opacity: 0.4 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  loading="lazy"
+                  className={`h-full w-full ${equipmentSlide.id === "confort" ? "object-contain" : "object-cover"}`}
+                />
+              </div>
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div aria-live="polite" aria-atomic="true" className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#816127]">{equipmentIndex + 1} / {EQUIPMENT_SLIDES.length}</p>
+                    <h3 className="mt-1 font-serif text-xl text-stone-900 sm:text-2xl">{equipmentSlide.title}</h3>
+                  </div>
+                  <div className="flex shrink-0 gap-1">
+                    <button type="button" onClick={() => moveEquipment(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-200 text-stone-800 hover:bg-stone-50" aria-label="Equipamiento anterior"><ChevronLeft size={22} /></button>
+                    <button type="button" onClick={() => moveEquipment(1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-200 text-stone-800 hover:bg-stone-50" aria-label="Equipamiento siguiente"><ChevronRight size={22} /></button>
+                  </div>
+                </div>
+                <ul className="mt-4 grid gap-2 text-sm font-light leading-relaxed text-stone-600 sm:grid-cols-2">
+                  {equipmentSlide.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2"><CheckCircle2 size={15} className="mt-0.5 shrink-0 text-[#9a7b45]" /><span>{item}</span></li>
+                  ))}
+                </ul>
+                <div className="mt-5 flex justify-center gap-1.5">
+                  {EQUIPMENT_SLIDES.map((slide, index) => (
+                    <button key={slide.id} type="button" onClick={() => setEquipmentIndex(index)} aria-label={`Ver equipamiento: ${slide.title}`} aria-current={index === equipmentIndex ? "true" : undefined} className="flex h-8 w-8 items-center justify-center">
+                      <span className={`h-2 rounded-full ${index === equipmentIndex ? "w-5 bg-[#9a7b45]" : "w-2 bg-stone-300"}`} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
 
             <button
               type="button"
               onClick={() => setZoomPlanImage("/eurodesign/equipamiento.jpg")}
-              className="mt-6 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-stone-200 bg-[#f4f1ea] shadow-md"
-              aria-label="Ampliar el detalle de equipamiento"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-800 transition hover:border-[#9a7b45] hover:text-[#816127]"
             >
-              <img
-                src="/eurodesign/equipamiento.jpg"
-                alt="Detalle de equipamiento de Tower Eurodesign"
-                className="mx-auto max-h-[78vh] w-full object-contain"
-              />
+              <Maximize2 size={15} className="text-[#9a7b45]" /> Ver equipamiento completo
             </button>
-            <p className="mt-2 text-center text-[11px] font-light text-stone-500">
-              Lámina del brochure. Toca para verla completa.
-            </p>
-
-            <ul className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {EURODESIGN_EQUIPAMIENTO.map((item) => (
-                <li key={item} className="flex items-start gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm font-light text-stone-700">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </section>
 
           {/* 6. CONSTRUCTORA — NUESTRO LEGADO (brochure) */}
@@ -1237,11 +1304,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Diseñando sueños, construyendo futuro.
+              Elige conociendo quién está detrás.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              El respaldo de {EURODESIGN_CONFIG.builder} es su portafolio. Tower Eurodesign tiene entrega en junio 2027. El mismo sello reúne Le Blanc, Soho, Nordic, Le Grand, Residence, Suites, La Foret y la casa residencial Hacienda del Urubó.
+              Conoce el portafolio de {EURODESIGN_CONFIG.builder} y el sello que acompaña a Tower Eurodesign. Una decisión importante merece que puedas mirar más allá del departamento.
             </p>
 
             <button
@@ -1252,23 +1319,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             >
               <img
                 src="/eurodesign/legado.jpg"
-                alt="Portafolio Nuestro legado de Eurodesign: Tower, Le Blanc, Soho, Nordic, Le Grand, Residence, Suites, La Foret y Hacienda del Urubó"
+                alt="Nuestro legado: portafolio de proyectos de Desarrollo Eurodesign"
                 className="mx-auto w-full"
               />
             </button>
             <p className="mt-2 text-center text-[11px] font-light text-stone-500">
-              Página del brochure. Toca la imagen para verla completa.
+              Conoce su portafolio. Toca para ampliar.
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {EURODESIGN_LEGADO.map((project) => (
-                <div key={project.name} className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9a7b45]">Eurodesign</p>
-                  <h3 className="mt-1 font-serif text-lg font-semibold text-stone-900">{project.name}</h3>
-                  {project.detail ? <p className="mt-1 text-xs font-light text-stone-500">{project.detail}</p> : null}
-                </div>
-              ))}
-            </div>
           </section>
 
           {/* 7. ESTRUCTURA DE COMPRA & FORMAS DE PAGO */}
@@ -1276,16 +1334,16 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-[#9a7b45]" />
               <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Estructura de Compra &amp; Financiación
+                Elige cómo hacerlo tuyo
               </p>
             </div>
 
             <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Planes claros: $1.480 USD/m² al contado o cuotas durante obra.
+              Da el paso a vivir en Equipetrol Norte.
             </h2>
 
             <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En Tower Eurodesign el contado sale a $1.480 USD/m². La entrega formal es en {EURODESIGN_DELIVERY}.
+              Elige el ahorro del contado o distribuye tu inversión durante la obra. Encuentra el plan que se acomoda a ti y empieza a hacer tuyo un departamento con entrega en {EURODESIGN_DELIVERY}.
             </p>
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-3.5 sm:px-4.5 shadow-xs">
@@ -1470,38 +1528,81 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               Selecciona tu tipología y el piso disponible. Las unidades se reservan formalmente con <strong>USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}</strong> congelando el precio de preventa.
             </p>
 
-            {/* PASO 1: AMBIENTE */}
+            {/* PASO 1: MODELO Y VISTA PREVIA */}
             <div className="mt-8">
               <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                Paso 1: Elige el Tipo de Inmueble
+                Paso 1: Encuentra tu modelo
               </p>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="mt-3 flex flex-wrap gap-2">
                 {AMBIENTE_OPTIONS.map((amb) => {
                   const isSel = selectedAmbId === amb.id;
                   return (
                     <button
                       key={amb.id}
                       type="button"
-                      onClick={() => setSelectedAmbId(amb.id)}
-                      className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                      onClick={() => { setSelectedAmbId(amb.id); setSelectedQuoteModelId(""); }}
+                      aria-pressed={isSel}
+                      className={`min-h-11 rounded-full border px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
                         isSel
                           ? "border-[#9a7b45] bg-[#9a7b45]/10 shadow-sm ring-1 ring-[#9a7b45]"
                           : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
                       }`}
                     >
-                      <p className="text-xs font-bold">{amb.name}</p>
-                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">{amb.areaRange}</p>
+                      {amb.shortName}
                     </button>
                   );
                 })}
               </div>
+              {quoteModel ? (
+                <div
+                  role="region"
+                  aria-roledescription="carrusel"
+                  aria-label="Modelos para cotizar"
+                  tabIndex={0}
+                  className="mt-4 touch-pan-y overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm focus-visible:outline-2 focus-visible:outline-[#9a7b45]"
+                  onTouchStart={(event) => { quoteTouch.current = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; }}
+                  onTouchEnd={(event) => finishCarouselSwipe(event, quoteTouch, moveQuoteModel)}
+                  onTouchCancel={() => { quoteTouch.current = null; }}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                      event.preventDefault();
+                      moveQuoteModel(event.key === "ArrowRight" ? 1 : -1);
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1 border-b border-stone-100 px-2 py-3">
+                    <button type="button" onClick={() => moveQuoteModel(-1)} disabled={quoteModels.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 hover:bg-stone-50 disabled:opacity-30" aria-label="Tipología anterior"><ChevronLeft size={22} /></button>
+                    <div className="min-w-0 flex-1 text-center" aria-live="polite" aria-atomic="true">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-[#816127]">{quoteModelIndex + 1} / {quoteModels.length} · {currentAmbiente.shortName}</p>
+                      <h3 className="mt-1 font-serif text-xl text-stone-900">{quoteModel.name}</h3>
+                      <p className="mt-0.5 text-xs text-stone-500">{quoteModel.area}</p>
+                      <p className="mt-1 text-sm font-semibold text-[#816127]">
+                        {quoteAvailableUnits.length
+                          ? `Desde USD ${formatEurodesignUsd(Math.min(...quoteAvailableUnits.map((unit) => unit.cashTotal)))}`
+                          : "Sin unidades disponibles"}
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => moveQuoteModel(1)} disabled={quoteModels.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 hover:bg-stone-50 disabled:opacity-30" aria-label="Tipología siguiente"><ChevronRight size={22} /></button>
+                  </div>
+                  <div className="flex h-[240px] items-center justify-center bg-white px-4 py-3 sm:h-[280px]">
+                    <motion.img key={quoteModel.id} src={quoteModel.preview} alt={`${quoteModel.name} · ${quoteModel.area}, vista del interior`} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} loading="lazy" className="h-full w-full object-contain" />
+                  </div>
+                  <div className="border-t border-stone-100 px-4 py-2 text-center">
+                    <button type="button" onClick={() => setZoomPlanImage(quoteModel.full)} className="inline-flex min-h-11 items-center justify-center gap-2 text-xs font-semibold text-[#816127] hover:text-stone-900">
+                      <Maximize2 size={14} /> Ver ficha completa
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-4 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-500">No hay modelos disponibles para esta categoría.</p>
+              )}
             </div>
 
             {/* PASO 2: PISO Y UNIDAD */}
             <div className="mt-8">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                  Paso 2: Elige el Piso ({currentAmbiente.name})
+                  Paso 2: Elige el piso de {quoteModel?.name || "tu modelo"}
                 </p>
                 <div className="flex items-center gap-3 text-[11px]">
                   <span className="flex items-center gap-1 text-emerald-700 font-medium">
@@ -1512,6 +1613,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   </span>
                 </div>
               </div>
+
+              <button type="button" onClick={() => setZoomPlanImage("/eurodesign/plano-distribucion.jpg")} className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-[#816127] hover:text-stone-900"><Layers size={14} /> Ver distribución del edificio</button>
 
               <div className="mt-3 flex flex-wrap gap-2">
                 {floorsForAmbiente.map((item) => {
@@ -1544,12 +1647,15 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                     >
                       <span className="font-bold">{label}</span>
                       <span className="block text-[9px] font-medium opacity-90">
-                        {item.availableCount} disp.
+                        {item.unit?.unitNumber ? `Unidad ${item.unit.unitNumber}` : `${item.availableCount} disp.`}
                       </span>
                     </button>
                   );
                 })}
               </div>
+              {quoteModel && !quoteAvailableUnits.length && (
+                <p className="mt-3 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-600">Este modelo no tiene unidades disponibles. Desliza a otro modelo para encontrar tu departamento.</p>
+              )}
             </div>
 
             {/* PASO 3: PARQUEO O BAULERA OPCIONAL (PRECIOS OFICIALES AUDITADOS) */}
@@ -1643,7 +1749,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   }`}
                 >
                   <p className="text-xs font-bold">Pago al Contado (100%)</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">$1.480 USD/m² · Mayor descuento</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">{activeUnit ? `USD ${formatEurodesignUsd(activeUnit.cashPerM2)}/m² · Mayor descuento` : "Selecciona un modelo disponible"}</p>
                 </button>
                 <button
                   type="button"
@@ -1655,7 +1761,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                   }`}
                 >
                   <p className="text-xs font-bold">Plan en Cuotas Preventa</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">$1.580 USD/m² · 40% inicial / 20% obra / 40% entrega</p>
+                  <p className="text-[10px] opacity-80 mt-0.5">{activeUnit ? `USD ${formatEurodesignUsd(activeUnit.cuotas.perM2)}/m² · 40% inicial / 20% obra / 40% entrega` : "Selecciona un modelo disponible"}</p>
                 </button>
               </div>
 
@@ -1739,7 +1845,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                     <button
                       type="button"
                       onClick={() => {
-                        const planLabel = selectedPlan === "contado" ? "Pago al Contado ($1.480 USD/m²)" : "Plan en Cuotas ($1.580 USD/m²)";
+                        const planLabel = `${selectedPlan === "contado" ? "Pago al Contado" : "Plan en Cuotas"} (USD ${formatEurodesignUsd(activeFinancials.pricePerM2)}/m²)`;
                         const parkingText =
                           parkingOption === "parking"
                             ? "Con Parqueo Cubierto (+USD 12.500)"
