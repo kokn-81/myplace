@@ -957,6 +957,7 @@ export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
   description: "Cuarenta departamentos de 1, 2 y 3 dormitorios en Equipetrol, calle 8, entre el 2° y el 3° anillo. Entrega en diciembre 2028. Lista de precios al 25/10/2026.",
   amenities: ["piscina", "churrasquera", "coworking", "sauna", "seguridad"],
   images: [
+    "/beton_brut/fachada-completa.jpg",
     "/beton_brut/fachada.jpg",
     "/beton_brut/fachada_torre.jpg",
     "/beton_brut/lobby.jpg",
@@ -4091,7 +4092,7 @@ export default function MapPage() {
           </span>
         )}
         {/* PANEL IZQUIERDO: Imagen (50% del ancho) */}
-        <div className="nia-property-card-media relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%]">
+        <div className={`nia-property-card-media relative h-full w-[48%] shrink-0 overflow-hidden md:w-[50%] ${isBetonBrutProperty(p) ? "bg-[#e8e6e3]" : ""}`}>
           {coverUrl && !isCollection ? (
             isVideoUrl(coverUrl) ? (
               <video
@@ -4106,7 +4107,7 @@ export default function MapPage() {
                 src={coverUrl}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className={`h-full w-full transition-transform duration-700 group-hover:scale-105 ${isBetonBrutProperty(p) ? "object-contain" : "object-cover"}`}
                 alt={p.title}
                 referrerPolicy="no-referrer"
                 onError={handleImageError}

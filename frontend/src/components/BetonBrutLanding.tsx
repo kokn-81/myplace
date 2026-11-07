@@ -353,10 +353,14 @@ export default function BetonBrutLanding({ onClose }: Props) {
         )}
       </div>
 
-      <div className="relative min-h-[480px] shrink-0 bg-stone-950 md:h-screen md:min-h-0 md:w-[44%]">
-        <img src="/beton_brut/fachada.jpg" alt="Fachada de Béton Brut II sobre la calle 8" className="absolute inset-0 h-full w-full object-cover brightness-[0.82]" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/30" />
-        <div className="absolute bottom-6 left-6 right-6 z-10 text-white md:bottom-10 md:left-10 md:right-10">
+      <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
+        <div className="relative flex w-full flex-col md:min-h-0 md:flex-1">
+          <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
+          <div className="relative h-[280px] w-full md:h-auto md:min-h-0 md:flex-1">
+            <img src="/beton_brut/fachada-completa.jpg" alt="Fachada completa de Béton Brut II" className="absolute inset-0 h-full w-full object-contain object-center" />
+          </div>
+        </div>
+        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-10 md:pb-8">
           <img src="/beton_brut/logo-blanco.png" alt="Béton Brut II" className="mb-3 h-10 w-auto" />
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
             <Sparkles size={12} />

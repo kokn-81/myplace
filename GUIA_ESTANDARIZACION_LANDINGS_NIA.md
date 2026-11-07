@@ -38,6 +38,7 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual. La página habla del proyecto.
 27. **Paso 1 (tipología).** Si hay varias plantas, no se listan en una grilla que alarga la página. Van en un carrusel: flechas y deslizamiento. Debajo del modelo activo se ve la foto del departamento, y cambia al pasar al siguiente. El clic en esa foto abre la ficha. El filtro de dormitorios puede quedar arriba, en una sola fila.
 28. **Títulos.** Cada sección habla al comprador: deseo, decisión o lugar. No describen el documento (“el brochure los presenta”, “los dos publicados”, “la lista dice qué queda”). Sin signos de exclamación y sin una oferta que el material no publica.
+29. **Fachada completa.** La portada y la foto de la ficha muestran el edificio entero, de la cubierta a la planta baja. No se usa un recorte de la calle que corte los pisos de arriba. Si el marco es más angosto que la foto, la imagen va en `object-contain` para que no se recorte el volumen.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 

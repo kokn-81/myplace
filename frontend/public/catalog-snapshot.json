@@ -1070,7 +1070,7 @@
     "ocupacion": "Disponible",
     "complejo_nombre": "BÉTON BRUT II",
     "descripcion": "Cuarenta departamentos de 1, 2 y 3 dormitorios en Equipetrol, calle 8, entre el 2° y el 3° anillo. Entrega en diciembre 2028.",
-    "imagenes": "/beton_brut/fachada.jpg, /beton_brut/lobby.jpg, /beton_brut/social/piscina.jpg, /beton_brut/living.jpg",
+    "imagenes": "/beton_brut/fachada-completa.jpg, /beton_brut/fachada.jpg, /beton_brut/lobby.jpg, /beton_brut/social/piscina.jpg, /beton_brut/living.jpg",
     "amenidades": [
       "piscina",
       "churrasquera",
