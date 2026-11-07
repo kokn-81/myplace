@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  AlertCircle,
   ArrowRight,
   Award,
   Building2,
@@ -241,7 +240,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   const [selectedParkingOption, setSelectedParkingOption] = useState<"none" | "techado" | "combo" | "moto">("none");
   const [selectedParkingCode, setSelectedParkingCode] = useState<string>("P01");
 
-  const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<GardenZenUnit[]>(GARDEN_ZEN_BASELINE_UNITS);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
@@ -627,14 +625,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
     >
       {/* Botones Flotantes Superiores: Solo Logos según el Manual de NIA */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button
-          onClick={() => setShowAdvisorInsights(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl backdrop-blur transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
-          aria-label="Insights Asesor"
-          title="Insights Asesor · Argumentario de Venta y Ventajas Comerciales"
-        >
-          <TrendingUp size={18} className="text-[#9a7b45]" />
-        </button>
 
         <a
           href={GARDEN_ZEN_CONFIG.brochurePdfUrl}
@@ -2199,169 +2189,6 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         )}
       </AnimatePresence>
 
-      {/* MODAL / DRAWER PRIVADO: INSIGHTS DE ASESOR & ARGUMENTARIO COMERCIAL */}
-      <AnimatePresence>
-        {showAdvisorInsights && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
-            onClick={() => setShowAdvisorInsights(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 text-stone-900 shadow-2xl"
-            >
-              <div className="flex items-start justify-between gap-4 border-b border-stone-100 pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                      Privado Asesor · NIA Insights
-                    </span>
-                    <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Argumentario de Ventas
-                    </span>
-                  </div>
-                  <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                    Insights Comerciales · Garden Zen
-                  </h3>
-                  <p className="text-xs text-stone-500 font-light mt-0.5">
-                    Guía de argumentos clave, manejo de objeciones y retornos para ofrecer con solidez.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="rounded-full p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors cursor-pointer"
-                  title="Cerrar insights"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* BLOQUE 1: VENTAJAS COMERCIALES */}
-              <div className="mt-5 space-y-4">
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-                  <div className="flex items-center gap-2 text-emerald-800">
-                    <CheckCircle2 size={16} />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Ventajas Comerciales Clave (Qué destacar)
-                    </h4>
-                  </div>
-                  <ul className="mt-2.5 space-y-2 text-xs text-stone-700 font-light">
-                    <li>
-                      • <strong>50% menos expensas de por vida:</strong> En Equipetrol las expensas suben año tras año. Garden Zen genera su propia energía para ascensores, bombas y áreas comunes, convirtiéndose en el edificio más rentable para un inversor.
-                    </li>
-                    <li>
-                      • <strong>8% más rentable en Airbnb (Estudio Bentall Kennedy):</strong> Los departamentos con certificación eco-sostenible y diseño Japandi logran mayor tasa de ocupación y tarifas superiores por noche.
-                    </li>
-                    <li>
-                      • <strong>Ubicación cota alta protegida:</strong> Situado en Barrio Brígida / Equipetrol Norte con drenaje pluvial superior sin riesgo de anegamiento en días de lluvia intensa.
-                    </li>
-                    <li>
-                      • <strong>Entrega en Marzo 2027 (Obra Fina):</strong> No es pozo cero. La estructura está levantada y en fase de acabados, reduciendo drásticamente el riesgo constructivo.
-                    </li>
-                    <li>
-                      • <strong>100% Equipado llave en mano:</strong> Cuarzo blanco, piedra sinterizada, aire acondicionado, box de vidrio, extractor, calefón y cerradura inteligente sin costos adicionales.
-                    </li>
-                  </ul>
-                </div>
-
-                {/* BLOQUE 2: MANEJO DE OBJECIONES */}
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-                  <div className="flex items-center gap-2 text-emerald-800">
-                    <AlertCircle size={16} />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Desventajas Transparentes &amp; Manejo de Objeciones
-                    </h4>
-                  </div>
-                  <div className="mt-2.5 space-y-3 text-xs">
-                    <div>
-                      <p className="font-semibold text-stone-900">
-                        • Objeción: &quot;La reserva es de USD 5.000 (más alta que en otros proyectos)&quot;
-                      </p>
-                      <p className="text-stone-600 font-light mt-0.5 [text-align:justify]">
-                        <strong>Respuesta:</strong> Es porque el proyecto ya está en obra fina (entrega Marzo 2027). Los USD 5.000 se descuentan 100% de la cuota inicial a la firma y garantizan el bloqueo de la unidad en la lista preferencial antes de la actualización de precios de entrega.
-                      </p>
-                    </div>
-
-                    <div className="border-t border-emerald-200/60 pt-2.5">
-                      <p className="font-semibold text-stone-900">
-                        • Objeción: &quot;¿Cómo se paga el saldo del 70% o 30%?&quot;
-                      </p>
-                      <p className="text-stone-600 font-light mt-0.5 [text-align:justify]">
-                        <strong>Respuesta:</strong> Es la mayor ventaja: el saldo se liquida 100% contra entrega de llaves en Marzo 2027. No hay cuotas mensuales forzadas durante la obra fina, permitiendo usar crédito hipotecario bancario o mantener los fondos rindiendo en el banco.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-stone-200 bg-[#f4f9f5] p-4 text-xs">
-                  <div className="border-b border-stone-200/80 pb-2 mb-3">
-                    <p className="font-bold uppercase tracking-wider text-[#816127]">
-                      Alquileres de referencia
-                    </p>
-                  </div>
-                  <p className="font-light leading-relaxed [text-align:justify]">
-                    No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
-                  </p>
-
-                  <div className="mt-4 border-t border-stone-200/80 pt-3">
-                    <p className="font-semibold text-stone-800 text-[11px] uppercase tracking-wider">
-                      Rango estimado de alquiler en Equipetrol Norte (amoblado / Airbnb)
-                    </p>
-                    <p className="mt-1 text-[11px] text-stone-500 font-light leading-relaxed">
-                      Estimaciones de renta mensual basadas en tarifas de mercado para departamentos a estrenar en el cuadrante Equipetrol / Sirari:
-                    </p>
-                    <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
-                        <span className="text-[10px] text-stone-500 uppercase block">Monoambiente</span>
-                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 480 – 550/mes</strong>
-                        <span className="text-[10px] text-emerald-700">Retorno est.: ~9,8%–11%</span>
-                      </div>
-                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
-                        <span className="text-[10px] text-stone-500 uppercase block">1 Dormitorio</span>
-                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 600 – 700/mes</strong>
-                        <span className="text-[10px] text-emerald-700">Retorno est.: ~9,5%–10,8%</span>
-                      </div>
-                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
-                        <span className="text-[10px] text-stone-500 uppercase block">2 Dormitorios</span>
-                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 850 – 980/mes</strong>
-                        <span className="text-[10px] text-emerald-700">Retorno est.: ~8,8%–9,9%</span>
-                      </div>
-                      <div className="rounded-lg bg-white border border-stone-200/70 p-2 text-center">
-                        <span className="text-[10px] text-stone-500 uppercase block">3 Dorms / PH</span>
-                        <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 1150 – 1350/mes</strong>
-                        <span className="text-[10px] text-emerald-700">Retorno est.: ~8,5%–9,6%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 3. Disclaimer de Transparencia NIA */}
-                  <div className="mt-4 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
-                    El rango de alquiler es una referencia de zona. No es una renta prometida.
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="rounded-full bg-stone-900 px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-black transition-all cursor-pointer"
-                >
-                  Entendido, volver a la landing
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

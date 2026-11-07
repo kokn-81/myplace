@@ -15,7 +15,6 @@ import {
   Share2,
   ShieldCheck,
   Sparkles,
-  TrendingUp,
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
@@ -130,7 +129,6 @@ export default function TriventoLanding({ onClose }: Props) {
   const [activeSection, setActiveSection] = useState("intro");
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [amenityIndex, setAmenityIndex] = useState(0);
   const [equipmentIndex, setEquipmentIndex] = useState(0);
@@ -290,9 +288,6 @@ export default function TriventoLanding({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-[#F8F3E7] font-sans text-[#1C1917] md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button type="button" onClick={() => setShowInsights(true)} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9A7B45] shadow-xl" aria-label="Insights asesor" title="Insights asesor">
-          <TrendingUp size={18} />
-        </button>
         <a href={TRIVENTO_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9A7B45] shadow-xl" aria-label="Descargar brochure" title="Descargar brochure">
           <Download size={18} />
         </a>
@@ -782,46 +777,6 @@ export default function TriventoLanding({ onClose }: Props) {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showInsights && (
-          <div className="fixed inset-0 z-[130] flex justify-end bg-black/60">
-            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} className="h-full w-full max-w-md space-y-6 overflow-y-auto border-l border-stone-200 bg-[#FFFDF6] p-6 text-stone-800">
-              <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-                <h4 className="font-serif text-lg">Insights asesor · Trivento IV</h4>
-                <button type="button" onClick={() => setShowInsights(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-100" aria-label="Cerrar insights">
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="space-y-2">
-                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">Ventajas</span>
-                <ul className="space-y-2 text-xs text-stone-700">
-                  <li>Dirección publicada: Av. San Martín y Calle A. Ramírez, Equipetrol.</li>
-                  <li>Quedan {libres.length} unidades libres en el basamento. El ticket de contado más bajo es USD {formatTriventoUsd(minTicket)} (unidades 204 y 404).</li>
-                  <li>La tarifa de contado más baja entre las libres es USD {formatTriventoUsd(minContado)}/m², en la unidad 305.</li>
-                  <li>El crédito oficial es 50% a la firma y 50% en {TRIVENTO_CONFIG.delivery}.</li>
-                  <li>El brochure incluye aires, horno o microondas, y vidrio laminado con perfilería ALVI 60.</li>
-                </ul>
-              </div>
-              <div className="space-y-2">
-                <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-800">Objeciones</span>
-                <ul className="space-y-2 text-xs text-stone-700">
-                  <li>El copy habla de 7 niveles residenciales. El cuadro y la planta tipo solo publican los pisos 1 a 5. No cotizar pisos que no están en el cuadro.</li>
-                  <li>Los monoambientes del basamento (modelo 02) figuran vendidos.</li>
-                  <li>No hay precio de parqueo ni monto de reserva en el material. No inventarlos en la conversación.</li>
-                  <li>Los precios del brochure (“desde USD 1.100/m²” y “desde USD 1.250/m²”) quedaron atrás. El cuadro manda.</li>
-                  <li>Hay renders de unidades 701/801 que no aparecen en la disponibilidad. No ofrecerlas.</li>
-                </ul>
-              </div>
-              <div className="space-y-2">
-                <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-stone-700">Escenario de mercado</span>
-                <p className="text-xs leading-relaxed text-stone-700">
-                  No cites plusvalía ni una renta. El material no publica ni un valor de reventa ni un alquiler. La unidad se plantea para renta tradicional o Airbnb, sin cifra.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

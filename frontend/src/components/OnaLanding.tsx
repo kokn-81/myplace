@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  AlertCircle,
   ArrowRight,
   Building2,
   Calculator,
@@ -316,7 +315,6 @@ export default function OnaLanding({ property, onClose }: Props) {
   const [selectedFloor, setSelectedFloor] = useState<number>(2);
   const [selectedPlan, setSelectedPlan] = useState<"contado" | "plan60" | "plan40">("contado");
 
-  const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<OnaUnit[]>(ONA_UNITS);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
@@ -732,16 +730,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
     >
-      {/* Botones Flotantes Superiores: Insights Asesor, Brochure, Compartir y Cerrar (Solo Logos) */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button
-          onClick={() => setShowAdvisorInsights(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl backdrop-blur transition-all hover:bg-stone-900 hover:text-white hover:border-stone-900 active:scale-95 cursor-pointer"
-          aria-label="Insights Asesor"
-          title="Insights Asesor · Argumentario de Venta y Ventajas Comerciales"
-        >
-          <TrendingUp size={18} className="text-[#9a7b45]" />
-        </button>
 
         <a
           href="/ona/brochure.pdf"
@@ -2314,144 +2303,6 @@ export default function OnaLanding({ property, onClose }: Props) {
         )}
       </AnimatePresence>
 
-      {/* MODAL / DRAWER PRIVADO: INSIGHTS DE ASESOR & ARGUMENTARIO COMERCIAL */}
-      <AnimatePresence>
-        {showAdvisorInsights && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
-            onClick={() => setShowAdvisorInsights(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 text-stone-900 shadow-2xl"
-            >
-              <div className="flex items-start justify-between gap-4 border-b border-stone-100 pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                      Privado Asesor · NIA Insights
-                    </span>
-                    <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Argumentario de Ventas
-                    </span>
-                  </div>
-                  <h3 className="mt-2 font-serif text-2xl text-stone-900">
-                    Insights Comerciales · ONA Residences
-                  </h3>
-                  <p className="text-xs text-stone-500 font-light mt-0.5">
-                    Guía de argumentos, ventajas y manejo de objeciones para ofrecer con solidez.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="rounded-full p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors cursor-pointer"
-                  title="Cerrar insights"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* BLOQUE 1: VENTAJAS FUERTES PARA OFRECER AL CLIENTE */}
-              <div className="mt-5 space-y-4">
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-                  <div className="flex items-center gap-2 text-emerald-800">
-                    <CheckCircle2 size={16} />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Ventajas Comerciales Clave (Qué destacar)
-                    </h4>
-                  </div>
-                  <ul className="mt-2.5 space-y-2 text-xs text-stone-700 font-light">
-                    <li>
-                      • <strong>Anclaje de precio en 1.ª fase:</strong> Desde ${formatOnaUsd(minCashPerM2)} USD/m² según el inventario en vivo. No cites una plusvalía proyectada: el material no publica un valor de reventa.
-                    </li>
-                    <li>
-                      • <strong>Ubicación estratégica y menor riesgo de anegamiento:</strong> A 8 minutos de Equipetrol, sobre Av. Los Cusis, en cota alta protegida y con acceso a servicios comerciales de primer nivel.
-                    </li>
-                    <li>
-                      • <strong>100% Equipado llave en mano:</strong> Granito, cajonería completa, roperos con divisiones, aire acondicionado instalado, box de vidrio y calefón sin cobros sorpresa.
-                    </li>
-                    <li>
-                      • <strong>Parqueos con baulera privada:</strong> Todas las opciones de parqueo ($15k simple / $22k doble) incluyen su propia baulera.
-                    </li>
-                  </ul>
-                </div>
-
-                {/* BLOQUE 2: DESVENTAJAS / OBJECIONES Y CÓMO REBATIRLAS */}
-                <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
-                  <div className="flex items-center gap-2 text-amber-800">
-                    <AlertCircle size={16} />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Desventajas Transparentes &amp; Manejo de Objeciones
-                    </h4>
-                  </div>
-                  <div className="mt-2.5 space-y-3 text-xs">
-                    <div>
-                      <p className="font-semibold text-stone-900">
-                        • Objeción: &quot;La entrega es en Junio 2028 (faltan casi 2 años y medio)&quot;
-                      </p>
-                      <p className="text-stone-600 font-light mt-0.5 [text-align:justify]">
-                        <strong>Respuesta:</strong> Es precisamente la ventaja de entrar en 1.ª fase al precio piso. Con el Plan 60/40 o 40/60 no te descapitalizas hoy: congelas el valor mínimo histórico con USD 1.000 y pagas el saldo recién cuando la torre esté terminada y revalorizada.
-                      </p>
-                    </div>
-
-                    <div className="border-t border-amber-200/60 pt-2.5">
-                      <p className="font-semibold text-stone-900">
-                        • Objeción: &quot;Pocas opciones de 1 dormitorio disponibles&quot;
-                      </p>
-                      <p className="text-stone-600 font-light mt-0.5 [text-align:justify]">
-                        <strong>Respuesta:</strong> Las unidades de 32 m² son las de mayor rotación por su ticket accesible (desde USD {formatOnaUsd(minPrice1Dorm)}). Quedan contadas unidades de 1D en 1.ª fase; esto demuestra la tracción real del proyecto y premia la decisión rápida.
-                      </p>
-                    </div>
-
-                    <div className="border-t border-amber-200/60 pt-2.5">
-                      <p className="font-semibold text-stone-900">
-                        • Objeción: &quot;¿Por qué Los Cusis y no directamente Equipetrol centro?&quot;
-                      </p>
-                      <p className="text-stone-600 font-light mt-0.5 [text-align:justify]">
-                        <strong>Respuesta:</strong> En Equipetrol central el m² en preventa arranca en $1.500–$1.700. Los Cusis está a solo 8 minutos, con la misma clientela de alquiler de alto nivel, pero con un costo de entrada 25% más bajo, generando mayor rendimiento porcentual neto.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4 text-xs">
-                  <div className="border-b border-stone-200/80 pb-2 mb-3">
-                    <p className="font-bold uppercase tracking-wider text-[#816127]">
-                      Alquileres de referencia
-                    </p>
-                  </div>
-                  <p className="font-light leading-relaxed [text-align:justify]">
-                    No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
-                  </p>
-                  <div className="mt-3.5 border-t border-stone-200/80 pt-2.5">
-                    <p className="font-light leading-relaxed [text-align:justify]">
-                      <strong>Rangos de alquiler mensual de referencia en Los Cusis:</strong> 1 Dormitorio: USD 380 – 460/mes · 2 Dormitorios: USD 600 – 750/mes. Es una referencia de zona, no una renta prometida.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="rounded-full bg-stone-900 px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-black transition-all cursor-pointer"
-                >
-                  Entendido, volver a la landing
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

@@ -24,7 +24,6 @@ import {
   Share2,
   ShieldCheck,
   Sparkles,
-  TrendingUp,
   X,
   Zap,
 } from "lucide-react";
@@ -241,7 +240,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
   const [equipIndex, setEquipIndex] = useState(0);
   const [selectedTypologyId, setSelectedTypologyId] = useState<string>("mono");
   const [showHdPlanModal, setShowHdPlanModal] = useState(false);
-  const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
@@ -556,14 +554,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
           ======================================================== */}
       <div className="fixed right-4 top-4 md:right-7 md:top-7 z-[120] flex items-center gap-2">
-        <button
-          onClick={() => setShowAdvisorInsights(true)}
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#9a7b45] hover:bg-stone-50 transition-all hover:scale-105"
-          title="Insights de Asesor (Datos Privados)"
-          aria-label="Insights Asesor"
-        >
-          <TrendingUp size={18} />
-        </button>
 
         <a
           href={BLESS_TOWER_CONFIG.brochurePdfUrl}
@@ -1684,86 +1674,6 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
         )}
       </AnimatePresence>
 
-      {/* 4.4 Drawer Modal Privado de Insights de Asesor */}
-      <AnimatePresence>
-        {showAdvisorInsights && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setShowAdvisorInsights(false)}>
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-h-[90vh] w-full max-w-2xl space-y-6 overflow-y-auto rounded-3xl border border-stone-200 bg-white p-6 text-stone-800 shadow-2xl sm:p-8"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-stone-200">
-                <div className="flex items-center gap-2 text-[#9a7b45]">
-                  <TrendingUp size={20} />
-                  <h4 className="font-serif text-lg font-bold text-stone-900">Insights Asesor · Bless Tower</h4>
-                </div>
-                <button
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="h-8 w-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center"
-                  aria-label="Cerrar modal"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Bloque 1: Ventajas Comerciales */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  Bloque 1 · Ventajas Clave
-                </span>
-                <ul className="space-y-2 text-xs text-stone-700 pt-1">
-                  <li className="flex items-start gap-1.5">
-                    <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Ubicación sobre avenida principal:</strong> Av. Cristo Redentor es la arteria de mayor crecimiento comercial y plusvalía del norte cruceño.</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Torre de 30 pisos:</strong> Máxima exclusividad con vistas abiertas sin obstáculos en pisos altos.</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <CheckCircle2 size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>100% equipado:</strong> Climatización, roperos, cajonería y cerraduras inteligentes sin desembolsos extra.</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Bloque 2: Desventajas Transparentes & Objeciones */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                  Bloque 2 · Objeciones & Manejo
-                </span>
-                <div className="space-y-2 text-xs text-stone-700 pt-1">
-                  <div className="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                    <p className="font-semibold text-stone-900">Objeción: "¿Hay ruido por estar sobre avenida?"</p>
-                    <p className="text-stone-600 mt-1">Respuesta: Carpintería de aluminio hermética con cámara de aire y vidrios templados que amortiguan el sonido urbano eficientemente.</p>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                    <p className="font-semibold text-stone-900">Objeción: "¿Tiempo de entrega?"</p>
-                    <p className="text-stone-600 mt-1">Respuesta: Diciembre 2027. Permite planificar el financiamiento bancario con holgura sin presión inmediata de cuotas hipotecarias.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2 pt-2 border-t border-stone-200">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#9a7b45] bg-[#9a7b45]/15 px-2.5 py-0.5 rounded-full border border-[#9a7b45]/30">
-                  Bloque 3 · Lo que no se cita
-                </span>
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
-                </p>
-                <div className="p-2.5 rounded-lg bg-white border border-stone-200 text-xs">
-                  <p className="text-[10px] text-stone-500 uppercase">Renta mensual de referencia</p>
-                  <p className="font-serif text-sm font-bold text-stone-900 mt-0.5">$450 – $750 USD</p>
-                  <p className="mt-1 text-[10px] text-stone-500">Referencia de zona, no una renta prometida.</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

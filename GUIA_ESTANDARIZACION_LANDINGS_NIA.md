@@ -1,5 +1,6 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.3  
+**Versión:** 1.5
+
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
 
@@ -14,10 +15,10 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 3. **Hero fijo.** La foto de fachada no cambia con el scroll. La foto de ubicación vive dentro de `#lugar`.
 4. **Contenido del panel derecho** centrado en `max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`, con `pb-32 md:pb-44`. Cada sección después de `#intro` abre con `mt-20 border-t border-stone-200/80 pt-10`.
 5. **Orden fijo:** `#intro`, `#lugar`, `#amenidades`, `#tipologias`, `#equipamiento`, `#constructora`, `#pago`, `#disponibilidad`, `#cierre`.
-6. **Cuatro controles superiores** circulares blancos, a la derecha: Insights, brochure, compartir, cerrar.
+6. **Tres controles superiores** circulares blancos, a la derecha: brochure, compartir y cerrar.
 7. **Barra inferior** `fixed inset-x-0 bottom-0 z-[110] md:left-[44%]` en crema: “Reserva con USD {monto del proyecto}” y botón Compartir. Se oculta en `#cierre`. El monto es el de ese proyecto.
 8. **Menú de secciones** circular negro, icono `#e8d5a8`, en `bottom-20 right-4`. El ítem activo usa fondo `#9a7b45/15` y texto `#816127`.
-9. **Insights** es un modal centrado (`max-w-2xl`, fondo blanco), no un cajón naranja lateral.
+9. **Sin Insights.** Ninguna landing incluye un botón ni un modal de Insights o modo asesor.
 10. **El botón de reserva** es `bg-stone-900` y en hover `#9a7b45`.
 11. **`#pago`:** la primera opción va en tarjeta negra con insignia dorada y “Ventaja comercial”. Las otras, en tarjeta blanca. El precio de esa sección es USD/m², no la cuota en dólares de una unidad todavía no elegida.
 12. **`#disponibilidad`:** cuatro pasos (tipología, piso, opcional, plan). La tarjeta de cotización tiene **tres** columnas: inversión total, cuota inicial y saldo contra entrega. `USD` arriba y el número abajo. En contado, el saldo es `—` y “Sin saldo pendiente”. **Ningún proyecto publica plusvalía proyectada.** No hay cuarta columna, ni porcentaje, ni “valor a la entrega”, ni comparación del precio de preventa contra un precio terminado inventado. No se calcula `capitalGain`, `gainPercentage` ni `marketValueAtDelivery`.
@@ -34,7 +35,7 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 23. **Adicionales.** Parqueo, moto o baulera usan solo el precio publicado. Si el documento no pone precio, ese adicional no entra en la cotización.
 24. **Unidad vendida.** Si la lista marca la unidad como vendida y no publica su precio, la ficha no calcula ni muestra un número.
 25. **Código de unidad.** Si el código es piso + letra (1D, 2D, 3D), el botón de piso dice “Unidad 1D”. Suelto, 1D, 2D y 3D se leen como dormitorios.
-26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual y en Insights. La página habla del proyecto.
+26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual. La página habla del proyecto.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 
@@ -75,7 +76,6 @@ Las landings de proyectos en N.I.A no son páginas informativas estáticas; son 
 | **Border Soft** | `#E7E5E4` (Stone-200) | Divisores sutiles de sección, bordes de tarjetas y botones blancos. |
 | **Status Live (Verde Éxito)** | `#059669` (Emerald-600) | Indicador pulsante "En vivo", confirmación de copiado y badges disponibles. |
 | **Status Sold (Gris Agotado)** | `#A8A29E` (Stone-400) | Unidades vendidas o no disponibles. |
-| **Alert / Private (Ámbar)** | `#B45309` / `#FFFBEB` | Módulo de Insights privados de asesor y objeciones comerciales. |
 
 ### 2.2 Tipografía y Jerarquía
 
@@ -98,7 +98,7 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│  HEADER FLOTANTE SUPERIOR DERECHO (Solo Iconos: Insights, PDF, Share, X)│
+│  HEADER FLOTANTE SUPERIOR DERECHO (Solo Iconos: PDF, Share, X)│
 ├───────────────────────────────────┬────────────────────────────────────┤
 │ PANEL IZQUIERDO (44% Desktop)    │ PANEL DERECHO EDITORIAL (56%)      │
 │ - Fotografía inmersiva dinámica   │ 1. #intro (Hero, tesis & nav bar)  │
@@ -114,7 +114,6 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 │ ELEMENTOS FLOTANTES REACTIVOS:                                         │
 │ • Barra inferior de conversión (Reserva USD 1.000 + Compartir)        │
 │ • Burbuja flotante de menú de secciones [ ☰ Secciones ]                │
-│ • Drawer modal privado de Insights de Asesor                           │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -123,12 +122,11 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 ## 4. Especificación Detallada Sección por Sección
 
 ### Controles Superiores Flotantes (`fixed right-4 top-4 md:right-7 md:top-7 z-[120]`)
-* **Formato:** Conjunto de 4 botones circulares idénticos (`h-10 w-10`), fondo `bg-white/95 backdrop-blur`, borde `border-stone-200`, sombra `shadow-xl`.
+* **Formato:** Conjunto de 3 botones circulares idénticos (`h-10 w-10`), fondo `bg-white/95 backdrop-blur`, borde `border-stone-200`, sombra `shadow-xl`.
 * **Botones requeridos:**
-  1. `TrendingUp` (color `#9A7B45`): Abre el modal privado de *Insights Asesor*.
-  2. `Download` (color `#9A7B45`): Descarga directa del brochure oficial en PDF.
-  3. `Share2` (color `stone-800`): Copia link con feedback visual `Check` en verde.
-  4. `X` (color `stone-700`): Cierra la landing y regresa a la búsqueda del mapa.
+  1. `Download` (color `#9A7B45`): Descarga directa del brochure oficial en PDF.
+  2. `Share2` (color `stone-800`): Copia link con feedback visual `Check` en verde.
+  3. `X` (color `stone-700`): Cierra la landing y regresa a la búsqueda del mapa.
 
 ---
 
@@ -273,15 +271,8 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
   * Al hacer clic en cualquier sección, se realiza scroll suave y el menú se repliega.
   * Al subir de nuevo a la parte superior de la página, la burbuja desaparece automáticamente.
 
-### 5.3 Módulo Privado "Insights Asesor" & Análisis Financiero Responsable
-* **Acceso:** Modal protegido accesible desde el botón circular superior `TrendingUp`.
-* **Estructura en 3 Bloques Secuenciales:**
-  1. *Bloque 1: Ventajas Comerciales Clave (Qué destacar):* Argumentos diferenciales de arquitectura, ingeniería, sostenibilidad y ahorros en expensas.
-  2. *Bloque 2: Desventajas Transparentes & Manejo de Objeciones:* Respuestas sólidas a objeciones reales de la zona (ej. tiempos de entrega, cuota de reserva, competencia).
-  3. *Bloque 3: Lo que no se cita.*
-     * Ubicación: después de las ventajas y las objeciones.
-     * **No se cita plusvalía proyectada** ni un porcentaje de reventa. Si el brochure no publica ese número, el asesor tampoco.
-     * Un rango de alquiler solo se muestra si el material oficial lo publica, y se rotula como referencia de zona, no como renta prometida.
+### 5.3 Controles disponibles
+Las landings ofrecen brochure, compartir y cerrar. No incluyen Insights ni un modo asesor.
 
 ---
 
@@ -332,7 +323,7 @@ Cada landing de proyecto debe implementar la siguiente estructura dividida en 9 
 
 Antes de publicar cualquier nueva landing basada en este estándar, verificar:
 
-- [ ] ¿Los botones superiores son exactamente 4 iconos circulares limpios sin etiquetas de texto?
+- [ ] ¿Los botones superiores son exactamente 3 iconos circulares (brochure, compartir y cerrar), sin etiquetas de texto?
 - [ ] ¿El botón "Inicio" de la barra de navegación se desplaza al `#intro` sin recargar la página ni cerrar la landing?
 - [ ] ¿El botón flotante de secciones es circular y solo muestra el icono (`Menu`/`X`), sin texto?
 - [ ] ¿El panel derecho en escritorio utiliza anchos amplios (`md:max-w-3xl lg:max-w-4xl xl:max-w-5xl`) sin comprimir tarjetas a 3 columnas?

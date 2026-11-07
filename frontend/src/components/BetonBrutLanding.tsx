@@ -16,7 +16,6 @@ import {
   MessageCircle,
   Share2,
   Sparkles,
-  TrendingUp,
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
@@ -178,7 +177,6 @@ export default function BetonBrutLanding({ onClose }: Props) {
   const [activeSection, setActiveSection] = useState("intro");
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [amenityIndex, setAmenityIndex] = useState(0);
   const [rooms, setRooms] = useState<BetonRooms>("1");
@@ -332,9 +330,6 @@ export default function BetonBrutLanding({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button type="button" onClick={() => setShowInsights(true)} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9a7b45] shadow-xl" aria-label="Insights Asesor" title="Insights de asesor">
-          <TrendingUp size={18} />
-        </button>
         <a href={BETON_BRUT_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-[#9a7b45] shadow-xl" aria-label="Descargar Brochure">
           <Download size={18} />
         </a>
@@ -790,29 +785,6 @@ export default function BetonBrutLanding({ onClose }: Props) {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showInsights && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setShowInsights(false)}>
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} onClick={(event) => event.stopPropagation()} className="max-h-[90vh] w-full max-w-2xl space-y-5 overflow-y-auto rounded-3xl border border-stone-200 bg-white p-6 text-stone-800 shadow-2xl sm:p-8">
-              <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-                <h4 className="font-serif text-lg font-bold text-stone-900">Insights asesor · Béton Brut II</h4>
-                <button type="button" onClick={() => setShowInsights(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-100 text-stone-700" aria-label="Cerrar modal"><X size={16} /></button>
-              </div>
-              <ul className="space-y-2 text-xs text-stone-700">
-                <li>La lista es del {BETON_BRUT_CONFIG.priceListLabel}. No hay Google Sheet. No digas que el precio está en vivo.</li>
-                <li>Contado: USD 1.700/m², 100% a la firma. Plan 30-60: USD 1.800/m². 30% a la firma, cuotas hasta el 60% en hasta 24 meses, 40% contra entrega.</li>
-                <li>Vendidas en la lista: 5F, 6A, 6E y 7D. No les inventes un precio.</li>
-                <li>No hay seña publicada. No des un monto de reserva.</li>
-                <li>Parqueo USD 13.000. Moto USD 3.000. Hay 15 bauleras en subsuelo sin precio: no las cotices.</li>
-                <li>El 6A está vendido. El plano dice 106,78 m² y la lista anota 105,82 m².</li>
-                <li>Colaboradores impresos: Beton Fortia S.R.L., Eduardo Roca y Mediterráneo Constructora. No inventes otro rol.</li>
-                <li>Cortinas solo en la fachada a la calle y en la fachada hacia la iglesia. El purificador de cocina es para 1 dormitorio; la campana de isla, para 2 y 3.</li>
-                <li>No cites una plusvalía proyectada ni un alquiler. El material no publica ese número.</li>
-              </ul>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

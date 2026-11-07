@@ -260,7 +260,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   const [selectedPlan, setSelectedPlan] = useState<"contado" | "cuotas">("contado");
   const [parkingOption, setParkingOption] = useState<"none" | "parking" | "baulera" | "parking_baulera">("none");
 
-  const [showAdvisorInsights, setShowAdvisorInsights] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [units, setUnits] = useState<EurodesignUnit[]>(EURODESIGN_UNITS);
   const [isRefreshingInv, setIsRefreshingInv] = useState(false);
@@ -604,15 +603,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
     >
       {/* Botones Flotantes Superiores: Solo Logos según el Manual de NIA */}
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-        <button
-          type="button"
-          onClick={() => setShowAdvisorInsights(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-          title="Modo Asesor (Insights Privados)"
-          aria-label="Insights Asesor"
-        >
-          <TrendingUp size={18} className="text-[#9a7b45]" />
-        </button>
 
         <a
           href={EURODESIGN_CONFIG.brochurePdfUrl}
@@ -1906,113 +1896,6 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         )}
       </AnimatePresence>
 
-      {/* DRAWER / MODAL DEL MODO ASESOR (INSIGHTS PRIVADOS) */}
-      <AnimatePresence>
-        {showAdvisorInsights && (
-          <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative max-h-[90vh] max-w-2xl w-full overflow-y-auto rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 shadow-2xl"
-            >
-              <button
-                type="button"
-                onClick={() => setShowAdvisorInsights(false)}
-                className="absolute top-5 right-5 flex h-8 w-8 items-center justify-center rounded-full bg-stone-100 text-stone-600 hover:bg-stone-200 transition"
-                aria-label="Cerrar modal de asesor"
-              >
-                <X size={16} />
-              </button>
-
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#9a7b45]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#9a7b45]">
-                  Uso Exclusivo Asesores NIA
-                </span>
-                <span className="text-xs text-stone-500 font-light">Confidencial</span>
-              </div>
-
-              <h2 className="mt-3 font-serif text-2xl sm:text-3xl font-light text-stone-900">
-                Insights &amp; Argumentario Comercial · Tower Eurodesign
-              </h2>
-
-              <div className="mt-6 space-y-4 text-xs text-stone-700">
-                {/* 1. VENTAJAS COMERCIALES CLAVE */}
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-                  <p className="font-semibold text-emerald-900 uppercase tracking-wider text-[11px]">
-                    1. Ventajas Comerciales Clave (Qué destacar)
-                  </p>
-                  <ul className="mt-2 space-y-1.5 font-light leading-relaxed text-stone-700">
-                    <li>• <strong>Obra gruesa 100% finalizada (losa 18):</strong> Cero riesgo de excavación o fundaciones. Estructura portante concluida en su totalidad.</li>
-                    <li>• <strong>Ubicación AAA en calle Enrique Finot:</strong> A 3 cuadras de Ventura Mall y Manzana 40, en el eje corporativo y comercial más cotizado de Santa Cruz.</li>
-                    <li>• <strong>Equipamiento de estándar europeo:</strong> Porcelanato importado, grifería empotrada y carpintería de aluminio hermética.</li>
-                  </ul>
-                </div>
-
-                {/* 2. DESVENTAJAS TRANSPARENTES Y MANEJO DE OBJECIONES */}
-                <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
-                  <p className="font-semibold text-amber-900 uppercase tracking-wider text-[11px]">
-                    2. Desventajas Transparentes &amp; Manejo de Objeciones
-                  </p>
-                  <div className="mt-2 space-y-2 font-light leading-relaxed text-stone-700">
-                    <div>
-                      <strong className="text-stone-900">• Objeción: &quot;¿Qué pasa si se demora la entrega?&quot;</strong>
-                      <p className="mt-0.5 text-stone-600 [text-align:justify]">
-                        <strong>Respuesta:</strong> Toda la estructura ya está erigida. Los trabajos actuales se concentran en tabiquería interna e instalaciones. Las visitas a obra están habilitadas martes y viernes con cita previa para verificar el avance.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-stone-200 bg-[#fbf9f4] p-4">
-                  <div className="border-b border-stone-200/80 pb-2 mb-3">
-                    <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px]">
-                      Alquileres de referencia
-                    </p>
-                  </div>
-
-                  <p className="font-light leading-relaxed [text-align:justify]">
-                    No cites una plusvalía proyectada ni un porcentaje de reventa. El material del proyecto no publica ese número.
-                  </p>
-
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
-                      <span className="text-[10px] text-stone-500 uppercase block">1 Dormitorio</span>
-                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 550 – 700/mes</strong>
-                      <span className="text-[10px] text-emerald-700">Retorno est.: ~10,2%–11,4%</span>
-                    </div>
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
-                      <span className="text-[10px] text-stone-500 uppercase block">2 Dormitorios</span>
-                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 900 – 1.200/mes</strong>
-                      <span className="text-[10px] text-emerald-700">Retorno est.: ~10,5%–11,8%</span>
-                    </div>
-                    <div className="rounded-xl border border-stone-200/80 bg-white p-2.5 text-center">
-                      <span className="text-[10px] text-stone-500 uppercase block">3 Dormitorios / PH</span>
-                      <strong className="text-xs text-stone-900 font-mono mt-0.5 block">USD 1.400 – 1.700/mes</strong>
-                      <span className="text-[10px] text-emerald-700">Retorno est.: ~11,5%–13%</span>
-                    </div>
-                  </div>
-
-                  {/* Disclaimer de Transparencia NIA */}
-                  <div className="mt-3 rounded-xl border border-stone-300/80 bg-white/80 p-3 text-[11px] text-stone-600 font-light leading-relaxed">
-                    El rango de alquiler es una referencia de zona. No es una renta prometida.
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvisorInsights(false)}
-                  className="rounded-full bg-stone-900 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-white hover:bg-black transition"
-                >
-                  Entendido
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* MODAL DE ZOOM DE PLANO EN ALTA RESOLUCIÓN */}
       <AnimatePresence>
