@@ -1,18 +1,13 @@
 import { useInventory, gardenZenInventory } from "../projectInventory";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
-  Award,
   Building2,
-  Calendar,
-  Car,
   Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  CreditCard,
-  DollarSign,
   Download,
   ExternalLink,
   Home,
@@ -21,12 +16,8 @@ import {
   MapPin,
   Menu,
   MessageCircle,
-  Percent,
-  RefreshCw,
   Share2,
-  ShieldCheck,
   Sparkles,
-  TrendingUp,
   X,
   Zap,
 } from "lucide-react";
@@ -37,9 +28,9 @@ import {
   GARDEN_ZEN_PARKINGS,
   GardenZenParking,
   GardenZenUnit,
+  PLANO_MODELO_MAP,
   fetchGardenZenLiveUnits,
   formatGardenZenUsd,
-  parseGardenZenLiveCsv,
 } from "../gardenZenInventory";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -49,1245 +40,712 @@ interface Props {
   onClose?: () => void;
 }
 
-interface AmbienteOption {
-  id: string;
-  name: string;
-  shortName: string;
-  rooms: number;
-  areaRange: string;
-  basePrice: number;
-  rentMin: number;
-  rentMax: number;
-  yieldRange: string;
-  matchUnit: (u: GardenZenUnit) => boolean;
+function minParking(kind: GardenZenParking["kind"]) {
+  const prices = GARDEN_ZEN_PARKINGS.filter((item) => item.kind === kind && item.status === "disponible").map((item) => item.price);
+  return prices.length ? Math.min(...prices) : null;
 }
 
-const AMBIENTE_OPTIONS: AmbienteOption[] = [
-  {
-    id: "mono",
-    name: "Monoambiente",
-    shortName: "Monoambiente · 37 a 52 m²",
-    rooms: 0,
-    areaRange: "37,8 a 52,6 m²",
-    basePrice: 59600,
-    rentMin: 480,
-    rentMax: 550,
-    yieldRange: "9,8% – 11,2%",
-    matchUnit: (u) => u.rooms === 0,
-  },
-  {
-    id: "1d",
-    name: "1 Dormitorio",
-    shortName: "1 Dormitorio · 46 a 70 m²",
-    rooms: 1,
-    areaRange: "46,1 a 70,0 m²",
-    basePrice: 69127,
-    rentMin: 600,
-    rentMax: 700,
-    yieldRange: "9,5% – 10,8%",
-    matchUnit: (u) => u.rooms === 1,
-  },
-  {
-    id: "2d",
-    name: "2 Dormitorios",
-    shortName: "2 Dormitorios · 83 a 108 m²",
-    rooms: 2,
-    areaRange: "83,3 a 107,6 m²",
-    basePrice: 121778,
-    rentMin: 850,
-    rentMax: 980,
-    yieldRange: "8,8% – 9,9%",
-    matchUnit: (u) => u.rooms === 2,
-  },
-  {
-    id: "3d",
-    name: "3 Dormitorios / Penthouse",
-    shortName: "3 Dormitorios · 106 a 133 m²",
-    rooms: 3,
-    areaRange: "106,1 a 133,5 m²",
-    basePrice: 156162,
-    rentMin: 1150,
-    rentMax: 1350,
-    yieldRange: "8,5% – 9,6%",
-    matchUnit: (u) => u.rooms === 3,
-  },
-];
+const PARKING_TECHADO = minParking("techado");
+const PARKING_MOTO = minParking("moto");
+const PARKING_BAULERA = minParking("baulera");
 
 const AMENITY_SLIDES = [
   {
     src: "/garden_zen/amenities/amenity_piscina.jpg",
     category: "Rooftop Piso 17",
-    title: "Piscina Izumi & Deck Panorámico",
-    description:
-      "Ubicada en el rooftop del piso 17 con vistas abiertas hacia Equipetrol Norte. Un oasis con solárium, reposeras y horizonte panorámico para relajarte con el atardecer cruceño.",
+    title: "Piscina Izumi y deck panorámico",
+    description: "Ubicada en el rooftop del piso 17 con vistas abiertas hacia Equipetrol Norte. Un espacio con solárium y reposeras.",
   },
   {
     src: "/garden_zen/amenities/amenity_sauna.jpg",
-    category: "Wellness & Relax",
-    title: "Sauna Seco Ki & Sauna Vapor Mizu",
-    description:
-      "Circuito completo de hidroterapia y relajación con vistas panorámicas, diseñado para renovar energías y promover el bienestar físico y mental sin salir de casa.",
+    category: "Wellness",
+    title: "Sauna seco Ki y sauna vapor Mizu",
+    description: "Circuito de sauna seco y sauna de vapor para relajarte sin salir del edificio.",
   },
   {
     src: "/garden_zen/amenities/amenity_gimnasio.jpg",
-    category: "Fitness & Cardio",
-    title: "Gimnasio Tecnológico Kinō",
-    description:
-      "Área de fitness climatizada equipada con máquinas de cardio y fuerza de última generación, acompañada de ventanales de piso a techo con vistas despejadas.",
+    category: "Fitness",
+    title: "Gimnasio tecnológico Kinō",
+    description: "Área de fitness climatizada con máquinas de cardio y fuerza, y ventanales de piso a techo.",
   },
   {
     src: "/garden_zen/amenities/amenity_cowork.jpg",
-    category: "Business & Networking",
+    category: "Trabajo",
     title: "Co-Work Nōka",
-    description:
-      "Espacio de trabajo colaborativo y business lounge climatizado con conectividad de fibra óptica de alta velocidad, iluminación natural y puestos ergonómicos.",
+    description: "Espacio de trabajo climatizado con fibra óptica, luz natural y puestos para trabajar.",
   },
   {
     src: "/garden_zen/amenities/amenity_salon.jpg",
-    category: "Social & Eventos",
-    title: "Salón Haku (Uso Múltiple)",
-    description:
-      "Ambiente social climatizado con barra gourmet, cocina de apoyo, celosías de madera natural y mobiliario para eventos y celebraciones privadas.",
+    category: "Eventos",
+    title: "Salón Haku",
+    description: "Ambiente social climatizado con barra, cocina de apoyo y lugar para celebraciones privadas.",
   },
   {
     src: "/garden_zen/amenities/amenity_churrasquera_enso.jpg",
-    category: "Gastronomía Rooftop",
+    category: "Parrilla",
     title: "Churrasquera Ensō",
-    description:
-      "Estación de parrilla gourmet techada con mesón de granito blanco, leñero integrado y área de comedor al aire libre con vista a los jardines flotantes.",
+    description: "Parrilla techada con mesón y comedor al aire libre.",
   },
   {
     src: "/garden_zen/amenities/amenity_churrasquera_koen.jpg",
-    category: "Gastronomía & Lounge",
-    title: "Churrasquera Kōen & Lounge",
-    description:
-      "Segunda estación de parrilla panorámica con living social climatizado, cava de vinos empotrada y vista privilegiada del horizonte de Santa Cruz.",
+    category: "Parrilla",
+    title: "Churrasquera Kōen y lounge",
+    description: "Segunda parrilla con living y vista al horizonte de Santa Cruz.",
   },
   {
     src: "/garden_zen/amenities/amenity_calistenia_petspa.jpg",
-    category: "Aire Libre & Mascotas",
-    title: "Área de Calistenia & Pet Spa",
-    description:
-      "Zona de entrenamiento funcional al aire libre y estación dedicada de baño y aseo para mascotas con agua tibia y secador profesional.",
+    category: "Aire libre",
+    title: "Calistenia y pet spa",
+    description: "Zona de entrenamiento al aire libre y estación de baño para mascotas.",
   },
   {
     src: "/garden_zen/amenities/amenity_lobby.jpg",
-    category: "Acceso & Seguridad",
-    title: "Lobby Zen Automatizado",
-    description:
-      "Recepción de doble altura con celosías acústicas en madera, control de acceso digital inteligente y monitoreo 24/7.",
+    category: "Acceso",
+    title: "Lobby Zen",
+    description: "Recepción de doble altura con control de acceso digital.",
   },
 ];
 
 const EQUIPMENT_SECTIONS = [
   {
     id: "cocina",
-    title: "Cocina & Sala de Estar",
-    subtitle: "Acabados importados y electrodomésticos instalados",
+    room: "Cocina y estar",
+    title: "Cocina y sala de estar",
     image: "/garden_zen/preview_page_42.jpg",
     items: [
-      "Mesón importado de cuarzo blanco de alta resistencia",
-      "Cocina encimera & campana extractora de acero inoxidable",
-      "Bacha de lavaplatos & grifería monocomando níquel cepillada",
-      "Revestimiento de cocina & pisos de porcelanato rectificado",
+      "Mesón importado de cuarzo blanco",
+      "Cocina encimera y campana extractora de acero inoxidable",
+      "Bacha y grifería monocomando",
+      "Porcelanato rectificado",
       "Aire acondicionado instalado",
-      "Iluminación LED empotrada en cajonería y muebles",
-      "Chapa de ingreso digital inteligente con tarjeta y clave",
-      "Calefón / termotanque instalado sin costos adicionales",
-      "Sector de lavandería integrado con tomas de agua y desagüe",
+      "Iluminación LED en muebles",
+      "Chapa de ingreso digital",
+      "Calefón instalado",
+      "Lavandería con tomas de agua y desagüe",
     ],
   },
   {
     id: "dormitorio",
-    title: "Dormitorio Principal & Suites",
-    subtitle: "Espacios de calma con diseño Japandi y confort térmico",
+    room: "Dormitorio",
+    title: "Dormitorio principal",
     image: "/garden_zen/preview_page_43.jpg",
     items: [
-      "Ropero con puertas de melamina con acabado de autor",
-      "Walking closet con divisiones completas",
-      "Pisos de porcelanato de alto tránsito",
-      "Aire acondicionado inverter instalado",
-      "Ventanales de piso a techo con vidrio laminado acústico",
-      "Puntos de iluminación indirecta cálida y tomas USB",
+      "Ropero de melamina",
+      "Walking closet con divisiones",
+      "Porcelanato de alto tránsito",
+      "Aire acondicionado instalado",
+      "Ventanales con vidrio laminado",
+      "Iluminación y tomas USB",
     ],
   },
   {
     id: "bano",
-    title: "Baños Completos",
-    subtitle: "Piedra sinterizada y accesorios de alta gama",
+    room: "Baño",
+    title: "Baños completos",
     image: "/garden_zen/amenities/amenity_sauna.jpg",
     items: [
-      "Mesón importado de piedra sinterizada antibacteriana",
-      "Paño fijo de vidrio templado de seguridad en ducha",
-      "Ducha de monocomando & grifería níquel cepillada",
-      "Inodoro ecológico de doble descarga de bajo consumo",
-      "Mueble inferior suspendido con tiradores ocultos",
-      "Bacha de baño embutida & espejo panorámico",
-      "Extractor de aire eléctrico instalado",
-      "Piso y revestimiento completo de porcelanato",
+      "Mesón de piedra sinterizada",
+      "Paño fijo de vidrio templado en la ducha",
+      "Grifería monocomando",
+      "Inodoro de doble descarga",
+      "Mueble suspendido",
+      "Bacha embutida y espejo",
+      "Extractor de aire",
+      "Porcelanato en piso y paredes",
     ],
   },
 ];
 
-export default function GardenZenLanding({ property, onClose }: Props) {
-  const [activeImage, setActiveImage] = useState("/garden_zen/fachada.jpg");
-  const [activeLabel, setActiveLabel] = useState("Fachada");
-  const [amenityIndex, setAmenityIndex] = useState(0);
+type GardenRooms = "mono" | "1" | "2" | "3";
+type GardenAddon = "none" | "techado" | "moto";
+type GardenPlan = "contado" | "plan70" | "plan30";
 
-  // Estados del cotizador en cascada (estilo Apple Store)
-  const [selectedAmbId, setSelectedAmbId] = useState<string>("mono");
-  const [selectedFloor, setSelectedFloor] = useState<number>(2);
-  const [selectedPlan, setSelectedPlan] = useState<"contado" | "plan70" | "plan30">("contado");
-  const [selectedParkingOption, setSelectedParkingOption] = useState<"none" | "techado" | "combo" | "moto">("none");
-  const [selectedParkingCode, setSelectedParkingCode] = useState<string>("P01");
+type GardenModel = {
+  id: string;
+  rooms: GardenRooms;
+  name: string;
+  plan: string;
+  match: (unit: GardenZenUnit) => boolean;
+};
 
-  const [shareFeedback, setShareFeedback] = useState(false);
-  const [units, setUnits] = useInventory(gardenZenInventory);
-  const [isRefreshingInv, setIsRefreshingInv] = useState(false);
-  const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
+const GARDEN_MODELS: GardenModel[] = [
+  { id: "MP", rooms: "mono", name: "Monoambiente MP", plan: PLANO_MODELO_MAP.MP, match: (unit) => unit.modelo === "MP" },
+  { id: "M1", rooms: "mono", name: "Monoambiente M1", plan: PLANO_MODELO_MAP.M1, match: (unit) => unit.modelo === "M1" },
+  { id: "ML", rooms: "mono", name: "Monoambiente ML", plan: PLANO_MODELO_MAP.ML, match: (unit) => unit.modelo === "ML" },
+  { id: "B1", rooms: "1", name: "1 dormitorio B1", plan: PLANO_MODELO_MAP.B1, match: (unit) => unit.modelo === "B1" },
+  { id: "I1", rooms: "1", name: "1 dormitorio I1", plan: PLANO_MODELO_MAP.I1, match: (unit) => unit.modelo === "I1" },
+  { id: "D2", rooms: "2", name: "2 dormitorios D2", plan: PLANO_MODELO_MAP.D2, match: (unit) => unit.modelo === "D2" },
+  { id: "E2", rooms: "2", name: "2 dormitorios E2", plan: PLANO_MODELO_MAP.E2, match: (unit) => unit.modelo === "E2" },
+  { id: "B3", rooms: "3", name: "3 dormitorios B3", plan: PLANO_MODELO_MAP.B3, match: (unit) => unit.modelo === "B3" },
+];
 
-  const [activeSectionId, setActiveSectionId] = useState<string>("intro");
-  const [showFloatingNav, setShowFloatingNav] = useState(false);
-  const [floatingNavOpen, setFloatingNavOpen] = useState(false);
+const SECTIONS = [
+  { id: "intro", label: "Inicio" },
+  { id: "lugar", label: "Ubicación" },
+  { id: "amenidades", label: "Áreas sociales" },
+  { id: "tipologias", label: "Tipologías" },
+  { id: "equipamiento", label: "Equipamiento" },
+  { id: "constructora", label: "Constructora" },
+  { id: "pago", label: "Formas de pago" },
+  { id: "disponibilidad", label: "Disponibilidad" },
+  { id: "cierre", label: "Cierre" },
+];
 
-  const outerContainerRef = useRef<HTMLDivElement>(null);
-  const rightPanelRef = useRef<HTMLDivElement>(null);
-  const navBarRef = useRef<HTMLElement>(null);
+const ROOM_FILTERS: { id: GardenRooms; label: string }[] = [
+  { id: "mono", label: "Monoambiente" },
+  { id: "1", label: "1 dormitorio" },
+  { id: "2", label: "2 dormitorios" },
+  { id: "3", label: "3 dormitorios" },
+];
 
-  const introRef = useRef<HTMLElement>(null);
-  const placeRef = useRef<HTMLElement>(null);
-  const amenitiesRef = useRef<HTMLElement>(null);
-  const typesRef = useRef<HTMLElement>(null);
-  const equipRef = useRef<HTMLElement>(null);
-  const builderRef = useRef<HTMLElement>(null);
-  const payRef = useRef<HTMLElement>(null);
-  const disponibilidadRef = useRef<HTMLElement>(null);
-  const closeRef = useRef<HTMLElement>(null);
+type ModelZoom = {
+  view: "depto" | "planta";
+  title: string;
+  caption: string;
+  src: string;
+};
 
-  const SECTIONS_NAV = [
-    { id: "intro", label: "Inicio", icon: Home, hint: "Presentación y portada" },
-    { id: "lugar", label: "Ubicación", icon: MapPin, hint: "Equipetrol Norte y accesos" },
-    { id: "amenidades", label: "Áreas Sociales", icon: Sparkles, hint: "Piscina Piso 17, Saunas & Cowork" },
-    { id: "tipologias", label: "Tipologías", icon: Layers, hint: "Mono, 1D, 2D y 3D Penthouse" },
-    { id: "equipamiento", label: "Equipamiento", icon: CheckCircle2, hint: "100% Equipado llave en mano" },
-    { id: "constructora", label: "Constructora", icon: ShieldCheck, hint: "Garden Buildings · Sede Platinum" },
-    { id: "pago", label: "Formas de Pago", icon: CreditCard, hint: "Planes 30%, 70% y Contado" },
-    { id: "disponibilidad", label: "Disponibilidad en Vivo", icon: Building2, hint: "Inventario y cotizador interactivo" },
-  ];
+function formatM2(value: number) {
+  return value.toLocaleString("es-BO", { maximumFractionDigits: 1 });
+}
 
-  const scrollToSection = (sectionId: string) => {
-    setFloatingNavOpen(false);
-    if (sectionId === "intro") {
-      if (introRef.current) {
-        introRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      if (rightPanelRef.current) {
-        rightPanelRef.current.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      if (outerContainerRef.current) {
-        outerContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      return;
-    }
+function unitKey(unit: GardenZenUnit) {
+  return `${unit.floor}-${unit.unitNumber}`;
+}
 
-    const targetEl = document.getElementById(sectionId);
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+function unitsForModel(list: GardenZenUnit[], model: GardenModel) {
+  return list
+    .filter(model.match)
+    .slice()
+    .sort((a, b) => a.floor - b.floor || a.unitNumber.localeCompare(b.unitNumber, "es", { numeric: true }));
+}
+
+function firstFreeKey(modelId: string, list: GardenZenUnit[]) {
+  const model = GARDEN_MODELS.find((item) => item.id === modelId) || GARDEN_MODELS[0];
+  const group = unitsForModel(list, model);
+  const free = group.find((unit) => unit.status === "disponible") || group[0];
+  return free ? unitKey(free) : "";
+}
+
+function minCash(list: GardenZenUnit[], match: (unit: GardenZenUnit) => boolean) {
+  const free = list.filter((unit) => unit.status === "disponible" && unit.cashTotal > 0 && match(unit));
+  if (free.length === 0) return null;
+  return Math.min(...free.map((unit) => unit.cashTotal));
+}
+
+function areaLabel(list: GardenZenUnit[], model: GardenModel) {
+  const areas = unitsForModel(list, model).map((unit) => unit.areaM2).filter((area) => area > 0);
+  if (areas.length === 0) return "";
+  const min = Math.min(...areas);
+  const max = Math.max(...areas);
+  return min === max ? `${formatM2(min)} m²` : `${formatM2(min)} a ${formatM2(max)} m²`;
+}
+
+function ModelFrame({
+  model,
+  area,
+  index,
+  total,
+  price,
+  frameClass,
+  onPrev,
+  onNext,
+  onOpen,
+  onTouchStart,
+  onTouchEnd,
+}: {
+  model: GardenModel;
+  area: string;
+  index: number;
+  total: number;
+  price?: string;
+  frameClass: string;
+  onPrev: () => void;
+  onNext: () => void;
+  onOpen: () => void;
+  onTouchStart: (event: TouchEvent<HTMLDivElement>) => void;
+  onTouchEnd: (event: TouchEvent<HTMLDivElement>) => void;
+}) {
+  return (
+    <div className={`flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm ${frameClass}`} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-stone-100 px-4 py-2.5">
+        <div className="min-w-0">
+          <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{model.name}</p>
+          <p className="truncate text-xs text-stone-600">{area}</p>
+          {price ? <p className="mt-0.5 text-sm font-semibold text-[#9a7b45]">{price}</p> : null}
+        </div>
+        <p className="shrink-0 pt-0.5 text-[11px] text-stone-400">{index + 1}/{total}</p>
+      </div>
+      <div className="relative min-h-0 flex-1 bg-white">
+        <button type="button" onClick={onOpen} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver planta ${model.name}`}>
+          <img src={model.plan} alt={`Planta ${model.name}`} className="max-h-full max-w-full object-contain" />
+        </button>
+        {total > 1 && (
+          <>
+            <button type="button" onClick={onPrev} className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo anterior"><ChevronLeft size={22} /></button>
+            <button type="button" onClick={onNext} className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo siguiente"><ChevronRight size={22} /></button>
+          </>
+        )}
+      </div>
+      <button type="button" onClick={onOpen} className="flex h-14 shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 text-left">
+        <img src={model.plan} alt="" className="h-10 w-14 shrink-0 bg-white object-contain" />
+        <span className="min-w-0 text-xs leading-snug text-stone-600">Toca la planta para verla completa.</span>
+      </button>
+    </div>
+  );
+}
+
+function quoteGardenUnit(unit: GardenZenUnit, plan: GardenPlan, addon: GardenAddon) {
+  let total = unit.cashTotal;
+  let initial = unit.cashTotal;
+  let balance = 0;
+  let rate = unit.cashPerM2;
+  if (plan === "plan70") {
+    total = unit.initial70Total;
+    initial = unit.cuotaInicial70;
+    balance = unit.initial70Total - unit.cuotaInicial70;
+    rate = unit.initial70PerM2;
+  } else if (plan === "plan30") {
+    total = unit.initial30Total;
+    initial = unit.cuotaInicial30;
+    balance = unit.initial30Total - unit.cuotaInicial30;
+    rate = unit.initial30PerM2;
+  }
+  const parking = addon === "techado" ? PARKING_TECHADO || 0 : addon === "moto" ? PARKING_MOTO || 0 : 0;
+  const parkingInitial = plan === "contado" ? parking : plan === "plan70" ? Math.round(parking * 0.7) : Math.round(parking * 0.3);
+  return {
+    total: total + parking,
+    initial: initial + parkingInitial,
+    balance: balance + (parking - parkingInitial),
+    rate,
+    parking,
   };
+}
+
+export default function GardenZenLanding({ property, onClose }: Props) {
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const introNavRef = useRef<HTMLDivElement>(null);
+  const touchX = useRef<number | null>(null);
+  const modelTouch = useRef<number | null>(null);
+  const [activeSection, setActiveSection] = useState("intro");
+  const [showSectionMenu, setShowSectionMenu] = useState(false);
+  const [showFloatingNav, setShowFloatingNav] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState(false);
+  const [amenityIndex, setAmenityIndex] = useState(0);
+  const [units, setUnits] = useInventory(gardenZenInventory);
+  const [rooms, setRooms] = useState<GardenRooms>("mono");
+  const [modelIndex, setModelIndex] = useState(0);
+  const [selectedModelId, setSelectedModelId] = useState(GARDEN_MODELS[0].id);
+  const [selectedKey, setSelectedKey] = useState(() => firstFreeKey(GARDEN_MODELS[0].id, GARDEN_ZEN_BASELINE_UNITS));
+  const [addon, setAddon] = useState<GardenAddon>("none");
+  const [paymentPlan, setPaymentPlan] = useState<GardenPlan>("contado");
+  const [zoom, setZoom] = useState<ModelZoom | null>(null);
 
   useEffect(() => {
     fetchGardenZenLiveUnits().then((res) => {
-      if (res && res.length > 0) {
-        setUnits(res);
-        setLastPriceUpdateText("Sincronizado en vivo");
-      }
+      if (res && res.length > 0) setUnits(res);
     });
   }, []);
 
-  const handleRefreshInventory = async () => {
-    setIsRefreshingInv(true);
-    try {
-      const res = await fetch(GARDEN_ZEN_CONFIG.sheetCsvUrl + "&_t=" + Date.now());
-      if (res.ok) {
-        const text = await res.text();
-        const parsed = parseGardenZenLiveCsv(text);
-        if (parsed.length > 0) {
-          let merged = parsed;
-          if (parsed.length < GARDEN_ZEN_BASELINE_UNITS.length) {
-            const liveMap = new Map(parsed.map((u) => [u.unitNumber, u]));
-            merged = GARDEN_ZEN_BASELINE_UNITS.map((base) => {
-              const live = liveMap.get(base.unitNumber);
-              if (live) return live;
-              return { ...base, status: "vendido" as const };
-            });
-          }
-          setUnits(merged);
-          const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-          setLastPriceUpdateText(`Actualizado ${timeStr}`);
-        }
-      }
-    } catch (err) {
-      console.warn("Error refrescando inventario Garden Zen:", err);
-    } finally {
-      setIsRefreshingInv(false);
-    }
-  };
+  const availableUnits = useMemo(() => units.filter((unit) => unit.status === "disponible"), [units]);
+  const soldCount = units.filter((unit) => unit.status === "vendido").length;
+  const reservedCount = units.filter((unit) => unit.status === "reservado").length;
+  const freeCount = availableUnits.length;
+  const ratePool = availableUnits;
+  const cashRates = ratePool.map((unit) => unit.cashPerM2).filter((rate) => rate > 0);
+  const plan70Rates = ratePool.map((unit) => unit.initial70PerM2).filter((rate) => rate > 0);
+  const plan30Rates = ratePool.map((unit) => unit.initial30PerM2).filter((rate) => rate > 0);
+  const minCashPerM2 = cashRates.length ? Math.min(...cashRates) : null;
+  const minPlan70PerM2 = plan70Rates.length ? Math.min(...plan70Rates) : null;
+  const minPlan30PerM2 = plan30Rates.length ? Math.min(...plan30Rates) : null;
+  const fromAny = minCash(units, () => true);
+  const fromMono = minCash(units, (unit) => unit.rooms === 0);
+  const from1 = minCash(units, (unit) => unit.rooms === 1);
+  const from2 = minCash(units, (unit) => unit.rooms === 2);
+  const from3 = minCash(units, (unit) => unit.rooms === 3);
 
-  const availableUnits = useMemo(() => units.filter((u) => u.status === "disponible"), [units]);
-  const soldUnitsCount = units.filter((u) => u.status === "vendido" || u.status === "reservado").length;
+  const slides = GARDEN_MODELS.filter((model) => model.rooms === rooms);
+  const slideIndex = slides.length ? ((modelIndex % slides.length) + slides.length) % slides.length : 0;
+  const currentModel = slides[slideIndex] || GARDEN_MODELS[0];
+  const selectedModel = GARDEN_MODELS.find((model) => model.id === selectedModelId) || currentModel;
+  const floors = unitsForModel(units, selectedModel);
+  const activeUnit = floors.find((unit) => unitKey(unit) === selectedKey) || null;
+  const quote = activeUnit && activeUnit.status === "disponible" && activeUnit.cashTotal > 0 ? quoteGardenUnit(activeUnit, paymentPlan, addon) : null;
+  const amenity = AMENITY_SLIDES[amenityIndex];
 
-  const minPriceMono = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 0 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 59600;
-  }, [availableUnits]);
-
-  const minPrice1Dorm = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 1 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 69127;
-  }, [availableUnits]);
-
-  const minPrice2Dorms = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 2 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 121778;
-  }, [availableUnits]);
-
-  const minPrice3Dorms = useMemo(() => {
-    const list = availableUnits.filter((u) => u.rooms === 3 && u.cashTotal > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashTotal)) : 156162;
-  }, [availableUnits]);
-
-  // Precios mínimos por m² dinámicos según inventario en vivo
-  const minCashPerM2 = useMemo(() => {
-    const list = availableUnits.filter((u) => u.cashPerM2 > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.cashPerM2)) : 1400;
-  }, [availableUnits]);
-
-  const minPlan70PerM2 = useMemo(() => {
-    const list = availableUnits.filter((u) => u.initial70PerM2 > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.initial70PerM2)) : 1450;
-  }, [availableUnits]);
-
-  const minPlan30PerM2 = useMemo(() => {
-    const list = availableUnits.filter((u) => u.initial30PerM2 > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.initial30PerM2)) : 1500;
-  }, [availableUnits]);
-
-  const currentAmbiente = useMemo(() => {
-    return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
-  }, [selectedAmbId]);
-
-  const floorsForAmbiente = useMemo(() => {
-    const floorNums = Array.from(
-      new Set(units.filter((u) => currentAmbiente.matchUnit(u)).map((u) => u.floor))
-    ).sort((a, b) => a - b);
-
-    return floorNums.map((floor) => {
-      const unitsOnFloor = units.filter((u) => currentAmbiente.matchUnit(u) && u.floor === floor);
-      const availableUnitsOnFloor = unitsOnFloor.filter((u) => u.status === "disponible");
-      const isAvailable = availableUnitsOnFloor.length > 0;
-      return {
-        floor,
-        isAvailable,
-        availableCount: availableUnitsOnFloor.length,
-        totalCount: unitsOnFloor.length,
-        unit: isAvailable ? availableUnitsOnFloor[0] : unitsOnFloor[0],
-      };
-    });
-  }, [units, currentAmbiente]);
+  const roomCount = useMemo(() => {
+    return {
+      mono: GARDEN_MODELS.filter((model) => model.rooms === "mono").length,
+      "1": GARDEN_MODELS.filter((model) => model.rooms === "1").length,
+      "2": GARDEN_MODELS.filter((model) => model.rooms === "2").length,
+      "3": GARDEN_MODELS.filter((model) => model.rooms === "3").length,
+    };
+  }, []);
 
   useEffect(() => {
-    const currentFloorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
-    if (!currentFloorItem || !currentFloorItem.isAvailable) {
-      const firstAvailable = floorsForAmbiente.find((f) => f.isAvailable);
-      if (firstAvailable) {
-        setSelectedFloor(firstAvailable.floor);
-      } else if (floorsForAmbiente.length > 0) {
-        setSelectedFloor(floorsForAmbiente[0].floor);
-      }
-    }
-  }, [floorsForAmbiente, selectedFloor]);
+    const model = GARDEN_MODELS.find((item) => item.id === selectedModelId);
+    if (!model) return;
+    const group = unitsForModel(units, model);
+    if (group.some((unit) => unitKey(unit) === selectedKey)) return;
+    const free = group.find((unit) => unit.status === "disponible") || group[0];
+    if (free) setSelectedKey(unitKey(free));
+  }, [units, selectedModelId, selectedKey]);
 
-  const handleSelectAmbiente = (ambId: string) => {
-    setSelectedAmbId(ambId);
-    const amb = AMBIENTE_OPTIONS.find((a) => a.id === ambId);
-    if (amb) {
-      const matchingUnitsOnFloor = units.filter(
-        (u) => amb.matchUnit(u) && u.floor === selectedFloor && u.status === "disponible"
-      );
-      if (matchingUnitsOnFloor.length === 0) {
-        const firstAvail = units.find((u) => amb.matchUnit(u) && u.status === "disponible");
-        if (firstAvail) {
-          setSelectedFloor(firstAvail.floor);
-        }
-      }
-    }
+  useEffect(() => {
+    const root = rightPanelRef.current;
+    if (!root) return;
+    const nodes = Array.from(root.querySelectorAll("section[id]"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target?.id) setActiveSection(visible.target.id);
+      },
+      { root: window.matchMedia("(min-width: 1024px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const nav = introNavRef.current;
+      if (!nav) return;
+      const past = nav.getBoundingClientRect().bottom < 80;
+      setShowFloatingNav(past);
+      if (!past) setShowSectionMenu(false);
+    };
+    const desktop = rightPanelRef.current;
+    const mobile = desktop?.parentElement;
+    desktop?.addEventListener("scroll", onScroll, { passive: true });
+    mobile?.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      desktop?.removeEventListener("scroll", onScroll);
+      mobile?.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    setShowSectionMenu(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const activeUnit = useMemo(() => {
-    const floorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
-    return floorItem?.unit || null;
-  }, [floorsForAmbiente, selectedFloor]);
+  const chooseModel = (model: GardenModel, list: GardenZenUnit[] = units) => {
+    setSelectedModelId(model.id);
+    setRooms(model.rooms);
+    const group = GARDEN_MODELS.filter((item) => item.rooms === model.rooms);
+    const index = group.findIndex((item) => item.id === model.id);
+    if (index >= 0) setModelIndex(index);
+    const nextUnits = unitsForModel(list, model);
+    const free = nextUnits.find((unit) => unit.status === "disponible") || nextUnits[0];
+    if (free) setSelectedKey(unitKey(free));
+  };
 
-  // Precio del parqueo opcional
-  const parkingPrice = useMemo(() => {
-    if (selectedParkingOption === "techado") return 12000;
-    if (selectedParkingOption === "combo") return 15000;
-    if (selectedParkingOption === "moto") return 7500;
-    return 0;
-  }, [selectedParkingOption]);
+  const chooseRooms = (next: GardenRooms) => {
+    setRooms(next);
+    setModelIndex(0);
+    const first = GARDEN_MODELS.find((model) => model.rooms === next);
+    if (first) chooseModel(first);
+  };
 
-  // Cálculos financieros completos
-  const activeFinancials = useMemo(() => {
-    if (!activeUnit) return null;
+  const shiftModel = (dir: number) => {
+    if (slides.length < 2) return;
+    const next = (slideIndex + dir + slides.length) % slides.length;
+    setModelIndex(next);
+    chooseModel(slides[next]);
+  };
 
-    let unitTotalPrice = activeUnit.cashTotal || Math.round(activeUnit.areaM2 * 1400);
-    let unitInitial = unitTotalPrice;
-    let unitBalance = 0;
-    let pricePerM2 = activeUnit.cashPerM2 || (activeUnit.areaM2 > 0 ? Math.round(unitTotalPrice / activeUnit.areaM2) : 1400);
+  const onModelSwipe = (event: TouchEvent<HTMLDivElement>) => {
+    if (modelTouch.current == null || slides.length < 2) return;
+    const dx = event.changedTouches[0].clientX - modelTouch.current;
+    if (dx > 40) shiftModel(-1);
+    if (dx < -40) shiftModel(1);
+    modelTouch.current = null;
+  };
 
-    if (selectedPlan === "plan30") {
-      unitTotalPrice = activeUnit.initial30Total || Math.round(activeUnit.areaM2 * 1500);
-      unitInitial = activeUnit.cuotaInicial30 || Math.round(unitTotalPrice * 0.3);
-      unitBalance = unitTotalPrice - unitInitial;
-      pricePerM2 = activeUnit.initial30PerM2 || 1500;
-    } else if (selectedPlan === "plan70") {
-      unitTotalPrice = activeUnit.initial70Total || Math.round(activeUnit.areaM2 * 1450);
-      unitInitial = activeUnit.cuotaInicial70 || Math.round(unitTotalPrice * 0.7);
-      unitBalance = unitTotalPrice - unitInitial;
-      pricePerM2 = activeUnit.initial70PerM2 || 1450;
-    }
+  const priceForModel = (model: GardenModel) => {
+    const amount = minCash(units, model.match);
+    return amount == null ? "Vendido" : `Desde USD ${formatGardenZenUsd(amount)}`;
+  };
 
-    const hasParking = selectedParkingOption !== "none";
-    const parkingInitial = !hasParking
-      ? 0
-      : selectedPlan === "contado"
-      ? parkingPrice
-      : selectedPlan === "plan70"
-      ? Math.round(parkingPrice * 0.7)
-      : Math.round(parkingPrice * 0.3);
-    const parkingBalance = !hasParking ? 0 : parkingPrice - parkingInitial;
-
-    const totalPrice = unitTotalPrice + (hasParking ? parkingPrice : 0);
-    const initialPayment = unitInitial + parkingInitial;
-    const balancePayment = unitBalance + parkingBalance;
-
-    return {
-      unitTotalPrice,
-      unitInitial,
-      unitBalance,
-      parkingPrice: hasParking ? parkingPrice : 0,
-      parkingInitial,
-      parkingBalance,
-      totalPrice,
-      initialPayment,
-      balancePayment,
-      pricePerM2,
-    };
-  }, [activeUnit, selectedPlan, currentAmbiente, selectedParkingOption, parkingPrice]);
+  const fromForRooms = (id: GardenRooms) => {
+    if (id === "mono") return fromMono;
+    if (id === "1") return from1;
+    if (id === "2") return from2;
+    return from3;
+  };
 
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/gardenzen`;
-    const shareTitle = "Garden Zen · Preventa Eco-Sostenible en Equipetrol Norte";
-    const shareText = `Departamentos eco-sostenibles con paneles solares y 50% menos expensas en Equipetrol Norte desde USD ${formatGardenZenUsd(minPriceMono)}. Conoce Garden Zen:`;
-
+    const shareTitle = "Garden Zen · Preventa en Equipetrol Norte";
+    const shareText = `Departamentos en Equipetrol Norte${fromAny ? ` desde USD ${formatGardenZenUsd(fromAny)}` : ""}. Entrega en ${GARDEN_ZEN_CONFIG.delivery}.`;
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
         return;
-      } catch (err) {
-        if ((err as DOMException)?.name === "AbortError") return;
+      } catch (error) {
+        if ((error as DOMException)?.name === "AbortError") return;
       }
     }
-
     try {
       await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
       setShareFeedback(true);
-      setTimeout(() => setShareFeedback(false), 2500);
+      window.setTimeout(() => setShareFeedback(false), 2200);
     } catch {
-      // fallback
+      setShareFeedback(false);
     }
   };
 
-  useEffect(() => {
-    const checkNavVisibility = () => {
-      if (!navBarRef.current) return;
-      const rect = navBarRef.current.getBoundingClientRect();
-      const isPast = rect.bottom < 50;
-      setShowFloatingNav(isPast);
-      if (!isPast) {
-        setFloatingNavOpen(false);
-      }
-    };
+  const contactWhatsApp = () => {
+    const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
+    const planLabel = paymentPlan === "contado"
+      ? "Contado 100%"
+      : paymentPlan === "plan70"
+        ? "Inicial 70% y saldo 30% contra entrega"
+        : "Inicial 30% y saldo 70% contra entrega";
+    const addonLabel = addon === "techado"
+      ? `Parqueo techado USD ${formatGardenZenUsd(PARKING_TECHADO || 0)}`
+      : addon === "moto"
+        ? `Parqueo de moto USD ${formatGardenZenUsd(PARKING_MOTO || 0)}`
+        : "Sin parqueo";
+    const unitLine = activeUnit
+      ? `Unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatM2(activeUnit.areaM2)} m²)`
+      : "Garden Zen";
+    const money = quote
+      ? `\n• Inversión total: USD ${formatGardenZenUsd(quote.total)}\n• Cuota inicial: USD ${formatGardenZenUsd(quote.initial)}\n• Saldo contra entrega: ${paymentPlan === "contado" ? "sin saldo pendiente" : `USD ${formatGardenZenUsd(quote.balance)}`}`
+      : "";
+    const text = `Hola, vengo de N.I.A y quiero la unidad en Garden Zen (${GARDEN_ZEN_CONFIG.address}):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n• Reserva: USD ${formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}\n\n¿Sigue disponible y cuáles son los pasos para reservar?`;
 
-    const rightEl = rightPanelRef.current;
-    const outerEl = outerContainerRef.current;
-
-    rightEl?.addEventListener("scroll", checkNavVisibility, { passive: true });
-    outerEl?.addEventListener("scroll", checkNavVisibility, { passive: true });
-    window.addEventListener("scroll", checkNavVisibility, { passive: true });
-
-    checkNavVisibility();
-
-    return () => {
-      rightEl?.removeEventListener("scroll", checkNavVisibility);
-      outerEl?.removeEventListener("scroll", checkNavVisibility);
-      window.removeEventListener("scroll", checkNavVisibility);
-    };
-  }, []);
-
-  useEffect(() => {
-    const scenes: Record<string, { src: string; label: string }> = {
-      intro: { src: "/garden_zen/fachada.jpg", label: "Fachada Principal" },
-      lugar: { src: "/garden_zen/ubicacion.jpg", label: "Ubicación Satelital" },
-      amenidades: { src: "/garden_zen/amenities/amenity_piscina.jpg", label: "Piscina Izumi Piso 17" },
-      tipologias: { src: "/garden_zen/preview_page_43.jpg", label: "Dormitorio Japandi" },
-      equipamiento: { src: "/garden_zen/preview_page_42.jpg", label: "Equipamiento Llave en Mano" },
-      constructora: { src: "/garden_zen/terraza.jpg", label: "Garden Buildings" },
-      pago: { src: "/garden_zen/fachada.jpg", label: "Formas de Pago" },
-      disponibilidad: { src: "/garden_zen/preview_page_42.jpg", label: "Disponibilidad en Vivo" },
-      cierre: { src: "/garden_zen/fachada.jpg", label: "Reserva USD 5.000" },
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const scene = visible ? scenes[visible.target.id] : undefined;
-        if (!scene) return;
-        setActiveImage(scene.src);
-        setActiveLabel(scene.label);
-        setActiveSectionId(visible.target.id);
-      },
-      { threshold: [0.22, 0.5] }
-    );
-
-    [introRef, placeRef, amenitiesRef, typesRef, equipRef, builderRef, payRef, disponibilidadRef, closeRef].forEach(
-      (ref) => {
-        if (ref.current) observer.observe(ref.current);
-      }
-    );
-
-    return () => observer.disconnect();
-  }, []);
-
-  const phone =
-    (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") ||
-    CONTACT_WHATSAPP_NUMBER;
-
-  const reserve = (messageText: string, budget?: number) => {
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: property.id,
       operacion: "Preventa",
       zona: property.zone || GARDEN_ZEN_CONFIG.zone,
-      presupuesto: budget ? `USD ${formatGardenZenUsd(budget)}` : `desde USD 56.210`,
+      presupuesto: quote ? `USD ${formatGardenZenUsd(quote.total)}` : undefined,
+      extraFilters: activeUnit
+        ? { unidad: activeUnit.unitNumber, piso: activeUnit.floor, modelo: activeUnit.modelo, plan: paymentPlan, adicional: addon }
+        : { plan: paymentPlan },
     }).catch(() => {});
 
-    if (typeof window !== "undefined") {
-      try {
-        if (typeof (window as any).fbq === "function") {
-          (window as any).fbq("track", "Lead", { content_name: "Garden Zen" });
-        }
-      } catch (err) {
-        console.warn("Meta Pixel Lead error:", err);
-      }
-    }
-
-    window.open(
-      `https://wa.me/${phone}?text=${encodeURIComponent(messageText)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
-  const nextAmenity = () => {
-    setAmenityIndex((prev) => (prev + 1) % AMENITY_SLIDES.length);
-  };
+  const parkingLine = [
+    PARKING_TECHADO != null ? `parqueo techado desde USD ${formatGardenZenUsd(PARKING_TECHADO)}` : "",
+    PARKING_MOTO != null ? `moto desde USD ${formatGardenZenUsd(PARKING_MOTO)}` : "",
+    PARKING_BAULERA != null ? `baulera desde USD ${formatGardenZenUsd(PARKING_BAULERA)}` : "",
+  ].filter(Boolean).join(", ");
 
-  const prevAmenity = () => {
-    setAmenityIndex((prev) => (prev - 1 + AMENITY_SLIDES.length) % AMENITY_SLIDES.length);
-  };
-
-  const currentSlide = AMENITY_SLIDES[amenityIndex];
+  const coverPrices: { label: string; amount: number | null }[] = [
+    { label: "Monoambiente", amount: fromMono },
+    { label: "1 dormitorio", amount: from1 },
+    { label: "2 dormitorios", amount: from2 },
+    { label: "3 dormitorios", amount: from3 },
+  ];
 
   return (
-    <motion.div
-      ref={outerContainerRef}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f7f5f0] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row"
-    >
-      {/* Botones Flotantes Superiores: Solo Logos según el Manual de NIA */}
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
-
-        <a
-          href={GARDEN_ZEN_CONFIG.brochurePdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-          aria-label="Descargar Brochure Oficial"
-          title="Descargar Brochure Oficial (PDF)"
-        >
-          <Download size={18} className="text-[#9a7b45]" />
-        </a>
-
-        <button
-          onClick={handleShare}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-900 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-          aria-label="Compartir"
-          title={shareFeedback ? "¡Enlace copiado!" : "Compartir Garden Zen"}
-        >
-          {shareFeedback ? (
-            <Check size={18} className="text-emerald-600" />
-          ) : (
-            <Share2 size={18} className="text-stone-800" />
-          )}
+        <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
+          {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
         </button>
-
         {onClose && (
-          <button
-            onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl backdrop-blur transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-            aria-label="Cerrar"
-            title="Volver al mapa"
-          >
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl" aria-label="Cerrar">
             <X size={18} />
           </button>
         )}
       </div>
 
-      {/* PANEL IZQUIERDO / HERO: Fotografía Inmersiva Dinámica con Datos Clave */}
-      <div className="relative min-h-[480px] shrink-0 bg-stone-950 md:h-screen md:min-h-0 md:w-[44%]">
-        <AnimatePresence mode="popLayout">
-          <motion.img
-            key={activeImage}
-            src="/garden_zen/fachada.jpg"
-            alt={`Garden Zen - ${activeLabel}`}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/30" />
-        <div className="absolute bottom-6 left-6 right-6 text-white md:bottom-8 md:left-8 md:right-8 lg:bottom-10 lg:left-10 lg:right-10">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-block rounded-full bg-black/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e8d5a8] backdrop-blur-md border border-white/10">
-              Preventa en Obra Fina · Equipetrol Norte
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-md">
-              <Zap size={11} className="text-[#e8d5a8]" />
-              Paneles Solares ON-GRID
-            </span>
-          </div>
-
-          <h1 className="mt-3 font-serif text-4xl font-light tracking-wide text-white md:text-5xl lg:text-6xl">
-            GARDEN ZEN
-          </h1>
-
-          <p className="mt-2 text-xs font-light text-stone-200 md:text-sm max-w-md leading-relaxed [text-align:justify] [text-justify:inter-word]">
-            Arquitectura minimalista, tecnología eco-sostenible y expensas 50% menores en el corazón de Equipetrol Norte.
-          </p>
-
-          <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-            <div className="rounded-xl border border-white/15 bg-white/10 p-2.5 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-[#e8d5a8] font-semibold flex items-center gap-1">
-                <ShieldCheck size={12} className="text-[#e8d5a8]" /> Constructora
-              </p>
-              <p className="mt-0.5 font-serif text-xs sm:text-sm font-semibold text-white">
-                {GARDEN_ZEN_CONFIG.builder}
-              </p>
+      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#f6edd9] md:h-screen md:w-[44%]">
+        <div className="relative min-h-0 flex-1">
+          <img src="/garden_zen/fachada.jpg" alt="Fachada completa de Garden Zen" className="absolute inset-0 h-full w-full object-contain object-center" />
+        </div>
+        <div className="relative z-10 shrink-0 bg-[#f6edd9] px-5 pb-3.5 pt-3 text-stone-900 md:px-8 md:pb-5 md:pt-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#9a7b45]/35 bg-white/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#816127] md:px-3 md:py-1 md:text-[11px]">
+            <Sparkles size={12} />
+            Preventa · obra fina · {GARDEN_ZEN_CONFIG.zone}
+          </span>
+          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#1C1917] md:mt-2 md:text-4xl">Garden Zen</h1>
+          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-600 md:text-sm">{GARDEN_ZEN_CONFIG.address}</p>
+          <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
+            <div className="rounded-xl border border-[#e6dcc4] bg-white/80 p-2 md:p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-500">Entrega</p>
+              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{GARDEN_ZEN_CONFIG.delivery}</p>
             </div>
-            <div className="rounded-xl border border-white/15 bg-white/10 p-2.5 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-[#e8d5a8] font-semibold flex items-center gap-1">
-                <Calendar size={12} /> Entrega de Obra
-              </p>
-              <p className="mt-0.5 font-serif text-xs sm:text-sm font-semibold text-white">
-                {GARDEN_ZEN_CONFIG.delivery} (Obra Fina)
-              </p>
+            <div className="rounded-xl border border-[#e6dcc4] bg-white/80 p-2 md:p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-500">Constructora</p>
+              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{GARDEN_ZEN_CONFIG.builder}</p>
             </div>
           </div>
-
-          {/* Tarjetas de Precios en Vivo por Tipología */}
-          <div className="mt-3 rounded-2xl border border-white/20 bg-black/40 p-3 backdrop-blur-md">
-            <div className="flex items-center justify-between border-b border-white/10 pb-1.5 mb-2">
-              <span className="text-[10px] uppercase tracking-widest text-stone-300 font-semibold">
-                Departamentos Disponibles
-              </span>
-              <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                en vivo
-              </span>
+          <div className="mt-2 max-w-sm rounded-xl border border-[#e6dcc4] bg-white/80 p-2.5 md:hidden">
+            <div className="flex items-center justify-between border-b border-[#e6dcc4] pb-1.5 text-[10px] text-stone-500">
+              <span className="font-semibold text-[#816127]">Precios al contado</span>
+              <span>{freeCount} libres de {units.length}</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div className="border-r border-white/10 pr-1">
-                <p className="text-[10px] text-stone-400">Monoambiente</p>
-                <p className="text-[11px] text-stone-300 font-mono">37 a 52 m²</p>
-                <p className="mt-0.5 font-serif text-xs sm:text-sm font-bold text-white">
-                  Desde USD {formatGardenZenUsd(minPriceMono)}
-                </p>
-              </div>
-              <div className="border-r border-white/10 pr-1">
-                <p className="text-[10px] text-stone-400">1 Dormitorio</p>
-                <p className="text-[11px] text-stone-300 font-mono">46 a 70 m²</p>
-                <p className="mt-0.5 font-serif text-xs sm:text-sm font-bold text-white">
-                  Desde USD {formatGardenZenUsd(minPrice1Dorm)}
-                </p>
-              </div>
-              <div className="border-r border-white/10 pr-1">
-                <p className="text-[10px] text-stone-400">2 Dormitorios</p>
-                <p className="text-[11px] text-stone-300 font-mono">83 a 108 m²</p>
-                <p className="mt-0.5 font-serif text-xs sm:text-sm font-bold text-white">
-                  Desde USD {formatGardenZenUsd(minPrice2Dorms)}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] text-stone-400">3 Dorms / PH</p>
-                <p className="text-[11px] text-stone-300 font-mono">106 a 133 m²</p>
-                <p className="mt-0.5 font-serif text-xs sm:text-sm font-bold text-white">
-                  Desde USD {formatGardenZenUsd(minPrice3Dorms)}
-                </p>
-              </div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 text-center">
+              {coverPrices.map((item) => (
+                <div key={item.label}>
+                  <p className="text-[10px] text-stone-500">{item.label}</p>
+                  <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{item.amount == null ? "Agotado" : `USD ${formatGardenZenUsd(item.amount)}`}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* PANEL DERECHO: Contenido Editorial y Tesis del Inversor */}
       <div ref={rightPanelRef} className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
-        <div className="mx-auto max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-5 py-8 pb-32 md:px-10 lg:px-14 md:py-14 md:pb-44">
-
-          {/* 1. HERO / VIVE EN GARDEN ZEN: EXPERIENCIA Y ESTILO DE VIDA */}
-          <section id="intro" ref={introRef} className="scroll-mt-6">
-            <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Experiencia Residencial & Preventa
-              </p>
-            </div>
-
-            <h2 className="mt-3 font-serif text-3xl font-light leading-snug text-stone-900 md:text-5xl">
-              Vive en Garden Zen. <br />
-              <span className="italic font-normal text-[#9a7b45]">
-                Un proyecto pensado para vivir en calma y consciencia.
+        <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:max-w-3xl md:px-10 md:py-14 md:pb-44 lg:max-w-4xl lg:px-14 xl:max-w-5xl">
+          <section id="intro" className="scroll-mt-6 space-y-6">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
+                <Sparkles size={13} />
+                Experiencia residencial
               </span>
-            </h2>
-
-            <p className="mt-5 text-[15px] font-light leading-relaxed text-stone-600 md:text-base [text-align:justify] [text-justify:inter-word]">
-              Garden Zen combina arquitectura contemporánea de vanguardia con soluciones de sostenibilidad activa en la zona de mayor plusvalía de Santa Cruz: <strong>{GARDEN_ZEN_CONFIG.zone}</strong>. Desarrollado por <strong>{GARDEN_ZEN_CONFIG.builder}</strong>, su sistema de paneles solares propios genera un ahorro de hasta el <strong>60% en consumo eléctrico</strong> y un <strong>50% menos en expensas</strong> comunes de por vida, ofreciendo el estándar residencial más inteligente y confortable del mercado.
-            </p>
-
-            <div className="mt-6 rounded-2xl border border-stone-200 bg-white/70 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
-                  <TrendingUp size={20} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
-                    Preventa en Marcha · Obra Fina
-                  </p>
-                  <p className="text-sm font-medium text-stone-800">
-                    Más de {soldUnitsCount} unidades ya han sido reservadas en esta torre de 16 niveles.
-                  </p>
-                </div>
-              </div>
-              <p className="mt-3 text-xs text-stone-500 font-light border-t border-stone-100 pt-2.5 [text-align:justify] [text-justify:inter-word]">
-                La oportunidad de ingresar en etapa de obra fina congela el precio de preventa antes de la entrega en {GARDEN_ZEN_CONFIG.delivery}.
+              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
+                Vive en Garden Zen.
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Un proyecto pensado para vivir en calma y consciencia.</span>
+              </h2>
+              <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
+                Garden Zen combina arquitectura contemporánea con soluciones de sostenibilidad activa en {GARDEN_ZEN_CONFIG.zone}. Desarrollado por {GARDEN_ZEN_CONFIG.builder}, su sistema de paneles solares genera un ahorro de hasta el 60% en consumo eléctrico y un 50% menos en expensas comunes.
               </p>
             </div>
-
-            {/* Accesos rápidos y Brochure */}
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <a
-                href={GARDEN_ZEN_CONFIG.brochurePdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-[#9a7b45]/40 bg-[#9a7b45]/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#9a7b45] transition-all hover:bg-[#9a7b45] hover:text-white"
-              >
-                <Download size={14} />
-                Brochure Oficial (PDF)
+            <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Lista de obra fina</p>
+                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">
+                  {soldCount} de {units.length} unidades vendidas{reservedCount > 0 ? ` · ${reservedCount} reservadas` : ""}
+                </p>
+              </div>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Quedan {freeCount}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => scrollToSection("disponibilidad")} className="flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md">
+                Ver disponibilidad y cotizar
+              </button>
+              <a href={GARDEN_ZEN_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-stone-800">
+                <Download size={15} className="text-[#9a7b45]" />
+                Brochure
               </a>
-              <button
-                type="button"
-                onClick={() => scrollToSection("disponibilidad")}
-                className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-stone-700 transition-all hover:border-[#9a7b45] hover:text-stone-950 shadow-xs cursor-pointer"
-              >
-                <Layers size={14} className="text-[#9a7b45]" />
-                Ver Disponibilidad en Vivo
-              </button>
             </div>
-
-            {/* Barra de Secciones Inicial */}
-            <nav
-              ref={navBarRef}
-              className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-stone-200 pt-4 text-xs font-medium text-stone-500"
-            >
-              <button
-                type="button"
-                onClick={() => scrollToSection("intro")}
-                className="inline-flex items-center gap-1.5 font-bold text-stone-900 hover:text-[#9a7b45] transition-colors cursor-pointer bg-stone-100 hover:bg-[#9a7b45]/15 px-2.5 py-1 rounded-full text-xs"
-                title="Ir al inicio de la presentación de Garden Zen"
-              >
-                <Home size={13} className="text-[#9a7b45]" />
-                <span>Inicio</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("lugar")}
-                className="hover:text-stone-950 transition-colors cursor-pointer"
-              >
-                Ubicación
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("amenidades")}
-                className="hover:text-stone-950 transition-colors cursor-pointer"
-              >
-                Áreas Sociales
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("tipologias")}
-                className="hover:text-stone-950 transition-colors cursor-pointer"
-              >
-                Tipologías
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("equipamiento")}
-                className="hover:text-stone-950 transition-colors font-semibold text-[#9a7b45] cursor-pointer"
-              >
-                Equipamiento
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("constructora")}
-                className="hover:text-stone-950 transition-colors font-semibold text-stone-700 cursor-pointer"
-              >
-                Constructora
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("pago")}
-                className="hover:text-stone-950 transition-colors cursor-pointer"
-              >
-                Formas de Pago
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("disponibilidad")}
-                className="text-[#9a7b45] font-semibold hover:text-stone-950 transition-colors cursor-pointer"
-              >
-                Disponibilidad en Vivo
-              </button>
-            </nav>
-          </section>
-
-          {/* 2. UBICACIÓN PRIVILEGIADA & CONECTIVIDAD */}
-          <section id="lugar" ref={placeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Ubicación Insuperable
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Equipetrol Norte: Tranquilidad residencial y cota alta protegida.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Ubicado estratégicamente sobre la <strong>{GARDEN_ZEN_CONFIG.address}</strong>, a pasos del Supermercado Tía, la Av. San Martín, Ventura Mall, Manzana 40 y el polo corporativo de la Torre Platinum. La zona goza de una cota topográfica alta con excelente drenaje pluvial, garantizando tranquilidad absoluta sin riesgo de anegamientos.
-            </p>
-
-            <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-md">
-              <img
-                src="/garden_zen/ubicacion.jpg"
-                alt="Mapa satelital de ubicación de Garden Zen en Equipetrol Norte"
-                className="h-64 sm:h-80 w-full object-cover"
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border-t border-stone-100 p-4 text-xs">
-                <div>
-                  <p className="font-semibold text-stone-900">A 2 min · Supermercado Tía</p>
-                  <p className="text-stone-500 font-light">Compras cotidianas a pie</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-stone-900">A 4 min · Manzana 40 &amp; Platinum</p>
-                  <p className="text-stone-500 font-light">Centro empresarial financiero</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-stone-900">A 5 min · Ventura Mall</p>
-                  <p className="text-stone-500 font-light">Gastronomía y entretenimiento</p>
-                </div>
-              </div>
-
-              <div className="border-t border-stone-100 p-4 pt-3 text-right">
-                <a
-                  href={GARDEN_ZEN_CONFIG.mapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#9a7b45] hover:underline cursor-pointer"
-                >
-                  <MapPin size={13} /> Ver ubicación en Google Maps
-                </a>
-              </div>
-            </div>
-          </section>
-
-          {/* 3. ÁREAS SOCIALES & AMENIDADES (ROOFTOP PISO 17) */}
-          <section id="amenidades" ref={amenitiesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Áreas Sociales &amp; Bienestar
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              El rooftop más completo de Equipetrol Norte en el Piso 17.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Más de 800 m² de espacios comunes diseñados para el bienestar integral. Cada área social cuenta con energía solar fotovoltaica propia, reduciendo a la mitad el costo mensual de expensas de por vida.
-            </p>
-
-            {/* Carrusel interactivo */}
-            <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-              <div className="relative aspect-video w-full overflow-hidden bg-stone-900">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentSlide.src}
-                    src={currentSlide.src}
-                    alt={currentSlide.title}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="h-full w-full object-cover"
-                  />
-                </AnimatePresence>
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-                <div className="absolute top-4 left-4">
-                  <span className="rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8] backdrop-blur-md border border-white/10">
-                    {currentSlide.category}
-                  </span>
-                </div>
-
-                <div className="absolute inset-y-0 left-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={prevAmenity}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-white hover:scale-105 active:scale-95 cursor-pointer"
-                    aria-label="Amenidad anterior"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-                </div>
-                <div className="absolute inset-y-0 right-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={nextAmenity}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-white hover:scale-105 active:scale-95 cursor-pointer"
-                    aria-label="Siguiente amenidad"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <p className="font-serif text-xl sm:text-2xl font-normal drop-shadow-sm">
-                    {currentSlide.title}
-                  </p>
-                  <p className="mt-1 text-xs text-stone-200 font-light drop-shadow line-clamp-2 sm:line-clamp-none [text-align:justify]">
-                    {currentSlide.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Puntos de navegación */}
-              <div className="flex items-center justify-center gap-1.5 p-3 bg-stone-50 border-t border-stone-100">
-                {AMENITY_SLIDES.map((slide, idx) => (
-                  <button
-                    key={slide.title}
-                    type="button"
-                    onClick={() => setAmenityIndex(idx)}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
-                      amenityIndex === idx ? "w-6 bg-[#9a7b45]" : "w-2 bg-stone-300 hover:bg-stone-400"
-                    }`}
-                    aria-label={`Ver ${slide.title}`}
-                  />
+            <div ref={introNavRef} className="border-t border-stone-200 pt-4">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Navegación del proyecto</p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <button type="button" onClick={() => scrollToSection("intro")} className="flex items-center gap-1.5 rounded-lg bg-stone-900 px-3 py-1.5 font-medium text-white"><Home size={12} /> Inicio</button>
+                {SECTIONS.slice(1, 8).map((section) => (
+                  <button key={section.id} type="button" onClick={() => scrollToSection(section.id)} className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-stone-700">{section.label}</button>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* 4. TIPOLOGÍAS RESIDENCIALES */}
-          <section id="tipologias" ref={typesRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <Layers size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Distribuciones Inteligentes
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Espacios concebidos para el confort y la vida contemporánea.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Cada planta optimiza el metraje útil eliminando pasillos muertos. Con amplios balcones, iluminación cruzada y orientación estratégica para maximizar el confort, la luminosidad y la calidad de vida diaria.
+          <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol Norte, a pasos de lo que usas cada día.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
+              Ubicado sobre {GARDEN_ZEN_CONFIG.address}, a pasos del supermercado Tía, la Av. San Martín, Ventura Mall, Manzana 40 y el polo de la Torre Platinum.
             </p>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {AMBIENTE_OPTIONS.map((amb) => {
-                const isSelected = selectedAmbId === amb.id;
-                let displayPrice = amb.basePrice;
-                if (amb.id === "mono") displayPrice = minPriceMono;
-                else if (amb.id === "1d") displayPrice = minPrice1Dorm;
-                else if (amb.id === "2d") displayPrice = minPrice2Dorms;
-                else if (amb.id === "3d") displayPrice = minPrice3Dorms;
-
-                return (
-                  <div
-                    key={amb.id}
-                    onClick={() => {
-                      handleSelectAmbiente(amb.id);
-                    }}
-                    className={`rounded-2xl border p-5 transition-all cursor-pointer flex flex-col justify-between ${
-                      isSelected
-                        ? "border-[#9a7b45] bg-[#9a7b45]/5 shadow-md ring-1 ring-[#9a7b45]"
-                        : "border-stone-200 bg-white hover:border-[#9a7b45]/50 hover:shadow-sm"
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs uppercase tracking-wider font-semibold text-[#9a7b45]">
-                          {amb.name}
-                        </span>
-                        <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-mono text-stone-600">
-                          {amb.areaRange}
-                        </span>
-                      </div>
-                      <p className="mt-3 font-serif text-2xl font-bold text-stone-900">
-                        Desde USD {formatGardenZenUsd(displayPrice)}
-                      </p>
-                      <p className="mt-1 text-xs text-stone-500 font-light">
-                        {amb.id === "mono"
-                          ? "Cocina integrada · Balcón aterrazado · Baño completo"
-                          : amb.id === "1d"
-                          ? "Suite privada · Walking closet · Balcón corrido"
-                          : amb.id === "2d"
-                          ? "Master suite + dormitorio · 2 Baños · Living amplio"
-                          : "3 Dormitorios · Terraza panorámica · Cocina con isla"}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <span className="text-stone-500 font-normal">Planta oficial {amb.name}</span>
-                      <span className={`inline-flex items-center gap-1 font-semibold ${isSelected ? "text-stone-900" : "text-[#9a7b45]"}`}>
-                        {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+              <img src="/garden_zen/ubicacion.jpg" alt="Mapa de Garden Zen en Equipetrol Norte" className="block h-auto w-full" />
             </div>
-
-            {/* Visualización interactiva del Plano Arquitectónico 2D + Corte 3D */}
-            {(() => {
-              const visualMap: Record<string, { code: string; name: string; area: string; image: string; desc: string; pills: string[] }> = {
-                mono: {
-                  code: "MP",
-                  name: "Monoambiente Zen (Studio)",
-                  area: "Desde 40.15 m²",
-                  image: "/garden_zen/plano_mono_mp.jpg",
-                  desc: "Distribución en L que independiza el área de descanso de la cocina integrada. Incluye mesón desayunador, espacio de lavandería oculto y ventanal con balcón aterrazado.",
-                  pills: ["Balcón integrado", "Mesón cuarzo blanco", "Lavandería privada", "Chapa inteligente"]
-                },
-                "1d": {
-                  code: "B1",
-                  name: "1 Dormitorio Master Suite",
-                  area: "Desde 46.10 m²",
-                  image: "/garden_zen/plano_1dorm_b1.jpg",
-                  desc: "Espaciosa suite con walking closet, sala de estar conectada a balcón aterrazado y cocina americana con doble frente de mesones de cuarzo blanco.",
-                  pills: ["Balcón aterrazado", "Walking closet con divisiones", "Doble mesón cocina", "Aires acondicionados instalados"]
-                },
-                "2d": {
-                  code: "D2",
-                  name: "2 Dormitorios Family Suite",
-                  area: "Desde 66.83 m²",
-                  image: "/garden_zen/plano_2dorm_d2.jpg",
-                  desc: "Máxima privacidad con dormitorios en extremos opuestos. Amplio living comedor con balcón corrido y cocina integrada de concepto abierto.",
-                  pills: ["Dormitorio en Master Suite", "2 Baños con piedra sinterizada", "Balcón corrido", "Comedor para 6 personas"]
-                },
-                "3d": {
-                  code: "B3",
-                  name: "3 Dormitorios / Penthouse Suite",
-                  area: "Desde 106.12 m²",
-                  image: "/garden_zen/plano_3dorm_b3.jpg",
-                  desc: "Planta extendida en niveles superiores con triple dormitorio, master suite con vestidor, ventanales de piso a techo y amplia terraza panorámica.",
-                  pills: ["3 Dormitorios", "Master vestidor", "Terraza panorámica", "Cocina con isla central"]
-                }
-              };
-
-              const ambKeys = ["mono", "1d", "2d", "3d"];
-              const currentIdx = ambKeys.indexOf(selectedAmbId);
-              const prevAmbKey = ambKeys[(currentIdx - 1 + ambKeys.length) % ambKeys.length];
-              const nextAmbKey = ambKeys[(currentIdx + 1) % ambKeys.length];
-
-              const currentVisual = visualMap[selectedAmbId] || visualMap["mono"];
-
-              return (
-                <div className="mt-6 overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-sm transition-all">
-                  <div className="p-4 sm:p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="rounded bg-[#9a7b45] px-2 py-0.5 text-[11px] font-bold text-white tracking-wider">
-                          PLANTA {currentVisual.code}
-                        </span>
-                        <span className="font-serif text-lg font-medium text-stone-900">
-                          {currentVisual.name}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs text-stone-500 font-light">
-                        Superficie: <strong className="font-semibold text-stone-800">{currentVisual.area}</strong> · Plano oficial de arquitectura Garden Zen
-                      </p>
-                    </div>
-
-                    {/* Botones para pasar de una imagen a otra sin mover de sección */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectAmbiente(prevAmbKey)}
-                        className="inline-flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 transition hover:bg-stone-50 active:scale-95 cursor-pointer shadow-2xs"
-                        title="Ver plano anterior"
-                      >
-                        <ChevronLeft size={14} />
-                        Anterior
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectAmbiente(nextAmbKey)}
-                        className="inline-flex items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#9a7b45] active:scale-95 cursor-pointer shadow-2xs"
-                        title="Ver siguiente plano"
-                      >
-                        Siguiente
-                        <ChevronRight size={14} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="relative aspect-[16/9] w-full bg-stone-50 flex items-center justify-center overflow-hidden group">
-                    <img
-                      src={currentVisual.image}
-                      alt={`Plano arquitectónico tipología ${currentVisual.name}`}
-                      className="h-full w-full object-contain p-2"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (!target.src.includes("preview_page")) {
-                          target.src = "/garden_zen/preview_page_22.jpg";
-                        }
-                      }}
-                    />
-
-                    {/* Flechas superpuestas para pasar de imagen */}
-                    <button
-                      type="button"
-                      onClick={() => handleSelectAmbiente(prevAmbKey)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-stone-900 hover:text-white cursor-pointer opacity-80 hover:opacity-100"
-                      aria-label="Plano anterior"
-                      title="Plano anterior"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectAmbiente(nextAmbKey)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-stone-800 shadow-md backdrop-blur transition-all hover:bg-stone-900 hover:text-white cursor-pointer opacity-80 hover:opacity-100"
-                      aria-label="Plano siguiente"
-                      title="Plano siguiente"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-
-                  <div className="p-4 sm:p-5 bg-stone-50/60 border-t border-stone-100">
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-                      <p className="text-xs text-stone-600 font-light leading-relaxed flex-1">
-                        {currentVisual.desc}
-                      </p>
-                      {/* Indicador de imagen activa */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {ambKeys.map((k) => (
-                          <button
-                            key={k}
-                            type="button"
-                            onClick={() => handleSelectAmbiente(k)}
-                            className={`h-1.5 rounded-full transition-all cursor-pointer ${selectedAmbId === k ? "w-5 bg-[#9a7b45]" : "w-1.5 bg-stone-300 hover:bg-stone-400"}`}
-                            title={`Ver plano ${visualMap[k]?.code}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {currentVisual.pills.map((pill, idx) => (
-                        <span key={idx} className="rounded-md bg-white border border-stone-200/80 px-2 py-0.5 text-[11px] font-light text-stone-700">
-                          ✓ {pill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="border-l-2 border-[#9a7b45] pl-3">
+                <p className="text-xs font-semibold text-stone-900">Supermercado Tía</p>
+                <p className="mt-0.5 text-xs font-light text-stone-500">Compras cotidianas a pocos minutos.</p>
+              </div>
+              <div className="border-l-2 border-[#9a7b45] pl-3">
+                <p className="text-xs font-semibold text-stone-900">Manzana 40 y Platinum</p>
+                <p className="mt-0.5 text-xs font-light text-stone-500">Centro empresarial y financiero.</p>
+              </div>
+              <div className="border-l-2 border-[#9a7b45] pl-3">
+                <p className="text-xs font-semibold text-stone-900">Ventura Mall</p>
+                <p className="mt-0.5 text-xs font-light text-stone-500">Gastronomía y entretenimiento.</p>
+              </div>
+            </div>
+            <a href={GARDEN_ZEN_CONFIG.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
+              Ver ubicación en Google Maps <ArrowRight size={14} />
+            </a>
           </section>
 
-          {/* 5. EQUIPAMIENTO 100% INCLUIDO (LLAVE EN MANO) */}
-          <section id="equipamiento" ref={equipRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Equipamiento 100% Incluido
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Entrega llave en mano sin costos ocultos ni adicionales.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              En Garden Zen cada departamento se entrega completamente terminado y equipado con materiales de primera línea internacional: cuarzo blanco, piedra sinterizada, climatización instalada y cerraduras inteligentes de acceso digital.
+          <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El rooftop del piso 17 y las áreas para el día a día.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
+              Piscina, saunas, gimnasio, cowork, salón y churrasqueras. Las áreas comunes usan energía solar y cosecha de agua de lluvia.
             </p>
+            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+              <div className="relative">
+                <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
+                <button type="button" onClick={() => setAmenityIndex((index) => (index + AMENITY_SLIDES.length - 1) % AMENITY_SLIDES.length)} className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Anterior amenidad"><ChevronLeft size={18} /></button>
+                <button type="button" onClick={() => setAmenityIndex((index) => (index + 1) % AMENITY_SLIDES.length)} className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Siguiente amenidad"><ChevronRight size={18} /></button>
+              </div>
+              <div className="space-y-1.5 px-5 py-4">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{amenity.category}</span>
+                <h4 className="font-serif text-xl text-stone-900 md:text-2xl">{amenity.title}</h4>
+                <p className="max-w-xl text-xs leading-relaxed text-stone-600">{amenity.description}</p>
+              </div>
+              <div className="flex justify-center gap-1.5 px-3 pb-3">
+                {AMENITY_SLIDES.map((slide, index) => (
+                  <button key={slide.title} type="button" onClick={() => setAmenityIndex(index)} className={`h-1.5 rounded-full ${amenityIndex === index ? "w-6 bg-[#9a7b45]" : "w-1.5 bg-stone-300"}`} aria-label={slide.title} />
+                ))}
+              </div>
+            </div>
+          </section>
 
-            <div className="mt-8 space-y-6">
-              {EQUIPMENT_SECTIONS.map((sec) => (
-                <div key={sec.id} className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-                  <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-stone-900">
-                    <img src={sec.image} alt={sec.title} className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                    <div className="absolute bottom-4 left-5 right-5 text-white">
-                      <p className="font-serif text-xl sm:text-2xl">{sec.title}</p>
-                      <p className="text-xs text-stone-200 font-light mt-0.5">{sec.subtitle}</p>
-                    </div>
-                  </div>
+          <section id="tipologias" className="mt-20 scroll-mt-2 border-t border-stone-200/80 pt-6">
+            <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+              <div className="shrink-0">
+                <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Del monoambiente al departamento de 3 dormitorios.</h3>
+              </div>
+              <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">
+                {ROOM_FILTERS.map((filter) => (
+                  <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-2xl border px-3 py-2 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{filter.label}</p>
+                    <p className="text-[11px] text-stone-500">{roomCount[filter.id]} {roomCount[filter.id] === 1 ? "planta" : "plantas"}</p>
+                  </button>
+                ))}
+              </div>
+              <ModelFrame
+                model={currentModel}
+                area={areaLabel(units, currentModel)}
+                index={slideIndex}
+                total={slides.length}
+                frameClass="min-h-0 flex-1"
+                onPrev={() => shiftModel(-1)}
+                onNext={() => shiftModel(1)}
+                onOpen={() => setZoom({ view: "planta", title: currentModel.name, caption: areaLabel(units, currentModel), src: currentModel.plan })}
+                onTouchStart={(event) => { touchX.current = event.changedTouches[0].clientX; }}
+                onTouchEnd={(event) => {
+                  if (touchX.current == null || slides.length < 2) return;
+                  const dx = event.changedTouches[0].clientX - touchX.current;
+                  if (dx > 40) shiftModel(-1);
+                  if (dx < -40) shiftModel(1);
+                  touchX.current = null;
+                }}
+              />
+            </div>
+          </section>
 
-                  <div className="p-5">
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-stone-700 font-light">
-                      {sec.items.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <Check size={14} className="text-emerald-600 mt-0.5 shrink-0" />
-                          <span>{item}</span>
-                        </li>
+          <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Lo que ya viene instalado.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
+              Cocina, dormitorio y baño se entregan con el equipamiento publicado para Garden Zen.
+            </p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {EQUIPMENT_SECTIONS.map((group) => (
+                <div key={group.id} className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+                  <img src={group.image} alt={group.title} className="max-h-[320px] w-full bg-stone-100 object-contain" />
+                  <div className="space-y-2 px-4 py-4">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{group.room}</span>
+                    <h4 className="font-serif text-base font-bold text-stone-900">{group.title}</h4>
+                    <ul className="space-y-1.5 border-t border-stone-100 pt-2 text-xs text-stone-600">
+                      {group.items.map((item) => (
+                        <li key={item} className="flex items-start gap-1.5"><span className="font-bold text-[#9a7b45]">·</span><span>{item}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1296,900 +754,279 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             </div>
           </section>
 
-          {/* 6. CONSTRUCTORA & RESPALDO INSTITUCIONAL */}
-          <section id="constructora" ref={builderRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-[#9a7b45]" />
-              <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                Respaldo &amp; Trayectoria
-              </p>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              {GARDEN_ZEN_CONFIG.builder}. Desarrollos eco-sostenibles de alta gama.
-            </h2>
-
-            <p className="mt-3 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              {GARDEN_ZEN_CONFIG.builder} lidera la transición hacia edificios eco-eficientes en Santa Cruz. Con sede en Platinum II Business Center (Piso 27), sus obras aplican la normativa nacional de Generación Distribuida para asegurar plusvalía patrimonial y costos de mantenimiento reducidos de por vida.
+          <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Constructora</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{GARDEN_ZEN_CONFIG.builder}</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
+              {GARDEN_ZEN_CONFIG.builder} desarrolla edificios con paneles solares bajo la normativa de generación distribuida. Su sede está en Platinum II Business Center, piso 27.
             </p>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 flex flex-col justify-between shadow-xs">
-                <div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
-                    <Zap size={20} />
-                  </div>
-                  <h3 className="mt-3 font-serif text-lg font-bold text-stone-900">
-                    Pioneros ON-GRID (CRE)
-                  </h3>
-                  <p className="mt-2 text-xs text-stone-600 font-light [text-align:justify]">
-                    Primeros proyectos desarrollados en coordinación directa con la CRE bajo la normativa nacional de Generación Distribuida, inyectando energía solar y reduciendo un 60% el consumo eléctrico.
-                  </p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-stone-100 text-[11px] font-semibold text-[#9a7b45]">
-                  60% Menos Energía
-                </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-stone-200 bg-white p-4">
+                <Zap size={18} className="text-[#9a7b45]" />
+                <p className="mt-2 font-serif text-lg text-stone-900">Paneles ON-GRID</p>
+                <p className="mt-1 text-xs text-stone-600">Coordinación con la CRE para inyectar energía solar y reducir el consumo eléctrico.</p>
               </div>
-
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 flex flex-col justify-between shadow-xs">
-                <div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
-                    <Leaf size={20} />
-                  </div>
-                  <h3 className="mt-3 font-serif text-lg font-bold text-stone-900">
-                    50% Menos Expensas
-                  </h3>
-                  <p className="mt-2 text-xs text-stone-600 font-light [text-align:justify]">
-                    Cosecha de agua de lluvia para riego y áreas comunes, junto a iluminación por cúpulas reflectantes, asegurando el costo de expensa más bajo y competitivo de Equipetrol Norte.
-                  </p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-stone-100 text-[11px] font-semibold text-[#9a7b45]">
-                  Costo-Eficiencia de por Vida
-                </div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4">
+                <Leaf size={18} className="text-[#9a7b45]" />
+                <p className="mt-2 font-serif text-lg text-stone-900">50% menos expensas</p>
+                <p className="mt-1 text-xs text-stone-600">Cosecha de agua de lluvia para riego y áreas comunes, más iluminación eficiente.</p>
               </div>
-
-              <div className="rounded-2xl border border-stone-200 bg-white p-5 flex flex-col justify-between shadow-xs">
-                <div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9a7b45]/10 text-[#9a7b45]">
-                    <Building2 size={20} />
-                  </div>
-                  <h3 className="mt-3 font-serif text-lg font-bold text-stone-900">
-                    Sello Garden Buildings
-                  </h3>
-                  <p className="mt-2 text-xs text-stone-600 font-light [text-align:justify]">
-                    Desarrolladores de torres emblemáticas en el eje corporativo, con oficinas centrales en Platinum II Business Center (Piso 27) y obras con estricto control de calidad.
-                  </p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-stone-100 text-[11px] font-semibold text-[#9a7b45]">
-                  Sede Platinum II
-                </div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4">
+                <Building2 size={18} className="text-[#9a7b45]" />
+                <p className="mt-2 font-serif text-lg text-stone-900">Sede Platinum II</p>
+                <p className="mt-1 text-xs text-stone-600">Oficinas en el piso 27 del Platinum II Business Center.</p>
               </div>
             </div>
-
-            {/* Cita del Desarrollador */}
-            <div className="mt-6 rounded-2xl border border-stone-200 bg-stone-50/70 p-5">
-              <p className="font-serif italic text-sm text-stone-700 leading-relaxed [text-align:justify]">
-                &quot;Conceptualizamos un estilo de vida responsable, en armonía con los cambios actuales y la tecnología, logrando una vida bajo la premisa de costo eficiente.&quot;
+            <div className="rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-6">
+              <p className="font-serif text-base italic leading-relaxed text-stone-800 md:text-xl">
+                “Conceptualizamos un estilo de vida responsable, en armonía con los cambios actuales y la tecnología, logrando una vida bajo la premisa de costo eficiente.”
               </p>
-              <p className="mt-2 text-xs font-semibold text-[#9a7b45] uppercase tracking-wider">
-                — Filosofía de Desarrollo · Garden Buildings
-              </p>
+              <p className="mt-4 border-t border-[#9a7b45]/20 pt-3 text-xs font-semibold text-stone-800">Garden Buildings</p>
             </div>
+            <a href={GARDEN_ZEN_CONFIG.builderUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
+              Conocer Garden Buildings <ExternalLink size={14} />
+            </a>
           </section>
 
-          {/* 7. FORMAS DE PAGO TRANSPARENTES & CRONOGRAMA */}
-          <section id="pago" ref={payRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            {/* Cabecera con refresco rápido */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CreditCard size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                  Estructura de Inversión
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleRefreshInventory}
-                disabled={isRefreshingInv}
-                title="Actualizar precio mínimo por m² e inventario desde planilla"
-                className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[11px] font-semibold text-stone-700 shadow-xs transition-all hover:border-[#9a7b45] hover:bg-stone-50 active:scale-95 disabled:opacity-50 cursor-pointer"
-              >
-                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : "text-[#9a7b45]"} />
-                <span>{isRefreshingInv ? "Actualizando..." : "Actualizar precio m²"}</span>
-              </button>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Planes de pago flexibles adaptados a tu estrategia.
-            </h2>
-            <p className="mt-2 text-[15px] font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {GARDEN_ZEN_CONFIG.delivery} (Obra Fina).
+          <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Planes de pago flexibles adaptados a tu estrategia.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
+              Elige cómo distribuir el pago hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}. El precio varía según departamento y piso. La reserva de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} se descuenta de la cuota inicial.
             </p>
-
-            {/* Banner de Precio Base Preventa en Vivo */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#9a7b45]/30 bg-[#f4f9f5] p-3.5 sm:px-4.5 shadow-xs">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9a7b45]/15 text-[#9a7b45]">
-                  <DollarSign size={16} />
-                </span>
-                <div>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-xs font-light text-stone-600">Precio base preventa:</span>
-                    <strong className="font-serif text-lg font-medium text-stone-900">
-                      Desde ${formatGardenZenUsd(minCashPerM2)} USD/m²
-                    </strong>
-                  </div>
-                  <p className="text-[11px] text-stone-500 font-light">
-                    Calculado en vivo sobre {availableUnits.length} unidades disponibles · {lastPriceUpdateText}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleRefreshInventory}
-                disabled={isRefreshingInv}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#9a7b45] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-[#816127] active:scale-95 disabled:opacity-50 cursor-pointer"
-              >
-                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin" : ""} />
-                <span>{isRefreshingInv ? "Sincronizando..." : "Actualizar ahora"}</span>
-              </button>
-            </div>
-
-            {/* LAS 3 FORMAS DE PAGO EXPLICADAS CON SU M² Y VENTAJA (ESTILO ONA) */}
-            <div className="mt-6 space-y-4">
-              {/* Opción 1: Contado */}
-              <div
-                onClick={() => setSelectedPlan("contado")}
-                className={`relative overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer shadow-lg ${
-                  selectedPlan === "contado"
-                    ? "border-stone-900 bg-stone-900 text-white ring-2 ring-[#e8d5a8]/40"
-                    : "border-stone-900 bg-stone-900 text-white"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full border border-[#e8d5a8]/30 bg-[#e8d5a8]/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#e8d5a8]">
-                      Mayor Descuento
-                    </span>
-                    <h3 className="mt-2 font-serif text-2xl">1. Pago al Contado (100%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-[#e8d5a8]">
-                      ${formatGardenZenUsd(minCashPerM2)} <span className="text-xs font-sans text-stone-300">USD/m²</span>
-                    </p>
-
-                  </div>
-                </div>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#e8d5a8] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-200 [text-align:justify] [text-justify:inter-word]">
-                    Compra al contado desde USD {formatGardenZenUsd(minCashPerM2)}/m². El precio depende del departamento, piso y modalidad: compáralos en el cotizador y encuentra el plan que se ajuste a ti.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 2: 70% inicial */}
-              <div
-                onClick={() => setSelectedPlan("plan70")}
-                className={`rounded-2xl border p-6 transition-all cursor-pointer shadow-sm ${
-                  selectedPlan === "plan70"
-                    ? "border-[#9a7b45] bg-[#9a7b45]/5 ring-1 ring-[#9a7b45]"
-                    : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Equilibrio Financiero
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">2. Inicial 70% + Saldo contra Entrega (30%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">
-                      ${formatGardenZenUsd(minPlan70PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                    </p>
-
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    Asegura tu departamento con un 70% de anticipo y distribuye tu inversión: el 30% restante se paga contra entrega. Consulta el precio de tu unidad en el cotizador.
-                  </p>
-                </div>
-              </div>
-
-              {/* Opción 3: 30% inicial */}
-              <div
-                onClick={() => setSelectedPlan("plan30")}
-                className={`rounded-2xl border p-6 transition-all cursor-pointer shadow-sm ${
-                  selectedPlan === "plan30"
-                    ? "border-[#9a7b45] bg-[#9a7b45]/5 ring-1 ring-[#9a7b45]"
-                    : "border-stone-200 bg-white hover:border-[#9a7b45]/40"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="rounded-full bg-stone-100 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                      Entrada Cómoda
-                    </span>
-                    <h3 className="mt-2 font-serif text-xl text-stone-900">3. Inicial 30% + Saldo contra Entrega (70%)</h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-serif text-2xl font-light text-stone-900">
-                      ${formatGardenZenUsd(minPlan30PerM2)} <span className="text-xs font-sans text-stone-500">USD/m²</span>
-                    </p>
-
-                  </div>
-                </div>
-                <div className="mt-3.5 border-t border-stone-100 pt-3">
-                  <p className="text-xs uppercase tracking-wider text-[#9a7b45] font-semibold">Ventaja Comercial:</p>
-                  <p className="mt-1 text-xs font-light leading-relaxed text-stone-600 [text-align:justify] [text-justify:inter-word]">
-                    El menor desembolso de entrada para asegurar tu departamento en {GARDEN_ZEN_CONFIG.zone}. Congelas la unidad con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} de reserva formal e integras el 30% inicial, cancelando el 70% restante en {GARDEN_ZEN_CONFIG.delivery} mediante fondos propios o financiamiento bancario.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-[#9a7b45]/30 bg-[#9a7b45]/5 p-4 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold text-stone-900">
-                  ¿Deseas conocer la cuota exacta de tu departamento?
-                </p>
-                <p className="text-[11px] text-stone-600 font-light mt-0.5">
-                  Elige tu tipología y piso en Disponibilidad para calcular el desembolso exacto en dólares según el plan elegido.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => scrollToSection("disponibilidad")}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-medium text-white transition-all hover:bg-[#9a7b45] active:scale-95 cursor-pointer"
-              >
-                Elegir departamento y cotizar <ArrowRight size={13} />
-              </button>
-            </div>
-
-            {/* Cronograma de Desembolsos */}
-            <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-5 shadow-xs">
-              <h4 className="font-serif text-base font-bold text-stone-900">
-                Cronograma de Desembolsos · Garden Zen
-              </h4>
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div className="border-l-2 border-[#9a7b45] pl-3">
-                  <p className="font-bold text-[#9a7b45] uppercase tracking-wider text-[10px]">
-                    Paso 1 · Hoy
-                  </p>
-                  <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                    USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}
-                  </p>
-                  <p className="text-stone-500 font-light mt-1">
-                    Congela la unidad seleccionada y asegura el precio de preventa.
-                  </p>
-                </div>
-                <div className="border-l-2 border-stone-300 pl-3">
-                  <p className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">
-                    Paso 2 · A la firma
-                  </p>
-                  <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                    Cuota Inicial
-                  </p>
-                  <p className="text-stone-500 font-light mt-1">
-                    Integración del 30%, 70% o 100% descontando los USD 5.000 de reserva.
-                  </p>
-                </div>
-                <div className="border-l-2 border-stone-300 pl-3">
-                  <p className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">
-                    Paso 3 · Marzo 2027
-                  </p>
-                  <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                    Saldo contra entrega
-                  </p>
-                  <p className="text-stone-500 font-light mt-1">
-                    Liquidación final contra entrega de llaves (apto crédito bancario).
-                  </p>
-                </div>
-              </div>
-            </div>
+            <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
+              <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Mayor descuento</span>
+              <h4 className="mt-3 font-serif text-2xl">Pago al contado (100%)</h4>
+              {minCashPerM2 != null && <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">Desde USD {formatGardenZenUsd(minCashPerM2)}/m²</p>}
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">El valor por m² más bajo del proyecto. Congelas ese precio hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}.</p>
+            </article>
+            <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Equilibrio financiero</span>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Inicial 70% y saldo 30% contra entrega</h4>
+              {minPlan70PerM2 != null && <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatGardenZenUsd(minPlan70PerM2)}/m²</p>}
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Pagas el 70% a la firma y el 30% restante cuando la obra fina esté concluida en {GARDEN_ZEN_CONFIG.delivery}.</p>
+            </article>
+            <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Entrada cómoda</span>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Inicial 30% y saldo 70% contra entrega</h4>
+              {minPlan30PerM2 != null && <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatGardenZenUsd(minPlan30PerM2)}/m²</p>}
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Aseguras la unidad con el 30% y cancelas el 70% en {GARDEN_ZEN_CONFIG.delivery}, con fondos propios o crédito bancario.</p>
+            </article>
+            {parkingLine && (
+              <p className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
+                {parkingLine.charAt(0).toUpperCase() + parkingLine.slice(1)}. Se cotizan aparte del metro cuadrado.
+              </p>
+            )}
+            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
+              Elegir mi departamento <ArrowRight size={14} />
+            </button>
           </section>
 
-          {/* 8. DISPONIBILIDAD EN VIVO & COTIZADOR EN CASCADA (ESTILO APPLE) */}
-          <section id="disponibilidad" ref={disponibilidadRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Building2 size={14} className="text-[#9a7b45]" />
-                <p className="text-[11px] uppercase tracking-[0.24em] font-semibold text-[#9a7b45]">
-                  Cotizador &amp; Disponibilidad en Vivo
-                </p>
+          <section id="disponibilidad" className="mt-20 scroll-mt-2 space-y-6 border-t border-stone-200/80 pt-6">
+            <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+              <div className="shrink-0">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Selecciona tu unidad y simula tu inversión al instante.</h3>
+                <p className="mt-1 text-xs text-stone-500">Lista de obra fina. Verde: disponible · Gris: vendido o reservado.</p>
               </div>
-              <button
-                type="button"
-                onClick={handleRefreshInventory}
-                disabled={isRefreshingInv}
-                className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
-                title="Sincronizar datos con Google Sheets"
-              >
-                <RefreshCw size={12} className={isRefreshingInv ? "animate-spin text-[#9a7b45]" : ""} />
-                <span>{lastPriceUpdateText}</span>
-              </button>
-            </div>
-
-            <h2 className="mt-2 font-serif text-3xl font-light text-stone-900 md:text-4xl">
-              Selecciona tu unidad y simula tu inversión al instante.
-            </h2>
-
-            {/* PASO 1: AMBIENTE */}
-            <div className="mt-8">
-              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                Paso 1: Elige la Tipología
-              </p>
-              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {AMBIENTE_OPTIONS.map((amb) => {
-                  const isSel = selectedAmbId === amb.id;
-                  return (
-                    <button
-                      key={amb.id}
-                      type="button"
-                      onClick={() => handleSelectAmbiente(amb.id)}
-                      className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
-                        isSel
-                          ? "border-[#9a7b45] bg-[#9a7b45]/15 text-[#816127] font-semibold shadow-xs"
-                          : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-                      }`}
-                    >
-                      <p className="text-xs font-bold">{amb.name}</p>
-                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">{amb.areaRange}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* PASO 2: PISO Y UNIDAD */}
-            <div className="mt-8">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                  Paso 2: Elige el Piso ({currentAmbiente.name})
-                </p>
-                <div className="flex items-center gap-3 text-[11px]">
-                  <span className="flex items-center gap-1 text-emerald-700 font-medium">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Disponible
-                  </span>
-                  <span className="flex items-center gap-1 text-stone-400">
-                    <span className="h-2 w-2 rounded-full bg-stone-300" /> Vendido / Reservado
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {floorsForAmbiente.map((item) => {
-                  const isSel = selectedFloor === item.floor;
-                  if (!item.isAvailable) {
+              <div className="flex min-h-0 flex-1 flex-col gap-2">
+                <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
+                <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">
+                  {ROOM_FILTERS.map((filter) => {
+                    const from = fromForRooms(filter.id);
                     return (
-                      <div
-                        key={item.floor}
-                        className="rounded-xl border border-stone-200 bg-stone-100/60 px-3.5 py-2 text-center text-xs text-stone-400 cursor-not-allowed"
-                        title={`Piso ${item.floor}: Unidades reservadas o vendidas`}
-                      >
-                        <span className="font-bold">Piso {item.floor}</span>
-                        <span className="block text-[9px] uppercase tracking-wider">Agotado</span>
-                      </div>
+                      <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-xl border p-3 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white"}`}>
+                        <p className="text-sm font-bold">{filter.label}</p>
+                        <p className="text-[11px] text-[#9a7b45]">{from == null ? "Sin unidades libres" : `Desde USD ${formatGardenZenUsd(from)}`}</p>
+                      </button>
                     );
-                  }
+                  })}
+                </div>
+                <ModelFrame
+                  model={currentModel}
+                  area={areaLabel(units, currentModel)}
+                  index={slideIndex}
+                  total={slides.length}
+                  price={priceForModel(currentModel)}
+                  frameClass="min-h-0 flex-1"
+                  onPrev={() => shiftModel(-1)}
+                  onNext={() => shiftModel(1)}
+                  onOpen={() => setZoom({ view: "planta", title: currentModel.name, caption: areaLabel(units, currentModel), src: currentModel.plan })}
+                  onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }}
+                  onTouchEnd={onModelSwipe}
+                />
+              </div>
+            </div>
 
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Unidad</p>
+              <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
+                {floors.map((floor) => {
+                  const current = activeUnit ? unitKey(activeUnit) === unitKey(floor) : false;
+                  const libre = floor.status === "disponible";
                   return (
-                    <button
-                      key={item.floor}
-                      type="button"
-                      onClick={() => setSelectedFloor(item.floor)}
-                      className={`rounded-xl border px-3.5 py-2 text-center text-xs transition-all cursor-pointer ${
-                        isSel
-                          ? "border-[#9a7b45] bg-stone-900 text-white shadow-md scale-105"
-                          : "border-emerald-300 bg-emerald-50/70 text-emerald-950 hover:bg-emerald-100/70"
-                      }`}
-                    >
-                      <span className="font-bold">Piso {item.floor}</span>
-                      <span className="block text-[9px] font-medium opacity-90">
-                        {item.availableCount} disp.
-                      </span>
+                    <button key={unitKey(floor)} type="button" disabled={!libre} onClick={() => setSelectedKey(unitKey(floor))} className={`rounded-lg px-1 py-2 text-xs font-semibold ${current ? "bg-stone-900 text-white" : libre ? "border border-emerald-200 bg-emerald-50 text-emerald-800" : "cursor-not-allowed bg-stone-100 text-stone-400"}`}>
+                      <span className="block">Piso {floor.floor}</span>
+                      <span className="block text-[10px] font-normal">Unidad {floor.unitNumber}</span>
                     </button>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Vista previa de la unidad seleccionada */}
-              {activeUnit && (
-                <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
-                    <div>
-                      <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                        Unidad {activeUnit.unitNumber} · Piso {activeUnit.floor}
-                      </span>
-                      <p className="mt-1 font-serif text-lg font-bold text-stone-900">
-                        {activeUnit.roomsLabel} · Modelo {activeUnit.modelo} ({activeUnit.areaM2} m²)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">
-                        Precio Unidad ({selectedPlan === "contado" ? "Contado" : selectedPlan === "plan70" ? "70% Anticipo" : "30% Anticipo"})
-                      </p>
-                      <p className="font-serif text-xl font-bold text-[#816127]">
-                        USD {formatGardenZenUsd(activeFinancials ? activeFinancials.unitTotalPrice : (activeUnit.cashTotal || Math.round(activeUnit.areaM2 * 1400)))}
-                      </p>
-                    </div>
-                  </div>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 3 · Adicional</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <button type="button" onClick={() => setAddon("none")} className={`rounded-xl border p-3 text-left ${addon === "none" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                  <p className="text-sm font-bold">Sin adicional</p>
+                  <p className={`text-[11px] ${addon === "none" ? "text-stone-300" : "text-stone-500"}`}>Solo el departamento</p>
+                </button>
+                {PARKING_TECHADO != null && (
+                  <button type="button" onClick={() => setAddon("techado")} className={`rounded-xl border p-3 text-left ${addon === "techado" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">Parqueo techado</p>
+                    <p className={`text-[11px] ${addon === "techado" ? "text-stone-300" : "text-stone-500"}`}>USD {formatGardenZenUsd(PARKING_TECHADO)}</p>
+                  </button>
+                )}
+                {PARKING_MOTO != null && (
+                  <button type="button" onClick={() => setAddon("moto")} className={`rounded-xl border p-3 text-left ${addon === "moto" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">Moto</p>
+                    <p className={`text-[11px] ${addon === "moto" ? "text-stone-300" : "text-stone-500"}`}>USD {formatGardenZenUsd(PARKING_MOTO)}</p>
+                  </button>
+                )}
+              </div>
+            </div>
 
-                  {/* Plano de la tipología */}
-                  {activeUnit.planoUrl && (
-                    <div className="mt-4 overflow-hidden rounded-xl border border-stone-100 bg-stone-50 p-2 text-center">
-                      <img
-                        src={activeUnit.planoUrl}
-                        alt={`Plano Modelo ${activeUnit.modelo}`}
-                        className="mx-auto max-h-56 object-contain"
-                      />
-                      <p className="mt-1 text-[11px] text-stone-400">
-                        Plano esquemático referencial · Modelo {activeUnit.modelo}
-                      </p>
-                    </div>
-                  )}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 4 · Plan de pago</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <button type="button" onClick={() => setPaymentPlan("contado")} className={`rounded-xl border p-3 text-left ${paymentPlan === "contado" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                  <p className="text-sm font-bold">Contado</p>
+                  <p className={`text-[11px] ${paymentPlan === "contado" ? "text-[#E8D5A8]" : "text-[#9a7b45]"}`}>100% a la firma{minCashPerM2 != null ? ` · USD ${formatGardenZenUsd(activeUnit?.cashPerM2 || minCashPerM2)}/m²` : ""}</p>
+                </button>
+                <button type="button" onClick={() => setPaymentPlan("plan70")} className={`rounded-xl border p-3 text-left ${paymentPlan === "plan70" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                  <p className="text-sm font-bold">Inicial 70%</p>
+                  <p className={`text-[11px] ${paymentPlan === "plan70" ? "text-stone-300" : "text-stone-500"}`}>70% a la firma · 30% contra entrega</p>
+                </button>
+                <button type="button" onClick={() => setPaymentPlan("plan30")} className={`rounded-xl border p-3 text-left ${paymentPlan === "plan30" ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                  <p className="text-sm font-bold">Inicial 30%</p>
+                  <p className={`text-[11px] ${paymentPlan === "plan30" ? "text-stone-300" : "text-stone-500"}`}>30% a la firma · 70% contra entrega</p>
+                </button>
+              </div>
+            </div>
+
+            {activeUnit && activeUnit.status !== "disponible" && (
+              <p className="rounded-xl border border-stone-200 bg-stone-100 p-4 text-sm text-stone-600">
+                La unidad {activeUnit.unitNumber} del piso {activeUnit.floor} figura {activeUnit.status === "reservado" ? "reservada" : "vendida"}. Elige otra.
+              </p>
+            )}
+
+            {activeUnit && quote && (
+              <div className="space-y-4 rounded-2xl bg-stone-900 p-5 text-white shadow-xl">
+                <div className="border-b border-white/10 pb-3 text-xs text-[#E8D5A8]">
+                  Unidad {activeUnit.unitNumber} · Piso {activeUnit.floor} · {selectedModel.name} · {formatM2(activeUnit.areaM2)} m²
                 </div>
-              )}
-            </div>
-
-            {/* PASO 3: PARQUEO Y BAULERA (OPCIONAL ESTILO APPLE STORE) */}
-            <div className="mt-8">
-              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                Paso 3: Añade tu Parqueo o Baulera (Opcional)
-              </p>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-3">
-                {/* Sin parqueo */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedParkingOption("none")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    selectedParkingOption === "none"
-                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white hover:border-stone-300"
-                  }`}
-                >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
-                    <span className="text-xs font-bold text-stone-900">Sin Parqueo</span>
-                    <p className="text-[11px] text-stone-500 font-light mt-1">
-                      Solo la unidad residencial.
-                    </p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Inversión total</p>
+                    <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{formatGardenZenUsd(quote.total)}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">USD {formatGardenZenUsd(quote.rate)}/m²{quote.parking ? ` + adicional USD ${formatGardenZenUsd(quote.parking)}` : ""}</p>
                   </div>
-                  <p className="font-serif text-sm font-bold text-stone-900 mt-3">
-                    + USD 0
-                  </p>
-                </button>
-
-                {/* Parqueo Techado */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedParkingOption("techado")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    selectedParkingOption === "techado"
-                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white hover:border-stone-300"
-                  }`}
-                >
                   <div>
-                    <div className="flex items-center gap-1.5 text-stone-900">
-                      <Car size={15} className="text-[#9a7b45]" />
-                      <span className="text-xs font-bold">Parqueo Techado</span>
-                    </div>
-                    <p className="text-[11px] text-stone-500 font-light mt-1">
-                      12,5 m² en Subsuelo / Piso 1.
-                    </p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Cuota inicial ({paymentPlan === "contado" ? "100" : paymentPlan === "plan70" ? "70" : "30"}%)</p>
+                    <p className="mt-1 font-serif text-2xl font-bold leading-tight text-emerald-400"><span className="block font-mono text-xs font-normal text-emerald-500/80">USD</span>{formatGardenZenUsd(quote.initial)}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">A la firma del contrato</p>
                   </div>
-                  <p className="font-serif text-sm font-bold text-[#816127] mt-3">
-                    + USD 12.000
-                  </p>
-                </button>
-
-                {/* Combo Parqueo + Baulera */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedParkingOption("combo")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    selectedParkingOption === "combo"
-                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white hover:border-stone-300"
-                  }`}
-                >
                   <div>
-                    <div className="flex items-center gap-1.5 text-stone-900">
-                      <ShieldCheck size={15} className="text-[#9a7b45]" />
-                      <span className="text-xs font-bold">Parqueo + Baulera</span>
-                    </div>
-                    <p className="text-[11px] text-stone-500 font-light mt-1">
-                      Parqueo techado + baulera privada.
-                    </p>
-                  </div>
-                  <p className="font-serif text-sm font-bold text-[#816127] mt-3">
-                    + USD 15.000
-                  </p>
-                </button>
-
-                {/* Parqueo de Moto */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedParkingOption("moto")}
-                  className={`rounded-2xl border p-4 text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    selectedParkingOption === "moto"
-                      ? "border-[#9a7b45] bg-[#9a7b45]/15 ring-1 ring-[#9a7b45]"
-                      : "border-stone-200 bg-white hover:border-stone-300"
-                  }`}
-                >
-                  <div>
-                    <span className="text-xs font-bold text-stone-900">Parqueo Moto</span>
-                    <p className="text-[11px] text-stone-500 font-light mt-1">
-                      3,75 m² techado en Subsuelo.
-                    </p>
-                  </div>
-                  <p className="font-serif text-sm font-bold text-[#816127] mt-3">
-                    + USD 7.500
-                  </p>
-                </button>
-              </div>
-            </div>
-
-            {/* PASO 4: PLAN FINANCIERO & DESGLOSE UNIFICADO */}
-            <div className="mt-8">
-              <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                Paso 4: Modalidad de Pago
-              </p>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedPlan("contado")}
-                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
-                    selectedPlan === "contado"
-                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm"
-                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-                  }`}
-                >
-                  <p className="text-xs font-bold">Pago Contado (100%)</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.cashPerM2 || minCashPerM2)}/m² · Unidad elegida</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedPlan("plan70")}
-                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
-                    selectedPlan === "plan70"
-                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm"
-                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-                  }`}
-                >
-                  <p className="text-xs font-bold">Plan 70% Anticipo</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.initial70PerM2 || minPlan70PerM2)}/m² · 30% contra entrega</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedPlan("plan30")}
-                  className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
-                    selectedPlan === "plan30"
-                      ? "border-[#9a7b45] bg-stone-900 text-white shadow-sm"
-                      : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-                  }`}
-                >
-                  <p className="text-xs font-bold">Plan 30% Anticipo</p>
-                  <p className="text-[10px] opacity-80 mt-0.5">USD {formatGardenZenUsd(activeUnit?.initial30PerM2 || minPlan30PerM2)}/m² · 70% contra entrega</p>
-                </button>
-              </div>
-
-              {/* Tarjeta de Resumen Financiero Total */}
-              {activeFinancials && activeUnit && (
-                <div className="mt-5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                  <div className="grid grid-cols-1 gap-3 border-b border-stone-100 pb-4 sm:grid-cols-3">
-                    <div className="flex flex-col justify-between">
-                      <div className="min-h-[28px] flex items-end">
-                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                          Inversión Total
-                        </p>
-                      </div>
-                      <div className="mt-1">
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
-                          <span className="block">USD</span>
-                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.totalPrice)}</span>
-                        </p>
-                        <p className="text-[10px] text-stone-500 font-mono mt-1">
-                          USD {formatGardenZenUsd(activeFinancials.pricePerM2)} / m²
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col justify-between">
-                      <div className="min-h-[28px] flex items-end">
-                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                          Cuota Inicial ({selectedPlan === "contado" ? "100%" : selectedPlan === "plan70" ? "70%" : "30%"})
-                        </p>
-                      </div>
-                      <div className="mt-1">
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-[#816127] leading-tight">
-                          <span className="block">USD</span>
-                          <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.initialPayment)}</span>
-                        </p>
-                        <p className="text-[10px] text-stone-500 mt-1">
-                          A la firma del contrato
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col justify-between">
-                      <div className="min-h-[28px] flex items-end">
-                        <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                          Saldo contra Entrega
-                        </p>
-                      </div>
-                      <div className="mt-1">
-                        {activeFinancials.balancePayment > 0 ? (
-                          <>
-                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-900 leading-tight">
-                              <span className="block">USD</span>
-                              <span className="block mt-0.5">{formatGardenZenUsd(activeFinancials.balancePayment)}</span>
-                            </p>
-                            <p className="text-[10px] text-stone-500 mt-1">
-                              En {GARDEN_ZEN_CONFIG.delivery}
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="font-serif text-lg sm:text-2xl font-bold text-stone-400 leading-tight">
-                              <span className="block">USD</span>
-                              <span className="block mt-0.5">—</span>
-                            </p>
-                            <p className="text-[10px] text-stone-400 mt-1">
-                              Sin saldo pendiente
-                            </p>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* PASO 5: BOTÓN DE RESERVA WHATSAPP */}
-                  <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-xs text-stone-500 font-light">
-                      Reserva formal con <strong>USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}</strong> para congelar la unidad {activeUnit.unitNumber} en Piso {activeUnit.floor}.
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const planLabel =
-                          selectedPlan === "contado"
-                            ? "Pago Contado (100%)"
-                            : selectedPlan === "plan70"
-                            ? "Plan 70% Anticipo"
-                            : "Plan 30% Anticipo";
-                        const parkingText =
-                          selectedParkingOption === "none"
-                            ? "Sin parqueo"
-                            : selectedParkingOption === "techado"
-                            ? "Parqueo Techado (+USD 12.000)"
-                            : selectedParkingOption === "combo"
-                            ? "Parqueo + Baulera (+USD 15.000)"
-                            : "Parqueo Moto (+USD 7.500)";
-
-                        const msg = `Hola, vengo directo de N.I.A para reservar en Garden Zen: Unidad ${activeUnit.unitNumber} en Piso ${activeUnit.floor} (${activeUnit.roomsLabel} - ${activeUnit.areaM2} m²), ${parkingText}, Inversión Total USD ${formatGardenZenUsd(activeFinancials.totalPrice)}, Modalidad ${planLabel}. Cuento con los USD ${formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} para congelar la unidad hoy.`;
-                        reserve(msg, activeFinancials.totalPrice);
-                      }}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-xl transition-all hover:bg-black hover:scale-105 active:scale-95 cursor-pointer"
-                    >
-                      <MessageCircle size={16} className="text-[#e8d5a8]" />
-                      <span>Reservar Unidad {activeUnit.unitNumber} vía WhatsApp</span>
-                    </button>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Saldo contra entrega</p>
+                    {paymentPlan === "contado" ? (
+                      <>
+                        <p className="mt-1 font-serif text-2xl font-bold leading-tight text-stone-500"><span className="block font-mono text-xs font-normal text-stone-500">USD</span>—</p>
+                        <p className="mt-1 text-[10px] text-stone-400">Sin saldo pendiente</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{formatGardenZenUsd(quote.balance)}</p>
+                        <p className="mt-1 text-[10px] text-stone-400">{paymentPlan === "plan70" ? "30%" : "70%"} en {GARDEN_ZEN_CONFIG.delivery}</p>
+                      </>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
-          </section>
-
-          {/* 9. CIERRE / CONDICIONES & DESCARGAS */}
-          <section id="cierre" ref={closeRef} className="mt-20 scroll-mt-6 border-t border-stone-200/80 pt-10">
-            <div className="rounded-3xl border border-stone-200 bg-gradient-to-br from-stone-900 to-black p-6 sm:p-8 text-white shadow-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e8d5a8]">
-                  Garantía &amp; Respaldo · {GARDEN_ZEN_CONFIG.builder}
-                </span>
-                <span className="text-xs text-emerald-400 font-medium">
-                  Entrega {GARDEN_ZEN_CONFIG.delivery}
-                </span>
-              </div>
-
-              <h3 className="mt-3 font-serif text-2xl sm:text-3xl text-white">
-                Asegura tu departamento en el proyecto eco-sostenible más rentable de Equipetrol Norte.
-              </h3>
-
-              <p className="mt-3 text-xs sm:text-sm text-stone-300 font-light leading-relaxed [text-align:justify]">
-                Las unidades se asignan por orden de reserva formal de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}. Al reservar, aseguras el precio preferencial de obra fina y congelas la orientación seleccionada antes del siguiente ajuste tarifario.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const msg = `Hola, quiero coordinar una visita y conocer más detalles de preventa en Garden Zen con el equipo de N.I.A.`;
-                    reserve(msg);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-stone-900 shadow-md transition-all hover:bg-emerald-100 cursor-pointer"
-                >
-                  <MessageCircle size={15} />
-                  Coordinar Visita de Obra
+                <p className="text-[11px] leading-relaxed text-stone-400">La reserva de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} se descuenta de la cuota inicial.</p>
+                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                  <MessageCircle size={16} />
+                  Quiero la unidad {activeUnit.unitNumber}
                 </button>
-
-                <a
-                  href={GARDEN_ZEN_CONFIG.brochurePdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur transition-all hover:bg-white/20 cursor-pointer"
-                >
-                  <Download size={14} className="text-[#e8d5a8]" />
-                  Brochure Completo (PDF)
-                </a>
               </div>
-
-              <p className="mt-8 text-[11px] leading-relaxed text-stone-400">
-                Desarrolla {GARDEN_ZEN_CONFIG.builder} · {GARDEN_ZEN_CONFIG.address} · Entrega programada {GARDEN_ZEN_CONFIG.delivery}. Las imágenes y renders son de carácter arquitectónico referencial.
-              </p>
-            </div>
+            )}
           </section>
 
+          <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu unidad en obra fina.</h3>
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
+              Reserva hoy tu departamento con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} y congela el precio de esta etapa. Si tienes dudas, escribe y te ayudamos a elegir la unidad.
+            </p>
+            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
+              Hablar con un asesor <ArrowRight size={14} />
+            </button>
+          </section>
         </div>
       </div>
 
-      {/* BARRA INFERIOR FLOTANTE DE CONVERSIÓN RÁPIDA (se oculta al llegar al cierre) */}
-      <AnimatePresence>
-        {activeLabel !== "Reserva USD 5.000" && (
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]"
-          >
-            <div>
-              <p className="text-xs text-stone-600">
-                Reserva con{" "}
-                <span className="font-semibold text-stone-900">
-                  USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}
-                </span>
-              </p>
-              <p className="text-[10px] text-[#9a7b45] font-medium hidden sm:block">
-                Congela el precio de preventa hoy · Saldo contra entrega
-              </p>
-            </div>
+      {activeSection !== "cierre" && (
+        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
+          <div>
+            <p className="text-xs text-stone-700">{fromAny == null ? GARDEN_ZEN_CONFIG.delivery : `Desde USD ${formatGardenZenUsd(fromAny)} · ${GARDEN_ZEN_CONFIG.delivery}`}</p>
+            <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <a href={GARDEN_ZEN_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-800">
+              <Download size={14} className="text-[#9a7b45]" />
+              Brochure
+            </a>
+            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-lg bg-[#1C1917] px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
+              Elegir unidad
+            </button>
+          </div>
+        </div>
+      )}
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95 cursor-pointer"
-                title="Compartir Garden Zen"
-              >
-                {shareFeedback ? (
-                  <>
-                    <Check size={14} className="text-emerald-600" />
-                    <span className="text-emerald-700">¡Copiado!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 size={14} />
-                    <span className="hidden sm:inline">Compartir</span>
-                  </>
-                )}
+      {showFloatingNav && (
+        <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
+            {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
+          </button>
+          <AnimatePresence>
+            {showSectionMenu && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="absolute bottom-14 right-0 z-[115] w-56 space-y-1 rounded-2xl border border-stone-200 bg-white/95 p-2.5 text-xs shadow-2xl">
+                {SECTIONS.map((section) => (
+                  <button key={section.id} type="button" onClick={() => scrollToSection(section.id)} className={`w-full rounded-lg px-3 py-2 text-left font-medium ${activeSection === section.id ? "bg-[#9a7b45]/15 font-semibold text-[#816127]" : "text-stone-700"}`}>
+                    {section.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      <AnimatePresence>
+        {zoom && (
+          <div className="fixed inset-0 z-[140] flex flex-col bg-[#f7f5f0]" role="dialog" aria-modal="true" aria-label={zoom.title}>
+            <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-8">
+              <div className="min-w-0">
+                <h4 className="font-serif text-xl text-stone-900">{zoom.title}</h4>
+                <p className="line-clamp-2 text-xs text-stone-500">{zoom.caption}</p>
+              </div>
+              <button type="button" onClick={() => setZoom(null)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-800 shadow-sm" aria-label="Cerrar vista">
+                <X size={18} />
               </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* BURBUJA FLOTANTE DE NAVEGACIÓN RÁPIDA DE SECCIONES */}
-      <AnimatePresence>
-        {showFloatingNav && (
-          <div className="fixed bottom-20 right-4 sm:right-6 md:right-8 z-[125] flex flex-col items-end">
-            <AnimatePresence>
-              {floatingNavOpen && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setFloatingNavOpen(false)}
-                    className="fixed inset-0 z-[126] bg-black/25 backdrop-blur-[2px]"
-                  />
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 14 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 14 }}
-                    transition={{ type: "spring", stiffness: 420, damping: 28 }}
-                    className="relative z-[127] mb-3 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-stone-200/90 bg-white/95 p-2.5 shadow-2xl backdrop-blur-xl text-stone-900"
-                  >
-                    <div className="flex items-center justify-between border-b border-stone-100 px-2.5 pb-2 pt-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-[#9a7b45] animate-pulse" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                          Secciones Garden Zen
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setFloatingNavOpen(false)}
-                        className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors cursor-pointer"
-                        title="Cerrar menú"
-                      >
-                        <X size={15} />
-                      </button>
-                    </div>
-
-                    <div className="mt-1 space-y-0.5 max-h-[60vh] overflow-y-auto py-1">
-                      {SECTIONS_NAV.map((sec) => {
-                        const IconComponent = sec.icon;
-                        const isActive =
-                          activeSectionId === sec.id ||
-                          (sec.id === "disponibilidad" && activeSectionId === "cierre");
-                        return (
-                          <button
-                            key={sec.id}
-                            type="button"
-                            onClick={() => scrollToSection(sec.id)}
-                            className={`w-full flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-xs transition-all cursor-pointer ${
-                              isActive
-                                ? "bg-[#9a7b45]/15 text-[#816127] font-semibold shadow-xs"
-                                : "text-stone-700 hover:bg-stone-100/90 hover:text-stone-950 font-normal"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div
-                                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                                  isActive
-                                    ? "bg-[#9a7b45] text-white"
-                                    : "bg-stone-100 text-stone-500"
-                                }`}
-                              >
-                                <IconComponent size={14} />
-                              </div>
-                              <div className="min-w-0 truncate">
-                                <p className="truncate text-xs leading-tight">{sec.label}</p>
-                                <p className="text-[10px] text-stone-400 font-light truncate">
-                                  {sec.hint}
-                                </p>
-                              </div>
-                            </div>
-                            {isActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#9a7b45]" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              type="button"
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.85, opacity: 0 }}
-              whileTap={{ scale: 0.94 }}
-              whileHover={{ scale: 1.05 }}
-              onClick={() => setFloatingNavOpen((prev) => !prev)}
-              className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl backdrop-blur-md transition-all hover:bg-black hover:shadow-black/25 cursor-pointer"
-              aria-label="Menú de secciones"
-              title="Navegar secciones del proyecto"
-            >
-              {floatingNavOpen ? (
-                <X size={18} className="text-[#e8d5a8]" />
-              ) : (
-                <Menu size={18} className="text-[#e8d5a8]" />
-              )}
-            </motion.button>
+            <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-4 md:px-10">
+              <img src={zoom.src} alt={zoom.title} className="max-h-full max-w-full object-contain" />
+            </div>
           </div>
         )}
       </AnimatePresence>
-
-    </motion.div>
+    </div>
   );
 }
