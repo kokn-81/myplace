@@ -597,10 +597,10 @@ export default function OnaLanding({ property, onClose }: Props) {
       </div>
 
       <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
-        <div className="relative min-h-[240px] flex-1 md:min-h-0">
+        <div className="relative md:min-h-0 md:flex-1">
           <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
-          <div className="relative h-[300px] w-full md:absolute md:inset-0 md:h-auto">
-            <img src="/ona/fachada-dia.jpg" alt="Fachada completa de ONA Residences" className="absolute inset-0 h-full w-full object-contain object-center" />
+          <div className="relative w-full md:absolute md:inset-0">
+            <img src="/ona/fachada-dia.jpg" alt="Fachada completa de ONA Residences" className="block h-auto w-full object-contain object-center md:absolute md:inset-0 md:h-full md:w-full" />
           </div>
         </div>
         <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
