@@ -3994,7 +3994,7 @@ export default function MapPage() {
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
       {!selectedProperty && (visibleProperties.length > 0 || hasFinishedAiSearch) && (
-        <div className={`nia-property-carousel ${visibleProperties.some((property) => getProjectCardSummary(property)) ? "nia-project-carousel" : ""} absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0`}>
+        <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
 
           {visibleProperties.length > 0 && (
             <button
