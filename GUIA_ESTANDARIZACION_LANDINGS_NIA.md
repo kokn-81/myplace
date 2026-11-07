@@ -1,5 +1,5 @@
 # N.I.A · Estándar de Diseño y Arquitectura para Landings de Proyectos Inmobiliarios
-**Versión:** 1.7
+**Versión:** 1.8
 
 **Referencia Maestra:** la landing publicada de *ONA Residences* (`frontend/src/components/OnaLanding.tsx` y `onaInventory.ts`).  
 **Propósito:** Especificación técnica, comercial y visual obligatoria. El formato, la orientación y la paleta se copian de ONA. El texto, los precios, los planes y las fotos son de cada proyecto.
@@ -25,7 +25,7 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 13. **Lo que no se copia de ONA:** oraciones, nombres, metrajes, precios, cantidad de planes, monto de reserva, parqueos y fotos. Si el material oficial trae dos planes, se muestran dos, con el mismo dibujo de tarjeta.
 14. **`#lugar`:** la imagen es el mapa o plano de ubicación del brochure oficial, a ancho completo (`block h-auto w-full`), dentro de un marco y sin estirarla. No se limita con `max-w-md`: un mapa vertical o apaisado tiene que ocupar la tarjeta. El texto va junto a la imagen, no encima.
 15. **`#amenidades`:** el título y el texto van debajo de la foto. No tapan la imagen. Si el brochure trae el nombre del ambiente impreso en la foto, se recorta para que no quede doble rótulo.
-16. **`#tipologias`:** la vista previa muestra solo el departamento, centrado (`object-contain`). El clic abre la ficha completa (plano, tabla y posición en el piso) en un modal con scroll. No se usa la hoja entera del brochure como miniatura.
+16. **`#tipologias`:** la vista previa es el departamento entero, con margen blanco, dentro de un marco que cabe sobre la barra inferior (`object-contain`, el alto del marco es el espacio que queda). Debajo va la planta del piso, con la unidad marcada. El clic abre un visor a pantalla completa, por encima de la barra, con tres vistas: departamento, planta y ficha. Ni el archivo ni el marco recortan el balcón ni el ala de servicio. No se usa la hoja entera del brochure como miniatura.
 17. **`#equipamiento`:** cada grupo es una tarjeta con foto del ambiente y la lista oficial debajo, igual que cocina, sala y el resto. No se deja una lista suelta. No se inventan acabados que el brochure no publica.
 18. **`#constructora`:** se muestra el logo de la constructora, tomado del material oficial.
 19. **Paso 2 (elegir piso):** hay un control para abrir la imagen oficial de distribución de pisos, para ver dónde queda la unidad en el edificio.
@@ -36,12 +36,12 @@ La marca es el cascarón de ONA tal como está escrito en `OnaLanding.tsx`, no u
 24. **Unidad vendida.** Si la lista marca la unidad como vendida y no publica su precio, la ficha no calcula ni muestra un número.
 25. **Código de unidad.** Si el código es piso + letra (1D, 2D, 3D), el botón de piso dice “Unidad 1D”. Suelto, 1D, 2D y 3D se leen como dormitorios.
 26. **Texto de la página.** El visitante no lee instrucciones de armado (“el texto va debajo de la foto”, “no se inventan acabados”). Esas reglas viven en este manual. La página habla del proyecto.
-27. **Paso 1 (tipología).** Si hay varias plantas, no se listan en una grilla que alarga la página. Van en un carrusel: flechas y deslizamiento. Debajo del modelo activo se ve la foto del departamento, y cambia al pasar al siguiente. El clic en esa foto abre la ficha. El filtro de dormitorios puede quedar arriba, en una sola fila.
+27. **Paso 1 (tipología).** Si hay varias plantas, no se listan en una grilla que alarga la página. Van en un carrusel: flechas y deslizamiento. El modelo activo muestra el departamento entero y, debajo, la planta del piso. Cambia al pasar al siguiente. El clic abre el visor (departamento, planta o ficha). El filtro de dormitorios puede quedar arriba, en una sola fila.
 28. **Títulos.** Cada sección habla al comprador: deseo, decisión o lugar. No describen el documento (“el brochure los presenta”, “los dos publicados”, “la lista dice qué queda”). Sin signos de exclamación y sin una oferta que el material no publica. El título de la portada no entra aquí: siempre es “Vive en [nombre del edificio].”
 29. **Fachada completa.** La portada y la foto de la ficha muestran el edificio entero, de la cubierta a la planta baja. No se usa un recorte de la calle que corte los pisos de arriba. Si el marco es más angosto que la foto, la imagen va en `object-contain` para que no se recorte el volumen. En escritorio la fachada ocupa el alto libre de la columna: el bloque de datos no la reduce a una estampa.
 30. **Ficha del hero.** Al lado de Entrega va el colaborador o la constructora, no una caja de “lista de precios”. Si el brochure dice colaboradores, se pone el primero de esa lista.
 31. **Plan en cuotas.** El título nombra las tres partes publicadas: inicial, cuotas hasta el porcentaje del plan, y saldo contra entrega. No se deja fuera el tramo de cuotas.
-32. **Planta del departamento.** La vista de tipologías y la del paso 1 muestran la distribución completa, escalada para caber en la tarjeta (`object-contain`, alto máximo en vh). No se recorta el departamento.
+32. **Planta del departamento.** Tipologías y el paso 1 muestran el departamento completo, con margen, en un marco que no queda debajo de la barra. La planta del piso va en la misma tarjeta. El visor de pantalla muestra el departamento, la planta o la ficha, siempre enteros. No se recorta el volumen para que “quepa”.
 
 Los apartados 2 a 8 de este archivo describen el mismo sistema. Si una frase vieja pide hero que cambia de foto, paleta propia del proyecto, o panel de 58vh, manda este apartado.
 

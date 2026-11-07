@@ -170,6 +170,86 @@ const ROOM_FILTERS: { id: BetonRooms; label: string }[] = [
   { id: "3", label: "3 dormitorios" },
 ];
 
+function betonPlanSrc(preview: string) {
+  return preview.replace("/modelos/", "/planos/");
+}
+
+type ModelZoom = {
+  view: "depto" | "planta" | "ficha";
+  title: string;
+  caption: string;
+  preview: string;
+  plan: string;
+  full: string;
+};
+
+type SheetZoom = {
+  view: "solo";
+  title: string;
+  caption: string;
+  src: string;
+};
+
+type ZoomState = ModelZoom | SheetZoom;
+
+function ModelFrame({
+  model,
+  index,
+  total,
+  price,
+  frameClass,
+  onPrev,
+  onNext,
+  onOpen,
+  onTouchStart,
+  onTouchEnd,
+}: {
+  model: BetonModel;
+  index: number;
+  total: number;
+  price?: string;
+  frameClass: string;
+  onPrev: () => void;
+  onNext: () => void;
+  onOpen: (view: "depto" | "planta") => void;
+  onTouchStart: (event: TouchEvent<HTMLDivElement>) => void;
+  onTouchEnd: (event: TouchEvent<HTMLDivElement>) => void;
+}) {
+  const plan = betonPlanSrc(model.preview);
+  return (
+    <div className={`flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm ${frameClass}`} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-stone-100 px-4 py-2.5">
+        <div className="min-w-0">
+          <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{model.name}</p>
+          <p className="truncate text-xs text-stone-600">{formatBetonM2(model.areaM2)} m² · {model.where}</p>
+          <p className="line-clamp-1 text-xs leading-snug text-stone-500">{model.detail}</p>
+          {price ? <p className="mt-0.5 text-sm font-semibold text-[#9a7b45]">{price}</p> : null}
+        </div>
+        <p className="shrink-0 pt-0.5 text-[11px] text-stone-400">{index + 1}/{total}</p>
+      </div>
+      <div className="relative min-h-0 flex-1 bg-white">
+        <button type="button" onClick={() => onOpen("depto")} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver ${model.name} completo`}>
+          <img src={model.preview} alt={`${model.name}, el departamento completo`} className="max-h-full max-w-full object-contain" />
+        </button>
+        {total > 1 && (
+          <>
+            <button type="button" onClick={onPrev} className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo anterior"><ChevronLeft size={22} /></button>
+            <button type="button" onClick={onNext} className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo siguiente"><ChevronRight size={22} /></button>
+          </>
+        )}
+      </div>
+      <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
+        <img src={plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
+        <span className="min-w-0">
+          <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">En el piso</span>
+          <span className="block text-xs leading-snug text-stone-600">Toca el departamento para verlo entero, o abre la planta.</span>
+        </span>
+      </button>
+      {model.areaNote ? <p className="shrink-0 px-3 py-1.5 text-center text-[11px] text-stone-500">{model.areaNote}</p> : null}
+    </div>
+  );
+}
+
 export default function BetonBrutLanding({ onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
@@ -186,7 +266,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
   const [selectedCodigo, setSelectedCodigo] = useState("1D");
   const [addon, setAddon] = useState<BetonAddon>("none");
   const [paymentPlan, setPaymentPlan] = useState<BetonPlan>("contado");
-  const [zoom, setZoom] = useState<{ src: string; title: string; caption: string } | null>(null);
+  const [zoom, setZoom] = useState<ZoomState | null>(null);
 
   const from1 = minContadoForRooms("1");
   const from2 = minContadoForRooms("2");
@@ -278,7 +358,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
     chooseModel(slides[next]);
   };
 
-  const onModelSwipe = (event: TouchEvent) => {
+  const onModelSwipe = (event: TouchEvent<HTMLDivElement>) => {
     if (modelTouch.current == null || slides.length < 2) return;
     const dx = event.changedTouches[0].clientX - modelTouch.current;
     if (dx > 40) shiftModel(-1);
@@ -471,52 +551,37 @@ export default function BetonBrutLanding({ onClose }: Props) {
             </div>
           </section>
 
-          <section id="tipologias" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige el metraje en el que te ves.</h3>
-            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Toca la imagen para abrir la ficha: el plano, la superficie y la posición en el piso. Los pisos 1 a 5 repiten seis departamentos. Los pisos 6 y 7 tienen cinco, con otra planta.
-            </p>
-            <div className="grid grid-cols-3 gap-2">
+          <section id="tipologias" className="mt-20 scroll-mt-2 border-t border-stone-200/80 pt-6">
+            <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+            <div className="shrink-0">
+              <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige el metraje en el que te ves.</h3>
+            </div>
+            <div className="grid shrink-0 grid-cols-3 gap-2">
               {ROOM_FILTERS.map((filter) => (
-                <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-2xl border p-3 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
+                <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-2xl border px-3 py-2 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{filter.label}</p>
-                  <p className="mt-1 text-[11px] text-stone-500">{roomCount[filter.id]} plantas</p>
+                  <p className="text-[11px] text-stone-500">{roomCount[filter.id]} plantas</p>
                 </button>
               ))}
             </div>
-            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-              <div className="flex items-start justify-between gap-3 border-b border-stone-100 px-4 py-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{currentModel.name}</p>
-                  <h4 className="font-serif text-xl text-stone-900">{formatBetonM2(currentModel.areaM2)} m²</h4>
-                  <p className="text-xs text-stone-500">{currentModel.where}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-stone-600">{currentModel.detail}</p>
-                </div>
-                <p className="pt-1 text-[11px] text-stone-400">{slideIndex + 1}/{slides.length}</p>
-              </div>
-              <div
-                className="relative bg-white"
-                onTouchStart={(event) => { touchX.current = event.changedTouches[0].clientX; }}
-                onTouchEnd={(event) => {
-                  if (touchX.current == null || slides.length < 2) return;
-                  const dx = event.changedTouches[0].clientX - touchX.current;
-                  if (dx > 40) shiftModel(-1);
-                  if (dx < -40) shiftModel(1);
-                  touchX.current = null;
-                }}
-              >
-                <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex w-full cursor-zoom-in items-center justify-center px-4 py-4" aria-label={`Ver ficha de ${currentModel.name}`}>
-                  <img src={currentModel.preview} alt={`${currentModel.name}, solo el departamento`} className="mx-auto h-auto max-h-[min(420px,calc(100dvh-520px))] w-full object-contain" />
-                </button>
-                {slides.length > 1 && (
-                  <>
-                    <button type="button" onClick={() => shiftModel(-1)} className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo anterior"><ChevronLeft size={22} /></button>
-                    <button type="button" onClick={() => shiftModel(1)} className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo siguiente"><ChevronRight size={22} /></button>
-                  </>
-                )}
-              </div>
-              {currentModel.areaNote ? <p className="border-t border-stone-100 px-4 py-3 text-center text-[11px] text-stone-500">{currentModel.areaNote}</p> : null}
+            <ModelFrame
+              model={currentModel}
+              index={slideIndex}
+              total={slides.length}
+              frameClass="min-h-0 flex-1"
+              onPrev={() => shiftModel(-1)}
+              onNext={() => shiftModel(1)}
+              onOpen={(view) => setZoom({ view, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}`, preview: currentModel.preview, plan: betonPlanSrc(currentModel.preview), full: currentModel.full })}
+              onTouchStart={(event) => { touchX.current = event.changedTouches[0].clientX; }}
+              onTouchEnd={(event) => {
+                if (touchX.current == null || slides.length < 2) return;
+                const dx = event.changedTouches[0].clientX - touchX.current;
+                if (dx > 40) shiftModel(-1);
+                if (dx < -40) shiftModel(1);
+                touchX.current = null;
+              }}
+            />
             </div>
           </section>
 
@@ -594,16 +659,17 @@ export default function BetonBrutLanding({ onClose }: Props) {
             </button>
           </section>
 
-          <section id="disponibilidad" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-            <div>
+          <section id="disponibilidad" className="mt-20 scroll-mt-2 space-y-6 border-t border-stone-200/80 pt-6">
+            <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+            <div className="shrink-0">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-              <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Encuentra la unidad y apártala.</h3>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Encuentra la unidad y apártala.</h3>
+              <p className="mt-1 text-xs text-stone-500">Lista del {BETON_BRUT_CONFIG.priceListLabel}. En verde, lo que puedes tomar. En gris, vendido.</p>
             </div>
-            <p className="text-xs text-stone-500">Precios de la lista oficial del {BETON_BRUT_CONFIG.priceListLabel}. En verde está lo que puedes tomar. En gris ya se vendió y no mostramos un precio que la lista no publicó.</p>
 
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
+              <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
+              <div className="grid shrink-0 grid-cols-3 gap-2">
                 {ROOM_FILTERS.map((filter) => (
                   <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-xl border p-3 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white"}`}>
                     <p className="text-sm font-bold">{filter.label}</p>
@@ -611,44 +677,30 @@ export default function BetonBrutLanding({ onClose }: Props) {
                   </button>
                 ))}
               </div>
-              <div
-                className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
+              <ModelFrame
+                model={currentModel}
+                index={slideIndex}
+                total={slides.length}
+                price={(() => {
+                  const freeUnits = unitsForModel(currentModel.id).filter((unit) => unit.precioContado != null);
+                  if (freeUnits.length === 0) return "Vendido";
+                  const amount = Math.min(...freeUnits.map((unit) => unit.precioContado as number));
+                  return `Desde USD ${formatBetonUsd(amount)}`;
+                })()}
+                frameClass="min-h-0 flex-1"
+                onPrev={() => shiftModel(-1)}
+                onNext={() => shiftModel(1)}
+                onOpen={(view) => setZoom({ view, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}`, preview: currentModel.preview, plan: betonPlanSrc(currentModel.preview), full: currentModel.full })}
                 onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }}
                 onTouchEnd={onModelSwipe}
-              >
-                <div className="flex items-center gap-1 border-b border-stone-100 px-2 py-3">
-                  <button type="button" onClick={() => shiftModel(-1)} disabled={slides.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 disabled:opacity-30" aria-label="Modelo anterior">
-                    <ChevronLeft size={22} />
-                  </button>
-                  <div className="min-w-0 flex-1 text-center">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{slideIndex + 1} / {slides.length}</p>
-                    <p className="font-serif text-lg text-stone-900">{currentModel.name}</p>
-                    <p className="text-xs text-stone-500">{formatBetonM2(currentModel.areaM2)} m² · {currentModel.where}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-stone-600">{currentModel.detail}</p>
-                    <p className="mt-1 text-sm font-semibold text-[#9a7b45]">
-                      {(() => {
-                        const freeUnits = unitsForModel(currentModel.id).filter((unit) => unit.precioContado != null);
-                        if (freeUnits.length === 0) return "Vendido";
-                        const price = Math.min(...freeUnits.map((unit) => unit.precioContado as number));
-                        return `Desde USD ${formatBetonUsd(price)}`;
-                      })()}
-                    </p>
-                  </div>
-                  <button type="button" onClick={() => shiftModel(1)} disabled={slides.length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-stone-800 disabled:opacity-30" aria-label="Modelo siguiente">
-                    <ChevronRight size={22} />
-                  </button>
-                </div>
-                <button type="button" onClick={() => setZoom({ src: currentModel.full, title: currentModel.name, caption: `${formatBetonM2(currentModel.areaM2)} m² · ${currentModel.detail}` })} className="flex w-full cursor-zoom-in items-center justify-center bg-[#f7f5f0] px-4 py-4" aria-label={`Ver ficha de ${currentModel.name}`}>
-                  <img src={currentModel.preview} alt={`${currentModel.name}, el departamento`} className="mx-auto h-auto max-h-[min(280px,32vh)] w-full object-contain" />
-                </button>
-
-              </div>
+              />
+            </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <button type="button" onClick={() => setZoom({ src: "/beton_brut/esquema.jpg", title: "Distribución del edificio", caption: "Subsuelo, planta baja, pisos 1 a 7 y área social." })} className="font-semibold text-[#816127]">
+                <button type="button" onClick={() => setZoom({ view: "solo", src: "/beton_brut/esquema.jpg", title: "Distribución del edificio", caption: "Subsuelo, planta baja, pisos 1 a 7 y área social." })} className="font-semibold text-[#816127]">
                   Ver distribución de pisos
                 </button>
               </div>
@@ -795,18 +847,31 @@ export default function BetonBrutLanding({ onClose }: Props) {
 
       <AnimatePresence>
         {zoom && (
-          <div className="fixed inset-0 z-[130] overflow-y-auto bg-black/90 p-4" onClick={() => setZoom(null)}>
-            <div className="mx-auto my-4 w-full max-w-3xl rounded-2xl border border-white/10 bg-stone-900 p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
-              <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2 text-white">
-                <div>
-                  <h4 className="font-serif text-lg font-bold">{zoom.title}</h4>
-                  <p className="text-xs text-stone-400">{zoom.caption}</p>
-                </div>
-                <button type="button" onClick={() => setZoom(null)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white" aria-label="Cerrar vista">
-                  <X size={16} />
-                </button>
+          <div className="fixed inset-0 z-[140] flex flex-col bg-[#f7f5f0]" role="dialog" aria-modal="true" aria-label={zoom.title}>
+            <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-8">
+              <div className="min-w-0">
+                <h4 className="font-serif text-xl text-stone-900">{zoom.title}</h4>
+                <p className="line-clamp-2 text-xs text-stone-500">{zoom.caption}</p>
               </div>
-              <img src={zoom.src} alt={zoom.title} className="mx-auto w-full bg-white" />
+              <button type="button" onClick={() => setZoom(null)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-800 shadow-sm" aria-label="Cerrar vista">
+                <X size={18} />
+              </button>
+            </div>
+            {zoom.view !== "solo" && (
+              <div className="flex justify-center gap-1.5 px-4 pb-2">
+                {(["depto", "planta", "ficha"] as const).map((view) => (
+                  <button key={view} type="button" onClick={() => setZoom({ ...zoom, view })} className={`rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider ${zoom.view === view ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>
+                    {view === "depto" ? "Departamento" : view === "planta" ? "Planta" : "Ficha"}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-4 md:px-10">
+              <img
+                src={zoom.view === "solo" ? zoom.src : zoom.view === "planta" ? zoom.plan : zoom.view === "ficha" ? zoom.full : zoom.preview}
+                alt={zoom.title}
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
           </div>
         )}
