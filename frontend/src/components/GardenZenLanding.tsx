@@ -559,17 +559,17 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#e9dcc8] md:h-screen md:w-[44%]">
+      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#3f5340] md:h-screen md:w-[44%]">
         <div className="relative min-h-0 flex-1">
           <img src="/garden_zen/fachada.jpg" alt="Fachada completa de Garden Zen" className="absolute inset-0 h-full w-full object-contain object-center" />
         </div>
-        <div className="relative z-10 shrink-0 bg-[#e9dcc8] px-5 pb-3.5 pt-3 text-stone-900 md:px-8 md:pb-5 md:pt-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#7a3218]/35 bg-white/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#5c2414] md:px-3 md:py-1 md:text-[11px]">
+        <div className="relative z-10 shrink-0 bg-[#3f5340] px-5 pb-3.5 pt-3 text-[#f4f1e6] md:px-8 md:pb-5 md:pt-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e7efd8]/40 bg-black/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#e7efd8] md:px-3 md:py-1 md:text-[11px]">
             <Sparkles size={12} />
             Preventa · obra fina · {GARDEN_ZEN_CONFIG.zone}
           </span>
-          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#1C1917] md:mt-2 md:text-4xl">Garden Zen</h1>
-          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-600 md:text-sm">{GARDEN_ZEN_CONFIG.address}</p>
+          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#f4f1e6] md:mt-2 md:text-4xl">Garden Zen</h1>
+          <p className="mt-1 max-w-sm text-[11px] leading-snug text-[#e7efd8] md:text-sm">{GARDEN_ZEN_CONFIG.address}</p>
           <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
             <div className="rounded-xl border border-[#e6cdb8] bg-white/80 p-2 md:p-3">
               <p className="text-[10px] uppercase tracking-wider text-stone-500">Entrega</p>

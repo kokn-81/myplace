@@ -1,18 +1,12 @@
-import { useInventory, blessTowerInventory } from "../projectInventory";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  AlertCircle,
   ArrowRight,
   Building2,
-  Calculator,
-  Car,
   Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  CreditCard,
-  DollarSign,
   Download,
   ExternalLink,
   Home,
@@ -20,23 +14,17 @@ import {
   MapPin,
   Menu,
   MessageCircle,
-  Percent,
-  RefreshCw,
   Share2,
-  ShieldCheck,
   Sparkles,
   X,
-  Zap,
 } from "lucide-react";
+import { blessTowerInventory, useInventory } from "../projectInventory";
 import { recordLeadEvent } from "../leadTracking";
 import {
-  BLESS_TOWER_BASELINE_UNITS,
   BLESS_TOWER_CONFIG,
-  BLESS_TOWER_PLANO_MAP,
   BlessTowerUnit,
   fetchBlessTowerLiveUnits,
   formatBlessUsd,
-  parseBlessTowerCsv,
 } from "../blessTowerInventory";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
@@ -46,1604 +34,825 @@ interface Props {
   onClose?: () => void;
 }
 
+type RoomId = "mono" | "1d" | "2d";
+type PlanId = "contado" | "plan40" | "plan30";
+type AddonId = "none" | "simple" | "combo";
+type ZoomView = "depto" | "planta" | "ficha" | "solo";
+
+type Slide = {
+  id: string;
+  name: string;
+  areaLabel: string;
+  where: string;
+  detail: string;
+  preview: string;
+  plan: string;
+};
+
+const ROOM_FILTERS: { id: RoomId; label: string; tipologia: BlessTowerUnit["tipologia"] }[] = [
+  { id: "mono", label: "Monoambiente", tipologia: "Monoambiente" },
+  { id: "1d", label: "1 dormitorio", tipologia: "1 Dormitorio" },
+  { id: "2d", label: "2 dormitorios", tipologia: "2 Dormitorios" },
+];
+
+const PLANS: { id: PlanId; label: string; hint: string }[] = [
+  { id: "contado", label: "100% contado", hint: "La tarifa de contado" },
+  { id: "plan40", label: "40% + 60%", hint: "40% en obra · 60% entrega" },
+  { id: "plan30", label: "30% + 70%", hint: "30% a la firma · 70% entrega" },
+];
+
+const ADDONS: { id: AddonId; label: string; hint: string; amount: number }[] = [
+  { id: "none", label: "Sin adicional", hint: "Solo el departamento", amount: 0 },
+  { id: "simple", label: "Parqueo", hint: "USD 12.000", amount: 12000 },
+  { id: "combo", label: "Parqueo + baulera", hint: "USD 15.000", amount: 15000 },
+];
+
 const AMENITY_SLIDES = [
   {
     src: "/bless_tower/piscina_infinity.jpg",
-    category: "Piscina en Rooftop",
+    category: "Piscina en rooftop",
     title: "Tu pausa, con vista a la ciudad",
-    description:
-      "Un baño, una vista abierta y un momento para ti. Disfruta de una piscina sinfín con panorámicas de Santa Cruz, sin salir de tu edificio.",
+    description: "Un baño, una vista abierta y un momento para ti. La piscina sinfín mira Santa Cruz, sin salir del edificio.",
   },
   {
     src: "/bless_tower/social_2.jpg",
-    category: "Área Gourmet",
+    category: "Área gourmet",
     title: "Un buen encuentro empieza aquí",
-    description:
-      "Dos churrasqueras y un estar social para compartir una parrillada con amigos o reunir a la familia. Más espacio para los encuentros que disfrutas.",
+    description: "Dos churrasqueras y un estar social para la parrillada con amigos o la reunión de familia.",
   },
   {
     src: "/bless_tower/social_1.jpg",
-    category: "Fitness & Bienestar",
+    category: "Fitness",
     title: "Entrena sin alejarte de casa",
-    description:
-      "Hazle un lugar al movimiento en tu día. Un gimnasio equipado dentro del edificio para mantener tu rutina cerca de tu departamento.",
+    description: "Un gimnasio dentro del edificio para mantener la rutina cerca del departamento.",
   },
   {
     src: "/bless_tower/cowork_real.jpg",
-    category: "Productividad",
+    category: "Cowork",
     title: "Tu espacio para concentrarte",
-    description:
-      "Cambia de ambiente sin cambiar de dirección. Un cowork para dedicarle tiempo a tus proyectos y separar el trabajo de tu espacio de descanso.",
+    description: "Un cowork para los proyectos, separado del lugar donde descansas.",
   },
   {
     src: "/bless_tower/lobby_interior.jpg",
-    category: "Acceso & Prestigio",
+    category: "Lobby",
     title: "Llegar también se disfruta",
-    description:
-      "Un lobby para recibir a tus visitas y sentir que llegaste a casa. La experiencia de vivir en Bless Tower empieza desde el ingreso.",
+    description: "El lobby recibe a tus visitas. La experiencia de Bless Tower empieza en el ingreso.",
   },
   {
     src: "/bless_tower/sala_juegos.jpg",
-    category: "Entretenimiento",
+    category: "Sala de juegos",
     title: "Tu próxima partida, en casa",
-    description:
-      "Desconéctate de la rutina y comparte una buena partida. Una sala de juegos dentro de tu edificio para disfrutar con amigos y familia.",
+    description: "Una sala de juegos en el edificio para compartir con amigos y familia.",
   },
 ];
 
-const startingPrice = (amount: number) => amount > 0 ? `Desde USD ${formatBlessUsd(amount)}` : "Sin unidades disponibles";
-
-const TYPOLOGIES_DATA = [
-  {
-    id: "mono",
-    title: "Monoambientes para tu independencia",
-    area: "28,5 a 38,4 m²",
-    image: "/bless_tower/modelos_pages/page_2.jpg",
-
-    tagline:
-      "Un espacio propio con cocina, baño y balcón para organizar tu vida a tu ritmo.",
-    highlights: [
-      "Ambiente integrado para descansar, cocinar y compartir",
-      "Cocina con cajonería y mesón de granito negro",
-      "Baño completo con box de vidrio templado",
-      "Aires acondicionados instalados y cerradura inteligente",
-    ],
-  },
-  {
-    id: "1d",
-    title: "1 dormitorio, más privacidad",
-    area: "41,3 a 63,1 m²",
-    image: "/bless_tower/modelos_pages/page_8.jpg",
-
-    tagline:
-      "Separa tu descanso de la vida social con un dormitorio independiente y espacios para compartir.",
-    highlights: [
-      "Dormitorio independiente con ropero empotrado",
-      "Living-comedor y balcón, según el modelo",
-      "Cocina y comedor integrados para tu día a día",
-      "Ubicación sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo",
-    ],
-  },
-  {
-    id: "2d",
-    title: "2 dormitorios para compartir",
-    area: "76,2 a 87,4 m²",
-    image: "/bless_tower/modelos_pages/page_16.jpg",
-
-    tagline:
-      "Dos dormitorios y espacios comunes para compartir, con privacidad para cada uno.",
-    highlights: [
-      "Dormitorio principal con vestidor y baño privado",
-      "Segundo dormitorio con baño propio",
-      "Living-comedor y balcones para disfrutar de tu casa",
-      "Modelos X e Y en los pisos 24 y 25",
-    ],
-  },
-];
-
-const EQUIPAMIENTO_SLIDES = [
+const EQUIPAMIENTO = [
   {
     id: "cocina",
-    room: "COCINA & COMEDOR",
-    title: "Cocina Equipada con Acabados Finos",
-    tagline: "Mobiliario a medida y equipamiento funcional",
+    room: "Cocina",
+    title: "La cocina ya viene resuelta",
     image: "/bless_tower/interior_render_real.jpg",
+    contain: false,
     items: [
       "Muebles superiores e inferiores en melamina de alto tráfico",
-      "Mesón de granito chiquitano pulido de gran resistencia",
-      "Cocina encimera vitrocerámica y campana extractora instaladas",
-      "Bacha de acero inoxidable y grifería monocomando premium",
+      "Mesón de granito chiquitano pulido",
+      "Cocina encimera vitrocerámica y campana extractora",
+      "Bacha de acero inoxidable y grifería monocomando",
     ],
   },
   {
     id: "living",
-    room: "LIVING & CONFORT",
-    title: "Living Social con Ventanales Panorámicos",
-    tagline: "Amplitud, iluminación natural y confort térmico",
+    room: "Living",
+    title: "El living abre la casa",
     image: "/bless_tower/interior_1.jpg",
+    contain: false,
     items: [
-      "Equipo de aire acondicionado split inverter instalado",
+      "Aire acondicionado split inverter instalado",
       "Piso de porcelanato esmaltado de alto tránsito",
-      "Carpintería de aluminio anodizado con aislamiento acústico",
-      "Salida directa a balcón aterrazado con baranda de seguridad",
+      "Carpintería de aluminio anodizado",
+      "Salida a balcón con baranda",
     ],
   },
   {
     id: "suite",
-    room: "SUITE & DISTRIBUCIÓN 3D",
-    title: "Dormitorio Principal y Distribución Isométrica",
-    tagline: "Espacios optimizados para descanso y orden",
+    room: "Dormitorio",
+    title: "El descanso queda aparte",
     image: "/bless_tower/interior_2.jpg",
+    contain: false,
     items: [
-      "Distribución arquitectónica optimizada al milímetro",
-      "Ropero empotrado con divisiones internas y cajonería a medida",
-      "Área de descanso acústicamente aislada del exterior",
-      "Conexión directa a baño completo y lavandería",
+      "Ropero empotrado con divisiones y cajonería",
+      "Distribución según el modelo del brochure",
     ],
   },
   {
-    id: "seguridad",
-    room: "ACCESO & TECNOLOGÍA",
-    title: "Porte-Cochère, Cerraduras Inteligentes y Servicios",
-    tagline: "Seguridad digital y confort en todo momento",
+    id: "acceso",
+    room: "Edificio",
+    title: "Llegas y el acceso ya está definido",
     image: "/bless_tower/ingreso_fachada.jpg",
+    contain: true,
     items: [
-      "Ingreso vehicular jerarquizado con porte-cochère techado",
-      "Cerradura digital inteligente (huella, código y tarjeta)",
-      "Termotanque / calefón instalado para agua caliente continua",
-      "Ascensores de alta velocidad de última generación",
+      "Cerradura digital inteligente",
+      "Termotanque o calefón instalado",
+      "Ascensores de alta velocidad",
     ],
   },
 ];
 
-interface AmbienteOption {
-  id: string;
-  name: string;
-  shortName: string;
-  tipologia: "Monoambiente" | "1 Dormitorio" | "2 Dormitorios";
-  areaRange: string;
-  basePrice: number;
-  matchUnit: (u: BlessTowerUnit) => boolean;
+const SECTIONS = [
+  { id: "intro", label: "Inicio" },
+  { id: "lugar", label: "Ubicación" },
+  { id: "amenidades", label: "Áreas sociales" },
+  { id: "tipologias", label: "Tipologías" },
+  { id: "equipamiento", label: "Equipamiento" },
+  { id: "constructora", label: "Constructora" },
+  { id: "pago", label: "Formas de pago" },
+  { id: "disponibilidad", label: "Disponibilidad" },
+  { id: "cierre", label: "Cierre" },
+];
+
+const MAPS_URL = "https://maps.app.goo.gl/qj6FGP2a7BSe9rVo8?g_st=ic";
+
+function roomOf(unit: BlessTowerUnit | undefined): RoomId {
+  if (unit?.tipologia === "2 Dormitorios") return "2d";
+  if (unit?.tipologia === "1 Dormitorio") return "1d";
+  return "mono";
 }
 
-const AMBIENTE_OPTIONS: AmbienteOption[] = [
-  {
-    id: "mono",
-    name: "Monoambiente",
-    shortName: "Monoambiente · 28 a 38 m²",
-    tipologia: "Monoambiente",
-    areaRange: "28,5 a 38,4 m²",
-    basePrice: 43026,
-    matchUnit: (u) => u.tipologia === "Monoambiente",
-  },
-  {
-    id: "1d",
-    name: "1 Dormitorio",
-    shortName: "1 Dormitorio · 41 a 63 m²",
-    tipologia: "1 Dormitorio",
-    areaRange: "41,3 a 63,1 m²",
-    basePrice: 58000,
-    matchUnit: (u) => u.tipologia === "1 Dormitorio",
-  },
-  {
-    id: "2d",
-    name: "2 Dormitorios",
-    shortName: "2 Dormitorios · 76 a 87 m²",
-    tipologia: "2 Dormitorios",
-    areaRange: "76,2 a 87,4 m²",
-    basePrice: 110000,
-    matchUnit: (u) => u.tipologia === "2 Dormitorios",
-  },
-];
+function tipologiaOf(room: RoomId) {
+  return ROOM_FILTERS.find((item) => item.id === room)?.tipologia || "Monoambiente";
+}
+
+function areaLabel(list: BlessTowerUnit[]) {
+  const areas = [...new Set(list.map((unit) => unit.superficieM2))].filter((value) => value > 0).sort((a, b) => a - b);
+  if (!areas.length) return "";
+  if (areas.length === 1) return `${areas[0].toLocaleString("es-BO")} m²`;
+  return `${areas[0].toLocaleString("es-BO")} a ${areas[areas.length - 1].toLocaleString("es-BO")} m²`;
+}
+
+function slidesFor(units: BlessTowerUnit[], room: RoomId): Slide[] {
+  const tipologia = tipologiaOf(room);
+  const groups = new Map<string, BlessTowerUnit[]>();
+  units.filter((unit) => unit.tipologia === tipologia && /^[A-Z]$/i.test(unit.modelo || "")).forEach((unit) => {
+    const list = groups.get(unit.modelo) || [];
+    list.push(unit);
+    groups.set(unit.modelo, list);
+  });
+  return [...groups.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([modelo, list]) => {
+      const plano = list.find((unit) => unit.planoUrl)?.planoUrl || "/bless_tower/fachada_principal.jpg";
+      return {
+        id: modelo,
+        name: `Modelo ${modelo}`,
+        areaLabel: areaLabel(list),
+        where: tipologia,
+        detail: "Plano del modelo publicado",
+        preview: plano,
+        plan: plano,
+      };
+    });
+}
+
+function minCash(list: BlessTowerUnit[]) {
+  const free = list.filter((unit) => unit.estado === "LIBRE" && unit.precioContado > 0);
+  return free.length ? Math.min(...free.map((unit) => unit.precioContado)) : null;
+}
+
+function apartmentTotal(unit: BlessTowerUnit, plan: PlanId) {
+  if (plan === "plan40") return unit.precioCuotas || Math.round(unit.precioContado * 1.08);
+  if (plan === "plan30") return unit.precioLista || Math.round(unit.precioContado * 1.15);
+  return unit.precioContado;
+}
+
+function quoteUnit(unit: BlessTowerUnit | null, plan: PlanId, addon: number) {
+  if (!unit || unit.estado !== "LIBRE" || !(unit.precioContado > 0)) return null;
+  const apartment = apartmentTotal(unit, plan);
+  const pct = plan === "contado" ? 100 : plan === "plan40" ? 40 : 30;
+  const initial = plan === "contado" ? apartment + addon : Math.round((apartment * pct) / 100);
+  const balance = plan === "contado" ? null : apartment - initial;
+  return {
+    total: apartment + addon,
+    initial,
+    balance,
+    rate: unit.superficieM2 > 0 ? Math.round(apartment / unit.superficieM2) : 0,
+    addon,
+  };
+}
+
+function ModelFrame({
+  slide,
+  index,
+  total,
+  price,
+  frameClass,
+  onPrev,
+  onNext,
+  onOpen,
+  onTouchStart,
+  onTouchEnd,
+}: {
+  slide: Slide;
+  index: number;
+  total: number;
+  price?: string;
+  frameClass: string;
+  onPrev: () => void;
+  onNext: () => void;
+  onOpen: (view: "depto" | "planta") => void;
+  onTouchStart: (event: TouchEvent<HTMLDivElement>) => void;
+  onTouchEnd: (event: TouchEvent<HTMLDivElement>) => void;
+}) {
+  return (
+    <div className={`flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm ${frameClass}`} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-stone-100 px-4 py-2.5">
+        <div className="min-w-0">
+          <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{slide.name}</p>
+          <p className="truncate text-xs text-stone-600">{slide.areaLabel} · {slide.where}</p>
+          <p className="line-clamp-1 text-xs leading-snug text-stone-500">{slide.detail}</p>
+          {price ? <p className="mt-0.5 text-sm font-semibold text-[#9a7b45]">{price}</p> : null}
+        </div>
+        <p className="shrink-0 pt-0.5 text-[11px] text-stone-400">{index + 1}/{total}</p>
+      </div>
+      <div className="relative min-h-0 flex-1 bg-white">
+        <button type="button" onClick={() => onOpen("depto")} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver ${slide.name} completo`}>
+          <img src={slide.preview} alt={`${slide.name}, el departamento completo`} className="max-h-full max-w-full object-contain" />
+        </button>
+        {total > 1 && (
+          <>
+            <button type="button" onClick={onPrev} className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo anterior"><ChevronLeft size={22} /></button>
+            <button type="button" onClick={onNext} className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Modelo siguiente"><ChevronRight size={22} /></button>
+          </>
+        )}
+      </div>
+      <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
+        <img src={slide.plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
+        <span className="min-w-0">
+          <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">En el piso</span>
+          <span className="block text-xs leading-snug text-stone-600">Toca el departamento para verlo entero, o abre la planta.</span>
+        </span>
+      </button>
+    </div>
+  );
+}
 
 export default function BlessTowerLanding({ property, onClose }: Props) {
-  // Estado de imágenes y secciones
-  const [activeSection, setActiveSection] = useState<string>("intro");
-  const [amenityIndex, setAmenityIndex] = useState(0);
-  const [equipIndex, setEquipIndex] = useState(0);
-  const [selectedTypologyId, setSelectedTypologyId] = useState<string>("mono");
-  const [showHdPlanModal, setShowHdPlanModal] = useState(false);
+  const [units, setUnits] = useInventory(blessTowerInventory);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const introNavRef = useRef<HTMLDivElement>(null);
+  const touchX = useRef<number | null>(null);
+  const modelTouch = useRef<number | null>(null);
+  const [activeSection, setActiveSection] = useState("intro");
   const [showSectionMenu, setShowSectionMenu] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
+  const [amenityIndex, setAmenityIndex] = useState(0);
+  const [rooms, setRooms] = useState<RoomId>("mono");
+  const [modelIndex, setModelIndex] = useState(0);
+  const [selectedCodigo, setSelectedCodigo] = useState("");
+  const [addon, setAddon] = useState<AddonId>("none");
+  const [paymentPlan, setPaymentPlan] = useState<PlanId>("contado");
+  const [zoom, setZoom] = useState<{ view: ZoomView; title: string; caption: string; preview: string; plan: string } | null>(null);
+  const picked = useRef(false);
 
-  // Inventario en vivo
-  const [units, setUnits] = useInventory(blessTowerInventory);
-  const [isRefreshingInv, setIsRefreshingInv] = useState(false);
-  const [lastPriceUpdateText, setLastPriceUpdateText] = useState<string>("Sincronizado");
-
-  // Cotizador interactivo (5 pasos)
-  const [selectedAmbId, setSelectedAmbId] = useState<string>("mono");
-  const [selectedFloor, setSelectedFloor] = useState<number>(2);
-  const [selectedUnitCode, setSelectedUnitCode] = useState<string>("");
-  const [includeParking, setIncludeParking] = useState(false);
-  const [parkingOption, setParkingOption] = useState<"simple" | "combo">("simple");
-  const [paymentPlan, setPaymentPlan] = useState<"contado" | "plan40" | "plan30">("contado");
-
-  const editorialScrollRef = useRef<HTMLDivElement>(null);
-  const navBarRef = useRef<HTMLDivElement>(null);
-
-  // Sincronización en vivo inicial
   useEffect(() => {
-    fetchBlessTowerLiveUnits().then((res) => {
-      if (res && res.length > 0) {
-        setUnits(res);
-        setLastPriceUpdateText("Sincronizado");
-      }
+    fetchBlessTowerLiveUnits().then((next) => {
+      if (next && next.length > 0) setUnits(next);
     });
-  }, []);
+  }, [setUnits]);
 
-  const handleRefreshInventory = async () => {
-    setIsRefreshingInv(true);
-    try {
-      const res = await fetch(BLESS_TOWER_CONFIG.sheetCsvUrl + "&_t=" + Date.now());
-      if (res.ok) {
-        const text = await res.text();
-        const parsed = parseBlessTowerCsv(text);
-        if (parsed.length > 0) {
-          setUnits(parsed);
-          const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-          setLastPriceUpdateText(`Actualizado ${timeStr}`);
-        }
-      }
-    } catch (err) {
-      console.warn("Error refrescando inventario Bless Tower:", err);
-    } finally {
-      setIsRefreshingInv(false);
-    }
+  const libres = units.filter((unit) => unit.estado === "LIBRE" && unit.precioContado > 0);
+  const placed = units.length - libres.length;
+  const fromMono = minCash(units.filter((unit) => unit.tipologia === "Monoambiente"));
+  const from1 = minCash(units.filter((unit) => unit.tipologia === "1 Dormitorio"));
+  const from2 = minCash(units.filter((unit) => unit.tipologia === "2 Dormitorios"));
+  const fromAny = minCash(units);
+  const slides = useMemo(() => slidesFor(units, rooms), [units, rooms]);
+  const slideIndex = slides.length ? ((modelIndex % slides.length) + slides.length) % slides.length : 0;
+  const slide = slides[slideIndex];
+  const floors = useMemo(() => {
+    if (!slide) return [];
+    return units.filter((unit) => unit.modelo === slide.id && unit.tipologia === tipologiaOf(rooms)).slice().sort((a, b) => a.pisoNumero - b.pisoNumero || a.codigo.localeCompare(b.codigo));
+  }, [slide, units, rooms]);
+  const activeUnit = floors.find((unit) => unit.codigo === selectedCodigo && unit.estado === "LIBRE")
+    || floors.find((unit) => unit.estado === "LIBRE")
+    || null;
+  const extra = ADDONS.find((item) => item.id === addon)?.amount || 0;
+  const quote = quoteUnit(activeUnit, paymentPlan, extra);
+  const amenity = AMENITY_SLIDES[amenityIndex];
+
+  const priceLabel = (current: Slide) => {
+    const matching = units.filter((unit) => unit.modelo === current.id && unit.tipologia === tipologiaOf(rooms));
+    const amount = minCash(matching);
+    if (amount) return `Desde USD ${formatBlessUsd(amount)}`;
+    if (matching.some((unit) => unit.estado === "RESERVADO")) return "Reservado";
+    return "Vendido";
   };
 
-  const availableUnits = useMemo(() => units.filter((u) => u.estado === "LIBRE"), [units]);
-  const soldUnitsCount = units.filter((u) => u.estado === "VENDIDO" || u.estado === "RESERVADO").length;
-
-  const minPriceMono = useMemo(() => {
-    const list = availableUnits.filter((u) => u.tipologia === "Monoambiente" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
-  }, [availableUnits]);
-
-  const minPrice1Dorm = useMemo(() => {
-    const list = availableUnits.filter((u) => u.tipologia === "1 Dormitorio" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
-  }, [availableUnits]);
-
-  const minPrice2Dorms = useMemo(() => {
-    const list = availableUnits.filter((u) => u.tipologia === "2 Dormitorios" && u.precioContado > 0);
-    return list.length > 0 ? Math.min(...list.map((u) => u.precioContado)) : 0;
-  }, [availableUnits]);
-
-  const minCashPerM2 = useMemo(() => {
-    const list = availableUnits.filter((u) => u.precioContado > 0 && u.superficieM2 > 0);
-    if (list.length === 0) return 1450;
-    return Math.min(...list.map((u) => Math.round(u.precioContado / u.superficieM2)));
-  }, [availableUnits]);
-
-  const currentAmbiente = useMemo(() => {
-    return AMBIENTE_OPTIONS.find((a) => a.id === selectedAmbId) || AMBIENTE_OPTIONS[0];
-  }, [selectedAmbId]);
-
-  // Pisos para el ambiente seleccionado
-  const floorsForAmbiente = useMemo(() => {
-    const matching = units.filter((u) => currentAmbiente.matchUnit(u));
-    const floorNums = Array.from(new Set(matching.map((u) => u.pisoNumero))).sort((a, b) => a - b);
-
-    return floorNums.map((floor) => {
-      const unitsOnFloor = matching.filter((u) => u.pisoNumero === floor);
-      const availableUnitsOnFloor = unitsOnFloor.filter((u) => u.estado === "LIBRE");
-      const isAvailable = availableUnitsOnFloor.length > 0;
-      return {
-        floor,
-        isAvailable,
-        availableCount: availableUnitsOnFloor.length,
-        totalCount: unitsOnFloor.length,
-        unit: isAvailable ? availableUnitsOnFloor[0] : unitsOnFloor[0],
-      };
-    });
-  }, [units, currentAmbiente]);
-
-  // Selección automática de piso disponible
   useEffect(() => {
-    const currentFloorItem = floorsForAmbiente.find((f) => f.floor === selectedFloor);
-    if (!currentFloorItem || !currentFloorItem.isAvailable) {
-      const firstAvailable = floorsForAmbiente.find((f) => f.isAvailable);
-      if (firstAvailable) {
-        setSelectedFloor(firstAvailable.floor);
-      } else if (floorsForAmbiente.length > 0) {
-        setSelectedFloor(floorsForAmbiente[0].floor);
-      }
-    }
-  }, [floorsForAmbiente, selectedFloor]);
-
-  // Unidades en el piso seleccionado
-  const unitsInSelectedFloor = useMemo(() => {
-    return units.filter((u) => currentAmbiente.matchUnit(u) && u.pisoNumero === selectedFloor);
-  }, [units, currentAmbiente, selectedFloor]);
-
-  // Unidad activa para el cotizador
-  const activeUnit = useMemo(() => {
-    if (selectedUnitCode) {
-      const found = unitsInSelectedFloor.find((u) => u.codigo === selectedUnitCode);
-      if (found) return found;
-    }
-    const firstLibre = unitsInSelectedFloor.find((u) => u.estado === "LIBRE");
-    return firstLibre || unitsInSelectedFloor[0] || null;
-  }, [unitsInSelectedFloor, selectedUnitCode]);
-
-  // Opcional de Parqueo
-  const parkingPrice = useMemo(() => {
-    if (!includeParking) return 0;
-    return parkingOption === "combo" ? 15000 : 12000;
-  }, [includeParking, parkingOption]);
-
-  // Cálculos financieros
-  const activeFinancials = useMemo(() => {
-    if (!activeUnit || activeUnit.estado !== "LIBRE") return null;
-
-    let unitTotalPrice = activeUnit.precioContado;
-    let cuotaInicialPct = 100;
-    let cuotaInicial = unitTotalPrice;
-    let saldoContraEntrega = 0;
-
-    if (paymentPlan === "plan40") {
-      unitTotalPrice = activeUnit.precioCuotas || Math.round(activeUnit.precioContado * 1.08);
-      cuotaInicialPct = 40;
-      cuotaInicial = Math.round(unitTotalPrice * 0.4);
-      saldoContraEntrega = unitTotalPrice - cuotaInicial;
-    } else if (paymentPlan === "plan30") {
-      unitTotalPrice = activeUnit.precioLista || Math.round(activeUnit.precioContado * 1.15);
-      cuotaInicialPct = 30;
-      cuotaInicial = Math.round(unitTotalPrice * 0.3);
-      saldoContraEntrega = unitTotalPrice - cuotaInicial;
-    }
-
-    const hasParking = includeParking;
-    const parkingInitial = !hasParking
-      ? 0
-      : paymentPlan === "contado"
-      ? parkingPrice
-      : paymentPlan === "plan40"
-      ? Math.round(parkingPrice * 0.4)
-      : Math.round(parkingPrice * 0.3);
-    const parkingBalance = !hasParking ? 0 : parkingPrice - parkingInitial;
-
-    const totalPrice = unitTotalPrice + parkingPrice;
-    const initialPayment = cuotaInicial + parkingInitial;
-    const balancePayment = saldoContraEntrega + parkingBalance;
-
-    const pricePerM2 = activeUnit.superficieM2 > 0 ? Math.round(unitTotalPrice / activeUnit.superficieM2) : 1500;
-
-    return {
-      unitTotalPrice,
-      totalPrice,
-      cuotaInicialPct,
-      initialPayment,
-      balancePayment,
-      pricePerM2,
-      reserva: BLESS_TOWER_CONFIG.reservaUsd,
-    };
-  }, [activeUnit, paymentPlan, includeParking, parkingPrice]);
-
-  // Sincronización visual del panel izquierdo al hacer scroll
-  useEffect(() => {
-    const el = editorialScrollRef.current;
-    if (!el) return;
-
-    const handleScroll = () => {
-      const sections = ["intro", "lugar", "amenidades", "tipologias", "equipamiento", "constructora", "pago", "disponibilidad", "cierre"];
-      for (const s of sections) {
-        const secEl = document.getElementById(s);
-        if (secEl) {
-          const rect = secEl.getBoundingClientRect();
-          if (rect.top <= 260 && rect.bottom >= 120) {
-            setActiveSection(s);
-            break;
-          }
-        }
-      }
-    };
-
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
+    const root = rightPanelRef.current;
+    if (!root) return;
+    const nodes = Array.from(root.querySelectorAll("section[id]"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target?.id) setActiveSection(visible.target.id);
+      },
+      { root: window.matchMedia("(min-width: 1024px)").matches ? root : null, rootMargin: "-12% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    const checkNavVisibility = () => {
-      const nav = navBarRef.current;
+    const onScroll = () => {
+      const nav = introNavRef.current;
       if (!nav) return;
       const past = nav.getBoundingClientRect().bottom < 80;
       setShowFloatingNav(past);
       if (!past) setShowSectionMenu(false);
     };
-
-    const desktop = editorialScrollRef.current;
+    const desktop = rightPanelRef.current;
     const mobile = desktop?.parentElement;
-    desktop?.addEventListener("scroll", checkNavVisibility, { passive: true });
-    mobile?.addEventListener("scroll", checkNavVisibility, { passive: true });
-    window.addEventListener("scroll", checkNavVisibility, { passive: true });
-    checkNavVisibility();
-
+    desktop?.addEventListener("scroll", onScroll, { passive: true });
+    mobile?.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => {
-      desktop?.removeEventListener("scroll", checkNavVisibility);
-      mobile?.removeEventListener("scroll", checkNavVisibility);
-      window.removeEventListener("scroll", checkNavVisibility);
+      desktop?.removeEventListener("scroll", onScroll);
+      mobile?.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
   const scrollToSection = (id: string) => {
     setShowSectionMenu(false);
-    const secEl = document.getElementById(id);
-    if (secEl) {
-      secEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const chooseRooms = (next: RoomId) => {
+    setRooms(next);
+    const list = slidesFor(units, next);
+    const index = Math.max(0, list.findIndex((item) => units.some((unit) => unit.modelo === item.id && unit.tipologia === tipologiaOf(next) && unit.estado === "LIBRE" && unit.precioContado > 0)));
+    setModelIndex(index);
+    const current = list[index];
+    const free = current ? units.find((unit) => unit.modelo === current.id && unit.tipologia === tipologiaOf(next) && unit.estado === "LIBRE" && unit.precioContado > 0) : undefined;
+    setSelectedCodigo(free?.codigo || "");
+    picked.current = true;
+  };
+
+  useEffect(() => {
+    if (picked.current || !units.length) return;
+    const list = slidesFor(units, rooms);
+    const index = list.findIndex((item) => units.some((unit) => unit.modelo === item.id && unit.tipologia === tipologiaOf(rooms) && unit.estado === "LIBRE" && unit.precioContado > 0));
+    if (index < 0) return;
+    picked.current = true;
+    setModelIndex(index);
+    const free = units.find((unit) => unit.modelo === list[index].id && unit.tipologia === tipologiaOf(rooms) && unit.estado === "LIBRE" && unit.precioContado > 0);
+    if (free) setSelectedCodigo(free.codigo);
+  }, [units, rooms]);
+
+  const shiftModel = (dir: number) => {
+    if (slides.length < 2) return;
+    const next = (slideIndex + dir + slides.length) % slides.length;
+    setModelIndex(next);
+    const free = units.find((unit) => unit.modelo === slides[next].id && unit.tipologia === tipologiaOf(rooms) && unit.estado === "LIBRE");
+    setSelectedCodigo(free?.codigo || "");
+  };
+
+  const openSlide = (current: Slide, view: "depto" | "planta") => {
+    setZoom({
+      view,
+      title: current.name,
+      caption: `${current.areaLabel} · ${current.where}`,
+      preview: current.preview,
+      plan: current.plan,
+    });
   };
 
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/bless-tower`;
-    const shareTitle = "Bless Tower · 30 Niveles de Lujo en Av. Cristo Redentor";
-    const shareText = `Torre de 30 niveles con rooftop panorámico y piscina sinfín en Av. Cristo Redentor desde USD ${formatBlessUsd(minPriceMono)}. Conoce Bless Tower:`;
-
-    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    const shareText = `Bless Tower, sobre Av. Cristo Redentor, desde USD ${formatBlessUsd(fromAny || BLESS_TOWER_CONFIG.minPriceUsd)}. Entrega en diciembre 2027.`;
+    recordLeadEvent({ action: "share", propertyRef: String(property.id || "bless-tower"), operacion: "Preventa", zona: BLESS_TOWER_CONFIG.zone }).catch(() => {});
+    if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+        await navigator.share({ title: "Bless Tower · Av. Cristo Redentor", text: shareText, url: shareUrl });
         return;
-      } catch (err) {
-        if ((err as DOMException)?.name === "AbortError") return;
+      } catch (error) {
+        if ((error as DOMException)?.name === "AbortError") return;
       }
     }
-
     try {
       await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
       setShareFeedback(true);
-      setTimeout(() => setShareFeedback(false), 2500);
+      window.setTimeout(() => setShareFeedback(false), 2200);
     } catch {
-      // fallback
+      setShareFeedback(false);
     }
   };
 
   const contactWhatsApp = () => {
+    const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
+    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
+      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Bless Tower" });
+    }
     recordLeadEvent({
       action: "contact_tap",
-      propertyRef: "bless-tower",
+      propertyRef: String(property.id || "bless-tower"),
       operacion: "Preventa",
-      zona: BLESS_TOWER_CONFIG.zone,
+      zona: property.zone || BLESS_TOWER_CONFIG.zone,
+      presupuesto: quote ? String(quote.total) : undefined,
+      extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, modelo: activeUnit.modelo, plan: paymentPlan, adicional: addon } : { plan: paymentPlan },
     }).catch(() => {});
-
-    const unitInfo = activeUnit
-      ? `Unidad ${activeUnit.codigo} (Piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} - ${activeUnit.tipologia} de ${activeUnit.superficieM2} m²)`
+    const planLabel = paymentPlan === "contado" ? "Contado 100%" : paymentPlan === "plan40" ? "40% en obra y 60% contra entrega" : "30% a la firma y 70% contra entrega";
+    const addonLabel = addon === "simple" ? "Parqueo USD 12.000" : addon === "combo" ? "Parqueo + baulera USD 15.000" : "Sin adicional";
+    const unitLine = activeUnit
+      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.superficieM2.toLocaleString("es-BO")} m²)`
       : "Bless Tower";
-    const parkingInfo = includeParking
-      ? ` + ${parkingOption === "combo" ? "Parqueo + Baulera" : "Parqueo Simple"}`
-      : " (Sin parqueo)";
-    const planInfo =
-      paymentPlan === "contado"
-        ? "Plan Al Contado (100%)"
-        : paymentPlan === "plan40"
-        ? "Plan 40% en Cuotas + 60% contra entrega"
-        : "Plan 30% Inicial + 70% contra entrega";
-
-    const text = `Hola, vengo de N.I.A y deseo reservar en BLESS TOWER:\n\n• ${unitInfo}${parkingInfo}\n• Modalidad: ${planInfo}\n• Inversión Total: USD ${formatBlessUsd(activeFinancials?.totalPrice || minPriceMono)}\n• Cuota Inicial: USD ${formatBlessUsd(activeFinancials?.initialPayment || minPriceMono)}\n\n¿Me confirman la disponibilidad oficial y los pasos para asegurar la unidad con la reserva de USD ${formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}?`;
-
-    window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    const money = quote
+      ? `\n• Inversión total: USD ${formatBlessUsd(quote.total)}\n• A la firma: USD ${formatBlessUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatBlessUsd(quote.balance)}`}`
+      : "";
+    const text = `Hola, vengo de N.I.A y quiero reservar en Bless Tower:\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n\nCuento con los USD ${formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)} de reserva. ¿Me confirman la disponibilidad y los pasos?`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
-  // Imagen de fondo dinámica para el panel izquierdo
-  const dynamicBackdropImage = useMemo(() => {
-    switch (activeSection) {
-      case "lugar":
-        return "/bless_tower/ingreso_fachada.jpg";
-      case "amenidades":
-        return "/bless_tower/piscina_infinity.jpg";
-      case "tipologias":
-        return "/bless_tower/interior_2.jpg";
-      case "equipamiento":
-        return "/bless_tower/interior_render_real.jpg";
-      case "constructora":
-        return "/bless_tower/fachada_2.jpg";
-      case "pago":
-        return "/bless_tower/social_2.jpg";
-      case "disponibilidad":
-      case "cierre":
-        return "/bless_tower/interior_1.jpg";
-      default:
-        return "/bless_tower/fachada_principal.jpg";
-    }
-  }, [activeSection]);
-
-  const currentTypology = TYPOLOGIES_DATA.find((t) => t.id === selectedTypologyId) || TYPOLOGIES_DATA[0];
+  const fromRooms = (room: RoomId) => (room === "mono" ? fromMono : room === "1d" ? from1 : from2);
 
   return (
-    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col bg-[#f8f1e7] font-sans text-stone-900 overflow-y-auto overscroll-y-contain md:overflow-hidden md:flex-row">
-      {/* ========================================================
-          1. CONTROLES SUPERIORES FLOTANTES (4 ICONOS LIMPIOS)
-          ======================================================== */}
-      <div className="fixed right-4 top-4 md:right-7 md:top-7 z-[120] flex items-center gap-2">
-
-        <a
-          href={BLESS_TOWER_CONFIG.brochurePdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-[#8e3e24] hover:bg-stone-50 transition-all hover:scale-105"
-          title="Descargar Brochure Oficial en PDF"
-          aria-label="Descargar Brochure"
-        >
-          <Download size={18} />
-        </a>
-
-        <button
-          onClick={handleShare}
-          className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-stone-800 hover:bg-stone-50 transition-all hover:scale-105"
-          title="Compartir enlace directo"
-          aria-label="Compartir"
-        >
+    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
+      <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
+        <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
           {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
         </button>
-
         {onClose && (
-          <button
-            onClick={onClose}
-            className="h-10 w-10 rounded-full bg-white/95 backdrop-blur border border-stone-200 shadow-xl flex items-center justify-center text-stone-700 hover:bg-stone-50 transition-all hover:scale-105"
-            title="Cerrar y volver al mapa"
-            aria-label="Cerrar"
-          >
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-700 shadow-xl" aria-label="Cerrar">
             <X size={18} />
           </button>
         )}
       </div>
 
-      {/* ========================================================
-          2. PANEL IZQUIERDO: ESCENOGRAFÍA DINÁMICA (44% Desktop)
-          ======================================================== */}
-      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#edd3c8] md:h-screen md:w-[44%]">
-        <div className="relative min-h-0 flex-1">
-          <img src="/bless_tower/fachada_principal.jpg" alt="Fachada completa de Bless Tower" className="absolute inset-0 h-full w-full object-contain object-center" />
+      <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
+        <div className="relative min-h-[240px] flex-1 md:min-h-0">
+          <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
+          <div className="relative h-[300px] w-full md:absolute md:inset-0 md:h-auto">
+            <img src="/bless_tower/fachada_principal.jpg" alt="Fachada de Bless Tower" className="absolute inset-0 h-full w-full object-contain object-center" />
+          </div>
         </div>
-        <div className="relative z-10 shrink-0 bg-[#edd3c8] px-5 pb-3.5 pt-3 text-stone-900 md:px-8 md:pb-5 md:pt-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#8e3e24]/35 bg-white/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#5c2414] md:px-3 md:py-1 md:text-[11px]">
+        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
+          <img src="/bless_drei/logo-altavida.jpg" alt="Alta Vida" className="mb-3 h-12 w-auto rounded-md md:mb-2 md:h-10" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
             <Sparkles size={12} />
-            Preventa · 30 niveles · {BLESS_TOWER_CONFIG.zone}
+            Preventa · {BLESS_TOWER_CONFIG.floorsCount} niveles
           </span>
-          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#1C1917] md:mt-2 md:text-4xl">Bless Tower</h1>
-          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-600 md:text-sm">Av. Cristo Redentor entre 2° y 3° Anillo · Santa Cruz de la Sierra</p>
-          <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
-            <div className="rounded-xl border border-[#e6cdb8] bg-white/80 p-2 md:p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-500">Entrega</p>
-              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{BLESS_TOWER_CONFIG.delivery}</p>
+          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2">Bless Tower</h1>
+          <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">{BLESS_TOWER_CONFIG.address}</p>
+          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
+              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.delivery}</p>
             </div>
-            <div className="rounded-xl border border-[#e6cdb8] bg-white/80 p-2 md:p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-500">Constructora</p>
-              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{BLESS_TOWER_CONFIG.builder}</p>
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-stone-400">Constructora</p>
+              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.builder}</p>
             </div>
           </div>
-          <div className="mt-2 max-w-sm rounded-xl border border-[#e6cdb8] bg-white/80 p-2.5 md:hidden">
-            <p className="border-b border-[#e6cdb8] pb-1.5 text-[10px] font-semibold text-[#5c2414]">Precios al contado</p>
-            <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
-              <div>
-                <p className="text-[10px] text-stone-500">Monoambiente</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPriceMono).replace("Desde ", "")}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-stone-500">1 dormitorio</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPrice1Dorm).replace("Desde ", "")}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-stone-500">2 dormitorios</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{startingPrice(minPrice2Dorms).replace("Desde ", "")}</p>
-              </div>
+          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 md:hidden">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
+              <span className="font-semibold text-[#e8d5a8]">Lista oficial</span>
+              <span>{libres.length} libres de {units.length}</span>
+            </div>
+            <div className="mt-2.5 space-y-1.5 text-xs">
+              {ROOM_FILTERS.map((filter) => (
+                <div key={filter.id} className="flex items-center justify-between">
+                  <span className="text-stone-300">{filter.label}</span>
+                  <span className="font-serif font-bold">{fromRooms(filter.id) ? `Desde USD ${formatBlessUsd(fromRooms(filter.id) as number)}` : "Agotado"}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ========================================================
-          3. PANEL DERECHO EDITORIAL (56% Desktop)
-          ======================================================== */}
-      <div
-        ref={editorialScrollRef}
-        className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto"
-      >
+      <div ref={rightPanelRef} className="relative min-h-0 flex-1 md:h-screen md:overflow-y-auto">
         <div className="mx-auto max-w-xl px-5 py-8 pb-32 md:max-w-3xl md:px-10 md:py-14 md:pb-44 lg:max-w-4xl lg:px-14 xl:max-w-5xl">
-        {/* ----------------------------------------------------
-            SECCIÓN 1: #intro (Hero, tesis & menú de navegación)
-            ---------------------------------------------------- */}
-        <section id="intro" className="scroll-mt-6 space-y-6">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#8e3e24]">
-              <Sparkles size={13} />
-              Tu vida, con otra perspectiva
-            </span>
-            <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1C1917] leading-tight">
-              Vive en <span className="italic font-normal">Bless Tower.</span>
-            </h2>
-            <p className="text-sm md:text-base text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word] pt-2">
-              Una piscina con vista a la ciudad, un gimnasio cerca de tu puerta y un cowork para trabajar sin salir de casa. En Bless Tower, eliges entre monoambientes y departamentos de 1 y 2 dormitorios sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo.
-            </p>
-          </div>
-
-          {/* Tarjeta de Tracción */}
-          <div className="p-4 rounded-xl bg-white border border-[#E7E5E4] shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Preventa · Entrega diciembre 2027</p>
-              <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                {soldUnitsCount} de {units.length} unidades vendidas o reservadas
+          <section id="intro" className="scroll-mt-6 space-y-6">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Sparkles size={13} /> Experiencia residencial y preventa</span>
+              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
+                Vive en Bless Tower.
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Tu vida, con otra perspectiva.</span>
+              </h2>
+              <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
+                Una piscina con vista a la ciudad, un gimnasio cerca de tu puerta y un cowork para trabajar sin salir de casa. Eliges entre monoambientes y departamentos de 1 y 2 dormitorios sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo. Entrega en {BLESS_TOWER_CONFIG.delivery}.
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Elige tu unidad
-            </span>
-          </div>
-
-          {/* Botones de acción rápida */}
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <button
-              onClick={() => scrollToSection("disponibilidad")}
-              className="px-5 py-3 rounded-xl bg-[#1C1917] text-white text-xs font-semibold uppercase tracking-wider hover:bg-stone-800 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02]"
-            >
-              <Calculator size={15} />
-              Ver Disponibilidad y Cotizar
-            </button>
-            <a
-              href={BLESS_TOWER_CONFIG.brochurePdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-3 rounded-xl bg-white text-stone-800 border border-stone-200 text-xs font-semibold uppercase tracking-wider hover:bg-stone-50 transition-all flex items-center gap-2"
-            >
-              <Download size={15} className="text-[#8e3e24]" />
-              Descargar Brochure PDF
-            </a>
-          </div>
-
-          {/* Barra de Secciones Inicial */}
-          <div ref={navBarRef} className="pt-4 border-t border-stone-200">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2.5">
-              Navegación del Proyecto
-            </p>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <button
-                onClick={() => scrollToSection("intro")}
-                className="px-3 py-1.5 rounded-lg bg-stone-900 text-white font-medium hover:bg-stone-800 transition-all flex items-center gap-1.5"
-              >
-                <Home size={12} />
-                Inicio
-              </button>
-              <button onClick={() => scrollToSection("lugar")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Ubicación</button>
-              <button onClick={() => scrollToSection("amenidades")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Áreas Sociales</button>
-              <button onClick={() => scrollToSection("tipologias")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Tipologías</button>
-              <button onClick={() => scrollToSection("equipamiento")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Equipamiento</button>
-              <button onClick={() => scrollToSection("constructora")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Constructora</button>
-              <button onClick={() => scrollToSection("pago")} className="px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all">Formas de Pago</button>
-              <button onClick={() => scrollToSection("disponibilidad")} className="px-3 py-1.5 rounded-lg bg-[#8e3e24] text-white font-semibold hover:bg-[#5c2414] transition-all">Disponibilidad en Vivo</button>
-            </div>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 2: #lugar (Ubicación & Drenaje pluvial)
-            ---------------------------------------------------- */}
-        <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <MapPin size={13} />
-              Ubicación Privilegiada
-            </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Tu día a día, mejor conectado.
-            </h3>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Vive sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo, en un entorno de comercios y servicios para organizar tu día. Frente a Audi (Hansa), Bless Tower te ofrece una dirección fácil de ubicar y una conexión con la vida urbana de Santa Cruz.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">Sobre</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Av. Cristo Redentor</p>
-            </div>
-            <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">2° y 3°</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Entre anillos</p>
-            </div>
-            <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">Frente a</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Audi (Hansa)</p>
-            </div>
-            <div className="p-3 rounded-xl bg-white border border-stone-200 shadow-sm">
-              <p className="font-serif text-xl font-bold text-stone-900">Santa Cruz</p>
-              <p className="text-[11px] text-stone-500 mt-0.5">Vive la ciudad</p>
-            </div>
-          </div>
-
-          {/* Botón de Google Maps */}
-          <div className="flex justify-end pt-1">
-            <a
-              href="https://maps.app.goo.gl/qj6FGP2a7BSe9rVo8?g_st=ic"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#8e3e24] hover:text-[#5c2414] transition-colors"
-            >
-              <MapPin size={14} />
-              Ver Ubicación en Google Maps
-              <ExternalLink size={12} />
-            </a>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 3: #amenidades (Áreas Sociales con Carrusel)
-            ---------------------------------------------------- */}
-        <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <Sparkles size={13} />
-              Áreas Sociales & Bienestar
-            </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Tu tiempo libre también vive aquí.
-            </h3>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Piscina sinfín, dos churrasqueras, fogatero y sala de juegos para compartir. Gimnasio y cowork para mantener tu rutina. Espacios que amplían tu casa y hacen que cada día tenga más opciones.
-            </p>
-          </div>
-
-          {/* Carrusel de amenidades */}
-          <div className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-lg text-white">
-            <div className="aspect-[16/10] w-full relative">
-              <img
-                src={AMENITY_SLIDES[amenityIndex].src}
-                alt={AMENITY_SLIDES[amenityIndex].title}
-                className="w-full h-full object-cover brightness-[0.88]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-              <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 space-y-1.5">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#e6cdb8]">
-                  {AMENITY_SLIDES[amenityIndex].category}
-                </span>
-                <h4 className="font-serif text-xl md:text-2xl font-normal text-white">
-                  {AMENITY_SLIDES[amenityIndex].title}
-                </h4>
-                <p className="text-xs text-stone-300 max-w-xl leading-relaxed">
-                  {AMENITY_SLIDES[amenityIndex].description}
-                </p>
-              </div>
-
-              {/* Botones carrusel */}
-              <button
-                onClick={() => setAmenityIndex((prev) => (prev > 0 ? prev - 1 : AMENITY_SLIDES.length - 1))}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-all backdrop-blur-sm"
-                aria-label="Anterior amenidad"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                onClick={() => setAmenityIndex((prev) => (prev < AMENITY_SLIDES.length - 1 ? prev + 1 : 0))}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-all backdrop-blur-sm"
-                aria-label="Siguiente amenidad"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-            {/* Dots */}
-            <div className="flex justify-center gap-1.5 p-3 bg-stone-950">
-              {AMENITY_SLIDES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setAmenityIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${amenityIndex === i ? "w-6 bg-[#8e3e24]" : "w-1.5 bg-stone-700"}`}
-                  aria-label={`Slide ${i + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 4: #tipologias (Exploración arquitectónica)
-            ---------------------------------------------------- */}
-        <section id="tipologias" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <Layers size={13} />
-              Tipologías Residenciales
-            </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Un espacio para la vida que quieres.
-            </h3>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Monoambientes y departamentos de 1 y 2 dormitorios para distintas formas de vivir. Compara sus distribuciones, balcones y espacios de guardado, y encuentra el lugar en el que te imaginas cada día.
-            </p>
-          </div>
-
-          {/* Tarjetas de tipologías */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            {TYPOLOGIES_DATA.map((t) => {
-              const isSelected = selectedTypologyId === t.id;
-              return (
-                <div
-                  key={t.id}
-                  onClick={() => setSelectedTypologyId(t.id)}
-                  className={`p-4 rounded-xl cursor-pointer transition-all border ${
-                    isSelected
-                      ? "bg-white border-[#8e3e24] shadow-md ring-1 ring-[#8e3e24]"
-                      : "bg-white/80 border-stone-200 hover:border-stone-300 hover:bg-white"
-                  }`}
-                >
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{t.area}</p>
-                  <h4 className="font-serif text-lg font-bold text-stone-900 mt-1">{t.title}</h4>
-                  <p className="text-xs text-[#8e3e24] font-semibold mt-1">
-                    {startingPrice(t.id === "mono" ? minPriceMono : t.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
-                  </p>
-                  <p className="text-[11px] text-stone-500 mt-2 line-clamp-2">{t.tagline}</p>
-                  <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] font-semibold">
-                    <span className={isSelected ? "text-[#8e3e24]" : "text-stone-400"}>
-                      {isSelected ? "Plano activo abajo ✓" : "Ver plano arquitectónico →"}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Visor de Plano Arquitectónico 2D */}
-          <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
               <div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8e3e24]">Plano Arquitectónico Oficial</span>
-                <h4 className="font-serif text-xl font-bold text-stone-900">{currentTypology.title}</h4>
-                <p className="text-xs text-stone-500">{currentTypology.area} · revisa el metraje de cada modelo</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Lista oficial</p>
+                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">{placed} colocadas</p>
               </div>
-              <button
-                onClick={() => setShowHdPlanModal(true)}
-                className="px-3 py-1.5 rounded-lg bg-stone-900 text-white text-xs font-semibold hover:bg-stone-800 transition-all flex items-center gap-1.5"
-              >
-                Ver HD
-              </button>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Quedan {libres.length}</span>
             </div>
-
-            <div className="aspect-[16/11] rounded-xl overflow-hidden bg-stone-50 border border-stone-100 flex items-center justify-center p-3">
-              <img
-                src={currentTypology.image}
-                alt={currentTypology.title}
-                className="max-h-full max-w-full object-contain filter drop-shadow-md cursor-pointer hover:scale-[1.02] transition-transform"
-                onClick={() => setShowHdPlanModal(true)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-stone-100">
-              {currentTypology.highlights.map((h, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-stone-600">
-                  <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-                  <span>{h}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 5: #equipamiento (Equipamiento 100% incluido & Acabados)
-            ---------------------------------------------------- */}
-        <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <CheckCircle2 size={13} />
-              Equipamiento incluido y acabados
-            </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Lo esencial de tu hogar ya está incluido.
-            </h3>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Muebles y mesones instalados en la cocina, ropero para organizar tus cosas y aires acondicionados en sala y dormitorios. Conoce los detalles incluidos y empieza a imaginar tu llegada a Bless Tower.
-            </p>
-          </div>
-
-          {/* Grilla Oficial de los 12 Equipamientos Incluidos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {[
-              { title: "Aires Acondicionados", desc: "Instalados en dormitorios y salas de estar" },
-              { title: "Cerradura Inteligente", desc: "Acceso digital con código y tarjeta en puerta principal" },
-              { title: "Calefón Eléctrico / a Gas", desc: "Agua caliente mediante calefón eléctrico o a gas" },
-              { title: "Intercomunicador", desc: "Comunicación directa en cada departamento" },
-              { title: "Vigilancia 24/7", desc: "Vigilancia en el edificio las 24 horas" },
-              { title: "Espejo LED en Baños", desc: "Iluminación integrada decorativa y funcional" },
-              { title: "Grifería Sanitaria Importada", desc: "Grifería y accesorios sanitarios incluidos" },
-              { title: "Luminaria LED", desc: "Iluminación LED incluida en el equipamiento" },
-              { title: "Cocina Encimera", desc: "Empotrada sobre mesón de granito negro" },
-              { title: "Box de Baños", desc: "Mamparas de vidrio templado de seguridad" },
-              { title: "Extractor Eléctrico", desc: "Campana extractora de humos en cocina" },
-              { title: "Extractor Mecánico", desc: "Ventilación de baños mediante extractor" },
-            ].map((item, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-white border border-stone-200/80 shadow-xs flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#8e3e24]/10 text-[#8e3e24] text-xs font-bold font-mono">
-                  {idx + 1}
-                </span>
-                <div>
-                  <h4 className="text-xs font-bold text-stone-900">{item.title}</h4>
-                  <p className="text-[11px] text-stone-500 font-light mt-0.5">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Ficha Técnica de Acabados Interiores (Folleto Oficial Alta Vida) */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xs space-y-4">
-            <div className="border-b border-stone-100 pb-3 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8e3e24]">
-                  Conoce lo que recibes
-                </span>
-                <h4 className="font-serif text-lg font-bold text-stone-900">
-                  Detalles que hacen tu casa más cómoda
-                </h4>
-              </div>
-              <span className="text-xs bg-stone-100 text-stone-600 px-3 py-1 rounded-full font-medium">
-                Acabados incluidos
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs text-stone-600 font-light">
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Revestimientos &amp; Pisos
-                </strong>
-                <p>• Piso y zócalos de porcelanato.</p>
-                <p>• Revestimiento de muros de baños con porcelanato.</p>
-                <p>• Revestimiento de cocina en salpicadero de porcelanato.</p>
-              </div>
-
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Mesones &amp; Grifería
-                </strong>
-                <p>• Mesones de cocina en <strong>granito negro</strong> pulido.</p>
-                <p>• Mesones de baño en <strong>granito negro</strong> con bacha.</p>
-                <p>• Grifería y accesorios sanitarios importados.</p>
-              </div>
-
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Carpintería &amp; Muebles
-                </strong>
-                <p>• Cajonería alta en melamina con nicho de puerta de vidrio y luz LED.</p>
-                <p>• Cajonería baja de cocina en melamina.</p>
-                <p>• Rack de TV en sala de estar con <strong>detalle de ripado</strong>.</p>
-                <p>• Mueble flotante de melamina bajo el lavabo.</p>
-              </div>
-
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Dormitorios &amp; Roperos
-                </strong>
-                <p>• Ropero empotrado de piso a techo.</p>
-                <p>• Divisiones internas completas, tubo metálico y rieles corredizos.</p>
-              </div>
-
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Aberturas &amp; Aislamiento
-                </strong>
-                <p>• Puerta principal con estructura de madera reforzada.</p>
-                <p>• Ventanas y puertas corredizas de carpintería de aluminio termoacústica.</p>
-                <p>• Barandas de balcón en aluminio y vidrio templado.</p>
-              </div>
-
-              <div className="space-y-1.5 p-3 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                <strong className="text-stone-900 font-semibold block text-[11px] uppercase tracking-wide text-[#8e3e24]">
-                  Revoques &amp; Pintura
-                </strong>
-                <p>• Revoque de mortero fino planchado en interior y exterior.</p>
-                <p>• Pintura color &quot;blanco nieve&quot; en cielo falso y &quot;blanco hielo&quot; en muros.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 6: #constructora (Respaldo Alta Vida SRL)
-            ---------------------------------------------------- */}
-        <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <Building2 size={13} />
-              Conoce a la desarrolladora
-            </span>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-                Un hogar se elige también por quién lo construye.
-              </h3>
-              <a
-                href="https://web.altavidasrl.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-[#8e3e24] font-semibold hover:underline"
-              >
-                <span>web.altavidasrl.com</span>
-                <ExternalLink size={13} />
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md">Ver disponibilidad y cotizar</button>
+              <a href={BLESS_TOWER_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-stone-800">
+                <Download size={15} className="text-[#9a7b45]" /> Brochure
               </a>
             </div>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Detrás de Bless Tower está <strong>Alta Vida SRL</strong>, fundada en 2014 y con presencia en <strong>5 ciudades</strong> de Bolivia. Conoce al equipo que planifica, diseña y construye el proyecto donde quieres vivir.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#8e3e24]">+10 Años</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Experiencia inmobiliaria</p>
-              <p className="text-[11px] text-stone-500 mt-1">Desarrollando proyectos desde 2014</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#8e3e24]">30 Niveles</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Tu vida en altura</p>
-              <p className="text-[11px] text-stone-500 mt-1">Piscina y áreas sociales para disfrutar</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#8e3e24]">5 ciudades</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Presencia en Bolivia</p>
-              <p className="text-[11px] text-stone-500 mt-1">Santa Cruz, Tarija, Potosí, Oruro y Cochabamba</p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#fbf7f1] border border-[#e6cdb8]/80 text-xs text-stone-700 space-y-1.5">
-            <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#8e3e24]">
-              Antes de tomar tu decisión
-            </p>
-            <p className="font-light leading-relaxed [text-align:justify]">
-              Conoce la trayectoria de la desarrolladora, revisa los planos y consulta las condiciones de compra. Un hogar se elige mejor cuando sabes qué incluye y quién está detrás del proyecto.
-            </p>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 7: #pago (Formas de Pago Transparentes)
-            ---------------------------------------------------- */}
-        <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-              <CreditCard size={13} />
-              Encuentra tu forma de comprar
-            </span>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Tu hogar, con un plan a tu medida.
-            </h3>
-            <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Compara la tarifa de contado con las opciones de pago durante obra y contra entrega. Elige cómo distribuir tu inversión y conoce los montos de tu departamento antes de dar el siguiente paso.
-            </p>
-          </div>
-
-          {/* Banner de precio base por m2 */}
-          <div className="p-3.5 rounded-xl bg-[#fbf7f1] border border-[#e6cdb8] flex items-center justify-between text-xs">
-            <span className="text-stone-700">Precio preventa oficial:</span>
-            <span className="font-serif font-bold text-[#8e3e24] text-sm">Desde ${minCashPerM2} USD/m²</span>
-          </div>
-
-          {/* 3 Tarjetas apiladas horizontalmente a todo el ancho */}
-          <div className="space-y-4">
-            {/* Opción 1: Contado */}
-            <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#8e3e24] text-stone-950">
-                  Mayor Descuento · 100% Contado
-                </span>
-                <span className="text-xs text-stone-400">A la firma de contrato</span>
-              </div>
-              <h4 className="font-serif text-xl font-bold text-white">Pago al Contado (100%)</h4>
-              <p className="text-xs text-stone-300">
-                Aprovecha la tarifa de contado pagando el 100% a la firma del contrato. Una opción para definir el desembolso de tu departamento desde el comienzo.
-              </p>
-              <div className="pt-2 border-t border-white/10 text-xs text-[#e6cdb8]">
-                <strong className="text-white">TU VENTAJA:</strong> Accedes a la tarifa de contado. Compara su importe con las otras modalidades para tu unidad.
+            <div ref={introNavRef} className="border-t border-stone-200 pt-4">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Navegación del proyecto</p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <button type="button" onClick={() => scrollToSection("intro")} className="flex items-center gap-1.5 rounded-lg bg-stone-900 px-3 py-1.5 font-medium text-white"><Home size={12} /> Inicio</button>
+                {SECTIONS.slice(1, 8).map((section) => (
+                  <button key={section.id} type="button" onClick={() => scrollToSection(section.id)} className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-stone-700">{section.label}</button>
+                ))}
               </div>
             </div>
+          </section>
 
-            {/* Opción 2: 40% Cuotas / 60% Saldo */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-800">
-                  Avanza en cuotas · 40 / 60
-                </span>
-                <span className="text-xs text-stone-500">40% en obra · 60% entrega</span>
-              </div>
-              <h4 className="font-serif text-xl font-bold text-stone-900">40% Durante Construcción + 60% Contra Entrega</h4>
-              <p className="text-xs text-stone-600">
-                Avanza hacia tu hogar pagando el 40% durante la obra y deja el 60% restante para la entrega de tus llaves.
-              </p>
-              <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">TU VENTAJA:</strong> Repartes una parte de la compra durante la construcción y planificas el saldo para la entrega.
-              </div>
-            </div>
-
-            {/* Opción 3: 30% Inicial / 70% Saldo */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-800">
-                  Entrada Cómoda · 30 / 70
-                </span>
-                <span className="text-xs text-stone-500">30% firma · 70% entrega</span>
-              </div>
-              <h4 className="font-serif text-xl font-bold text-stone-900">30% de Entrada + 70% Contra Entrega</h4>
-              <p className="text-xs text-stone-600">
-                Empieza con el 30% a la firma y paga el 70% restante al recibir tu departamento. Una opción para dejar la mayor parte del desembolso para la entrega.
-              </p>
-              <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">TU VENTAJA:</strong> Concentras el 70% del pago en la entrega y organizas tus recursos con ese horizonte.
-              </div>
-            </div>
-          </div>
-
-          {/* Cronograma de hitos */}
-          <div className="p-4 rounded-xl bg-white border border-stone-200 text-xs space-y-2">
-            <p className="font-semibold text-stone-800 uppercase tracking-wider text-[11px]">Cronograma de Pagos</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-stone-600">
-              <div><strong>Hito 1 (Hoy):</strong> Consulta la disponibilidad y las condiciones de la reserva de USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}.</div>
-              <div><strong>Hito 2 (Contrato):</strong> Integración de cuota inicial a la firma (descontando la reserva).</div>
-              <div><strong>Hito 3 (Diciembre 2027):</strong> Saldo contra entrega de llaves, según el plan elegido.</div>
-            </div>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------
-            SECCIÓN 8: #disponibilidad (Cotizador Interactivo 5 pasos)
-            ---------------------------------------------------- */}
-        <section id="disponibilidad" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#8e3e24] flex items-center gap-1.5">
-                <Calculator size={13} />
-                Disponibilidad en Vivo & Cotizador
-              </span>
-              <button
-                onClick={handleRefreshInventory}
-                disabled={isRefreshingInv}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-stone-500 hover:text-stone-800 transition-colors"
-              >
-                <RefreshCw size={11} className={isRefreshingInv ? "animate-spin" : ""} />
-                {lastPriceUpdateText}
-              </button>
-            </div>
-            <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Encuentra el tuyo y da el siguiente paso.
-            </h3>
-            <p className="text-sm text-[#57534E]">
-              Elige tu distribución, encuentra un piso disponible y compara cuánto pagarías con cada plan. Dale forma a tu próximo hogar, una elección a la vez.
+          <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu día a día, mejor conectado.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify]">
+              Vive sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo, frente a Audi (Hansa). Comercios y servicios quedan en el entorno para organizar el día.
             </p>
-          </div>
+            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+              <img src="/bless_tower/ingreso_fachada.jpg" alt="Ingreso de Bless Tower sobre Av. Cristo Redentor" className="block h-auto w-full" />
+            </div>
+            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
+              Ver ubicación en Google Maps <ExternalLink size={14} />
+            </a>
+          </section>
 
-          {/* Paso 1: Tipología */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-              Paso 1 · Elige la Tipología
+          <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El edificio también se vive fuera de tu puerta.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify]">Piscina sinfín, churrasqueras, gimnasio, cowork, lobby y sala de juegos. Las fotos son las del proyecto.</p>
+            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+              <div className="relative">
+                <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
+                <button type="button" onClick={() => setAmenityIndex((index) => (index + AMENITY_SLIDES.length - 1) % AMENITY_SLIDES.length)} className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Anterior amenidad"><ChevronLeft size={18} /></button>
+                <button type="button" onClick={() => setAmenityIndex((index) => (index + 1) % AMENITY_SLIDES.length)} className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-stone-800 shadow-md" aria-label="Siguiente amenidad"><ChevronRight size={18} /></button>
+              </div>
+              <div className="space-y-1.5 px-5 py-4">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{amenity.category}</span>
+                <h4 className="font-serif text-xl text-stone-900">{amenity.title}</h4>
+                <p className="text-xs leading-relaxed text-stone-600">{amenity.description}</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="tipologias" className="mt-20 scroll-mt-2 border-t border-stone-200/80 pt-6">
+            {slide && (
+              <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+                <div className="shrink-0">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
+                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">El departamento, de una mirada.</h3>
+                </div>
+                <div className="grid shrink-0 grid-cols-3 gap-2">
+                  {ROOM_FILTERS.map((filter) => (
+                    <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-2xl border px-3 py-2 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{filter.label}</p>
+                      <p className="text-[11px] text-stone-500">{slidesFor(units, filter.id).length} plantas</p>
+                    </button>
+                  ))}
+                </div>
+                <ModelFrame slide={slide} index={slideIndex} total={slides.length} frameClass="min-h-0 flex-1" onPrev={() => shiftModel(-1)} onNext={() => shiftModel(1)} onOpen={(view) => openSlide(slide, view)} onTouchStart={(event) => { touchX.current = event.changedTouches[0].clientX; }} onTouchEnd={(event) => { if (touchX.current == null) return; const dx = event.changedTouches[0].clientX - touchX.current; if (dx > 40) shiftModel(-1); if (dx < -40) shiftModel(1); touchX.current = null; }} />
+              </div>
+            )}
+          </section>
+
+          <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu unidad no llega vacía.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify]">Cocina equipada, aire acondicionado, ropero y cerradura digital. Esto es lo que el proyecto publica como incluido.</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {EQUIPAMIENTO.map((group) => (
+                <div key={group.id} className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+                  <img src={group.image} alt={group.title} className={group.contain ? "max-h-[320px] w-full object-contain" : "h-[210px] w-full object-cover"} />
+                  <div className="space-y-2 px-4 py-4">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{group.room}</span>
+                    <h4 className="font-serif text-base font-bold text-stone-900">{group.title}</h4>
+                    <ul className="space-y-1.5 border-t border-stone-100 pt-2 text-xs text-stone-600">
+                      {group.items.map((item) => <li key={item} className="flex items-start gap-1.5"><span className="font-bold text-[#9a7b45]">·</span><span>{item}</span></li>)}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Constructora</span>
+            <div className="inline-flex rounded-xl bg-stone-950 px-4 py-3">
+              <img src="/bless_drei/logo-altavida.jpg" alt="Alta Vida Desarrollos Inmobiliarios" className="h-16 w-auto rounded-md" />
+            </div>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Un hogar se elige también por quién lo construye.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify]">
+              Detrás de Bless Tower está Alta Vida SRL, fundada en 2014 y con presencia en 5 ciudades de Bolivia. Entrega en {BLESS_TOWER_CONFIG.delivery}.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {AMBIENTE_OPTIONS.map((amb) => {
-                const isSelected = selectedAmbId === amb.id;
-                return (
-                  <button
-                    key={amb.id}
-                    onClick={() => setSelectedAmbId(amb.id)}
-                    className={`p-3 rounded-xl text-left transition-all border ${
-                      isSelected
-                        ? "bg-white border-[#8e3e24] shadow-md ring-1 ring-[#8e3e24]"
-                        : "bg-white/80 border-stone-200 hover:border-stone-300"
-                    }`}
-                  >
-                    <p className="text-xs font-bold text-stone-900">{amb.name}</p>
-                    <p className="text-[11px] text-stone-500 mt-0.5">{amb.areaRange}</p>
-                    <p className="text-xs font-semibold text-[#8e3e24] mt-1">
-                      {startingPrice(amb.id === "mono" ? minPriceMono : amb.id === "1d" ? minPrice1Dorm : minPrice2Dorms)}
-                    </p>
-                  </button>
-                );
-              })}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-stone-200 bg-white p-4"><p className="font-serif text-xl">Desde 2014</p><p className="mt-1 text-xs text-stone-500">Experiencia publicada de la desarrolladora.</p></div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4"><p className="font-serif text-xl">30 niveles</p><p className="mt-1 text-xs text-stone-500">La torre publicada, con áreas sociales en altura.</p></div>
+              <div className="rounded-xl border border-stone-200 bg-white p-4"><p className="font-serif text-xl">5 ciudades</p><p className="mt-1 text-xs text-stone-500">Santa Cruz, Tarija, Potosí, Oruro y Cochabamba.</p></div>
             </div>
-          </div>
+            <a href="https://web.altavidasrl.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">web.altavidasrl.com <ExternalLink size={14} /></a>
+          </section>
 
-          {/* Paso 2: Selección de Piso */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold uppercase tracking-wider text-stone-500">
-                Paso 2 · Selecciona un Piso ({floorsForAmbiente.filter((f) => f.isAvailable).length} pisos con disponibilidad)
-              </span>
-              <span className="text-stone-400 text-[11px]">Verde = Disponible · Gris = Agotado</span>
-            </div>
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 max-h-48 overflow-y-auto p-2 rounded-xl bg-white border border-stone-200">
-              {floorsForAmbiente.map((f) => {
-                const isCurrent = selectedFloor === f.floor;
-                return (
-                  <button
-                    key={f.floor}
-                    disabled={!f.isAvailable}
-                    onClick={() => {
-                      setSelectedFloor(f.floor);
-                      setSelectedUnitCode("");
-                    }}
-                    className={`py-2 px-1 rounded-lg text-xs font-semibold transition-all flex flex-col items-center ${
-                      isCurrent
-                        ? "bg-stone-900 text-white shadow-md"
-                        : f.isAvailable
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
-                        : "bg-stone-100 text-stone-400 cursor-not-allowed opacity-50"
-                    }`}
-                  >
-                    <span>P{f.floor}</span>
-                    <span className="text-[9px] font-normal">{f.isAvailable ? `${f.availableCount} disp` : "Agotado"}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu hogar, con un plan a tu medida.</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify]">
+              El proyecto publica tres caminos. Al contado usas la tarifa más baja. También puedes dejar el 40% durante la obra y el 60% contra entrega, o entrar con el 30% y dejar el 70% para {BLESS_TOWER_CONFIG.delivery}. La reserva publicada es USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}.
+            </p>
+            <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
+              <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
+              <h4 className="mt-3 font-serif text-2xl">Pago al contado, el 100% a la firma</h4>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Aseguras la tarifa de contado del departamento. El monto aparece al elegir la unidad.</p>
+            </article>
+            <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">40 / 60</span>
+              <h4 className="mt-3 font-serif text-2xl">40% durante la obra y 60% al recibir las llaves</h4>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">El 40% se integra durante la construcción, descontando los USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)} de reserva. El 60% queda contra entrega.</p>
+            </article>
+            <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">30 / 70</span>
+              <h4 className="mt-3 font-serif text-2xl">30% a la firma y 70% contra entrega</h4>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Empiezas con el 30% y dejas el 70% para la entrega en {BLESS_TOWER_CONFIG.delivery}.</p>
+            </article>
+            <p className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">Parqueo simple por USD 12.000. Parqueo con baulera por USD 15.000. Se cotizan aparte, fuera del precio por metro.</p>
+            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Elegir mi departamento <ArrowRight size={14} /></button>
+          </section>
 
-          {/* Unidades en el piso */}
-          {unitsInSelectedFloor.length > 0 && (
+          <section id="disponibilidad" className="mt-20 scroll-mt-2 space-y-6 border-t border-stone-200/80 pt-6">
+            {slide && (
+              <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
+                <div className="shrink-0">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
+                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Cotiza y reserva tu departamento.</h3>
+                  <p className="mt-1 text-xs text-stone-500">Lista oficial. Verde: disponible · Gris: vendido o reservado. Reserva USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}.</p>
+                </div>
+                <div className="flex min-h-0 flex-1 flex-col gap-2">
+                  <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
+                  <div className="grid shrink-0 grid-cols-3 gap-2">
+                    {ROOM_FILTERS.map((filter) => (
+                      <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-xl border p-3 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white"}`}>
+                        <p className="text-sm font-bold">{filter.label}</p>
+                        <p className="text-[11px] text-[#9a7b45]">{fromRooms(filter.id) ? `Desde USD ${formatBlessUsd(fromRooms(filter.id) as number)}` : "Sin unidades"}</p>
+                      </button>
+                    ))}
+                  </div>
+                  <ModelFrame slide={slide} index={slideIndex} total={slides.length} price={priceLabel(slide)} frameClass="min-h-0 flex-1" onPrev={() => shiftModel(-1)} onNext={() => shiftModel(1)} onOpen={(view) => openSlide(slide, view)} onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }} onTouchEnd={(event) => { if (modelTouch.current == null) return; const dx = event.changedTouches[0].clientX - modelTouch.current; if (dx > 40) shiftModel(-1); if (dx < -40) shiftModel(1); modelTouch.current = null; }} />
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                Unidades en Piso {selectedFloor}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {unitsInSelectedFloor.map((u) => {
-                  const isSelected = activeUnit?.codigo === u.codigo;
-                  const isLibre = u.estado === "LIBRE";
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</p>
+              <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
+                {floors.map((floor) => {
+                  const libre = floor.estado === "LIBRE";
+                  const current = activeUnit?.codigo === floor.codigo;
                   return (
-                    <button
-                      key={u.id}
-                      disabled={!isLibre}
-                      onClick={() => setSelectedUnitCode(u.codigo)}
-                      className={`p-2.5 rounded-xl text-left border transition-all ${
-                        isSelected
-                          ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                          : isLibre
-                          ? "bg-white border-stone-200 hover:border-stone-300 text-stone-900"
-                          : "bg-stone-100 border-stone-200 text-stone-400 cursor-not-allowed opacity-60"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span>{u.codigo}</span>
-                        <span className={`text-[10px] font-semibold ${isSelected ? "text-[#e6cdb8]" : isLibre ? "text-emerald-600" : "text-stone-400"}`}>
-                          {u.estado}
-                        </span>
-                      </div>
-                      <p className={`text-[11px] mt-0.5 ${isSelected ? "text-stone-300" : "text-stone-500"}`}>
-                        Modelo {u.modelo} · {u.superficieM2} m²
-                      </p>
-                      <p className={`text-xs font-bold mt-1 ${isSelected ? "text-white" : "text-[#8e3e24]"}`}>
-                        USD {formatBlessUsd(u.precioContado)}
-                      </p>
+                    <button key={floor.codigo} type="button" disabled={!libre} onClick={() => setSelectedCodigo(floor.codigo)} className={`rounded-lg px-1 py-2 text-xs font-semibold ${current && libre ? "bg-stone-900 text-white" : libre ? "border border-emerald-200 bg-emerald-50 text-emerald-800" : "cursor-not-allowed bg-stone-100 text-stone-400"}`}>
+                      <span className="block">Piso {floor.pisoNumero}</span>
+                      <span className="block text-[10px] font-normal">Unidad {floor.codigo}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
-          )}
 
-          {/* Paso 3: Selector directo de Parqueo */}
-          <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Car size={16} className="text-[#8e3e24]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                  Paso 3 · Opcional de Parqueo y Baulera
-                </span>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 3 · Adicional</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {ADDONS.map((item) => (
+                  <button key={item.id} type="button" onClick={() => setAddon(item.id)} className={`rounded-xl border p-3 text-left ${addon === item.id ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">{item.label}</p>
+                    <p className={`text-[11px] ${addon === item.id ? "text-stone-300" : "text-stone-500"}`}>{item.hint}</p>
+                  </button>
+                ))}
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={includeParking}
-                  onChange={(e) => setIncludeParking(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-5 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#8e3e24]"></div>
-              </label>
             </div>
 
-            {includeParking && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-stone-100">
-                <button
-                  type="button"
-                  onClick={() => setParkingOption("simple")}
-                  className={`p-3 rounded-lg border text-left text-xs transition-all ${
-                    parkingOption === "simple"
-                      ? "border-[#8e3e24] bg-[#fbf7f1] font-semibold text-stone-900"
-                      : "border-stone-200 hover:bg-stone-50 text-stone-600"
-                  }`}
-                >
-                  <p className="font-bold">Parqueo Simple (+USD 12.000)</p>
-                  <p className="text-[11px] text-stone-500">Parqueo vehicular cubierto</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setParkingOption("combo")}
-                  className={`p-3 rounded-lg border text-left text-xs transition-all ${
-                    parkingOption === "combo"
-                      ? "border-[#8e3e24] bg-[#fbf7f1] font-semibold text-stone-900"
-                      : "border-stone-200 hover:bg-stone-50 text-stone-600"
-                  }`}
-                >
-                  <p className="font-bold">Parqueo + Baulera (+USD 15.000)</p>
-                  <p className="text-[11px] text-stone-500">Parqueo vehicular con baulera integrada</p>
-                </button>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 4 · Plan de pago</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {PLANS.map((plan) => (
+                  <button key={plan.id} type="button" onClick={() => setPaymentPlan(plan.id)} className={`rounded-xl border p-3 text-left ${paymentPlan === plan.id ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">{plan.label}</p>
+                    <p className={`text-[11px] ${paymentPlan === plan.id ? "text-[#E8D5A8]" : "text-stone-500"}`}>{plan.hint}</p>
+                  </button>
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* Paso 4: Modalidad de Pago */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-              Paso 4 · Modalidad de Pago
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                onClick={() => setPaymentPlan("contado")}
-                className={`p-3 rounded-xl border text-left transition-all ${
-                  paymentPlan === "contado"
-                    ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                    : "bg-white border-stone-200 hover:border-stone-300 text-stone-800"
-                }`}
-              >
-                <p className="text-xs font-bold">100% Contado</p>
-                <p className={`text-[11px] mt-0.5 ${paymentPlan === "contado" ? "text-[#e6cdb8]" : "text-[#8e3e24]"}`}>
-                  Tarifa más baja
-                </p>
-              </button>
-              <button
-                onClick={() => setPaymentPlan("plan40")}
-                className={`p-3 rounded-xl border text-left transition-all ${
-                  paymentPlan === "plan40"
-                    ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                    : "bg-white border-stone-200 hover:border-stone-300 text-stone-800"
-                }`}
-              >
-                <p className="text-xs font-bold">40% en Obra / 60% Saldo</p>
-                <p className={`text-[11px] mt-0.5 ${paymentPlan === "plan40" ? "text-stone-300" : "text-stone-500"}`}>
-                  Equilibrio de cuotas
-                </p>
-              </button>
-              <button
-                onClick={() => setPaymentPlan("plan30")}
-                className={`p-3 rounded-xl border text-left transition-all ${
-                  paymentPlan === "plan30"
-                    ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                    : "bg-white border-stone-200 hover:border-stone-300 text-stone-800"
-                }`}
-              >
-                <p className="text-xs font-bold">30% Inicial / 70% Saldo</p>
-                <p className={`text-[11px] mt-0.5 ${paymentPlan === "plan30" ? "text-stone-300" : "text-stone-500"}`}>
-                  Entrada accesible
-                </p>
-              </button>
             </div>
-          </div>
 
-          {/* Tarjeta de Resumen Financiero: 4 Columnas con regla USD arriba, número abajo */}
-          {activeFinancials && (
-            <div className="p-5 rounded-2xl bg-stone-900 text-white shadow-xl space-y-4">
-              <div className="flex items-center justify-between text-xs pb-3 border-b border-white/10">
-                <span className="font-semibold text-[#e6cdb8]">
-                  Resumen · Unidad {activeUnit?.codigo} (Piso {selectedFloor}, Modelo {activeUnit?.modelo})
-                </span>
-                <span className="text-stone-400">
-                  Reserva con USD {formatBlessUsd(activeFinancials.reserva)}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                {/* Columna 1: Inversión Total */}
-                <div className="flex flex-col justify-between">
-                  <div className="min-h-[28px] flex items-end">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                      Inversión Total
-                    </p>
-                  </div>
-                  <div className="mt-1">
-                    <p className="font-serif text-lg sm:text-2xl font-bold text-white leading-tight">
-                      <span className="block text-xs font-mono font-normal text-stone-400">USD</span>
-                      <span className="block mt-0.5">{formatBlessUsd(activeFinancials.totalPrice)}</span>
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-1">
-                      ${activeFinancials.pricePerM2} USD/m²
-                    </p>
-                  </div>
+            {activeUnit && quote && (
+              <div className="space-y-4 rounded-2xl bg-stone-900 p-5 text-white shadow-xl">
+                <div className="border-b border-white/10 pb-3 text-xs text-[#E8D5A8]">
+                  Unidad {activeUnit.codigo} · Piso {activeUnit.pisoNumero} · Modelo {activeUnit.modelo} · {activeUnit.superficieM2.toLocaleString("es-BO")} m²
                 </div>
-
-                {/* Columna 2: Cuota Inicial */}
-                <div className="flex flex-col justify-between">
-                  <div className="min-h-[28px] flex items-end">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                      Cuota Inicial ({activeFinancials.cuotaInicialPct}%)
-                    </p>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Inversión total</p>
+                    <p className="mt-1 font-serif text-2xl font-bold"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{formatBlessUsd(quote.total)}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">USD {formatBlessUsd(quote.rate)}/m²{extra ? ` + adicional USD ${formatBlessUsd(extra)}` : ""}</p>
                   </div>
-                  <div className="mt-1">
-                    <p className="font-serif text-lg sm:text-2xl font-bold text-emerald-400 leading-tight">
-                      <span className="block text-xs font-mono font-normal text-emerald-500/80">USD</span>
-                      <span className="block mt-0.5">{formatBlessUsd(activeFinancials.initialPayment)}</span>
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-1">
-                      A la firma del contrato
-                    </p>
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Cuota inicial ({paymentPlan === "contado" ? "100" : paymentPlan === "plan40" ? "40" : "30"}%)</p>
+                    <p className="mt-1 font-serif text-2xl font-bold text-emerald-400"><span className="block font-mono text-xs font-normal text-emerald-500/80">USD</span>{formatBlessUsd(quote.initial)}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">A la firma del contrato</p>
                   </div>
-                </div>
-
-                {/* Columna 3: Saldo contra Entrega (Estándar: '-' y 'Sin saldo pendiente' cuando contado) */}
-                <div className="flex flex-col justify-between">
-                  <div className="min-h-[28px] flex items-end">
-                    <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold leading-tight">
-                      Saldo contra Entrega
-                    </p>
-                  </div>
-                  <div className="mt-1">
-                    {paymentPlan === "contado" ? (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Saldo contra entrega</p>
+                    {quote.balance == null ? (
                       <>
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-stone-500 leading-tight">
-                          <span className="block text-xs font-mono font-normal text-stone-500">USD</span>
-                          <span className="block mt-0.5">—</span>
-                        </p>
-                        <p className="text-[10px] text-stone-400 mt-1">
-                          Sin saldo pendiente
-                        </p>
+                        <p className="mt-1 font-serif text-2xl font-bold text-stone-500"><span className="block font-mono text-xs font-normal text-stone-500">USD</span>—</p>
+                        <p className="mt-1 text-[10px] text-stone-400">Sin saldo pendiente</p>
                       </>
                     ) : (
                       <>
-                        <p className="font-serif text-lg sm:text-2xl font-bold text-white leading-tight">
-                          <span className="block text-xs font-mono font-normal text-stone-400">USD</span>
-                          <span className="block mt-0.5">{formatBlessUsd(activeFinancials.balancePayment)}</span>
-                        </p>
-                        <p className="text-[10px] text-stone-400 mt-1">
-                          En {BLESS_TOWER_CONFIG.delivery}
-                        </p>
+                        <p className="mt-1 font-serif text-2xl font-bold"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{formatBlessUsd(quote.balance)}</p>
+                        <p className="mt-1 text-[10px] text-stone-400">En {BLESS_TOWER_CONFIG.delivery}</p>
                       </>
                     )}
                   </div>
                 </div>
-
-              </div>
-
-              {/* Paso 5: Botón WhatsApp de Acción Inmediata */}
-              <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p className="text-[11px] text-stone-400 text-center sm:text-left">
-                  Congela la unidad {activeUnit?.codigo} con la reserva formal de USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}.
-                </p>
-                <button
-                  onClick={contactWhatsApp}
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-stone-900 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md transition-all hover:bg-[#8e3e24] active:scale-95"
-                >
-                  <MessageCircle size={16} />
-                  Reservar Unidad {activeUnit?.codigo} vía WhatsApp
+                {extra > 0 && paymentPlan !== "contado" && (
+                  <p className="text-[11px] leading-relaxed text-stone-400">El parqueo o la baulera quedan fuera de ese porcentaje y se suman a la inversión total.</p>
+                )}
+                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                  <MessageCircle size={16} /> Quiero la unidad {activeUnit.codigo}
                 </button>
               </div>
-            </div>
-          )}
-        </section>
+            )}
+          </section>
 
-        {/* ----------------------------------------------------
-            SECCIÓN 9: #cierre (Garantía & Cierre)
-            ---------------------------------------------------- */}
-        <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-          <div className="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 text-stone-900">
-              <ShieldCheck size={20} className="text-emerald-600" />
-              <h4 className="font-serif text-lg font-bold">Hablemos de tu próximo hogar.</h4>
-            </div>
-            <p className="text-xs text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Cuéntanos qué modelo te gustó y te ayudamos a encontrar el piso y el plan de pago para ti. Confirma la disponibilidad de tu departamento y conoce cómo dar el siguiente paso con la reserva de USD 2.000.
+          <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-[48vh] text-center">
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu departamento en Av. Cristo Redentor.</h3>
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
+              Si tienes dudas, escríbenos. Te ayudamos a comparar modelos, confirmar la lista y reservar con USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}. Entrega en {BLESS_TOWER_CONFIG.delivery}.
             </p>
-            <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500">
-              <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>
-              <button
-                onClick={contactWhatsApp}
-                className="font-semibold text-[#8e3e24] hover:underline flex items-center gap-1"
-              >
-                Quiero conocer mis opciones
-                <ArrowRight size={12} />
-              </button>
-            </div>
-          </div>
-        </section>
+            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Hablar con un asesor <ArrowRight size={14} /></button>
+          </section>
         </div>
       </div>
 
-      {/* ========================================================
-          4. ELEMENTOS FLOTANTES REACTIVOS
-          ======================================================== */}
-      {/* 4.1 Barra inferior flotante de conversión rápida */}
       {activeSection !== "cierre" && (
-      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f8f1e7]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
-        <div>
-          <p className="text-xs text-stone-600">
-            Reserva con <span className="font-semibold text-stone-900">USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}</span>
-          </p>
-          <p className="hidden text-[10px] font-medium text-[#8e3e24] sm:block">Da el primer paso hacia tu hogar</p>
+        <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
+          <div>
+            <p className="text-xs text-stone-700">Desde USD {formatBlessUsd(fromAny || BLESS_TOWER_CONFIG.minPriceUsd)} · {BLESS_TOWER_CONFIG.delivery}</p>
+            <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva con USD {formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <a href={BLESS_TOWER_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-800">
+              <Download size={14} className="text-[#9a7b45]" /> Brochure
+            </a>
+            <button type="button" onClick={() => scrollToSection("disponibilidad")} className="rounded-lg bg-[#1C1917] px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">Elegir unidad</button>
+          </div>
         </div>
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-1.5 border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-800 shadow-sm transition-all hover:bg-stone-100 active:scale-95"
-        >
-          {shareFeedback ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
-          <span className="hidden sm:inline">Compartir</span>
-        </button>
-      </div>
       )}
 
-      {/* 4.2 Burbuja flotante de menú de secciones. Solo después de pasar la barra. */}
       {showFloatingNav && (
-      <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
-        <button
-          onClick={() => setShowSectionMenu(!showSectionMenu)}
-          className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl"
-          title="Menú de Secciones"
-          aria-label="Secciones"
-        >
-          {showSectionMenu ? <X size={18} className="text-[#e6cdb8]" /> : <Menu size={18} className="text-[#e6cdb8]" />}
-        </button>
-
-        <AnimatePresence>
-          {showSectionMenu && (
-            <>
-              <div
-                className="fixed inset-0 bg-black/20 z-[114]"
-                onClick={() => setShowSectionMenu(false)}
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="absolute right-0 bottom-14 w-64 rounded-2xl bg-white/95 backdrop-blur-xl border border-stone-200 shadow-2xl p-2.5 z-[115] space-y-1 text-xs"
-              >
-                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100">
-                  Secciones de Bless Tower
-                </div>
-                {[
-                  { id: "intro", label: "Inicio & Resumen" },
-                  { id: "lugar", label: "Ubicación & Entorno" },
-                  { id: "amenidades", label: "Áreas Sociales (Rooftop)" },
-                  { id: "tipologias", label: "Tipologías & Planos" },
-                  { id: "equipamiento", label: "Equipamiento Incluido" },
-                  { id: "constructora", label: "Constructora Alta Vida" },
-                  { id: "pago", label: "Formas de Pago" },
-                  { id: "disponibilidad", label: "Disponibilidad en Vivo" },
-                  { id: "cierre", label: "Garantías & Reserva" },
-                ].map((sec) => (
-                  <button
-                    key={sec.id}
-                    onClick={() => scrollToSection(sec.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors ${
-                      activeSection === sec.id
-                        ? "bg-[#8e3e24] text-white font-semibold"
-                        : "text-stone-700 hover:bg-stone-100"
-                    }`}
-                  >
-                    {sec.label}
-                  </button>
+        <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
+            {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
+          </button>
+          <AnimatePresence>
+            {showSectionMenu && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="absolute bottom-14 right-0 z-[115] w-56 space-y-1 rounded-2xl border border-stone-200 bg-white/95 p-2.5 text-xs shadow-2xl">
+                {SECTIONS.map((section) => (
+                  <button key={section.id} type="button" onClick={() => scrollToSection(section.id)} className={`w-full rounded-lg px-3 py-2 text-left font-medium ${activeSection === section.id ? "bg-[#9a7b45]/15 font-semibold text-[#816127]" : "text-stone-700"}`}>{section.label}</button>
                 ))}
               </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
-      {/* 4.3 Modal Zoom HD de Planos */}
-      <AnimatePresence>
-        {showHdPlanModal && (
-          <div className="fixed inset-0 z-[130] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="relative max-w-4xl w-full bg-stone-900 rounded-2xl p-4 shadow-2xl border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-white pb-2 border-b border-white/10">
-                <div>
-                  <h4 className="font-serif text-lg font-bold">{currentTypology.title}</h4>
-                  <p className="text-xs text-stone-400">{currentTypology.area} · Plano Arquitectónico</p>
-                </div>
-                <button
-                  onClick={() => setShowHdPlanModal(false)}
-                  className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
-                  aria-label="Cerrar modal"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="aspect-[16/10] bg-black rounded-xl overflow-hidden flex items-center justify-center p-2">
-                <img src={currentTypology.image} alt={currentTypology.title} className="max-h-full max-w-full object-contain" />
-              </div>
+      {zoom && (
+        <div className="fixed inset-0 z-[140] flex flex-col bg-[#f7f5f0]" role="dialog" aria-modal="true" aria-label={zoom.title}>
+          <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-8">
+            <div className="min-w-0">
+              <h4 className="font-serif text-xl text-stone-900">{zoom.title}</h4>
+              <p className="text-xs text-stone-500">{zoom.caption}</p>
             </div>
+            <button type="button" onClick={() => setZoom(null)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-800" aria-label="Cerrar vista"><X size={18} /></button>
           </div>
-        )}
-      </AnimatePresence>
-
+          {zoom.view !== "solo" && (
+            <div className="flex justify-center gap-1.5 px-4 pb-2">
+              {(["depto", "planta", "ficha"] as const).map((view) => (
+                <button key={view} type="button" onClick={() => setZoom({ ...zoom, view })} className={`rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider ${zoom.view === view ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>
+                  {view === "depto" ? "Departamento" : view === "planta" ? "Planta" : "Ficha"}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-4 md:px-10">
+            <img src={zoom.view === "depto" ? zoom.preview : zoom.plan} alt={zoom.title} className="max-h-full max-w-full object-contain" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
