@@ -498,33 +498,33 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
             <img src="/bless_tower/fachada_principal.jpg" alt="Fachada de Bless Tower" className="absolute inset-0 h-full w-full object-contain object-center" />
           </div>
         </div>
-        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
+        <div className="relative z-10 bg-[#a34a28] px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
           <img src="/bless_drei/logo-altavida.jpg" alt="Alta Vida" className="mb-3 h-12 w-auto rounded-md md:mb-2 md:h-10" />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f6e7d4]/40 bg-[#5c2414]/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#f6e7d4]">
             <Sparkles size={12} />
             Preventa · {BLESS_TOWER_CONFIG.floorsCount} niveles
           </span>
           <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2">Bless Tower</h1>
-          <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">{BLESS_TOWER_CONFIG.address}</p>
+          <p className="mt-1 max-w-sm text-xs text-[#f6e7d4] md:text-sm">{BLESS_TOWER_CONFIG.address}</p>
           <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
+            <div className="rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-3">
+              <p className="text-[10px] uppercase tracking-wider text-[#f6e7d4]">Entrega</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.delivery}</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-400">Constructora</p>
+            <div className="rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-3">
+              <p className="text-[10px] uppercase tracking-wider text-[#f6e7d4]">Constructora</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.builder}</p>
             </div>
           </div>
-          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 md:hidden">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
-              <span className="font-semibold text-[#e8d5a8]">Lista oficial</span>
+          <div className="mt-3 max-w-sm rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-4 md:hidden">
+            <div className="flex items-center justify-between border-b border-[#f6e7d4]/20 pb-2 text-[11px] text-[#f6e7d4]">
+              <span className="font-semibold text-white">Lista oficial</span>
               <span>{libres.length} libres de {units.length}</span>
             </div>
             <div className="mt-2.5 space-y-1.5 text-xs">
               {ROOM_FILTERS.map((filter) => (
                 <div key={filter.id} className="flex items-center justify-between">
-                  <span className="text-stone-300">{filter.label}</span>
+                  <span className="text-[#f6e7d4]">{filter.label}</span>
                   <span className="font-serif font-bold">{fromRooms(filter.id) ? `Desde USD ${formatBlessUsd(fromRooms(filter.id) as number)}` : "Agotado"}</span>
                 </div>
               ))}
