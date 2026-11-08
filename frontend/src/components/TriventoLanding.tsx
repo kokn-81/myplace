@@ -53,38 +53,38 @@ const AMENITY_SLIDES = [
   {
     src: "/trivento/piscina.jpg",
     category: "Piscina",
-    title: "Tu piscina en el edificio",
-    description: "El día de calor se resuelve sin salir de Equipetrol. Bajas a la piscina del proyecto y te quedas.",
+    title: "Tu pausa favorita, a unos pasos",
+    description: "Refresca tus tardes y desconecta de la rutina en la piscina de tu propio edificio.",
   },
   {
     src: "/trivento/cowork.jpg",
     category: "Cowork",
-    title: "Trabaja sin ocupar tu dormitorio",
-    description: "El cowork está para una llamada, una entrega o una tarde de estudio. Tu departamento sigue siendo para vivir.",
+    title: "Dale a tus ideas su propio espacio",
+    description: "Trabaja o estudia dentro del edificio y disfruta de un espacio distinto al que eliges para descansar.",
   },
   {
     src: "/trivento/churrasquera.jpg",
     category: "Churrasquera",
-    title: "El asado queda en casa",
-    description: "Invitas y el lugar ya está. La churrasquera es parte de las áreas sociales del proyecto.",
+    title: "Los mejores planes se comparten",
+    description: "Reúne a tus amigos alrededor de un asado, con una churrasquera dentro del edificio.",
   },
   {
     src: "/trivento/reunion.jpg",
     category: "Reunión",
-    title: "Un lugar para recibir a los tuyos",
-    description: "El área de reunión abierta sirve para el domingo en familia o para mostrar el edificio a quien va a alquilar.",
+    title: "Más espacio para estar juntos",
+    description: "Comparte una charla o una reunión con los tuyos en un área abierta que suma espacio a tu hogar.",
   },
   {
     src: "/trivento/lobby.jpg",
     category: "Lobby",
-    title: "La primera impresión ya está resuelta",
-    description: "Quien llega a visitarte entra por un lobby. La dirección se entiende desde la puerta.",
+    title: "Bienvenido a tu próxima etapa",
+    description: "Un lobby para recibir a tus visitas y disfrutar la experiencia de llegar a casa.",
   },
   {
     src: "/trivento/ingreso.jpg",
     category: "Ingreso",
-    title: "Llegas a Equipetrol",
-    description: "El ingreso principal da a Av. San Martín y Calle A. Ramírez.",
+    title: "Tu día empieza en Equipetrol",
+    description: "Haz tuya una nueva dirección, con ingreso por Av. San Martín y Calle A. Ramírez.",
   },
 ];
 
@@ -92,7 +92,7 @@ const EQUIPMENT = [
   {
     id: "clima",
     room: "Climatización",
-    title: "Llegas y el clima ya está",
+    title: "Tu confort, desde el primer día",
     image: "/trivento/vista_04.jpg",
     contain: false,
     items: [
@@ -103,15 +103,15 @@ const EQUIPMENT = [
   {
     id: "cocina",
     room: "Cocina",
-    title: "La cocina entra en uso",
+    title: "Empieza a disfrutar tu nueva cocina",
     image: "/trivento/vista_05.jpg",
     contain: false,
-    items: ["1 horno o microondas incluido, para que la unidad no te espere vacía."],
+    items: ["1 horno o microondas incluido."],
   },
   {
     id: "vidrio",
     room: "Cerramientos",
-    title: "El cerramiento ya viene definido",
+    title: "Detalles que completan tu hogar",
     image: "/trivento/fachada.jpg",
     contain: true,
     items: ["Vidrio laminado y perfilería ALVI 60 en la fachada de tu departamento."],
@@ -400,7 +400,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
     const money = quote
       ? `\n• Inversión total: USD ${formatTriventoUsd(quote.total)}\n• A la firma: USD ${formatTriventoUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatTriventoUsd(quote.balance)}`}`
       : "";
-    const text = `Hola, vengo de N.I.A y quiero reservar en Trivento IV (Equipetrol):\n\n• ${unitLine}\n• Modalidad: ${planLabel}${money}\n\n¿Me confirman la disponibilidad del cuadro y los pasos para reservar?`;
+    const text = `Hola, vengo de N.I.A y me interesa comprar en Trivento IV (Equipetrol):\n\n• ${unitLine}\n• Modalidad: ${planLabel}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -435,7 +435,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <span className="text-4xl font-light tracking-wide md:text-5xl">Trivento</span>
             <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">IV</span>
           </h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Si buscas tu primer departamento, o una unidad para alquilar en Equipetrol, Trivento IV está pensado para ti.</p>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Tu espacio propio en Equipetrol, con balcón, piscina y cowork para disfrutar más de cada día.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -447,7 +447,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Constructora</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Proyecto</p>
                 <p className="mt-0.5 text-sm font-medium leading-tight">Trivento IV</p>
               </div>
             </div>
@@ -477,17 +477,17 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Experiencia residencial y preventa
+                Tu próximo paso en Equipetrol
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Trivento IV.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">El lugar donde Equipetrol te queda a la puerta.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Tu independencia empieza aquí.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Si buscas tu primer departamento, o una unidad para alquilar en Equipetrol, Trivento IV está pensado para ti. Estudiantes, jóvenes profesionales, parejas que empiezan e inversionistas entran por la misma puerta: <strong>{TRIVENTO_CONFIG.address}</strong>, con llaves en <strong>{TRIVENTO_CONFIG.delivery}</strong>.
+                Estrena un departamento con balcón en <strong>{TRIVENTO_CONFIG.address}</strong>, con entrega programada para <strong>{TRIVENTO_CONFIG.delivery}</strong>. Elige un espacio para vivir a tu ritmo o una propiedad para destinar al alquiler, con piscina, cowork y áreas para compartir.
               </p>
               <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-                Hoy eliges entre los pisos 1 a 5, cinco departamentos por piso. El precio que ves es el del cuadro del {INVENTORY_LABEL}, en dólares al tipo de cambio del BCB. Lo que ya se vendió o se reservó sale de la cotización.
+                Compara modelos, elige tu piso y descubre cuánto necesitas para comprar. Consulta los precios de la lista del {INVENTORY_LABEL}, expresados en USD al tipo de cambio del BCB, y cotiza las unidades disponibles con la forma de pago que prefieras.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -499,7 +499,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <button type="button" onClick={() => scrollToSection("disponibilidad")} className="flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md">
-                Ver disponibilidad y cotizar
+                Encuentra tu departamento
               </button>
               <a href={TRIVENTO_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-stone-800">
                 <Download size={15} className="text-[#9a7b45]" />
@@ -519,9 +519,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol, donde tu departamento se vive y se alquila.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Haz de San Martín tu nueva dirección.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Tu unidad queda sobre <strong>{TRIVENTO_CONFIG.address}</strong>. Es la pieza de la ciudad que el proyecto presenta como la más dinámica: movimiento, servicios y gente que busca alquiler. Recibes las llaves en <strong>{TRIVENTO_CONFIG.delivery}</strong>.
+              Vive sobre <strong>{TRIVENTO_CONFIG.address}</strong>, en Equipetrol. Sal a disfrutar de la zona y vuelve a tu propio espacio. Si compras para alquilar, esta misma ubicación será parte de lo que ofrezcas a tus futuros inquilinos, con entrega programada en <strong>{TRIVENTO_CONFIG.delivery}</strong>.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/trivento/drone.jpg" alt="Trivento IV en Av. San Martín y Calle A. Ramírez, Equipetrol" className="block h-auto w-full" />
@@ -533,9 +533,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El edificio también se vive fuera de tu puerta.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Más espacio para disfrutar, sin salir de casa.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Además de tu departamento, el proyecto incluye dos niveles de áreas sociales: vista panorámica, área de reunión, churrasquera, cowork, piscina y lobby. Las fotos son los renders del proyecto.
+              Una tarde de piscina, una jornada en el cowork o un asado con amigos: disfruta las áreas sociales como una extensión de tu hogar. El proyecto contempla dos niveles con vista panorámica, área de reunión y churrasquera, además de piscina, cowork y lobby. Imágenes referenciales del proyecto.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -560,8 +560,8 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Cinco maneras de entrar. Elige la tuya.</h3>
-                <p className="mt-1 text-xs text-stone-500">Cada piso repite la misma planta: tres departamentos a la fachada y dos atrás.</p>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Encuentra el espacio que va contigo.</h3>
+                <p className="mt-1 text-xs text-stone-500">Monoambientes y 1 dormitorio, con balcón. Desliza para comparar los modelos.</p>
               </div>
               <RoomFilters rooms={rooms} onChange={chooseRooms} />
               <ModelFrame
@@ -586,9 +586,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu unidad no llega vacía.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Estrena con más resuelto.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Tu departamento incluye climatización, un horno o microondas, y cerramientos de vidrio laminado con perfilería ALVI 60. Llegas a una unidad que ya se puede vivir.
+              Climatización, un horno o microondas y cerramientos de vidrio laminado con perfilería ALVI 60: equipamiento incluido que te ahorra preparativos al estrenar tu departamento.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPMENT.map((group) => (
@@ -613,49 +613,49 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="inline-flex">
               <img src="/trivento/logo.png" alt="Trivento IV" className="h-14 w-auto" />
             </div>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Sabes cuándo entras y en qué dólar se cobra.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Empieza a proyectar tu vida en Trivento IV.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              La decisión se apoya en tres datos publicados: la fecha en que recibes las llaves, las unidades que puedes elegir hoy y la moneda en la que está tu precio.
+              Tu balcón, los espacios compartidos y una dirección en Equipetrol son parte de lo que eliges. Revisa la entrega programada y las condiciones de esta etapa para planificar tu compra con información clara.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-stone-200 bg-white p-4">
                 <p className="font-serif text-xl">Noviembre 2027</p>
-                <p className="mt-1 text-xs text-stone-500">La fecha en la que el proyecto entrega tu departamento.</p>
+                <p className="mt-1 text-xs text-stone-500">Entrega programada para planificar tu próxima etapa.</p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4">
                 <p className="font-serif text-xl">25 unidades</p>
-                <p className="mt-1 text-xs text-stone-500">Pisos 1 a 5, cinco departamentos por piso. Eliges entre las que siguen libres.</p>
+                <p className="mt-1 text-xs text-stone-500">Oferta publicada en los pisos 1 a 5, con cinco departamentos por piso.</p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4">
                 <p className="font-serif text-xl">T/C BCB</p>
-                <p className="mt-1 text-xs text-stone-500">Tu cotización está en dólares, al tipo de cambio del Banco Central.</p>
+                <p className="mt-1 text-xs text-stone-500">Precios en USD al tipo de cambio del Banco Central de Bolivia.</p>
               </div>
             </div>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige cómo asegurar tu unidad.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Da el paso hoy. Elige cómo pagar.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              El proyecto publica dos caminos. Al contado congelas la tarifa más baja. A crédito dejas la mitad ahora y la otra mitad cuando recibes la llave en {TRIVENTO_CONFIG.delivery}.
+              Elige el ahorro del contado o distribuye tu compra en dos momentos: 50% a la firma y 50% contra entrega en {TRIVENTO_CONFIG.delivery}. Compara ambas modalidades y encuentra la que mejor se adapta a tus planes.
             </p>
-            <p className="text-xs text-stone-500">Lista del {INVENTORY_LABEL}. El metro que ves es el de las unidades que siguen libres.</p>
+            <p className="text-xs text-stone-500">Lista del {INVENTORY_LABEL}. Tarifas según modelo, piso y unidad disponible.</p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
-              <h4 className="mt-3 font-serif text-2xl">Pago al contado, el 100% a la firma</h4>
+              <h4 className="mt-3 font-serif text-2xl">Aprovecha el contado: 100% a la firma</h4>
               <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">Desde USD {formatTriventoUsd(cashRates.min)}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">Es la forma de pagar menos por metro. En lo que queda libre va de USD {formatTriventoUsd(cashRates.min)} a USD {formatTriventoUsd(cashRates.max)} por m². El monto de tu unidad aparece cuando la eliges.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Accede al menor precio por m² de los dos planes publicados. Las unidades disponibles van de USD {formatTriventoUsd(cashRates.min)} a USD {formatTriventoUsd(cashRates.max)} por m². Elige tu departamento y conoce su precio total.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Crédito 50 / 50</span>
-              <h4 className="mt-3 font-serif text-2xl">50% a la firma · 50% contra entrega</h4>
+              <h4 className="mt-3 font-serif text-2xl">50% a la firma · 50% al recibir tu departamento</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatTriventoUsd(creditRates.min)}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">Entras con la mitad a la firma y cancelas la otra mitad al recibir las llaves en {TRIVENTO_CONFIG.delivery}. En las unidades libres va de USD {formatTriventoUsd(creditRates.min)} a USD {formatTriventoUsd(creditRates.max)} por m².</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Conserva parte de tu presupuesto hasta la entrega: pagas la mitad a la firma y completas el saldo al recibir las llaves en {TRIVENTO_CONFIG.delivery}. Tarifas de USD {formatTriventoUsd(creditRates.min)} a USD {formatTriventoUsd(creditRates.max)} por m², según la unidad.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
-              <p><strong>Hoy.</strong> Eliges la unidad que sigue libre. El proyecto no publica una seña aparte: ese monto te lo confirma el asesor.</p>
-              <p><strong>A la firma.</strong> Si vas al contado, cancelas el 100%. Si vas a crédito, dejas el 50% y aseguras el precio.</p>
-              <p><strong>{TRIVENTO_CONFIG.delivery}.</strong> Recibes el departamento. Con crédito pagas el saldo. Al contado ya no te queda nada pendiente.</p>
+              <p><strong>Hoy.</strong> Encuentra tu modelo y piso. Tu asesor confirma la disponibilidad y cualquier monto de reserva antes de avanzar.</p>
+              <p><strong>A la firma.</strong> Formaliza tu compra con el 100% al contado o el 50% del plan de crédito.</p>
+              <p><strong>{TRIVENTO_CONFIG.delivery}.</strong> Entrega programada. Con el plan 50/50 pagas el saldo contra entrega; al contado, tu departamento ya está pagado.</p>
             </div>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -666,7 +666,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige la unidad que todavía puedes tomar.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Tu próximo departamento, en cuatro pasos.</h3>
                 <p className="mt-1 text-xs text-stone-500">Lista del {INVENTORY_LABEL}. Verde: disponible · Gris: vendido o reservado.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -779,12 +779,12 @@ export default function TriventoLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu lugar en Equipetrol.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Da el siguiente paso hacia tu lugar en Equipetrol.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Si tienes dudas, escríbenos. Te ayudamos a comparar modelos, confirmar la lista del {INVENTORY_LABEL} y reservar el departamento. Quedan {libres.length} unidades, desde USD {formatTriventoUsd(minTicket)} al contado, con entrega en {TRIVENTO_CONFIG.delivery}.
+              Elige tu modelo favorito y recibe una cotización con el piso y la forma de pago que prefieras. Según la lista del {INVENTORY_LABEL}, hay {libres.length} unidades disponibles, desde USD {formatTriventoUsd(minTicket)} al contado, con entrega programada para {TRIVENTO_CONFIG.delivery}. Conversemos sobre tu próxima compra.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
+              Quiero conocer mis opciones <ArrowRight size={14} />
             </button>
           </section>
         </div>
