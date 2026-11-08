@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowDownUp, ChevronLeft, SlidersHorizontal, X } from "lucide-react";
 import type { LocalSearchCriteria } from "../localSearch";
-import { KNOWN_ZONES } from "../localSearch";
 import { SHOW_READY_APARTMENTS } from "../catalogVisibility";
 
 export type CatalogSort = "recommended" | "price-asc" | "price-desc" | "delivery";
@@ -29,6 +28,14 @@ const QUESTIONS: Record<CatalogGuideStep, string> = {
   zone: "¿Qué zona prefieres?", budget: "¿Cuál es tu presupuesto?",
   delivery: "¿Para cuándo la entrega?", results: "", sort: "¿Cómo quieres ordenar?",
 };
+
+const ZONE_OPTIONS = [
+  ["equipetrol", "Equipetrol"],
+  ["norte", "Norte"],
+  ["fexpocruz", "Fexpocruz"],
+  ["sirari", "Sirari"],
+  ["los cusis", "Los Cusis"],
+] as const;
 
 export default function CatalogFilters(props: Props) {
   const { criteria, onChange, step, onStep } = props;
@@ -63,7 +70,7 @@ export default function CatalogFilters(props: Props) {
 
   const chips: { key: keyof LocalSearchCriteria; label: string }[] = [];
   if (criteria.bedrooms) chips.push({ key: "bedrooms", label: criteria.bedrooms === "4+ Dorms" ? "Más de 3 dormitorios" : criteria.bedrooms === "0" || criteria.bedrooms === "Monoambiente" ? "Monoambiente" : criteria.bedrooms.replace(/Dorms?/, criteria.bedrooms.startsWith("1") ? "dormitorio" : "dormitorios") });
-  if (criteria.zone) chips.push({ key: "zone", label: criteria.zone });
+  if (criteria.zone) chips.push({ key: "zone", label: ZONE_OPTIONS.find(([value]) => value === criteria.zone)?.[1] || criteria.zone });
   if (criteria.maxBudget) chips.push({ key: "maxBudget", label: `Hasta ${currency} ${criteria.maxBudget.toLocaleString("es-BO")}` });
   if (criteria.minBudget) chips.push({ key: "minBudget", label: `Desde ${currency} ${criteria.minBudget.toLocaleString("es-BO")}` });
   if (criteria.deliveryYear) chips.push({ key: "deliveryYear", label: `Entrega ${criteria.deliveryYear}` });
@@ -109,7 +116,7 @@ export default function CatalogFilters(props: Props) {
 
       {step === "bedrooms" && [["1 Dorm", "1", "1 dormitorio"], ["2 Dorms", "2", "2 dormitorios"], ["3 Dorms", "3", "3 dormitorios"], ["4+ Dorms", "+3", "Más de 3 dormitorios"]].map(([value, label, accessibleLabel]) => <button key={value} type="button" aria-label={accessibleLabel} className={pill(criteria.bedrooms === value)} aria-pressed={criteria.bedrooms === value} onClick={() => { set("bedrooms", value); onStep("zone"); }}>{label}</button>)}
 
-      {step === "zone" && ["", ...KNOWN_ZONES].map(zone => <button key={zone} type="button" className={pill((criteria.zone || "") === zone)} aria-pressed={(criteria.zone || "") === zone} onClick={() => { set("zone", zone); onStep("budget"); }}>{zone ? zone.charAt(0).toUpperCase() + zone.slice(1) : "Cualquier zona"}</button>)}
+      {step === "zone" && ZONE_OPTIONS.map(([value, label]) => <button key={value} type="button" className={pill(criteria.zone === value)} aria-pressed={criteria.zone === value} onClick={() => { set("zone", value); onStep("budget"); }}>{label}</button>)}
 
       {step === "budget" && <>
         {(currency === "Bs" ? [5000, 8000, 12000] : [75000, 100000, 150000, 200000, 300000]).map(amount => <button key={amount} type="button" className={pill(criteria.maxBudget === amount)} aria-pressed={criteria.maxBudget === amount} onClick={() => chooseBudget(amount)}>Hasta {currency} {amount.toLocaleString("es-BO")}</button>)}

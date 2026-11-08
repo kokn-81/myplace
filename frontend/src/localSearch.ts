@@ -39,6 +39,7 @@ export const KNOWN_ZONES = [
   "urubo",
   "las palmas",
   "norte",
+  "fexpocruz",
   "centro",
   "sur",
   "san aurelio",
