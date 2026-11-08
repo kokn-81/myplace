@@ -62,7 +62,7 @@ export default function CatalogFilters(props: Props) {
   };
 
   const chips: { key: keyof LocalSearchCriteria; label: string }[] = [];
-  if (criteria.bedrooms) chips.push({ key: "bedrooms", label: criteria.bedrooms === "0" || criteria.bedrooms === "Monoambiente" ? "Monoambiente" : criteria.bedrooms.replace(/Dorms?/, criteria.bedrooms.startsWith("1") ? "dormitorio" : "dormitorios") });
+  if (criteria.bedrooms) chips.push({ key: "bedrooms", label: criteria.bedrooms === "4+ Dorms" ? "Más de 3 dormitorios" : criteria.bedrooms === "0" || criteria.bedrooms === "Monoambiente" ? "Monoambiente" : criteria.bedrooms.replace(/Dorms?/, criteria.bedrooms.startsWith("1") ? "dormitorio" : "dormitorios") });
   if (criteria.zone) chips.push({ key: "zone", label: criteria.zone });
   if (criteria.maxBudget) chips.push({ key: "maxBudget", label: `Hasta ${currency} ${criteria.maxBudget.toLocaleString("es-BO")}` });
   if (criteria.minBudget) chips.push({ key: "minBudget", label: `Desde ${currency} ${criteria.minBudget.toLocaleString("es-BO")}` });
@@ -107,7 +107,7 @@ export default function CatalogFilters(props: Props) {
         onStep("bedrooms");
       }}>{label} ({count})</button>)}
 
-      {step === "bedrooms" && [["Monoambiente", "Monoambiente"], ["1 Dorm", "1 dormitorio"], ["2 Dorms", "2 dormitorios"], ["3+ Dorms", "3 o más"], ["", "Cualquiera"]].map(([value, label]) => <button key={value} type="button" className={pill((criteria.bedrooms || "") === value)} aria-pressed={(criteria.bedrooms || "") === value} onClick={() => { set("bedrooms", value); onStep("zone"); }}>{label}</button>)}
+      {step === "bedrooms" && [["1 Dorm", "1", "1 dormitorio"], ["2 Dorms", "2", "2 dormitorios"], ["3 Dorms", "3", "3 dormitorios"], ["4+ Dorms", "+3", "Más de 3 dormitorios"]].map(([value, label, accessibleLabel]) => <button key={value} type="button" aria-label={accessibleLabel} className={pill(criteria.bedrooms === value)} aria-pressed={criteria.bedrooms === value} onClick={() => { set("bedrooms", value); onStep("zone"); }}>{label}</button>)}
 
       {step === "zone" && ["", ...KNOWN_ZONES].map(zone => <button key={zone} type="button" className={pill((criteria.zone || "") === zone)} aria-pressed={(criteria.zone || "") === zone} onClick={() => { set("zone", zone); onStep("budget"); }}>{zone ? zone.charAt(0).toUpperCase() + zone.slice(1) : "Cualquier zona"}</button>)}
 

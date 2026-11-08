@@ -92,8 +92,14 @@ export const matchesBedrooms = (
   if (requested.includes("2 Dorm") || requested === "2") {
     return r === 2;
   }
-  if (requested.includes("3+") || requested === "3" || requested.includes("3 Dorm")) {
+  if (requested.includes("3+")) {
     return r >= 3;
+  }
+  if (requested === "3" || requested.includes("3 Dorm")) {
+    return r === 3;
+  }
+  if (requested.includes("4+")) {
+    return r > 3;
   }
   return true;
 };

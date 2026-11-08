@@ -2,12 +2,12 @@ import type { Property } from "./types";
 import type { CatalogSort } from "./components/CatalogFilters";
 import { getProjectAvailableUnits } from "./projectInventory";
 import { getProjectCardSummary } from "./projectCardSummary";
+import { matchesBedrooms } from "./localSearch";
 
 export function catalogPrice(property: Property, bedrooms?: string | null, minBudget?: number | null, maxBudget?: number | null): number | null {
   const units = getProjectAvailableUnits(property.id);
   if (units) {
-    const count = bedrooms?.includes("Mono") ? 0 : bedrooms ? parseInt(bedrooms) : null;
-    const prices = units.filter(u => count === null || (count === 3 ? u.rooms >= 3 : u.rooms === count)).map(u => u.price).filter(p => p > 0 && (!minBudget || p >= minBudget) && (!maxBudget || p <= maxBudget));
+    const prices = units.filter(u => !bedrooms || matchesBedrooms(u.rooms, "", "", bedrooms)).map(u => u.price).filter(p => p > 0 && (!minBudget || p >= minBudget) && (!maxBudget || p <= maxBudget));
     return prices.length ? Math.min(...prices) : null;
   }
   return property.price > 0 ? property.price : null;

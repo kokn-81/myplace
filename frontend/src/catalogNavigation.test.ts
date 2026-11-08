@@ -53,6 +53,25 @@ test("prices exclude sold units and share the inventory used by the quote", () =
   } finally { blessTowerInventory.set(old); }
 });
 
+test("3 bedrooms is exact and more than 3 uses the matching unit prices", () => {
+  const previous = onaInventory.get();
+  const project = property("5");
+  const listings = [project, property("three", { rooms: 3 }), property("four", { rooms: 4 }), property("five", { rooms: 5 })];
+  try {
+    onaInventory.set([
+      { ...previous[0], rooms: 3, cash: 160000, status: "disponible" },
+      { ...previous[0], rooms: 4, cash: 140000, status: "disponible" },
+      { ...previous[0], rooms: 5, cash: 180000, status: "disponible" },
+    ]);
+    assert.deepEqual(localSearchCatalog("", listings, { bedrooms: "3 Dorms" }).ids, ["5", "three"]);
+    assert.deepEqual(localSearchCatalog("", listings, { bedrooms: "4+ Dorms" }).ids, ["5", "four", "five"]);
+    assert.equal(catalogPrice(project, "3 Dorms"), 160000);
+    assert.equal(catalogPrice(project, "4+ Dorms"), 140000);
+    assert.deepEqual(localSearchCatalog("", [project], { bedrooms: "3 Dorms", maxBudget: 150000 }).ids, []);
+    assert.deepEqual(localSearchCatalog("", [project], { bedrooms: "4+ Dorms", maxBudget: 150000 }).ids, ["5"]);
+  } finally { onaInventory.set(previous); }
+});
+
 test("apartment and project links round-trip and browser Back/Forward reads route paths", () => {
   for (const id of ["3", "4", "5", "bless-tower", "bless-drei", "domus-black"]) {
     const path = propertyPath({ id });
