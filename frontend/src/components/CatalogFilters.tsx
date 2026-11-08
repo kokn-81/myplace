@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDownUp, ChevronLeft, SlidersHorizontal, X } from "lucide-react";
 import type { LocalSearchCriteria } from "../localSearch";
 import { KNOWN_ZONES } from "../localSearch";
+import { SHOW_READY_APARTMENTS } from "../catalogVisibility";
 
 export type CatalogSort = "recommended" | "price-asc" | "price-desc" | "delivery";
 export type CatalogGuideStep = "category" | "bedrooms" | "zone" | "budget" | "delivery" | "results" | "sort";
@@ -88,7 +89,7 @@ export default function CatalogFilters(props: Props) {
     </div>
 
     {step !== "results" && !(step === "budget" && customBudget) && <div key={step} className="nia-catalog-options flex w-full items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="group" aria-label={QUESTIONS[step]}>
-      {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount], ["", "Todos", props.projectCount + props.apartmentCount]].map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
+      {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount], ["", "Todos", props.projectCount + props.apartmentCount]].filter(([value]) => value !== "Departamentos" || SHOW_READY_APARTMENTS).map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
         props.onCategory(String(value));
         if (value === "Departamentos" && criteria.deliveryYear) onChange({ ...criteria, deliveryYear: undefined });
         onStep("bedrooms");

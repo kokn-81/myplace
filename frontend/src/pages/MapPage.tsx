@@ -61,6 +61,7 @@ import CatalogFilters, { CatalogGuideStep, CatalogSort } from "../components/Cat
 import { LocalSearchCriteria } from "../localSearch";
 import { catalogPrice, sortCatalogResults, propertyPath, propertyIdFromLocation } from "../catalogPresentation";
 import { useInventoryRevision, refreshProjectInventories } from "../projectInventory";
+import { isCatalogPropertyVisible } from "../catalogVisibility";
 import { ONA_DELIVERY } from "../onaInventory";
 
 const MAPBOX_TOKEN =
@@ -1294,7 +1295,7 @@ export default function MapPage() {
   const [sortOrder, setSortOrder] = useState<CatalogSort>("recommended");
   const [filterStep, setFilterStep] = useState<CatalogGuideStep>("category");
   useEffect(() => { void refreshProjectInventories(); }, []);
-  const catalogProperties = useMemo(() => properties.map(p => {
+  const catalogProperties = useMemo(() => properties.filter(property => isCatalogPropertyVisible(property)).map(p => {
     const summary = getProjectCardSummary(p);
     return summary ? { ...p, fechaEntrega: summary.delivery, description: `${p.description} ${summary.address}`, price: catalogPrice(p) || 0 } : p;
   }), [properties, inventoryRevision]);
@@ -1323,6 +1324,16 @@ export default function MapPage() {
   }, []);
 
   const selectProperty = useCallback(async (property: Property, options?: { skipHistoryPush?: boolean }) => {
+    if (!isCatalogPropertyVisible(property)) {
+      setSelectedProperty(null);
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.pathname = "/";
+        ["proyecto", "project", "p"].forEach(key => url.searchParams.delete(key));
+        window.history.replaceState(null, "", url.pathname + url.search);
+      }
+      return;
+    }
     setSelectedProperty(property);
     setLastViewedProperty(property);
     focusPropertyLocation(property, 16.2);
@@ -2570,7 +2581,7 @@ export default function MapPage() {
     const maxBudget = budgetMatch ? Number(budgetMatch[1]) : null;
 
     const exactIds = new Set(exactProperties.map((p) => p.id));
-    return properties
+    return catalogProperties
       .filter((p) => {
         if (exactIds.has(p.id)) return false;
         if (!propertyMatchesOperation(p, guidedOperation)) return false;
@@ -2598,7 +2609,7 @@ export default function MapPage() {
         return 0;
       })
       .slice(0, 6);
-  }, [properties, exactProperties, guidedOperation, guidedCity, guidedPropertyType, guidedBedrooms, guidedBudget]);
+  }, [catalogProperties, exactProperties, guidedOperation, guidedCity, guidedPropertyType, guidedBedrooms, guidedBudget]);
 
   const filteredProperties = useMemo(() => {
     let list: Property[] = [];
@@ -2773,7 +2784,7 @@ export default function MapPage() {
 
   const carouselProperties = useMemo(() => {
     if (selectedBuildingGroup) {
-      return buildingFilteredProperties;
+      return buildingFilteredProperties.filter(property => isCatalogPropertyVisible(property));
     }
     return filteredProperties;
   }, [selectedBuildingGroup, buildingFilteredProperties, filteredProperties]);
