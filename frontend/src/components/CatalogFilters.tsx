@@ -101,7 +101,7 @@ export default function CatalogFilters(props: Props) {
     </div>}
 
     {step !== "results" && !(step === "budget" && customBudget) && <div key={step} className="nia-catalog-options flex w-full items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="group" aria-label={QUESTIONS[step]}>
-      {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount], ["", "Todos", props.projectCount + props.apartmentCount]].filter(([value]) => value !== "Departamentos" || SHOW_READY_APARTMENTS).map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
+      {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount]].filter(([value]) => value !== "Departamentos" || SHOW_READY_APARTMENTS).map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
         props.onCategory(String(value));
         if (value === "Departamentos" && criteria.deliveryYear) onChange({ ...criteria, deliveryYear: undefined });
         onStep("bedrooms");
