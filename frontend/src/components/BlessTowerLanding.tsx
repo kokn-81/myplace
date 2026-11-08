@@ -577,7 +577,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Vive sobre la Av. Cristo Redentor, entre el 2° y el 3° anillo, frente a Audi (Hansa). Comercios y servicios quedan en el entorno para organizar el día.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-              <img src="/bless_tower/ingreso_fachada.jpg" alt="Ingreso de Bless Tower sobre Av. Cristo Redentor" className="block h-auto w-full" />
+              <img src="/bless_tower/ubicacion-brochure-p2.jpg" alt="Ubicación de Bless Tower: Av. Cristo Redentor, Av. Los Cusis y tercer anillo" width={1080} height={1920} loading="lazy" decoding="async" className="block h-auto w-full" />
             </div>
             <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Ver ubicación en Google Maps <ExternalLink size={14} />
