@@ -931,7 +931,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Lo esencial de tu hogar ya está incluido.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Imagina tu cocina con muebles y mesones instalados, el ropero listo para organizar tus cosas y los aires acondicionados incluidos en sala y dormitorios. Conoce el equipamiento y los acabados con los que se entrega tu departamento.
+              Muebles y mesones instalados en la cocina, ropero para organizar tus cosas y aires acondicionados en sala y dormitorios. Conoce los detalles incluidos y empieza a imaginar tu llegada a Bless Tower.
             </p>
           </div>
 
@@ -1060,7 +1060,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               </a>
             </div>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Detrás de Bless Tower está <strong>Alta Vida SRL</strong>, una desarrolladora fundada en 2014, con más de 10 años de experiencia y presencia en <strong>5 ciudades</strong> de Bolivia. Conoce su trayectoria y su equipo de planificación, diseño, construcción y comercialización para tomar tu decisión con más información.
+              Detrás de Bless Tower está <strong>Alta Vida SRL</strong>, fundada en 2014 y con presencia en <strong>5 ciudades</strong> de Bolivia. Conoce al equipo que planifica, diseña y construye el proyecto donde quieres vivir.
             </p>
           </div>
 
@@ -1130,7 +1130,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 Aprovecha la tarifa de contado pagando el 100% a la firma del contrato. Una opción para definir el desembolso de tu departamento desde el comienzo.
               </p>
               <div className="pt-2 border-t border-white/10 text-xs text-[#e6cdb8]">
-                <strong className="text-white">VENTAJA COMERCIAL:</strong> Accedes a la tarifa de contado. Compara su importe con las otras modalidades para tu unidad.
+                <strong className="text-white">TU VENTAJA:</strong> Accedes a la tarifa de contado. Compara su importe con las otras modalidades para tu unidad.
               </div>
             </div>
 
@@ -1147,7 +1147,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 Avanza hacia tu hogar pagando el 40% durante la obra y deja el 60% restante para la entrega de tus llaves.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Repartes una parte de la compra durante la construcción y planificas el saldo para la entrega.
+                <strong className="text-stone-900">TU VENTAJA:</strong> Repartes una parte de la compra durante la construcción y planificas el saldo para la entrega.
               </div>
             </div>
 
@@ -1164,7 +1164,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
                 Empieza con el 30% a la firma y paga el 70% restante al recibir tu departamento. Una opción para dejar la mayor parte del desembolso para la entrega.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Concentras el 70% del pago en la entrega y organizas tus recursos con ese horizonte.
+                <strong className="text-stone-900">TU VENTAJA:</strong> Concentras el 70% del pago en la entrega y organizas tus recursos con ese horizonte.
               </div>
             </div>
           </div>
@@ -1203,7 +1203,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               Encuentra el tuyo y da el siguiente paso.
             </h3>
             <p className="text-sm text-[#57534E]">
-              Elige la distribución que va contigo, encuentra un piso disponible y compara tus opciones de pago. Tu próximo hogar empieza a tomar forma con cada elección.
+              Elige tu distribución, encuentra un piso disponible y compara cuánto pagarías con cada plan. Dale forma a tu próximo hogar, una elección a la vez.
             </p>
           </div>
 
@@ -1521,7 +1521,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
               <h4 className="font-serif text-lg font-bold">Hablemos de tu próximo hogar.</h4>
             </div>
             <p className="text-xs text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Elige tu modelo y conversemos sobre la disponibilidad, el plan de pago y la reserva de USD 2.000. Consulta cómo se acredita ese monto a tu compra y revisa la documentación del proyecto antes de firmar.
+              Cuéntanos qué modelo te gustó y te ayudamos a encontrar el piso y el plan de pago para ti. Confirma la disponibilidad de tu departamento y conoce cómo dar el siguiente paso con la reserva de USD 2.000.
             </p>
             <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500">
               <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>

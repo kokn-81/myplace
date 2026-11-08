@@ -607,10 +607,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Garden Zen.
-                <span className="mt-1 block font-normal italic text-[#7a3218]">Un proyecto pensado para vivir en calma y consciencia.</span>
+                <span className="mt-1 block font-normal italic text-[#7a3218]">Tu calma en Equipetrol Norte.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Garden Zen combina arquitectura contemporánea con soluciones de sostenibilidad activa en {GARDEN_ZEN_CONFIG.zone}. Desarrollado por {GARDEN_ZEN_CONFIG.builder}, su sistema de paneles solares genera un ahorro de hasta el 60% en consumo eléctrico y un 50% menos en expensas comunes.
+                Imagina volver a casa y elegir entre un rato de piscina, una sesión de sauna o la vista desde el rooftop. En {GARDEN_ZEN_CONFIG.zone}, Garden Zen combina esos momentos con paneles solares y aprovechamiento de agua de lluvia para una vida más eficiente. Un proyecto de {GARDEN_ZEN_CONFIG.builder} con espacios para distintas etapas de tu vida.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -646,7 +646,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#7a3218]"><MapPin size={13} /> Ubicación</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol Norte, a pasos de lo que usas cada día.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Ubicado sobre {GARDEN_ZEN_CONFIG.address}, a pasos del supermercado Tía, la Av. San Martín, Ventura Mall, Manzana 40 y el polo de la Torre Platinum.
+              Haz tus compras, sal a comer o conecta con tu oficina desde una dirección en {GARDEN_ZEN_CONFIG.address}. El entorno reúne el supermercado Tía, la Av. San Martín, Ventura Mall, Manzana 40 y Torre Platinum para que tus compras y tus planes queden cerca.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/garden_zen/ubicacion.jpg" alt="Mapa de Garden Zen en Equipetrol Norte" className="block h-auto w-full" />
@@ -672,9 +672,9 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#7a3218]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El rooftop del piso 17 y las áreas para el día a día.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Sube al piso 17. Baja el ritmo.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Piscina, saunas, gimnasio, cowork, salón y churrasqueras. Las áreas comunes usan energía solar y cosecha de agua de lluvia.
+              Disfruta la piscina y las vistas del rooftop, encuentra tu pausa en los saunas y mantén cerca el gimnasio y el cowork. Para compartir, tienes salón y churrasqueras. Cada plan encuentra su lugar dentro de Garden Zen.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -699,7 +699,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#7a3218]"><Layers size={13} /> Tipologías</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Del monoambiente al departamento de 3 dormitorios.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">El espacio para tu próxima etapa.</h3>
               </div>
               <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">
                 {ROOM_FILTERS.map((filter) => (
@@ -732,9 +732,9 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#7a3218]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Lo que ya viene instalado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Detalles incluidos para vivir más cómodo.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Cocina, dormitorio y baño se entregan con el equipamiento publicado para Garden Zen.
+              Mesones, muebles, climatización y acabados que hacen más cómodo tu día. Revisa lo que incluye la cocina, el dormitorio y el baño, y empieza a imaginar tu llegada a Garden Zen.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPMENT_SECTIONS.map((group) => (
@@ -758,7 +758,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#7a3218]"><Building2 size={13} /> Constructora</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{GARDEN_ZEN_CONFIG.builder}</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              {GARDEN_ZEN_CONFIG.builder} desarrolla edificios con paneles solares bajo la normativa de generación distribuida. Su sede está en Platinum II Business Center, piso 27.
+              Conoce la propuesta de {GARDEN_ZEN_CONFIG.builder}: integrar energía solar, aprovechamiento del agua e iluminación eficiente a la vida en un edificio. Una forma de pensar tu hogar que también toma en cuenta el uso de los recursos.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-stone-200 bg-white p-4">
@@ -768,7 +768,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4">
                 <Leaf size={18} className="text-[#7a3218]" />
-                <p className="mt-2 font-serif text-lg text-stone-900">50% menos expensas</p>
+                <p className="mt-2 font-serif text-lg text-stone-900">Uso eficiente del agua</p>
                 <p className="mt-1 text-xs text-stone-600">Cosecha de agua de lluvia para riego y áreas comunes, más iluminación eficiente.</p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white p-4">
@@ -790,15 +790,15 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#7a3218]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Planes de pago flexibles adaptados a tu estrategia.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige cómo dar el paso a Garden Zen.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Elige cómo distribuir el pago hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}. El precio varía según departamento y piso. La reserva de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} se descuenta de la cuota inicial.
+              Aprovecha la tarifa de contado o elige cuánto pagar al inicio y cuánto dejar para la entrega en {GARDEN_ZEN_CONFIG.delivery}. Compara los montos de tu departamento y piso. La reserva de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} se descuenta de la cuota inicial.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#c4896a] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Mayor descuento</span>
               <h4 className="mt-3 font-serif text-2xl">Pago al contado (100%)</h4>
               {minCashPerM2 != null && <p className="mt-2 font-serif text-3xl text-[#e6cdb8]">Desde USD {formatGardenZenUsd(minCashPerM2)}/m²</p>}
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">El valor por m² más bajo del proyecto. Congelas ese precio hasta la entrega en {GARDEN_ZEN_CONFIG.delivery}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Accede a la tarifa de contado de la unidad que elijas y define el pago de tu departamento desde el inicio. Entrega programada para {GARDEN_ZEN_CONFIG.delivery}.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Equilibrio financiero</span>
@@ -810,7 +810,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Entrada cómoda</span>
               <h4 className="mt-3 font-serif text-2xl leading-snug">Inicial 30% y saldo 70% contra entrega</h4>
               {minPlan30PerM2 != null && <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatGardenZenUsd(minPlan30PerM2)}/m²</p>}
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">Aseguras la unidad con el 30% y cancelas el 70% en {GARDEN_ZEN_CONFIG.delivery}, con fondos propios o crédito bancario.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Empieza con el 30% y deja el 70% para {GARDEN_ZEN_CONFIG.delivery}. Una opción para organizar con más tiempo el pago de la mayor parte de tu departamento.</p>
             </article>
             {parkingLine && (
               <p className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
@@ -826,7 +826,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#7a3218]">Disponibilidad</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Selecciona tu unidad y simula tu inversión al instante.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Encuentra tu lugar en Garden Zen.</h3>
                 <p className="mt-1 text-xs text-stone-500">Lista de obra fina. Verde: disponible · Gris: vendido o reservado.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -961,9 +961,9 @@ export default function GardenZenLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu unidad en obra fina.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Empieza a imaginar tu vida en Garden Zen.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Reserva hoy tu departamento con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} y congela el precio de esta etapa. Si tienes dudas, escribe y te ayudamos a elegir la unidad.
+              Cuéntanos qué modelo te gustó. Te ayudamos a comparar pisos, confirmar el equipamiento y elegir la forma de pago. Consulta cómo reservar tu unidad con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} y da el siguiente paso.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#5c2414]">
               Hablar con un asesor <ArrowRight size={14} />

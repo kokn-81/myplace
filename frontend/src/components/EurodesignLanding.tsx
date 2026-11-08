@@ -78,26 +78,26 @@ const AMENITY_SLIDES = [
   {
     src: "/eurodesign/amenities/amenity_piscina_dia.jpg",
     category: "Piso 18 Rooftop",
-    title: "Piscina Panorámica & Sky Deck 360°",
-    description: "Ubicada en el piso más alto de la torre con vista infinita sobre todo Santa Cruz y el cielo de Equipetrol. Deck con reposeras, solárium y atardeceres incomparables.",
+    title: "Tu pausa en la piscina, con otra vista",
+    description: "Refréscate, descansa en las reposeras y disfruta del solárium con vistas abiertas desde el rooftop del piso 18.",
   },
   {
     src: "/eurodesign/amenities/amenity_piscina_skybar.jpg",
     category: "Rooftop & Coctelería",
-    title: "Sky Bar & Piscina Nocturna",
-    description: "Ambiente exclusivo para eventos y reuniones sociales en las alturas, con barra gourmet, living social climatizado e iluminación ambiental sofisticada.",
+    title: "Tus encuentros, en las alturas",
+    description: "Comparte una conversación y disfruta la vista de la ciudad en el ambiente social del sky bar junto a la piscina.",
   },
   {
     src: "/eurodesign/amenities/amenity_sala_lounge.jpg",
     category: "Social & Eventos",
-    title: "Sala Lounge & Club Social",
-    description: "Espacio de esparcimiento con cómodos sofás seccionales, mesas de banquete, sector de bar y ventanales de piso a techo con vistas despejadas a la ciudad.",
+    title: "Un lounge para compartir a gusto",
+    description: "Recibe a tus visitas en un espacio con sofás, mesas y vistas a la ciudad. Tus encuentros también tienen lugar fuera del departamento.",
   },
   {
     src: "/eurodesign/amenities/amenity_gimnasio.jpg",
     category: "Fitness & Bienestar",
-    title: "Gimnasio Panorámico Climatizado",
-    description: "Equipamiento de cardio y fuerza de nivel profesional con máquinas de última generación, diseñado para entrenar con vista directa al skyline de Equipetrol.",
+    title: "Entrena con Equipetrol a la vista",
+    description: "Mantén tu rutina de cardio y fuerza en un gimnasio climatizado, cerca de casa y con vista a Equipetrol.",
   },
   {
     src: "/eurodesign/amenities/amenity_lobby_recepcion.jpg",
@@ -108,8 +108,8 @@ const AMENITY_SLIDES = [
   {
     src: "/eurodesign/amenities/amenity_lobby_lounge.jpg",
     category: "Recepción & Espera",
-    title: "Salón de Espera & Living Exclusivo",
-    description: "Espacio de bienvenida amoblado con mobiliario de autor, iluminación cálida indirecta y acabados europeos para confort de residentes y visitantes.",
+    title: "Una bienvenida para ti y tus visitas",
+    description: "Un estar amoblado en el ingreso para esperar, recibir y empezar a sentirte en casa.",
   },
   {
     src: "/eurodesign/amenities/amenity_living_panoramico.jpg",
@@ -571,14 +571,14 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Experiencia residencial y preventa
+                Tu vida en Equipetrol Norte
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Tower Eurodesign.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">Obra gruesa al 100% en losa piso 18.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Tu día a día, con otra vista.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Tower Eurodesign eleva el concepto residencial y comercial en la zona más cotizada de Santa Cruz: {EURODESIGN_ZONE}. Su diseño bioclimático contemporáneo, lobby de doble altura revestido en porcelanato y madera, y amenidades en el piso 18 con vista 360° ofrecen un estándar residencial para vivir. Entrega en {EURODESIGN_DELIVERY}.
+                Vive en {EURODESIGN_ZONE} y termina el día con la ciudad a tus pies. Tower Eurodesign reúne departamentos de 1 y 2 dormitorios, equipamiento incluido y áreas sociales en el piso 18 con piscina, gimnasio y lounge. Elige el espacio que va contigo, con entrega programada para {EURODESIGN_DELIVERY}.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -612,7 +612,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Equipetrol Norte, a pasos de San Martín.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Ubicado sobre {EURODESIGN_ADDRESS}, a pasos de la Av. San Martín, Ventura Mall, Patio Design, Torre Platinum, Fidalga, Hipermaxi y el polo gastronómico de Santa Cruz.
+              Tu nueva dirección está en {EURODESIGN_ADDRESS}. Conecta con la Av. San Martín y disfruta de un entorno con Ventura Mall, Patio Design, Torre Platinum, Fidalga, Hipermaxi y opciones para salir a comer. Trabajo, compras y encuentros cerca de tu hogar.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/eurodesign/ubicacion-entorno.jpg" alt="Mapa de entorno de Tower Eurodesign en Equipetrol Norte" className="block h-auto w-full" />
@@ -624,9 +624,9 @@ export default function EurodesignLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales · Piso 18</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Amenities panorámicos para disfrutar en las alturas.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu tiempo libre, en lo más alto.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              En el piso más alto de la torre se despliega un club social panorámico con vista abierta de 360° hacia la ciudad y el horizonte de Equipetrol.
+              Sube al piso 18 para entrenar, refrescarte en la piscina o reunirte en el lounge. Las vistas abiertas hacia la ciudad acompañan esos momentos que hacen más agradable volver a casa.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -652,7 +652,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
                 <div className="shrink-0">
                   <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">El departamento, de una mirada.</h3>
+                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Un espacio para tu próxima etapa.</h3>
                 </div>
                 <div className="grid shrink-0 grid-cols-3 gap-2">
                   {ROOM_FILTERS.map((filter) => (
@@ -687,7 +687,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Llegas a casa. Lo esencial ya está resuelto.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Cocina equipada, climatización en sala y dormitorios, y baños con los detalles del brochure. Esto es lo que incluye el departamento, ambiente por ambiente.
+              Cocina equipada, climatización en sala y dormitorios, y baños con espejo LED y box de ducha. Conoce los detalles incluidos, ambiente por ambiente, e imagina tu llegada a Tower Eurodesign.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPAMIENTO.map((group) => (
@@ -712,9 +712,9 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <div className="inline-flex rounded-xl bg-stone-950 px-4 py-3">
               <img src="/eurodesign/logo.png" alt="Tower Eurodesign" className="h-14 w-auto" />
             </div>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige conociendo quién está detrás.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Conoce el sello Eurodesign.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Conoce el portafolio de {EURODESIGN_CONFIG.builder} y el sello que acompaña a Tower Eurodesign. Entrega en {EURODESIGN_DELIVERY}.
+              Explora el portafolio de {EURODESIGN_CONFIG.builder} y conoce su propuesta de arquitectura y espacios residenciales. Una mirada a quienes están detrás del lugar que puedes llamar hogar.
             </p>
             <button type="button" onClick={() => setZoom({ view: "solo", src: "/eurodesign/legado.jpg", title: "Nuestro legado", caption: EURODESIGN_CONFIG.builder })} className="block w-full overflow-hidden rounded-xl border border-stone-200 bg-white">
               <img src="/eurodesign/legado.jpg" alt="Portafolio de Desarrollo Eurodesign" className="block h-auto w-full" />
@@ -725,11 +725,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Da el paso a vivir en Equipetrol Norte.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Elige el ahorro del contado o distribuye la inversión durante la obra. Entrega en {EURODESIGN_DELIVERY}. La reserva publicada es USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}.
+              Compara la tarifa de contado con el plan que distribuye tu pago entre la firma, la obra y la entrega en {EURODESIGN_DELIVERY}. Revisa los montos de tu unidad y consulta cómo reservarla con USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
-              <h4 className="mt-3 font-serif text-2xl">Pago al contado, el 100% a la firma</h4>
+              <h4 className="mt-3 font-serif text-2xl">Contado: mejor tarifa, 100% a la firma</h4>
               <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">USD 1.480/m²</p>
               <p className="mt-3 text-sm leading-relaxed text-stone-300">Aseguras el valor por metro más bajo del departamento. Los locales de planta baja se cotizan a USD 2.300/m². El monto en dólares aparece al elegir la unidad.</p>
             </article>
@@ -752,7 +752,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
               <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
                 <div className="shrink-0">
                   <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Cotiza y reserva tu departamento.</h3>
+                  <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige el tuyo y conoce cuánto pagarías.</h3>
                   <p className="mt-1 text-xs text-stone-500">Lista oficial. Verde: disponible · Gris: vendido o reservado. Reserva USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}.</p>
                 </div>
                 <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -883,9 +883,9 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-[48vh] text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu departamento en Equipetrol Norte.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Ven a conocer tu próxima dirección.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Si tienes dudas, escríbenos. Te ayudamos a comparar modelos, confirmar la lista y reservar el departamento. Visitas a obra los martes y viernes. Contado de departamentos a USD 1.480/m².
+              Cuéntanos qué departamento te gustó. Te ayudamos a comparar modelos y planes de pago, confirmar disponibilidad y coordinar una visita a obra. Conoce Tower Eurodesign y da el siguiente paso hacia tu hogar en Equipetrol Norte.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Hablar con un asesor <ArrowRight size={14} />

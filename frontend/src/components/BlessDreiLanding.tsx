@@ -51,38 +51,38 @@ const AMENITY_SLIDES = [
   {
     src: "/bless_drei/social/piscina.jpg",
     category: "Piso 6",
-    title: "Piscina",
-    description: "Piscina en el nivel de áreas sociales, con solárium y vista abierta.",
+    title: "Tu pausa junto a la piscina",
+    description: "Refréscate, disfruta del solárium y encuentra un momento para ti con vista abierta, sin salir de tu edificio.",
   },
   {
     src: "/bless_drei/social/gimnasio.jpg",
     category: "Piso 6",
-    title: "Gimnasio al aire libre",
-    description: "Gimnasio exterior en la terraza de áreas sociales.",
+    title: "Entrena al aire libre",
+    description: "Dale un lugar al movimiento en tu día con el gimnasio exterior de la terraza de áreas sociales.",
   },
   {
     src: "/bless_drei/social/cowork.jpg",
     category: "Piso 6",
-    title: "Co-work",
-    description: "Sala de trabajo compartido con mesas y escritorio.",
+    title: "Un cowork para tus proyectos",
+    description: "Cambia de ambiente para concentrarte. Una sala de trabajo compartido cerca de tu departamento.",
   },
   {
     src: "/bless_drei/social/reuniones.jpg",
     category: "Piso 6",
-    title: "Sala de reuniones",
-    description: "Sala cerrada para reuniones, con mesa y vista a la ciudad.",
+    title: "Reúnete sin salir de casa",
+    description: "Recibe a tu equipo en una sala de reuniones con mesa y vista a la ciudad, y separa el trabajo de tu espacio personal.",
   },
   {
     src: "/bless_drei/social/churrasquera.jpg",
     category: "Piso 6",
-    title: "Churrasquera",
-    description: "Churrasquera con barra y mesón para el uso de los residentes.",
+    title: "Comparte alrededor de la parrilla",
+    description: "Invita a los tuyos a un asado. La churrasquera cuenta con barra y mesón para disfrutar tus encuentros.",
   },
   {
     src: "/bless_drei/social/eventos.jpg",
     category: "Piso 6",
-    title: "Salón de eventos",
-    description: "Salón de eventos con comedor y estar.",
+    title: "Un salón para tus celebraciones",
+    description: "Reúne a tu familia y amigos en un salón con comedor y estar para compartir tus ocasiones especiales.",
   },
 ];
 
@@ -576,26 +576,26 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#a34a28]">
               <Sparkles size={13} />
-              Experiencia Residencial & Preventa
+              Tu vida, en el corazón de Equipetrol
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1C1917] leading-tight">
               Vive en <span className="italic font-normal">Bless Drei.</span>
             </h2>
             <p className="text-sm md:text-base text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word] pt-2">
-              Un desarrollo boutique de 16 niveles diseñado para quienes buscan habitar o invertir en el epicentro gastronómico y empresarial de Equipetrol. Con una fachada contemporánea que combina sobriedad y elegancia, Bless Drei ofrece amenidades en rooftop, equipamiento de primera línea y una tasa de rentabilidad respaldada por la altísima demanda de alquiler de la zona.
+              Sal a disfrutar Equipetrol y vuelve a un espacio que se sienta tuyo. Bless Drei reúne monoambientes y departamentos de 1 dormitorio en la calle Alejandro Ramírez, cerca de la Av. San Martín. Piscina, cowork, gimnasio al aire libre y espacios para compartir en el piso 6 completan una vida con más opciones cerca de casa.
             </p>
           </div>
 
           {/* Tarjeta de Tracción */}
           <div className="p-4 rounded-xl bg-white border border-[#E7E5E4] shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Tracción de Preventa · Entrega Febrero 2028</p>
+              <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Preventa · Entrega febrero 2028</p>
               <p className="font-serif text-lg font-bold text-stone-900 mt-0.5">
-                {soldUnitsCount} de {units.length} unidades colocadas
+                {soldUnitsCount} de {units.length} unidades vendidas o reservadas
               </p>
             </div>
             <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Fase Exclusiva · Equipetrol
+              Encuentra tu espacio
             </span>
           </div>
 
@@ -653,10 +653,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Ubicación Privilegiada
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              En el Corazón de Equipetrol
+              Sal a disfrutar Equipetrol.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Situado en la Calle Alejandro Ramírez entre 3° y 4° Anillo, a escasos metros de la Av. San Martín. El barrio es Equipetrol.
+              Tu dirección está en la calle Alejandro Ramírez, entre el 3° y el 4° anillo, cerca de la Av. San Martín. Restaurantes, comercios y oficinas forman parte del entorno para conectar tu hogar con los planes de cada día.
             </p>
           </div>
 
@@ -711,10 +711,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Áreas Sociales & Bienestar
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Vida Social y Relax en Rooftop
+              Trabaja, entrena y desconecta cerca de casa.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Diseñadas bajo el concepto de hotel boutique para ofrecer espacios funcionales que eleven la calidad de vida de sus residentes e incrementen la satisfacción de huéspedes temporales.
+              Empieza el día entrenando al aire libre, encuentra tu lugar en el cowork y termina junto a la piscina. Las áreas sociales del piso 6 también te esperan con sala de reuniones, churrasquera y salón de eventos para compartir.
             </p>
           </div>
 
@@ -774,10 +774,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Tipologías Residenciales
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Plantas Arquitectónicas en Equipetrol
+              Un espacio propio para vivir Equipetrol.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              La foto muestra solo el departamento. Toca la imagen para ver la ficha con medidas, plano y en qué parte del piso queda.
+              Elige entre monoambientes y departamentos de 1 dormitorio. Compara cómo se distribuye cada espacio y toca el modelo que te guste para conocer sus medidas y ubicación en el piso.
             </p>
           </div>
 
@@ -876,13 +876,13 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#a34a28] flex items-center gap-1.5">
               <CheckCircle2 size={13} />
-              Equipamiento 100% Incluido
+              Equipamiento incluido
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Entrega Completa Llave en Mano
+              Abre la puerta a un hogar bien equipado.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Cada unidad se entrega con el equipamiento que publica el brochure.
+              Cocina encimera, climatización y cerradura inteligente: detalles incluidos para hacer más cómoda tu rutina. Revisa el equipamiento de cada ambiente y descubre lo que ya viene con tu nuevo hogar.
             </p>
           </div>
 
@@ -916,7 +916,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#a34a28] flex items-center gap-1.5">
               <Building2 size={13} />
-              Respaldo y Trayectoria Constructiva
+              Conoce a la desarrolladora
             </span>
             <img
               src="/bless_drei/logo-altavida.jpg"
@@ -925,7 +925,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-                Alta Vida SRL · Desarrolladora Inmobiliaria
+                Alta Vida, detrás de tu próximo hogar.
               </h3>
               <a
                 href="https://web.altavidasrl.com/"
@@ -938,7 +938,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               </a>
             </div>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Fundada en 2014, <strong>Alta Vida SRL</strong> cuenta con más de 10 años de experiencia transformando el desarrollo urbano y habitacional en Bolivia. Con presencia corporativa consolidada en <strong>5 ciudades</strong> (Santa Cruz, Tarija, Potosí, Oruro y Cochabamba), su modelo integral abarca desde la planificación arquitectónica y cálculo estructural hasta la ejecución directa con equipo multidisciplinario propio y comercialización sin intermediarios.
+              <strong>Alta Vida SRL</strong> desarrolla proyectos desde 2014 y tiene presencia en <strong>5 ciudades</strong> de Bolivia. Conoce al equipo que acompaña la planificación, el diseño y la construcción de Bless Drei, y la trayectoria detrás de tu próximo hogar.
             </p>
           </div>
 
@@ -946,26 +946,26 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#a34a28]">+10 Años</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Trayectoria Nacional</p>
-              <p className="text-[11px] text-stone-500 mt-1">Fundada en 2014 en 5 ciudades de Bolivia</p>
+              <p className="text-[11px] text-stone-500 mt-1">Presencia en 5 ciudades de Bolivia</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
               <p className="font-serif text-3xl font-bold text-[#a34a28]">16 Niveles</p>
               <p className="text-xs font-semibold text-stone-900 mt-1">Torre Boutique en Equipetrol</p>
-              <p className="text-[11px] text-stone-500 mt-1">Áreas sociales en el piso 6, según el esquema del brochure</p>
+              <p className="text-[11px] text-stone-500 mt-1">Tu piscina, cowork y gimnasio en el piso 6</p>
             </div>
             <div className="p-4 rounded-xl bg-white border border-stone-200 shadow-sm text-center">
-              <p className="font-serif text-3xl font-bold text-[#a34a28]">100%</p>
-              <p className="text-xs font-semibold text-stone-900 mt-1">Solvencia &amp; Seguridad Jurídica</p>
-              <p className="text-[11px] text-stone-500 mt-1">Equipo propio de ingeniería y contratos registrados</p>
+              <p className="font-serif text-3xl font-bold text-[#a34a28]">Equipo</p>
+              <p className="text-xs font-semibold text-stone-900 mt-1">Diseño y construcción</p>
+              <p className="text-[11px] text-stone-500 mt-1">Profesionales para planificar y ejecutar el proyecto</p>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-[#fbf7f1] border border-[#e6cdb8]/80 text-xs text-stone-700 space-y-1.5">
             <p className="font-semibold text-stone-900 uppercase tracking-wider text-[11px] text-[#a34a28]">
-              Compromiso Alta Vida SRL
+              Conoce mejor tu próximo hogar
             </p>
             <p className="font-light leading-relaxed [text-align:justify]">
-              &quot;Más que una desarrolladora, somos creadores de valor. Asesoramos, construimos y entregamos el mejor inmueble a nuestros clientes, garantizando calidad en cada terminación y cumplimiento estricto de cronogramas.&quot;
+              Descubre cómo se distribuye tu departamento, qué equipamiento incluye y qué plan de pago puedes elegir. Nuestro equipo te acompaña para que des el siguiente paso con la información que necesitas.
             </p>
           </div>
         </section>
@@ -980,10 +980,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               Formas de Pago Transparentes
             </span>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Modalidades Flexibles de Preventa
+              Tu lugar en Equipetrol empieza con un plan.
             </h3>
             <p className="text-sm text-[#57534E] leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              Planes estructurados para asegurar tu unidad en Equipetrol con el mejor descuento o con cuotas adaptadas a tu liquidez durante la construcción.
+              Compara la tarifa de contado con las opciones de pago durante obra y contra entrega. Elige cuánto pagar al inicio y conoce los montos de tu departamento antes de dar el siguiente paso.
             </p>
           </div>
 
@@ -1003,10 +1003,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-white">Pago al Contado (100%)</h4>
               <p className="text-xs text-stone-300">
-                Asegura el precio por metro cuadrado más competitivo de Equipetrol.
+                Aprovecha la tarifa de contado de tu unidad pagando el 100% a la firma del contrato.
               </p>
               <div className="pt-2 border-t border-white/10 text-xs text-[#e6cdb8]">
-                <strong className="text-white">VENTAJA COMERCIAL:</strong> Ahorro financiero directo de hasta un 15% sobre la lista oficial.
+                <strong className="text-white">TU VENTAJA:</strong> Compara el precio de contado con el plan en cuotas para conocer el ahorro de tu departamento.
               </div>
             </div>
 
@@ -1014,16 +1014,16 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-800">
-                  Equilibrio Financiero · 40 / 60
+                  Avanza en cuotas · 40 / 60
                 </span>
                 <span className="text-xs text-stone-500">40% en obra · 60% entrega</span>
               </div>
               <h4 className="font-serif text-xl font-bold text-stone-900">40% Durante Construcción + 60% Contra Entrega</h4>
               <p className="text-xs text-stone-600">
-                Paga el 40% en cuotas flexibles hasta la conclusión de obra y cancela el 60% al recibir la llave (apto crédito bancario).
+                Avanza hacia tu hogar pagando el 40% durante la obra y deja el 60% restante para la entrega de tus llaves.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Permite planificar el financiamiento con holgura mientras la obra avanza.
+                <strong className="text-stone-900">TU VENTAJA:</strong> Distribuye una parte del pago mientras se construye tu departamento.
               </div>
             </div>
 
@@ -1037,10 +1037,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               </div>
               <h4 className="font-serif text-xl font-bold text-stone-900">30% de Anticipo + 70% Contra Entrega</h4>
               <p className="text-xs text-stone-600">
-                Ingresa a la preventa con solo el 30% inicial y deja el 70% para la entrega de llaves o crédito hipotecario.
+                Empieza con el 30% a la firma y deja el 70% restante para la entrega de tu departamento.
               </p>
               <div className="pt-2 border-t border-stone-100 text-xs text-stone-700">
-                <strong className="text-stone-900">VENTAJA COMERCIAL:</strong> Menor desembolso de entrada para congelar tu departamento en Equipetrol.
+                <strong className="text-stone-900">TU VENTAJA:</strong> Deja la mayor parte del desembolso para cuando recibas tu hogar.
               </div>
             </div>
           </div>
@@ -1050,7 +1050,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-stone-600">
               <div><strong>Hito 1 (Hoy):</strong> Reserva de USD {formatBlessUsd(BLESS_DREI_CONFIG.reservaUsd)} para asegurar la unidad.</div>
               <div><strong>Hito 2 (Contrato):</strong> Integración de cuota inicial a la firma (descontando la reserva).</div>
-              <div><strong>Hito 3 (Febrero 2028):</strong> Saldo contra entrega de llaves (apto crédito bancario).</div>
+              <div><strong>Hito 3 (Febrero 2028):</strong> Saldo contra entrega de llaves.</div>
             </div>
           </div>
         </section>
@@ -1075,10 +1075,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
               </button>
             </div>
             <h3 className="font-serif text-2xl md:text-3xl font-light text-[#1C1917]">
-              Cotiza tu Unidad en Equipetrol
+              Elige el tuyo y empieza a hacerlo realidad.
             </h3>
             <p className="text-sm text-[#57534E]">
-              Elige tu ambiente, revisa pisos disponibles y visualiza tu inversión unificada en segundos.
+              Encuentra el modelo que va contigo, elige un piso disponible y compara el total, la cuota inicial y el saldo de tu compra.
             </p>
           </div>
 
@@ -1379,10 +1379,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
           <div className="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-stone-900">
               <ShieldCheck size={20} className="text-emerald-600" />
-              <h4 className="font-serif text-lg font-bold">Garantía y Certeza Jurídica en Equipetrol</h4>
+              <h4 className="font-serif text-lg font-bold">Tu próximo comienzo tiene lugar en Equipetrol.</h4>
             </div>
             <p className="text-xs text-stone-600 leading-relaxed [text-align:justify] [text-justify:inter-word]">
-              La reserva formal de USD 2.000 se acredita íntegramente a tu cuota inicial. Contratos de preventa notariados con hitos claros de construcción respaldados por Alta Vida Santa Cruz.
+              Cuéntanos cómo imaginas tu nuevo espacio. Te ayudamos a comparar modelos, confirmar disponibilidad y conocer las condiciones de la reserva de USD 2.000, que se acredita a tu cuota inicial.
             </p>
             <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500">
               <span>Desarrollado y Construido por Alta Vida Santa Cruz</span>
@@ -1390,7 +1390,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 onClick={contactWhatsApp}
                 className="font-semibold text-[#a34a28] hover:underline flex items-center gap-1"
               >
-                Hablar con Asesor de Bless Drei
+                Quiero conocer mis opciones
                 <ArrowRight size={12} />
               </button>
             </div>
@@ -1452,7 +1452,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 {[
                   { id: "intro", label: "Inicio & Resumen" },
                   { id: "lugar", label: "Ubicación en Equipetrol" },
-                  { id: "amenidades", label: "Áreas Sociales (Rooftop)" },
+                  { id: "amenidades", label: "Áreas sociales" },
                   { id: "tipologias", label: "Tipologías & Planos" },
                   { id: "equipamiento", label: "Equipamiento Incluido" },
                   { id: "constructora", label: "Constructora Alta Vida" },

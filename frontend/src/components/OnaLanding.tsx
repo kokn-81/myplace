@@ -652,10 +652,10 @@ export default function OnaLanding({ property, onClose }: Props) {
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en ONA Residences.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">Un proyecto pensado para elevar tu forma de vivir.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">La calma de Los Cusis, cerca de todo.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                ONA Residences reúne arquitectura contemporánea, diseño biofílico y ambientes pensados para combinar comodidad, bienestar y estilo en una de las zonas más serenas y cotizadas de Santa Cruz: {ONA_ZONE}. Un proyecto concebido por {ONA_BUILDER} para quienes entienden que el verdadero confort reside en despertar con calma, disfrutar áreas sociales completas y asegurar una sólida inversión patrimonial.
+                Vuelve a casa para bajar el ritmo, entrenar o compartir una tarde junto a la piscina. En {ONA_ZONE}, ONA Residences reúne departamentos de 1 y 2 dormitorios, áreas sociales y equipamiento incluido. Un proyecto de {ONA_BUILDER} en la Av. Los Cusis, entre Banzer y Beni.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -689,9 +689,9 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Los Cusis: calma residencial y conectividad total.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">La tranquilidad de Los Cusis, con la ciudad a mano.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Ubicado estratégicamente sobre {ONA_ADDRESS}, en el tradicional cuadrante residencial de {ONA_ZONE} (entre Banzer y Beni). Combina el encanto de un vecindario arbolado y tranquilo con un acceso inmediato a las principales arterias comerciales y empresariales de Santa Cruz.
+              Tu nueva dirección está sobre {ONA_ADDRESS}, en {ONA_ZONE}, entre Banzer y Beni. Disfruta de un entorno residencial arbolado y mantén cerca las avenidas que te conectan con tus compras, tu trabajo y tus planes en la ciudad.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/ona/ubicacion.jpg" alt="Mapa de ONA Residences en Los Cusis, entre Banzer y Beni" className="block h-auto w-full" />
@@ -717,9 +717,9 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Espacios pensados para disfrutar cada día.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu rutina merece estos espacios.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Áreas comunes diseñadas para brindar comodidad, descanso y encuentros agradables con amigos y familia dentro del propio edificio.
+              Entrena en el gimnasio, descansa junto a la piscina o reúne a los tuyos en las churrasqueras. También tienes sauna y coworking para darle a cada momento del día su propio lugar.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -776,9 +776,9 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Lo que incluye tu departamento.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu nuevo hogar empieza bien equipado.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              En ONA Residences cada departamento se entrega con equipamiento completo de primera calidad, listo para habitar o poner en alquiler de inmediato sin gastos imprevistos de habilitación.
+              Muebles de cocina, aire acondicionado, roperos y cerradura digital: detalles que hacen más cómoda tu llegada a ONA. Conoce lo que incluye cada ambiente y empieza a imaginar cómo hacerlo tuyo.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPAMIENTO.map((group) => (
@@ -804,9 +804,9 @@ export default function OnaLanding({ property, onClose }: Props) {
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Constructora</span>
             <img src="/ona/ona-emblem.jpg" alt="ONA Residences" className="h-14 w-auto" />
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Constructora Palacios Antúnez</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Conoce a quienes construyen tu hogar.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Más de cuatro décadas de solidez técnica, arquitectura y rigor en la ejecución. Conoce a los profesionales y la trayectoria familiar detrás de ONA Residences.
+              Detrás de ONA está Constructora Palacios Antúnez, con más de cuatro décadas de trayectoria. Conoce a sus profesionales y la experiencia que aportan al proyecto donde quieres vivir.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="flex min-h-36 flex-col items-center justify-center rounded-xl border border-stone-200 bg-white p-4 text-center">
@@ -822,7 +822,7 @@ export default function OnaLanding({ property, onClose }: Props) {
               <div className="flex min-h-36 flex-col items-center justify-center rounded-xl border border-stone-200 bg-white p-4 text-center">
                 <p className="font-serif text-2xl font-light text-stone-900">Dirección propia</p>
                 <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">Garantía de obra</p>
-                <p className="mt-2 text-xs text-stone-600">Supervisión técnica directa de los arquitectos fundadores en obra, garantizando precisión de cálculo y entrega en plazo.</p>
+                <p className="mt-2 text-xs text-stone-600">Supervisión técnica directa de los arquitectos fundadores para acompañar la ejecución y los detalles de la obra.</p>
               </div>
             </div>
             <div className="rounded-2xl border border-[#9a7b45]/30 bg-[#fbf9f4] p-6">
@@ -841,9 +841,9 @@ export default function OnaLanding({ property, onClose }: Props) {
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Planes de pago flexibles adaptados a tu estrategia.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Empieza a planear tu hogar en Los Cusis.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Elige cómo distribuir tu capital durante el proceso constructivo con entrega programada para {ONA_DELIVERY}.
+              Compara el contado con las opciones de pago inicial y saldo contra entrega. Elige el departamento que va contigo y conoce cuánto pagarías en cada etapa, con entrega programada para {ONA_DELIVERY}.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Mayor descuento</span>
@@ -855,13 +855,13 @@ export default function OnaLanding({ property, onClose }: Props) {
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Equilibrio financiero</span>
               <h4 className="mt-3 font-serif text-2xl leading-snug">Inicial 60% y saldo 40% contra entrega</h4>
               {minPlan60PerM2 != null && <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatOnaUsd(minPlan60PerM2)}/m²</p>}
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">Congelas tu unidad con un precio por metro cuadrado muy por debajo del promedio del mercado y pagas el 40% restante recién cuando la obra esté 100% finalizada.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Avanza con el 60% inicial y deja el 40% para la entrega de tu departamento. Compara su tarifa con los otros planes y elige cómo organizar tu compra.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Entrada cómoda</span>
               <h4 className="mt-3 font-serif text-2xl leading-snug">Inicial 40% y saldo 60% contra entrega</h4>
               {minPlan40PerM2 != null && <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatOnaUsd(minPlan40PerM2)}/m²</p>}
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">El menor desembolso de entrada para ingresar a un edificio de categoría en {ONA_ZONE}. Aseguras la propiedad hoy y cancelas el 60% en {ONA_DELIVERY}.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Empieza con el 40% y deja la mayor parte del pago para la entrega en {ONA_DELIVERY}. Una opción para planificar con más tiempo tu hogar en {ONA_ZONE}.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
               <p>Parqueo simple por USD {formatOnaUsd(PARKING_SIMPLE_USD)} o parqueo doble por USD {formatOnaUsd(PARKING_DOBLE_USD)}. Cada parqueo incluye una baulera y se cotiza aparte del metro cuadrado.</p>
@@ -878,7 +878,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Selecciona tu unidad y simula tu inversión al instante.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige tu piso. Acércate a tu próximo hogar.</h3>
                 <p className="mt-1 text-xs text-stone-500">Lista de la 1.ª fase. Verde: disponible · Gris: vendido o reservado.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -1011,9 +1011,9 @@ export default function OnaLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu unidad al valor de 1.ª fase.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima etapa puede empezar en ONA.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Reserva hoy tu departamento con USD {formatOnaUsd(ONA_RESERVE_USD)} y congela el precio antes de la siguiente escala de preventa. Si tienes dudas, escribe y te ayudamos a elegir la unidad.
+              Cuéntanos qué espacio buscas. Te ayudamos a comparar modelos, confirmar el precio de tu unidad y elegir tu plan de pago. Cuando encuentres el tuyo, consulta las condiciones de la reserva de USD {formatOnaUsd(ONA_RESERVE_USD)}.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Hablar con un asesor <ArrowRight size={14} />
