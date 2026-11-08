@@ -33,6 +33,7 @@ if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
 from sqlalchemy.orm import selectinload
+from config import LEGACY_PROPERTY_IMPORTS_ENABLED
 from database import SessionLocal
 from models import InmuebleDB, OfertaDB, AgenteDB, ComplejoDB, OficinaDB
 from catalog import find_or_create_oficina, find_or_create_captador, find_or_create_complejo, es_publicable
@@ -400,6 +401,9 @@ def export_catalog_snapshot(db) -> int:
     Regenera el snapshot estático frontend/public/catalog-snapshot.json
     para que la app y el mapa carguen instantáneamente.
     """
+    if not LEGACY_PROPERTY_IMPORTS_ENABLED:
+        raise RuntimeError("La exportación del catálogo antiguo de departamentos está desactivada.")
+
     print("\n--- Exportando catalog-snapshot.json para el Frontend ---")
     from main import serializar_inmueble, invalidate_public_catalog_cache
     
@@ -448,6 +452,9 @@ def run_c21_ingestion(
     bounds_str: str = "coordenadas_-17.53864183136249,-62.9722950322132,-17.96828290799978,-63.34720347947882,11",
     skip_snapshot: bool = False,
 ) -> List[int]:
+    if not LEGACY_PROPERTY_IMPORTS_ENABLED:
+        raise RuntimeError("La importación del catálogo antiguo de departamentos está desactivada.")
+
     imported_ids = []
     
     with SessionLocal() as db:

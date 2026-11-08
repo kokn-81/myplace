@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from config import ADMIN_EMAILS, AUTHORIZED_ADVISOR_EMAILS, AUTO_CREATE_TABLES, DATABASE_URL, IS_SQLITE
+from config import ADMIN_EMAILS, AUTHORIZED_ADVISOR_EMAILS, AUTO_CREATE_TABLES, DATABASE_URL, IS_SQLITE, LEGACY_PROPERTY_IMPORTS_ENABLED
 
 
 engine_options = {"pool_pre_ping": True}
@@ -193,6 +193,10 @@ def ensure_sqlite_property_type_columns() -> None:
 
 
 def seed_remax_catalog() -> None:
+    # The legacy apartment catalogue was retired. Starting the server must not restore it.
+    if not LEGACY_PROPERTY_IMPORTS_ENABLED:
+        return
+
     import json
     import os
     from models import InmuebleDB

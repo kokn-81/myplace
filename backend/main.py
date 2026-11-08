@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
-from config import CORS_ORIGINS
+from config import CORS_ORIGINS, LEGACY_PROPERTY_IMPORTS_ENABLED
 from database import SessionLocal, init_db
 from auth_security import get_current_profile, get_role_for_email, normalize_email, require_admin, require_advisor_or_admin, upsert_authorized_user
 from api_schemas import PeticionChat, PeticionLeadEvent, PeticionMarcarContacto
@@ -1164,7 +1164,10 @@ async def obtener_inmuebles(db: Session = Depends(get_db)):
 
 @app.post("/api/remax/sync-catalog")
 @app.get("/api/remax/sync-catalog")
-def sincronizar_catalogo_remax(db: Session = Depends(get_db)):
+def sincronizar_catalogo_remax(db: Session = Depends(get_db), current_profile: dict = Depends(require_admin)):
+    if not LEGACY_PROPERTY_IMPORTS_ENABLED:
+        raise HTTPException(status_code=409, detail="La importación del catálogo antiguo de departamentos está desactivada.")
+
     catalog_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "remax_inventario.json")
     if not os.path.exists(catalog_path):
         raise HTTPException(status_code=404, detail="remax_inventario.json no encontrado")

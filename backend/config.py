@@ -39,6 +39,7 @@ def get_database_url() -> str:
 DATABASE_URL = get_database_url()
 IS_SQLITE = DATABASE_URL.startswith("sqlite")
 AUTO_CREATE_TABLES = os.getenv("AUTO_CREATE_TABLES", "true").strip().lower() not in {"0", "false", "no"}
+LEGACY_PROPERTY_IMPORTS_ENABLED = os.getenv("LEGACY_PROPERTY_IMPORTS_ENABLED", "false").strip().lower() in {"1", "true", "yes"}
 
 
 DEFAULT_CORS_ORIGINS = [

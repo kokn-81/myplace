@@ -30,6 +30,7 @@ if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
 from sqlalchemy import func
+from config import LEGACY_PROPERTY_IMPORTS_ENABLED
 from database import SessionLocal
 from models import InmuebleDB, OfertaDB, AgenteDB, ComplejoDB
 from catalog import find_or_create_oficina, find_or_create_captador, find_or_create_complejo
@@ -347,6 +348,9 @@ def import_property(db, item: Dict[str, Any], default_office_id: int) -> Inmuebl
 
 
 def run_batch_import(data: List[Dict[str, Any]]) -> List[int]:
+    if not LEGACY_PROPERTY_IMPORTS_ENABLED:
+        raise RuntimeError("La importación del catálogo antiguo de departamentos está desactivada.")
+
     with SessionLocal() as db:
         oficina = find_or_create_oficina(db, "REMAX Patrimonio", "Santa Cruz")
         imported_ids = []
