@@ -2,6 +2,7 @@
  * Developer: Alborada Group Bolivia SRL
  * Generated automatically from official Google Sheets.
  */
+import { DOMUS_COMMERCIAL_COPY } from "./domusCommercialCopy";
 
 export interface DomusUnit {
   projectId: "domus-black" | "domus-gold" | "domus-onix" | "domus-insignia" | "domus-luxury" | "domus-tower" | "domus-infinity";
@@ -80,7 +81,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-black": {
     id: "domus-black",
     name: "DOMUS BLACK",
-    tagline: "El nuevo estándar de arquitectura sobria y diseño contemporáneo en Equipetrol Norte.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-black"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol Norte",
     address: "Calle Enrique Finot esq. Calle 9 Oeste, Equipetrol Norte",
@@ -189,7 +190,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-gold": {
     id: "domus-gold",
     name: "DOMUS GOLD",
-    tagline: "El pináculo del lujo residencial con acabados dorados y arquitectura monumental sobre Equipetrol.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-gold"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol / San Martín",
     address: "Equipetrol, a pasos de Av. San Martín",
@@ -289,7 +290,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-onix": {
     id: "domus-onix",
     name: "DOMUS ONIX",
-    tagline: "21 pisos de innovación vertical con piscina en la cúspide y club house en Piso 3 sobre Av. Radial 23.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-onix"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol / Sirari",
     address: "Av. Radial 23 esq. Calle Los Claveles, Equipetrol / Sirari",
@@ -394,7 +395,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-insignia": {
     id: "domus-insignia",
     name: "DOMUS INSIGNIA",
-    tagline: "Exclusividad y prestigio en Plaza Italia, a pasos del Hotel Los Tajibos en el corazón de Equipetrol.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-insignia"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol / Los Tajibos",
     address: "Plaza Italia, Calle 7 Este (UV-33), Equipetrol",
@@ -485,7 +486,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-luxury": {
     id: "domus-luxury",
     name: "DOMUS LUXURY",
-    tagline: "Viviendas boutique de alta gama en la zona más dinámica del 3er y 4to Anillo Norte, Las Brisas.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-luxury"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Zona Norte / Las Brisas",
     address: "Av. Radial 27 entre 3er y 4to Anillo (UV-63)",
@@ -577,7 +578,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-tower": {
     id: "domus-tower",
     name: "DOMUS TOWER",
-    tagline: "Torre de 17 pisos con arquitectura icónica en Equipetrol Norte sobre el Canal Isuto.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-tower"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol Norte",
     address: "Canal Isuto y Calle 9 Este, Equipetrol Norte",
@@ -669,7 +670,7 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
   "domus-infinity": {
     id: "domus-infinity",
     name: "DOMUS INFINITY",
-    tagline: "Residencias inteligentes y amenidades infinitas en Urb. Los Tajibos, Equipetrol.",
+    tagline: DOMUS_COMMERCIAL_COPY["domus-infinity"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol / Los Tajibos",
     address: "Urb. Los Tajibos, Calle 6 Este (UV-34 Mza 21)",

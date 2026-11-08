@@ -27,6 +27,7 @@ import {
 } from "../domusInventory";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
+import { DOMUS_COMMERCIAL_COPY } from "../domusCommercialCopy";
 
 interface Props {
   property: Property;
@@ -64,7 +65,7 @@ const SECTIONS = [
   { id: "amenidades", label: "Áreas sociales" },
   { id: "tipologias", label: "Tipologías" },
   { id: "equipamiento", label: "Equipamiento" },
-  { id: "constructora", label: "Colaboradores" },
+  { id: "constructora", label: "Constructora" },
   { id: "pago", label: "Formas de pago" },
   { id: "disponibilidad", label: "Disponibilidad" },
   { id: "cierre", label: "Cierre" },
@@ -101,13 +102,13 @@ const PROJECT_META: Record<string, {
     floorPlate: {
       href: "https://drive.google.com/file/d/1zkUYsY9fXnwWkUE_giz01tb4xxpEbiZb/view",
       title: "Distribución de plantas",
-      caption: "Nomenclatura publicada de Domus Black.",
+      caption: "Ubica tu departamento dentro del edificio.",
     },
     amenities: [
-      { name: "Piscina y deck", category: "Piso superior", description: "Piscina en altura con deck y vista a Equipetrol Norte.", image: "/domus/domus_black/social_03.jpg" },
-      { name: "Gimnasio", category: "Bienestar", description: "Zona de entrenamiento con vista a la ciudad.", image: "/domus/domus_black/social_01.jpg" },
-      { name: "Sala de juegos", category: "Entretenimiento", description: "Salón con mesa de billar y livings.", image: "/domus/domus_black/social_02.jpg" },
-      { name: "Churrasqueras", category: "Social", description: "Parrillas y comedor para reuniones en altura.", image: "/domus/domus_black/social_04.jpg" },
+      { name: "Una partida entre amigos", category: "Sala de juegos", description: "Haz de una partida de billar el motivo para reunirte y disfrutar el tiempo libre en tu edificio.", image: "/domus/domus_black/social_03.jpg" },
+      { name: "Tu entrenamiento, más cerca", category: "Gimnasio", description: "Encuentra un espacio para moverte, entrenar y mantener tu rutina dentro del edificio.", image: "/domus/domus_black/social_01.jpg" },
+      { name: "El asado también puede ser en casa", category: "Churrasquera y comedor", description: "Recibe a tus amigos en un ambiente con parrilla, barra y espacio para compartir la mesa.", image: "/domus/domus_black/social_02.jpg" },
+      { name: "Una pausa para conversar", category: "Lounge social", description: "Comparte una charla o disfruta un momento de descanso en los livings del área social.", image: "/domus/domus_black/social_04.jpg" },
     ],
   },
   "domus-gold": {
@@ -118,10 +119,10 @@ const PROJECT_META: Record<string, {
     listLabel: "8 de noviembre de 2026",
     brochure: "https://drive.google.com/file/d/15oGaN86t2c69OaGZ3qX9ThN5-8kUJD2y/view",
     amenities: [
-      { name: "Piscina", category: "Área social", description: "Piscina y solárium del proyecto.", image: "/domus/domus_gold/social_piscina.jpg" },
-      { name: "Lobby", category: "Acceso", description: "Recepción publicada de Domus Gold.", image: "/domus/domus_gold/lobby_real.jpg" },
-      { name: "Deck", category: "Aire libre", description: "Deck de descanso del proyecto.", image: "/domus/domus_gold/social_deck.jpg" },
-      { name: "Churrasquera", category: "Social", description: "Sector de parrillas del proyecto.", image: "/domus/domus_gold/social_churrasquera.jpg" },
+      { name: "Tu plan para las tardes de calor", category: "Piscina", description: "Refresca el día y disfruta del agua en un espacio que amplía la vida de tu hogar.", image: "/domus/domus_gold/social_piscina.jpg" },
+      { name: "Una bienvenida que se disfruta", category: "Lobby", description: "Llega a casa o recibe a tus visitas en un lobby que forma parte de la experiencia Gold.", image: "/domus/domus_gold/lobby_real.jpg" },
+      { name: "Desconecta junto al agua", category: "Deck de descanso", description: "Haz una pausa, disfruta el aire libre y encuentra tu momento de descanso al lado de la piscina.", image: "/domus/domus_gold/social_deck.jpg" },
+      { name: "La mesa lista para tus encuentros", category: "Churrasquera", description: "Reúne a los tuyos alrededor de un asado y disfruta de un espacio para compartir sin salir del edificio.", image: "/domus/domus_gold/social_churrasquera.jpg" },
     ],
   },
   "domus-onix": {
@@ -137,9 +138,9 @@ const PROJECT_META: Record<string, {
       caption: "Lobby, cafetería, bauleras y parqueos.",
     },
     amenities: [
-      { name: "Planta baja", category: "Acceso", description: "Lobby, cafetería, bauleras y parqueos en planta baja.", image: "/domus/domus_onix/lobby_cafeteria.jpg" },
-      { name: "Área social, piso 3", category: "Piso 3", description: "Planta publicada del área social: piscina, gimnasio, juegos y comedor.", image: "/domus/domus_onix/social_area_clean.jpg" },
-      { name: "Piscina, piso 21", category: "Piso 21", description: "Planta publicada de la piscina del piso 21.", image: "/domus/domus_onix/social_piscina_clean.jpg" },
+      { name: "Llegar, encontrarte y seguir tu día", category: "Plano de planta baja", description: "Conoce cómo se distribuyen el lobby, la cafetería y los servicios de acceso del proyecto.", image: "/domus/domus_onix/lobby_cafeteria.jpg" },
+      { name: "Más espacio para tus planes", category: "Plano del piso 3", description: "Explora la distribución de las áreas sociales y descubre dónde podrías compartir, entrenar y descansar.", image: "/domus/domus_onix/social_area_clean.jpg" },
+      { name: "Tu pausa en el piso 21", category: "Plano de piscina", description: "Conoce la piscina y los espacios de descanso previstos en el nivel superior del proyecto.", image: "/domus/domus_onix/social_piscina_clean.jpg" },
     ],
   },
   "domus-insignia": {
@@ -152,10 +153,10 @@ const PROJECT_META: Record<string, {
     lugarImage: "/domus/domus_insignia/brochure_p04.jpg",
     nearby: ["Cafetería Ottimo", "Pizzería Vulcanica", "Casa Çuina", "Supermercado Fidalga", "Mall Ventura", "Universidad Utepsa", "Colegio Alemán", "Hotel Los Tajibos"],
     amenities: [
-      { name: "Lobby", category: "Acceso", description: "Lobby amoblado del proyecto.", image: "/domus/domus_insignia/lobby_insignia.jpg" },
-      { name: "Piscina", category: "Área social", description: "Piscina publicada de Domus Insignia.", image: "/domus/domus_insignia/social_piscina.jpg" },
-      { name: "Cine", category: "Entretenimiento", description: "Sala de cine del proyecto.", image: "/domus/domus_insignia/social_cine.jpg" },
-      { name: "Cowork", category: "Trabajo", description: "Espacio de cowork del proyecto.", image: "/domus/domus_insignia/social_cowork.jpg" },
+      { name: "Bienvenido a tu próxima dirección", category: "Lobby", description: "Un ambiente para llegar a casa y recibir a quienes forman parte de tu vida.", image: "/domus/domus_insignia/lobby_insignia.jpg" },
+      { name: "Desconecta de la rutina", category: "Piscina", description: "Disfruta un momento junto al agua y suma una pausa a tu día sin salir del edificio.", image: "/domus/domus_insignia/social_piscina.jpg" },
+      { name: "Tus reuniones, con su propio espacio", category: "Cowork y reuniones", description: "Separa el trabajo del descanso con un ambiente para reunirte y concentrarte dentro del proyecto.", image: "/domus/domus_insignia/social_cine.jpg" },
+      { name: "Un lugar para avanzar con tus ideas", category: "Cowork", description: "Encuentra un espacio compartido para trabajar, conversar y desarrollar tus proyectos.", image: "/domus/domus_insignia/social_cowork.jpg" },
     ],
   },
   "domus-luxury": {
@@ -166,10 +167,10 @@ const PROJECT_META: Record<string, {
     listLabel: null,
     brochure: "https://drive.google.com/file/d/1GHxQsjFFDVGW35z-AvQdEOjBgFCHG8nd/view",
     amenities: [
-      { name: "Piscina", category: "Área social", description: "Piscina publicada de Domus Luxury.", image: "/domus/domus_luxury/social_piscina.jpg" },
-      { name: "Lobby", category: "Acceso", description: "Lobby del proyecto.", image: "/domus/domus_luxury/lobby_luxury.jpg" },
-      { name: "Gimnasio", category: "Bienestar", description: "Gimnasio del proyecto.", image: "/domus/domus_luxury/social_gym.jpg" },
-      { name: "Cine", category: "Entretenimiento", description: "Sala de cine del proyecto.", image: "/domus/domus_luxury/social_cine.jpg" },
+      { name: "La tarde se disfruta junto al agua", category: "Piscina", description: "Encuentra una pausa para refrescarte y descansar en la piscina del edificio.", image: "/domus/domus_luxury/social_piscina.jpg" },
+      { name: "El gusto de llegar a casa", category: "Lobby", description: "Un ambiente cálido, con diseño y vegetación, para recibirte y dar la bienvenida a tus visitas.", image: "/domus/domus_luxury/lobby_luxury.jpg" },
+      { name: "Hazle lugar a tu bienestar", category: "Gimnasio", description: "Dedica tiempo a tu entrenamiento en un espacio del propio edificio.", image: "/domus/domus_luxury/social_gym.jpg" },
+      { name: "Hoy la película puede ser en casa", category: "Cine", description: "Disfruta una función y comparte una nueva forma de pasar el tiempo libre dentro de Domus Luxury.", image: "/domus/domus_luxury/social_cine.jpg" },
     ],
   },
   "domus-tower": {
@@ -180,9 +181,9 @@ const PROJECT_META: Record<string, {
     listLabel: null,
     brochure: "https://drive.google.com/file/d/1Bg6B774mAmV-zBkKSkJZ-X-QwLuuGeC1/view",
     amenities: [
-      { name: "Piscina", category: "Área social", description: "Piscina y solárium publicados de Domus Tower.", image: "/domus/domus_tower/render_01.jpg" },
-      { name: "Cowork y piscina", category: "Áreas comunes", description: "Cowork y piscina del proyecto.", image: "/domus/domus_tower/social_cowork_pool.jpg" },
-      { name: "Áreas sociales", category: "Social", description: "Ambientes sociales publicados del proyecto.", image: "/domus/domus_tower/social_amenities_02.jpg" },
+      { name: "Tu pausa al aire libre", category: "Terraza social", description: "Comparte una charla o descansa en los livings de la terraza, junto al entorno de la piscina.", image: "/domus/domus_tower/render_01.jpg" },
+      { name: "Más planes en el piso 6", category: "Áreas comunes", description: "Conoce la propuesta de cowork, piscina, gimnasio y espacios compartidos que amplían tu hogar.", image: "/domus/domus_tower/social_cowork_pool.jpg" },
+      { name: "El agua, a unos pasos de casa", category: "Piscina y descanso", description: "Disfruta la piscina y los espacios de descanso como parte de tu vida en Domus Tower.", image: "/domus/domus_tower/social_amenities_02.jpg" },
     ],
   },
   "domus-infinity": {
@@ -193,10 +194,10 @@ const PROJECT_META: Record<string, {
     listLabel: null,
     brochure: "https://drive.google.com/file/d/1x0nw_BXjqEYiyQzY5kwQKbjJDoeuIRk1/view",
     amenities: [
-      { name: "Lobby", category: "Acceso", description: "Lobby publicado de Domus Infinity.", image: "/domus/domus_infinity/lobby_infinity.jpg" },
-      { name: "Churrasqueras", category: "Social", description: "Churrasqueras del proyecto.", image: "/domus/domus_infinity/social_churrasqueras.jpg" },
-      { name: "Gimnasio", category: "Bienestar", description: "Gimnasio del proyecto.", image: "/domus/domus_infinity/social_gym.jpg" },
-      { name: "Sala multiuso", category: "Social", description: "Sala multiuso del proyecto.", image: "/domus/domus_infinity/social_multiuso.jpg" },
+      { name: "Una bienvenida para los tuyos", category: "Lobby", description: "Llega a tu departamento a través de un ambiente pensado para recibirte y recibir a tus visitas.", image: "/domus/domus_infinity/lobby_infinity.jpg" },
+      { name: "Que el próximo asado sea en casa", category: "Churrasquera", description: "Reúne a tus amigos y disfruta un espacio para cocinar, conversar y compartir la mesa.", image: "/domus/domus_infinity/social_churrasqueras.jpg" },
+      { name: "Tu rutina de bienestar, más cerca", category: "Gimnasio", description: "Entrena dentro del edificio y suma movimiento a tu día sin cambiar de dirección.", image: "/domus/domus_infinity/social_gym.jpg" },
+      { name: "Haz espacio para encontrarte con otros", category: "Salón multiuso", description: "Celebra, reúnete o comparte una ocasión especial en un ambiente que complementa tu departamento.", image: "/domus/domus_infinity/social_multiuso.jpg" },
     ],
   },
 };
@@ -343,7 +344,7 @@ function planHint(plan: PlanId): string {
   if (plan === "contado") return "100% a la firma";
   if (plan === "inicial60") return "60% a la firma · saldo contra entrega";
   if (plan === "inicial40") return "40% a la firma · saldo contra entrega";
-  return "El total publicado se cancela hasta la entrega";
+  return "Consulta el calendario de pagos de tu unidad";
 }
 
 function ModelFrame({
@@ -384,10 +385,10 @@ function ModelFrame({
       <div className="relative min-h-0 flex-1 bg-white">
         {model.art.preview || model.art.full ? (
           <button type="button" onClick={() => onOpen(clickView)} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver ${model.name}`}>
-            <img src={model.art.preview || model.art.full} alt={`${model.name}, el departamento`} className="max-h-full max-w-full object-contain" />
+            <img src={model.art.preview || model.art.full} alt={`Detalle visual de ${model.name}`} className="max-h-full max-w-full object-contain" />
           </button>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-stone-500">La lámina de este modelo está en el brochure.</div>
+          <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-stone-500">Consulta la distribución de este modelo en el brochure o con tu asesor.</div>
         )}
         {total > 1 && (
           <>
@@ -400,8 +401,8 @@ function ModelFrame({
         <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
           <img src={model.art.plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
           <span className="min-w-0">
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">En el piso</span>
-            <span className="block text-xs leading-snug text-stone-600">Toca el departamento para verlo entero, o abre la planta.</span>
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">Distribución</span>
+            <span className="block text-xs leading-snug text-stone-600">Amplía el plano y conoce la distribución del departamento.</span>
           </span>
         </button>
       ) : null}
@@ -413,6 +414,7 @@ export default function DomusLanding({ property, onClose }: Props) {
   const projectId = useMemo(() => projectIdFromProperty(property), [property]);
   const project: DomusProjectConfig = DOMUS_PROJECTS_CONFIG[projectId] || DOMUS_PROJECTS_CONFIG["domus-black"];
   const meta = PROJECT_META[projectId] || PROJECT_META["domus-black"];
+  const copy = DOMUS_COMMERCIAL_COPY[projectId] || DOMUS_COMMERCIAL_COPY["domus-black"];
   const inventory = domusInventories[projectId] || domusInventories["domus-black"];
   const [units, setUnits] = useInventory(inventory);
   const rightPanelRef = useRef<HTMLDivElement>(null);
@@ -622,7 +624,7 @@ export default function DomusLanding({ property, onClose }: Props) {
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}${meta.sharePath}`;
-    const priceLine = fromAny == null ? "Consulta la lista publicada." : `Desde USD ${formatDomusUsd(fromAny)}.`;
+    const priceLine = fromAny == null ? "Consulta las opciones disponibles." : `Desde USD ${formatDomusUsd(fromAny)}.`;
     const shareText = `${display}, ${project.zone}. ${priceLine}`;
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
@@ -662,7 +664,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     const money = quote
       ? `\n• Inversión total: USD ${formatDomusUsd(quote.total)}\n• A la firma: USD ${formatDomusUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? (plan === "hastaEntrega" ? "el total se cancela hasta la entrega" : "sin saldo pendiente") : `USD ${formatDomusUsd(quote.balance)}`}`
       : "";
-    const text = `Hola, vengo de N.I.A y quiero consultar ${display} (${project.address}):\n\n• ${unitLine}\n• Modalidad: ${planTitle(plan)}${addonLine}${money}\n\n¿Me confirman la disponibilidad de la lista y los pasos para reservar?`;
+    const text = `Hola, vengo de N.I.A y me interesa comprar en ${display} (${project.address}):\n\n• ${unitLine}\n• Modalidad: ${planTitle(plan)}${addonLine}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -719,7 +721,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">{meta.delivery ? "Entrega" : "Dirección"}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">{meta.delivery ? "Entrega publicada" : "Dirección"}</p>
                 <p className="mt-0.5 text-sm font-medium leading-tight">{meta.delivery || project.address}</p>
               </div>
             </div>
@@ -756,14 +758,14 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                {project.zone}
+                {copy.kicker}
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en {display}.
-                {tagline ? <span className="mt-1 block font-normal italic text-[#9a7b45]">{tagline}</span> : null}
+                {tagline ? <span className="mt-1 block font-normal italic text-[#9a7b45]">{copy.subtitle}</span> : null}
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                {display} está en {project.address}. Lo desarrolla Alborada Group Bolivia SRL.
+                {copy.intro}
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -775,7 +777,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <button type="button" onClick={() => scrollToSection("disponibilidad")} className="flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md">
-                Ver disponibilidad y cotizar
+                Encuentra tu departamento
               </button>
               <a href={meta.brochure} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-stone-800">
                 <Download size={15} className="text-[#9a7b45]" />
@@ -795,8 +797,8 @@ export default function DomusLanding({ property, onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Vive en {project.zone}.</h3>
-            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">{project.address}. {project.city}.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.locationTitle}</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">{copy.locationBody} Encuéntralo en {project.address}, {project.city}.</p>
             {meta.lugarImage && (
               <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
                 <img src={meta.lugarImage} alt={`Ubicación de ${display}`} className="block h-auto w-full" />
@@ -808,14 +810,14 @@ export default function DomusLanding({ property, onClose }: Props) {
               </ul>
             )}
             <a href={`https://maps.google.com/?q=${project.lat},${project.lng}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Abrir la dirección en el mapa <ArrowRight size={14} />
+              Explorar la ubicación en el mapa <ArrowRight size={14} />
             </a>
           </section>
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El edificio también se vive en sus áreas comunes.</h3>
-            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">Espacios publicados del proyecto, para llegar, entrenar y reunirse sin salir del edificio.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.amenitiesTitle}</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">{copy.amenitiesIntro} Imágenes referenciales del proyecto.</p>
             {amenity && (
               <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
                 <div className="relative">
@@ -840,7 +842,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Tipologías</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige el departamento que quieres habitar.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">{copy.typologiesTitle}</h3>
               </div>
               {roomOptions.length > 0 && (
                 <div className={`grid shrink-0 gap-2 ${roomOptions.length >= 4 ? "grid-cols-2 sm:grid-cols-4" : roomOptions.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
@@ -874,57 +876,57 @@ export default function DomusLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El departamento, como lo publica el proyecto.</h3>
-            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">Las terminaciones y el equipamiento de cada unidad están en el brochure. No se agregan partidas que la lista no publica.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.equipmentTitle}</h3>
+            <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">{copy.equipmentBody}</p>
             {currentModel?.art.preview && (
               <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
                 <img src={currentModel.art.preview} alt={currentModel.name} className="aspect-[16/10] w-full object-contain bg-white" />
               </div>
             )}
             <a href={meta.brochure} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-[#816127]">
-              <Download size={15} /> Abrir el brochure <ArrowRight size={14} />
+              <Download size={15} /> {projectId === "domus-onix" ? "Explorar las láminas del proyecto" : "Conocer acabados y detalles"} <ArrowRight size={14} />
             </a>
           </section>
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Constructora</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Alborada Group Bolivia SRL.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.developerTitle}</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              {display} forma parte de la colección Domus y lo desarrolla Alborada Group Bolivia SRL, el nombre que firman las listas y los brochures del proyecto.
+              {copy.developerBody}
             </p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige cómo pagar el departamento.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.paymentTitle}</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              {plans.includes("inicial40") || plans.includes("inicial60")
-                ? "La lista publica el contado y la cuota inicial. El saldo queda contra entrega. El parqueo, cuando tiene precio, se suma fuera de ese porcentaje."
+              {copy.paymentIntro} {plans.includes("inicial40") || plans.includes("inicial60")
+                ? "Las modalidades con inicial distribuyen el pago del departamento entre la firma y la entrega. Revisa el porcentaje y el saldo de cada opción; los adicionales se muestran por separado."
                 : plans.includes("hastaEntrega")
-                  ? "La lista publica el contado y un precio de pago total hasta la entrega. No separa esa segunda columna en cuota y saldo."
-                  : "La lista publica el precio de contado."}
+                  ? "Solicita el calendario de desembolsos de la modalidad de pago hasta la entrega para organizar tu compra."
+                  : "Consulta el precio al contado de tu unidad y las condiciones para formalizar la compra."}
             </p>
             {plans.includes("contado") && (
               <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
-                <h4 className="font-serif text-2xl">Contado, 100% a la firma</h4>
+                <h4 className="font-serif text-2xl">Tu compra al contado: 100% a la firma</h4>
                 <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">{rateSpan(units.filter((unit) => unit.cashTotal > 0).map((unit) => unit.cashPerM2))}</p>
               </article>
             )}
             {plans.includes("inicial60") && (
               <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <h4 className="font-serif text-2xl leading-snug">60% inicial y saldo contra entrega</h4>
+                <h4 className="font-serif text-2xl leading-snug">Empieza con 60% · saldo contra entrega</h4>
                 <p className="mt-2 font-serif text-3xl text-stone-900">{rateSpan(units.map((unit) => unit.initial60PerM2 || 0))}</p>
               </article>
             )}
             {plans.includes("inicial40") && (
               <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <h4 className="font-serif text-2xl leading-snug">40% inicial y saldo contra entrega</h4>
+                <h4 className="font-serif text-2xl leading-snug">Empieza con 40% · saldo contra entrega</h4>
                 <p className="mt-2 font-serif text-3xl text-stone-900">{rateSpan(units.map((unit) => unit.initial40PerM2 || 0))}</p>
               </article>
             )}
             {plans.includes("hastaEntrega") && (
               <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <h4 className="font-serif text-2xl leading-snug">Pago total hasta la entrega</h4>
+                <h4 className="font-serif text-2xl leading-snug">Organiza tu pago total hasta la entrega</h4>
                 <p className="mt-2 font-serif text-3xl text-stone-900">{rateSpan(units.map((unit) => unit.planPerM2 || 0))}</p>
               </article>
             )}
@@ -942,7 +944,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Haz tuyo el departamento.</h3>
+                <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">{copy.availabilityTitle}</h3>
                 <p className="mt-1 text-xs text-stone-500">{meta.listLabel ? `Lista del ${meta.listLabel}. ` : ""}Verde: disponible · Gris: vendido o reservado.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -1050,14 +1052,14 @@ export default function DomusLanding({ property, onClose }: Props) {
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{plan === "hastaEntrega" ? "Pago hasta la entrega" : `Cuota inicial (${quote.pct}%)`}</p>
                     <p className="mt-1 font-serif text-2xl font-bold leading-tight text-emerald-400"><span className="block font-mono text-xs font-normal text-emerald-500/80">USD</span>{formatDomusUsd(quote.initial)}</p>
-                    <p className="mt-1 text-[10px] text-stone-400">{plan === "contado" ? "A la firma del contrato" : plan === "hastaEntrega" ? "Según la columna publicada" : "A la firma del contrato"}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">{plan === "contado" ? "A la firma del contrato" : plan === "hastaEntrega" ? "Total del plan elegido" : "A la firma del contrato"}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Saldo contra entrega</p>
                     {quote.balance == null ? (
                       <>
                         <p className="mt-1 font-serif text-2xl font-bold leading-tight text-stone-500"><span className="block font-mono text-xs font-normal text-stone-500">USD</span>—</p>
-                        <p className="mt-1 text-[10px] text-stone-400">{plan === "hastaEntrega" ? "La lista no separa un saldo" : "Sin saldo pendiente"}</p>
+                        <p className="mt-1 text-[10px] text-stone-400">{plan === "hastaEntrega" ? "Consulta el calendario de pagos" : "Sin saldo pendiente"}</p>
                       </>
                     ) : (
                       <>
@@ -1076,10 +1078,10 @@ export default function DomusLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección empieza aquí.</h3>
-            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">Cuéntanos qué departamento estás mirando. Te ayudamos a confirmar la lista y los pasos para reservar en {display}.</p>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">{copy.closingTitle}</h3>
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">{copy.closingBody}</p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
+              {copy.closingCta} <ArrowRight size={14} />
             </button>
           </section>
         </div>
