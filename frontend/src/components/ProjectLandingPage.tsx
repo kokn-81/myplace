@@ -12,6 +12,7 @@ import BetonBrutLanding from "./BetonBrutLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
+import { isOnaProperty } from "../projectIdentity";
 
 interface Props {
   property: Property;
@@ -45,7 +46,7 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
     return <BetonBrutLanding property={property} onClose={onClose} />;
   }
 
-  if (property.title?.toLowerCase().includes("ona")) {
+  if (isOnaProperty(property)) {
     return <OnaLanding property={property} onClose={onClose} />;
   }
 

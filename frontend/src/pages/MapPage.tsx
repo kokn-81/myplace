@@ -1448,6 +1448,13 @@ export default function MapPage() {
       } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
         selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
         hasSearchInteractionRef.current = true;
+      } else if (
+        proyecto.toLowerCase().includes("domus") ||
+        ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
+      ) {
+        const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
+        selectProperty(domTarget, { skipHistoryPush: true });
+        hasSearchInteractionRef.current = true;
       } else if (proyecto.toLowerCase().includes("bless-tower") || proyecto.toLowerCase().includes("tower") || proyecto.toLowerCase().includes("blesstower")) {
         selectProperty(SYNTHETIC_BLESS_TOWER_PROPERTY, { skipHistoryPush: true });
         hasSearchInteractionRef.current = true;
@@ -1459,13 +1466,6 @@ export default function MapPage() {
         hasSearchInteractionRef.current = true;
       } else if (proyecto.toLowerCase().includes("ona") || proyecto === "5") {
         selectProperty(SYNTHETIC_ONA_PROPERTY, { skipHistoryPush: true });
-        hasSearchInteractionRef.current = true;
-      } else if (
-        proyecto.toLowerCase().includes("domus") ||
-        ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
-      ) {
-        const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
-        selectProperty(domTarget, { skipHistoryPush: true });
         hasSearchInteractionRef.current = true;
       }
     }
@@ -1533,16 +1533,16 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_EURODESIGN_PROPERTY, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("garden") || proyecto.toLowerCase().includes("zen")) {
           selectProperty(SYNTHETIC_GARDEN_ZEN_PROPERTY, { skipHistoryPush: true });
-        } else if (proyecto.toLowerCase().includes("bless-tower") || proyecto.toLowerCase().includes("tower") || proyecto.toLowerCase().includes("blesstower")) {
-          selectProperty(SYNTHETIC_BLESS_TOWER_PROPERTY, { skipHistoryPush: true });
-        } else if (proyecto.toLowerCase().includes("bless-drei") || proyecto.toLowerCase().includes("drei") || proyecto.toLowerCase().includes("blessdrei")) {
-          selectProperty(SYNTHETIC_BLESS_DREI_PROPERTY, { skipHistoryPush: true });
         } else if (
           proyecto.toLowerCase().includes("domus") ||
           ["black", "gold", "onix", "ónix", "insignia", "luxury", "tower", "infinity"].includes(proyecto.toLowerCase())
         ) {
           const domTarget = SYNTHETIC_DOMUS_PROPERTIES.find((p) => isTargetProject(p, proyecto)) || SYNTHETIC_DOMUS_BLACK_PROPERTY;
           selectProperty(domTarget, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("bless-tower") || proyecto.toLowerCase().includes("tower") || proyecto.toLowerCase().includes("blesstower")) {
+          selectProperty(SYNTHETIC_BLESS_TOWER_PROPERTY, { skipHistoryPush: true });
+        } else if (proyecto.toLowerCase().includes("bless-drei") || proyecto.toLowerCase().includes("drei") || proyecto.toLowerCase().includes("blessdrei")) {
+          selectProperty(SYNTHETIC_BLESS_DREI_PROPERTY, { skipHistoryPush: true });
         }
       }
     };

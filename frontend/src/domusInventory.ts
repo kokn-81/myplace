@@ -21,6 +21,9 @@ export interface DomusUnit {
   initial60Total?: number;
   cuotaInicial40?: number;
   cuotaInicial60?: number;
+  /** Full price of the published pay-by-delivery column, when it is not a 40% plan. */
+  planTotal?: number;
+  planPerM2?: number;
   deliveryYear?: string;
 }
 
@@ -12827,178 +12830,203 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
   "domus-infinity": [],
 };
 
+function splitCsvLine(line: string): string[] {
+  const res: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') inQuotes = !inQuotes;
+    else if (ch === "," && !inQuotes) {
+      res.push(cur.trim());
+      cur = "";
+    } else cur += ch;
+  }
+  res.push(cur.trim());
+  return res;
+}
+
+function cleanDomusNum(str: string): number {
+  if (!str) return 0;
+  let clean = str.replace(/[m²\s"$]/gi, "").replace(/%/g, "").trim();
+  if (!clean || !/\d/.test(clean)) return 0;
+  if (clean.includes(",") && clean.includes(".")) {
+    clean = clean.replace(/\./g, "").replace(",", ".");
+  } else if (clean.includes(",")) {
+    clean = clean.replace(",", ".");
+  } else if (clean.includes(".")) {
+    const parts = clean.split(".");
+    if (parts.length === 2 && parts[1].length === 3) clean = parts[0] + parts[1];
+  }
+  const val = parseFloat(clean);
+  return isNaN(val) ? 0 : val;
+}
+
+function headerHit(headers: string[], pred: (cell: string) => boolean): number {
+  return headers.findIndex(pred);
+}
+
+function domusRooms(rawDorm: string): { rooms: number; roomsLabel: string } {
+  const text = rawDorm || "";
+  if (/mono/i.test(text)) return { rooms: 0, roomsLabel: "Monoambiente" };
+  if (/3/.test(text)) return { rooms: 3, roomsLabel: "3 Dormitorios" };
+  if (/2/.test(text)) return { rooms: 2, roomsLabel: "2 Dormitorios" };
+  if (/0/.test(text) && !/[1-9]/.test(text)) return { rooms: 0, roomsLabel: "Monoambiente" };
+  return { rooms: 1, roomsLabel: "1 Dormitorio" };
+}
+
+function domusStatus(raw: string): "disponible" | "vendido" | "reservado" {
+  const text = raw.toUpperCase();
+  if (text.includes("NO DISP") || text.includes("VENDID") || text.includes("OCUPAD")) return "vendido";
+  if (text.includes("RESERV") || text.includes("BLOQUE")) return "reservado";
+  return "disponible";
+}
+
 export function parseDomusLiveCsv(csvText: string, projectId: string): DomusUnit[] {
   if (!csvText || typeof csvText !== "string") return [];
-  const lines = csvText.split("\n").map((l) => l.trim()).filter(Boolean);
+  const lines = csvText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const units: DomusUnit[] = [];
   let currentFloor = 1;
   let currentFloorLabel = "Piso 1";
 
-  // Find header
   let headerIdx = -1;
-  for (let i = 0; i < Math.min(10, lines.length); i++) {
+  for (let i = 0; i < Math.min(30, lines.length); i++) {
     const u = lines[i].toUpperCase();
-    if (u.includes("NRO D") || u.includes("NRO.") || (u.includes("PISO") && u.includes("MODELO"))) {
+    const hasUnit = u.includes("NRO") || u.includes("NRO.") || u.includes("N°");
+    const hasModel = u.includes("MODELO");
+    const hasFloor = u.includes("PISO") || u.includes("NIVEL");
+    if (hasModel && (hasUnit || hasFloor)) {
       headerIdx = i;
       break;
     }
   }
   if (headerIdx === -1) return [];
 
-  const splitLine = (line: string): string[] => {
-    const res: string[] = [];
-    let cur = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') inQuotes = !inQuotes;
-      else if (ch === "," && !inQuotes) {
-        res.push(cur.trim());
-        cur = "";
-      } else cur += ch;
-    }
-    res.push(cur.trim());
-    return res;
+  const headers = splitCsvLine(lines[headerIdx]).map((cell) => cell.replace(/^"|"$/g, "").trim().toUpperCase());
+  const col = {
+    floor: headerHit(headers, (h) => h.includes("PISO") || h.includes("NIVEL")),
+    unit: headerHit(headers, (h) => h.includes("NRO") || h === "NRO." || h.includes("N°") && !h.includes("DORM")),
+    modelo: headerHit(headers, (h) => h.includes("MODELO")),
+    dorm: headerHit(headers, (h) => h.includes("DORM")),
+    area: headerHit(headers, (h) => (h.includes("TOTAL") && (h.includes("M2") || h.includes("SUP"))) && !h.includes("LOZA")),
+    plan: headerHit(headers, (h) => h.includes("PLAN") && h.includes("PAG") && !h.includes("M2") && !h.includes("$")),
+    initial40: headerHit(headers, (h) => h.includes("40") && !h.includes("$") && !h.includes("M2") && (h.includes("INICIAL") || h.includes("INIC"))),
+    initial60: headerHit(headers, (h) => h.includes("60") && !h.includes("$") && !h.includes("M2") && (h.includes("INICIAL") || h.includes("INIC"))),
+    cash: headerHit(headers, (h) => !h.includes("$") && !h.includes("M2") && !h.includes("PLAN") && (h.includes("CONTADO") || h.includes("100%"))),
+    rate40: headerHit(headers, (h) => h.includes("40") && (h.includes("$") || h.includes("M2"))),
+    rate60: headerHit(headers, (h) => h.includes("60") && (h.includes("$") || h.includes("M2"))),
+    rateCash: headerHit(headers, (h) => (h.includes("100") || (h.includes("CONTADO") && !h.includes("PLAN"))) && (h.includes("$") || h.includes("/M") || h.includes("M2"))),
+    status: headerHit(headers, (h) => h.includes("ESTADO")),
   };
+  if (col.area < 0) {
+    col.area = headerHit(headers, (h) => h.includes("M2") && !h.includes("LOZA") && !h.includes("$") && !h.includes("%"));
+  }
+  if (col.unit < 0) col.unit = 1;
+  // "Plan de Pagos | Contado" is one merged header. The cash price sits in the next unlabeled column.
+  if (col.cash < 0 && col.plan >= 0 && !(headers[col.plan + 1] || "").trim()) {
+    col.cash = col.plan + 1;
+  }
+  const planRateCol = headerHit(headers, (h) => h.includes("PLAN") && (h.includes("M2") || h.includes("M²") || h.includes("/M")));
+  if (col.rate40 < 0 && planRateCol >= 0) col.rate40 = planRateCol;
+  if (col.rateCash < 0 && planRateCol >= 0 && !(headers[planRateCol + 1] || "").trim()) {
+    col.rateCash = planRateCol + 1;
+  }
 
-  const cleanNum = (str: string): number => {
-    if (!str) return 0;
-    let clean = str.replace(/[m²\s"$]/gi, "").trim();
-    if (clean.includes(",") && clean.includes(".")) {
-      clean = clean.replace(/\./g, "").replace(",", ".");
-    } else if (clean.includes(",")) {
-      clean = clean.replace(",", ".");
-    } else if (clean.includes(".")) {
-      const parts = clean.split(".");
-      if (parts.length === 2 && parts[1].length === 3) clean = parts[0] + parts[1];
-    }
-    const val = parseFloat(clean);
-    return isNaN(val) ? 0 : val;
-  };
+  const cell = (row: string[], index: number) => (index >= 0 ? (row[index] || "").replace(/^"|"$/g, "").trim() : "");
 
   for (let i = headerIdx + 1; i < lines.length; i++) {
-    const row = splitLine(lines[i]).map((c) => c.replace(/^"|"$/g, "").trim());
-    if (row.length < 5) continue;
+    const row = splitCsvLine(lines[i]).map((c) => c.replace(/^"|"$/g, "").trim());
+    if (row.length < 4) continue;
 
-    const rawFloor = row[0];
-    if (rawFloor && rawFloor.toLowerCase().includes("piso")) {
-      currentFloorLabel = rawFloor;
+    const rawFloor = cell(row, col.floor);
+    if (rawFloor && /piso|nivel/i.test(rawFloor)) {
+      currentFloorLabel = rawFloor.replace(/^nivel/i, "Piso");
       const numMatch = rawFloor.match(/\d+/);
       if (numMatch) currentFloor = parseInt(numMatch[0], 10);
+    } else if (/^\d+$/.test(rawFloor)) {
+      currentFloor = parseInt(rawFloor, 10);
+      currentFloorLabel = `Piso ${currentFloor}`;
     }
 
-    const unitNumber = row[1];
+    const unitNumber = cell(row, col.unit);
     if (!unitNumber || !/^\d+[A-Z0-9-]*$/i.test(unitNumber)) continue;
 
-    const modelo = row[2] || "";
-    const rawDorm = row[3] || "";
-    let rooms = 1;
-    let roomsLabel = "1 Dormitorio";
-    if (/mono/i.test(rawDorm)) {
-      rooms = 0;
-      roomsLabel = "Monoambiente";
-    } else if (/2\s*dorm/i.test(rawDorm)) {
-      rooms = 2;
-      roomsLabel = "2 Dormitorios";
-    } else if (/3\s*dorm/i.test(rawDorm)) {
-      rooms = 3;
-      roomsLabel = "3 Dormitorios";
+    const modelo = cell(row, col.modelo);
+    const { rooms, roomsLabel } = domusRooms(cell(row, col.dorm));
+    const areaM2 = cleanDomusNum(cell(row, col.area));
+    const initial40Total = Math.round(cleanDomusNum(cell(row, col.initial40)) || cleanDomusNum(cell(row, col.plan)));
+    const initial60Total = Math.round(cleanDomusNum(cell(row, col.initial60)));
+    let cashTotal = Math.round(cleanDomusNum(cell(row, col.cash)));
+    if (!cashTotal && col.cash < 0) {
+      const moneyCols = headers
+        .map((h, index) => ({ h, index }))
+        .filter(({ h, index }) => index !== col.plan && index !== col.initial40 && index !== col.initial60 && !h.includes("M2") && !h.includes("M²") && !h.includes("/M") && /\d/.test(row[index] || "") && (h.includes("CONTADO") || h.includes("100") || h.includes("PAGO")));
+      const amounts = moneyCols.map(({ index }) => Math.round(cleanDomusNum(row[index] || ""))).filter((n) => n > 1000);
+      if (amounts.length) cashTotal = Math.min(...amounts);
     }
+    const rawStatus = cell(row, col.status);
+    if (areaM2 <= 0 && cashTotal <= 0 && initial40Total <= 0) continue;
+    const status = rawStatus ? domusStatus(rawStatus) : cashTotal > 0 ? "disponible" : "vendido";
+    const cashPerM2 = cleanDomusNum(cell(row, col.rateCash)) || (areaM2 > 0 && cashTotal > 0 ? Math.round(cashTotal / areaM2) : 0);
+    const initial40PerM2 = cleanDomusNum(cell(row, col.rate40)) || (areaM2 > 0 && initial40Total > 0 ? Math.round(initial40Total / areaM2) : 0);
+    const initial60PerM2 = cleanDomusNum(cell(row, col.rate60)) || (areaM2 > 0 && initial60Total > 0 ? Math.round(initial60Total / areaM2) : 0);
 
-    if (projectId === "domus-black" || projectId === "domus-gold" || projectId === "domus-onix") {
-      const areaM2 = cleanNum(row[4]);
-      const initial40Total = Math.round(cleanNum(row[5]));
-      const initial60Total = Math.round(cleanNum(row[6]));
-      const cashTotal = Math.round(cleanNum(row[7]));
-      const initial40PerM2 = cleanNum(row[8]);
-      const initial60PerM2 = cleanNum(row[9]);
-      const cashPerM2 = cleanNum(row[10]);
-      const rawStatus = (row[11] || "").toUpperCase();
-      let status: "disponible" | "vendido" | "reservado" = "disponible";
-      if (rawStatus.includes("VENDID")) status = "vendido";
-      else if (rawStatus.includes("RESERV") || rawStatus.includes("BLOQUE")) status = "reservado";
-
-      units.push({
-        projectId: projectId as any,
-        floor: currentFloor,
-        floorLabel: currentFloorLabel,
-        unitNumber,
-        modelo,
-        rooms,
-        roomsLabel,
-        areaM2,
-        status,
-        cashPerM2: cashPerM2 || (areaM2 ? Math.round(cashTotal / areaM2) : 1510),
-        cashTotal: cashTotal || Math.round(areaM2 * 1510),
-        initial40PerM2: initial40PerM2 || (areaM2 ? Math.round(initial40Total / areaM2) : 1610),
-        initial40Total: initial40Total || Math.round(areaM2 * 1610),
-        initial60PerM2: initial60PerM2 || (areaM2 ? Math.round(initial60Total / areaM2) : 1560),
-        initial60Total: initial60Total || Math.round(areaM2 * 1560),
-        cuotaInicial40: Math.round((initial40Total || areaM2 * 1610) * 0.4),
-        cuotaInicial60: Math.round((initial60Total || areaM2 * 1560) * 0.6),
-      });
-    } else {
-      // Insignia / Luxury
-      const areaM2 = cleanNum(row[6]) || cleanNum(row[4]);
-      const initial40Total = Math.round(cleanNum(row[7]));
-      const cashTotal = Math.round(cleanNum(row[8])) || Math.round(areaM2 * 1440);
-      const rawStatus = (row[9] || "").toUpperCase();
-      let status: "disponible" | "vendido" | "reservado" = "disponible";
-      if (rawStatus.includes("VENDID")) status = "vendido";
-      else if (rawStatus.includes("RESERV") || rawStatus.includes("BLOQUE")) status = "reservado";
-
-      units.push({
-        projectId: projectId as any,
-        floor: currentFloor,
-        floorLabel: currentFloorLabel,
-        unitNumber,
-        modelo,
-        rooms,
-        roomsLabel,
-        areaM2,
-        status,
-        cashPerM2: 1440,
-        cashTotal,
-        initial40PerM2: 1490,
-        initial40Total,
-        cuotaInicial40: Math.round(initial40Total * 0.4),
-      });
+    const unit: DomusUnit = {
+      projectId: projectId as DomusUnit["projectId"],
+      floor: currentFloor,
+      floorLabel: currentFloorLabel,
+      unitNumber,
+      modelo,
+      rooms,
+      roomsLabel,
+      areaM2,
+      status,
+      cashPerM2,
+      cashTotal,
+      initial40PerM2,
+      initial40Total,
+    };
+    if (initial40Total > 0) unit.cuotaInicial40 = Math.round(initial40Total * 0.4);
+    if (initial60Total > 0) {
+      unit.initial60PerM2 = initial60PerM2;
+      unit.initial60Total = initial60Total;
+      unit.cuotaInicial60 = Math.round(initial60Total * 0.6);
     }
+    units.push(unit);
   }
 
   return units;
+}
+
+async function loadDomusSnapshot(projectId: string): Promise<DomusUnit[] | null> {
+  try {
+    const jsonRes = await fetch("/domus-inventory.json", { cache: "no-cache" });
+    if (!jsonRes.ok) return null;
+    const data = await jsonRes.json();
+    if (Array.isArray(data[projectId]) && data[projectId].length > 0) return data[projectId];
+  } catch {
+    return null;
+  }
+  return null;
 }
 
 export async function fetchDomusLiveUnits(projectId: string): Promise<DomusUnit[]> {
   const config = DOMUS_PROJECTS_CONFIG[projectId];
   const baseline = DOMUS_BASELINE_UNITS[projectId] || [];
 
-  if (!config || !config.sheetCsvUrl) {
-    return baseline;
+  if (config?.sheetCsvUrl) {
+    try {
+      const res = await fetch(config.sheetCsvUrl, { cache: "no-cache" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const csv = await res.text();
+      const liveUnits = parseDomusLiveCsv(csv, projectId);
+      if (liveUnits.length >= 10) return liveUnits;
+    } catch (err) {
+      console.warn(`[DomusLive] Fallback to baseline for ${projectId}:`, err);
+    }
   }
 
-  try {
-    const res = await fetch(config.sheetCsvUrl, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const csv = await res.text();
-    const liveUnits = parseDomusLiveCsv(csv, projectId);
-    if (liveUnits.length >= 10) {
-      return liveUnits;
-    }
-  } catch (err) {
-    console.warn(`[DomusLive] Fallback to baseline for ${projectId}:`, err);
-  }
-
-  // Fallback to static public json snapshot if available
-  try {
-    const jsonRes = await fetch("/domus-inventory.json");
-    if (jsonRes.ok) {
-      const data = await jsonRes.json();
-      if (Array.isArray(data[projectId]) && data[projectId].length > 0) {
-        return data[projectId];
-      }
-    }
-  } catch {}
-
+  const snapshot = await loadDomusSnapshot(projectId);
+  if (snapshot) return snapshot;
   return baseline;
 }

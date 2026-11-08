@@ -60,9 +60,52 @@ Piso 3,301,A1,1 Dorm.,"47,30  m²","76.153,00","73.788,00","71.423,00",1.610,1.5
   const parsed = parseDomusLiveCsv(sampleCsv, "domus-black");
   assert.equal(parsed.length, 2);
   assert.equal(parsed[0].unitNumber, "301");
+  assert.equal(parsed[0].modelo, "A1");
+  assert.equal(parsed[0].rooms, 1);
   assert.equal(parsed[0].status, "disponible");
   assert.equal(parsed[0].cashTotal, 71423);
+  assert.equal(parsed[0].cuotaInicial40, 30461);
   assert.equal(parsed[1].unitNumber, "302");
+  assert.equal(parsed[1].modelo, "B1");
+  assert.equal(parsed[1].rooms, 0);
   assert.equal(parsed[1].status, "vendido");
   assert.equal(parsed[1].cashTotal, 45602);
+});
+
+test("parseDomusLiveCsv reads the current sheet column order and does not invent blank prices", () => {
+  const sampleCsv = `BLACK2,144,DOMUS BLACK
+Piso,NRO D,N. DORM,MODELO,M2 TOTAL,40% INICIAL,60% INICIAL,100% CONTADO,40% $/M2,60% $/M2,100% $/M2,ESTADO,M2 LOZA
+Piso 3,310,1 Dorm.,A3,"45,90  m²","73.899,00","71.604,00","69.309,00",1.610,1.560,1.510,DISPONIBLE,
+Piso 3,311,2 Dorm.,D1,"74,70  m²",,,,, ,,,NO DISPONIBLE,
+`;
+  const parsed = parseDomusLiveCsv(sampleCsv, "domus-black");
+  assert.equal(parsed.length, 2);
+  assert.equal(parsed[0].modelo, "A3");
+  assert.equal(parsed[0].rooms, 1);
+  assert.equal(parsed[0].cashTotal, 69309);
+  assert.equal(parsed[0].initial60Total, 71604);
+  assert.equal(parsed[0].cashPerM2, 1510);
+  assert.equal(parsed[1].modelo, "D1");
+  assert.equal(parsed[1].rooms, 2);
+  assert.equal(parsed[1].status, "vendido");
+  assert.equal(parsed[1].cashTotal, 0);
+});
+
+test("parseDomusLiveCsv keeps the cash column when Plan de Pagos and Contado share one header", () => {
+  const sampleCsv = `DOMUS LUXURY,Entrega del proyecto Noviembre 2026
+Plan de pagos: 40% inicial y saldo hasta la entrega del proyecto
+Piso,Nro.,Modelo,N° Dorm.,Sup. Dpto.,Balcon/Área de Servicio,Sup. Total,Plan de Pagos | Contado,,ESTADO,PRECIO POR M² PLAN DE PAGOS,
+Piso 1,101,A,1 Dorm.,"45,00  m²","Balcón  1,95 ","46,95  m²","69.251,25","68.077,50",VENDIDO ,1475,1450
+Piso 2,214,G2,Mono.,"35,00  m²","A. de Serv.  3,10","38,10  m²","55.245,00",,LIBRE,1450,
+`;
+  const parsed = parseDomusLiveCsv(sampleCsv, "domus-luxury");
+  assert.equal(parsed.length, 2);
+  assert.equal(parsed[0].cashTotal, 68078);
+  assert.equal(parsed[0].initial40Total, 69251);
+  assert.equal(parsed[0].initial60Total, undefined);
+  assert.equal(parsed[0].cashPerM2, 1450);
+  assert.equal(parsed[0].initial40PerM2, 1475);
+  assert.equal(parsed[1].status, "disponible");
+  assert.equal(parsed[1].cashTotal, 0);
+  assert.equal(parsed[1].initial40Total, 55245);
 });

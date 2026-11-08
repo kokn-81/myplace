@@ -210,7 +210,7 @@ Una sola tarjeta, usada en `#tipologias` y en el paso 1.
 >
 > Presentarlo como una pastilla informativa: número en dorado oscuro `#816127`, fondo claro `#f7f5f0` y borde dorado `#9a7b45` al 40%. Tamaño de **16 px en móvil y 18 px desde `sm`**, negrita y cifras tabulares. Mantenerlo arriba a la derecha, sin comprimir la foto del departamento. Referencia: `min-w-[4.25rem] rounded-full border border-[#9a7b45]/40 bg-[#f7f5f0] px-3 py-1.5 text-center text-base font-bold leading-none tabular-nums text-[#816127] shadow-sm sm:text-lg`.
 >
-> Es un indicador, no un botón. Conserva el índice y el total reales del filtro elegido y se actualiza al cambiar de modelo. Está en ONA, Béton Brut II, Tower Eurodesign, Bless Tower, Bless Drei y Trivento IV. Garden Zen usa la misma pastilla con su chocolate: texto `#5c2414`, fondo `#f8f1e7`, borde `#7a3218` al 40%.
+> Es un indicador, no un botón. Conserva el índice y el total reales del filtro elegido y se actualiza al cambiar de modelo. Está en ONA, Béton Brut II, Tower Eurodesign, Bless Tower, Bless Drei, Trivento IV y las siete landings Domus. Garden Zen usa la misma pastilla con su chocolate: texto `#5c2414`, fondo `#f8f1e7`, borde `#7a3218` al 40%.
 
 Archivos: vista del departamento en `/…/modelos/{id}.jpg`. Planta, con la unidad marcada, en `/…/planos/{id}.jpg`. Ficha completa del brochure en `/…/fichas/{id}.jpg`.
 
