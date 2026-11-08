@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Building2,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -298,6 +299,14 @@ function minCash(list: OnaUnit[], match: (unit: OnaUnit) => boolean) {
   return Math.min(...free.map((unit) => unit.cash));
 }
 
+function coverAreaLabel(list: OnaUnit[], match: (unit: OnaUnit) => boolean) {
+  const sizes = list.filter(match).map((unit) => unit.totalM2);
+  if (sizes.length === 0) return "";
+  const low = Math.round(Math.min(...sizes));
+  const high = Math.round(Math.max(...sizes));
+  return low === high ? `${low} m²` : `${low} a ${high} m²`;
+}
+
 function ModelFrame({
   model,
   index,
@@ -391,6 +400,9 @@ export default function OnaLanding({ property, onClose }: Props) {
   const from1 = minCash(units, (unit) => unit.rooms === 1);
   const from2 = minCash(units, (unit) => unit.tipo === "1");
   const fromSuite = minCash(units, (unit) => unit.tipo === "2" || unit.tipo === "5");
+  const coverFrom2 = minCash(units, (unit) => unit.rooms === 2);
+  const coverArea1 = coverAreaLabel(units, (unit) => unit.rooms === 1);
+  const coverArea2 = coverAreaLabel(units, (unit) => unit.rooms === 2);
 
   const slides = ONA_MODELS.filter((model) => model.rooms === rooms);
   const slideIndex = slides.length ? ((modelIndex % slides.length) + slides.length) % slides.length : 0;
@@ -597,45 +609,54 @@ export default function OnaLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      <div className="relative flex h-[calc(100svh-3.75rem)] shrink-0 flex-col bg-[#f6edd9] md:h-screen md:w-[44%]">
-        <div className="relative min-h-0 flex-1">
-          <img src="/ona/fachada-atardecer.jpg" alt="Fachada completa de ONA Residences" className="absolute inset-0 h-full w-full object-contain object-center" />
-        </div>
-        <div className="relative z-10 shrink-0 bg-[#f6edd9] px-5 pb-3.5 pt-3 text-stone-900 md:px-8 md:pb-5 md:pt-4">
-          <img src="/ona/ona-emblem.jpg" alt="ONA Residences" className="mb-2 h-8 w-8 rounded-full object-cover" />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#9a7b45]/35 bg-white/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#816127] md:px-3 md:py-1 md:text-[11px]">
-            <Sparkles size={12} />
-            Preventa · 1.ª fase · {ONA_ZONE}
-          </span>
-          <h1 className="mt-1.5 font-serif text-[1.7rem] font-light leading-none tracking-wide text-[#1C1917] md:mt-2 md:text-4xl">ONA Residences</h1>
-          <p className="mt-1 max-w-sm text-[11px] leading-snug text-stone-600 md:text-sm">{ONA_ADDRESS} entre Banzer y Beni</p>
-          <div className="mt-2.5 grid max-w-sm grid-cols-2 gap-2 md:mt-3 md:gap-3">
-            <div className="rounded-xl border border-[#e6dcc4] bg-white/80 p-2 md:p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-500">Entrega</p>
-              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{ONA_DELIVERY}</p>
+      <div className="relative flex shrink-0 flex-col justify-end overflow-hidden md:h-screen md:w-[44%]" style={{ minHeight: "100svh" }}>
+        <img src="/ona/fachada-atardecer.jpg" alt="Fachada completa de ONA Residences" className="absolute inset-0 h-full w-full object-cover object-[center_18%]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
+        <div className="relative z-10 px-5 pb-24 pt-16 text-white lg:px-7 lg:pb-7">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e8d5a8] backdrop-blur-md">
+              <Sparkles size={12} />
+              Preventa exclusiva · 1.ª fase
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-3 py-1 text-[10px] font-semibold text-white/90 backdrop-blur-md">
+              <MapPin size={12} className="text-[#e8d5a8]" />
+              {ONA_ZONE}
+            </span>
+          </div>
+          <h1 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-serif leading-none drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]">
+            <span className="text-5xl font-light tracking-wide md:text-6xl">ONA</span>
+            <span className="text-2xl font-light text-[#e8d5a8] md:text-4xl">Residences</span>
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Eleva tu vida en equilibrio y armonía. Un proyecto contemporáneo en Los Cusis.</p>
+          <div className="mt-3 flex max-w-lg gap-2">
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Constructora</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{ONA_BUILDER}</p>
+              </div>
             </div>
-            <div className="rounded-xl border border-[#e6dcc4] bg-white/80 p-2 md:p-3">
-              <p className="text-[10px] uppercase tracking-wider text-stone-500">Constructora</p>
-              <p className="mt-0.5 text-xs font-semibold text-stone-900 md:text-sm">{ONA_BUILDER}</p>
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Entrega de obra</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{ONA_DELIVERY}</p>
+              </div>
             </div>
           </div>
-          <div className="mt-2 max-w-sm rounded-xl border border-[#e6dcc4] bg-white/80 p-2.5 md:hidden">
-            <div className="flex items-center justify-between border-b border-[#e6dcc4] pb-1.5 text-[10px] text-stone-500">
-              <span className="font-semibold text-[#816127]">Precios al contado</span>
-              <span>{freeCount} libres de {units.length}</span>
-            </div>
-            <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
-              <div>
-                <p className="text-[10px] text-stone-500">1 dormitorio</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{from1 == null ? "Agotado" : `USD ${formatOnaUsd(from1)}`}</p>
+          <div className="mt-2 max-w-lg rounded-2xl border border-[#e8d5a8]/30 bg-black/55 px-3.5 py-3 backdrop-blur-md">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#e8d5a8]">Departamentos disponibles</p>
+            <div className="mt-2 flex">
+              <div className="min-w-0 flex-1 pr-3">
+                <p className="text-sm text-white">1 Dormitorio</p>
+                <p className="text-[11px] text-white/70">{coverArea1}</p>
+                <p className="mt-1 font-serif text-sm font-semibold leading-tight">{from1 == null ? "Agotado" : `Desde USD ${formatOnaUsd(from1)}`}</p>
               </div>
-              <div>
-                <p className="text-[10px] text-stone-500">2 dormitorios</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{from2 == null ? "Agotado" : `USD ${formatOnaUsd(from2)}`}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-stone-500">Suite 92 m²</p>
-                <p className="mt-0.5 font-serif text-[11px] font-bold leading-tight text-stone-900">{fromSuite == null ? "Agotado" : `USD ${formatOnaUsd(fromSuite)}`}</p>
+              <div className="w-px bg-white/15" />
+              <div className="min-w-0 flex-1 pl-3">
+                <p className="text-sm text-white">2 Dormitorios</p>
+                <p className="text-[11px] text-white/70">{coverArea2}</p>
+                <p className="mt-1 font-serif text-sm font-semibold leading-tight">{coverFrom2 == null ? "Agotado" : `Desde USD ${formatOnaUsd(coverFrom2)}`}</p>
               </div>
             </div>
           </div>
