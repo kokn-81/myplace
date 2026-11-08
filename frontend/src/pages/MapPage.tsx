@@ -1286,9 +1286,7 @@ export default function MapPage() {
   const [loginError, setLoginError] = useState("");
   const [showClientWelcome, setShowClientWelcome] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const desktopMenuRef = useRef<HTMLDivElement>(null);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const [properties, setProperties] = useState<Property[]>(readCachedCatalog);
   const inventoryRevision = useInventoryRevision();
   const [searchCriteria, setSearchCriteria] = useState<LocalSearchCriteria>({});
@@ -1646,19 +1644,16 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    if (!isMenuOpen && !isDesktopMenuOpen) return;
+    if (!isMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (isMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+      if (isMenuOpen && accountMenuRef.current && !accountMenuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
       }
-      if (isDesktopMenuOpen && desktopMenuRef.current && !desktopMenuRef.current.contains(e.target as Node)) {
-        setIsDesktopMenuOpen(false);
-      }
+
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsMenuOpen(false);
-        setIsDesktopMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -1667,7 +1662,7 @@ export default function MapPage() {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isMenuOpen, isDesktopMenuOpen]);
+  }, [isMenuOpen]);
 
   const handleLogin = async () => {
     try {
@@ -2565,10 +2560,6 @@ export default function MapPage() {
     }
   };
 
-  const handleAskGemini = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await runNiaSearch(geminiQuery);
-  };
   const exactProperties = useMemo(() => {
     return localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(p => propertyMatchesOperation(p, guidedOperation));
   }, [catalogProperties, searchCriteria, guidedOperation]);
@@ -2869,12 +2860,16 @@ export default function MapPage() {
     return {
       propertyRef: property?.id || null,
       title: property?.title,
-      zona: guidedZone || property?.area || "",
+      zona: searchCriteria.zone || guidedZone || property?.area || "",
       operacion: offer?.operation || property?.operation || guidedOperation || "",
-      presupuesto: guidedBudget || "",
+      presupuesto: [
+        searchCriteria.minBudget ? `Desde ${searchCriteria.budgetCurrency || "USD"} ${searchCriteria.minBudget.toLocaleString("es-BO")}` : "",
+        searchCriteria.maxBudget ? `Hasta ${searchCriteria.budgetCurrency || "USD"} ${searchCriteria.maxBudget.toLocaleString("es-BO")}` : "",
+      ].filter(Boolean).join(" · ") || guidedBudget || "",
       extraFilters: {
         purpose: guidedPropertyType || undefined,
         history: aiFilterHistory,
+        criteria: searchCriteria,
       },
     };
   };
@@ -2919,7 +2914,26 @@ export default function MapPage() {
     else if (result === "shared") setShareHint("");
   };
 
-  const renderCompactFilter = (_variant: "mobile" | "desktop") => <CatalogFilters
+  const renderCatalogGuide = () => <CatalogFilters
+    onReset={resetGuidedSearch}
+    leadingControl={
+      <button type="button" onClick={() => applyTheme(!isDarkMode)} className="nia-map-icon-button" aria-label="Cambiar tema" title="Cambiar tema">
+        {isDarkMode ? <Sun size={19} /> : <Moon size={19} />}
+      </button>
+    }
+    trailingControl={
+      <div className="relative" ref={accountMenuRef}>
+        <button type="button" onClick={() => setIsMenuOpen(open => !open)} className="nia-map-icon-button relative" aria-label="Menú y cuenta" aria-expanded={isMenuOpen} aria-controls="nia-account-menu" title={user?.displayName || "Menú y cuenta"}>
+          <Menu size={20} />
+          {user && <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--accent-main)]" />}
+        </button>
+        <AnimatePresence>
+          {isMenuOpen && <motion.div id="nia-account-menu" initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.96 }} transition={{ duration: 0.16, ease: "easeOut" }} className="absolute right-0 top-14 z-50 origin-top-right">
+            {renderAccountDropdown(() => setIsMenuOpen(false))}
+          </motion.div>}
+        </AnimatePresence>
+      </div>
+    }
     step={filterStep} onStep={setFilterStep}
     criteria={searchCriteria} sort={sortOrder} onSort={value => { setSortOrder(value); setCurrentIndex(0); }}
     years={deliveryYears} count={filteredProperties.length} category={guidedOperation}
@@ -2981,261 +2995,9 @@ export default function MapPage() {
         </AnimatePresence>
       </main>
 
-      {/* BOTONES SUPERIORES (Laterales) */}
-      <div className="absolute top-6 left-6 z-10 hidden md:block">
-        <button
-          onClick={() => applyTheme(!isDarkMode)}
-          className="p-3 bg-stone-900/90 dark:bg-[rgba(27,20,17,0.94)] backdrop-blur-md rounded-xl shadow-lg border border-white/15 dark:border-[var(--border-soft)] text-stone-200 dark:text-[var(--text-main)] hover:bg-stone-850 hover:text-white transition-colors flex items-center justify-center cursor-pointer"
-          aria-label="Cambiar tema"
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-      </div>
-
-      {/* MENU SUPERIOR DERECHO (Escritorio) */}
-      <div className="absolute top-6 right-6 z-10 hidden md:block" ref={desktopMenuRef}>
-        <button
-          type="button"
-          onClick={() => setIsDesktopMenuOpen((prev) => !prev)}
-          className={`flex items-center gap-2.5 rounded-2xl border px-3.5 py-2 text-xs font-semibold shadow-lg backdrop-blur-xl transition-all duration-200 cursor-pointer active:scale-95 ${
-            isDesktopMenuOpen
-              ? "border-[#A34A28] bg-stone-900 text-white"
-              : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
-          }`}
-          aria-label="Menú y cuenta"
-        >
-          <Menu size={16} className="text-stone-300" />
-          {user ? (
-            <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#7A3218] to-[#A34A28] text-white font-bold text-[11px] shadow-sm">
-                {user.displayName ? user.displayName[0].toUpperCase() : "U"}
-              </span>
-              <span className="max-w-[120px] truncate">{user.displayName?.split(" ")[0] || "Mi cuenta"}</span>
-            </div>
-          ) : (
-            <span>Menú</span>
-          )}
-        </button>
-
-        <AnimatePresence>
-          {isDesktopMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.96 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="absolute right-0 top-12 z-50 origin-top-right"
-            >
-              {renderAccountDropdown(() => setIsDesktopMenuOpen(false))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* HUD MOVIL: controles compactos en una sola fila */}
-      <div className="nia-mobile-hud absolute left-4 right-4 top-5 z-40 flex items-center gap-2 md:hidden">
-        <button
-          onClick={() => applyTheme(!isDarkMode)}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-stone-900/90 text-stone-200 shadow-lg transition-colors hover:bg-stone-850 hover:text-white cursor-pointer"
-          aria-label="Cambiar tema"
-        >
-          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-
-        <form
-          onSubmit={handleAskGemini}
-          className="nia-mobile-search-form min-w-0 flex-1 rounded-full border border-white/15 bg-stone-950/80 p-1 shadow-xl backdrop-blur-xl"
-        >
-          <div className="flex items-center">
-            <div className="flex items-center pl-3 pr-1">
-              {isAsking ? (
-                <div className="h-4 w-4 rounded-full border-2 border-[#A34A28] border-t-transparent animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4 text-[#C4896A]" />
-              )}
-            </div>
-
-            <input
-              type="text"
-              value={geminiQuery}
-              onChange={(e) => setGeminiQuery(e.target.value)}
-              disabled={isAsking}
-              placeholder="Ej. 2 dormitorios hasta 100 mil en Equipetrol"
-              className="min-w-0 flex-1 bg-transparent px-1 text-[13px] text-stone-100 outline-none placeholder-stone-400 disabled:opacity-50"
-            />
-
-            {(guidedStage !== "operation" || guidedOperation === "Proyectos" || aiFilteredIds !== null) && (
-              <button
-                type="button"
-                onClick={resetGuidedSearch}
-                className="p-1.5 text-stone-400 hover:text-red-400 transition-colors cursor-pointer"
-                title="Restablecer busqueda"
-              >
-                <X size={15} />
-              </button>
-            )}
-
-            <button
-              type="submit"
-              disabled={isAsking}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#7A3218] to-[#A34A28] text-white shadow-md transition-all hover:brightness-110 disabled:opacity-70 cursor-pointer"
-              aria-label="Buscar"
-            >
-              <Search size={16} />
-            </button>
-          </div>
-        </form>
-
-        <div className="relative" ref={mobileMenuRef}>
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 shadow-lg backdrop-blur-xl active:scale-95 cursor-pointer relative ${
-              isMenuOpen
-                ? "border-[#A34A28] bg-stone-900 text-[#C4896A]"
-                : "border-white/15 bg-stone-900/90 text-stone-200 hover:bg-stone-850 hover:text-white hover:border-white/30"
-            }`}
-            aria-label="Menú y configuración"
-            title="Menú y configuración"
-          >
-            <Menu size={20} />
-            {user && (
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#A34A28] ring-2 ring-stone-900" />
-            )}
-          </button>
-
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.96 }}
-                transition={{ duration: 0.16, ease: "easeOut" }}
-                className="absolute right-0 top-13 z-50 origin-top-right"
-              >
-                {renderAccountDropdown(() => setIsMenuOpen(false))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-      <div className="nia-mobile-guide-toggle absolute left-4 right-4 top-[4.75rem] z-30 md:hidden">
-        {renderCompactFilter("mobile")}
-      </div>
-      {locationQuestion && !isGuidedSearchOpen && (
-        <div className="nia-mobile-location-question absolute left-4 right-4 top-[7.25rem] z-30 rounded-2xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/96 p-3 text-left shadow-[var(--shadow-warm)] backdrop-blur-xl md:hidden dark:bg-[rgba(27,20,17,0.94)]">
-          <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--accent-main)]">
-            <Sparkles size={14} />
-            <span>Pregunta de NIA</span>
-            <button type="button" onClick={() => setLocationQuestion("")} className="ml-auto text-[var(--text-muted)] hover:text-red-500" aria-label="Cerrar pregunta">
-              <X size={15} />
-            </button>
-          </div>
-          <p className="mb-3 text-sm font-semibold normal-case tracking-normal text-[var(--text-main)]">{locationQuestion}</p>
-          <div className="flex flex-wrap gap-2">
-            {locationChoices.map((choice) => (
-              <button key={`mobile-location-${choice.id}`} type="button" onClick={() => handleLocationChoice(choice)} className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--accent-main)] transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]">
-                {choice.name}
-              </button>
-            ))}
-            <button type="button" onClick={() => setIsCustomLocationOpen((open) => !open)} className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--text-main)] transition-colors hover:border-[var(--accent-main)]">
-              Otro
-            </button>
-          </div>
-          {isCustomLocationOpen && (
-            <form onSubmit={handleCustomLocationSubmit} className="mt-3 flex gap-2">
-              <input value={customLocationText} onChange={(event) => setCustomLocationText(event.target.value)} placeholder="Ej. Santa Cruz de la Sierra, Bolivia" className="min-w-0 flex-1 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2.5 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]" />
-              <button type="submit" className="rounded-xl bg-[var(--accent-main)] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white">
-                Usar
-              </button>
-            </form>
-          )}
-        </div>
-      )}
-      {/* CAPA 1: HUD SUPERIOR (Pildora de Busqueda IA - Version Conserjeria) */}
-      <div className="nia-desktop-hud absolute top-6 left-1/2 z-10 hidden w-[60%] max-w-2xl -translate-x-1/2 md:block">
-        <>
-          <form
-            onSubmit={handleAskGemini}
-            className="bg-[rgba(255,253,246,0.88)] dark:bg-[rgba(16,12,10,0.58)] backdrop-blur-xl shadow-[var(--shadow-warm)] rounded-full p-1 flex items-center border border-[var(--border-soft)] dark:border-[var(--border-soft)] transition-all focus-within:bg-[var(--surface-panel)] dark:focus-within:bg-[rgba(27,20,17,0.88)]"
-          >
-            <div className="pl-3 pr-1.5 sm:pl-4 sm:pr-2 flex items-center">
-              {isAsking ? (
-                <div className="h-4 w-4 rounded-full border-2 border-gold border-t-transparent animate-spin" />
-              ) : (
-                <Sparkles className="h-6 w-4 text-[var(--accent-main)]" />
-              )}
-            </div>
-
-            <input
-              type="text"
-              value={geminiQuery}
-              onChange={(e) => setGeminiQuery(e.target.value)}
-              disabled={isAsking}
-              placeholder="Ej. 2 dormitorios hasta 100 mil en Equipetrol"
-              className="w-full min-w-0 bg-transparent border-none outline-none px-1.5 sm:px-2 text-[var(--text-main)] dark:text-[var(--text-main)] placeholder-[var(--text-muted)] dark:placeholder-stone-300 font-sans text-[13px] sm:text-sm tracking-wide disabled:opacity-50"
-            />
-
-            {(guidedStage !== "operation" || guidedOperation === "Proyectos" || aiFilteredIds !== null) && (
-              <button type="button" onClick={resetGuidedSearch} className="p-2 text-stone-500 hover:text-red-400 transition-colors" title="Restablecer busqueda">
-                <X size={16} />
-              </button>
-            )}
-
-            <button
-              type="submit"
-              disabled={isAsking || guidedStage === "sell"}
-              className="bg-[var(--accent-main)] text-[#2F241D] px-5 sm:px-6 py-2.5 rounded-full hover:bg-[var(--accent-hover)] hover:text-white transition-all duration-300 font-bold shadow-md flex items-center gap-1.5 disabled:opacity-70 text-[11px] uppercase tracking-[0.1em]"
-            >
-              <Search size={14} className="md:hidden" />
-              <span className="hidden md:inline">Buscar</span>
-            </button>
-          </form>
-          {renderCompactFilter("desktop")}
-        </>
-        {locationQuestion && !isGuidedSearchOpen && (
-          <div className="mt-3 rounded-xl border-2 border-[var(--accent-main)] bg-[var(--surface-panel)]/95 p-3 text-left shadow-[0_18px_42px_rgba(58,33,25,0.18)] backdrop-blur-xl dark:bg-[rgba(27,20,17,0.94)]">
-            <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--accent-main)]">
-              <Sparkles size={14} />
-              <span>Pregunta de NIA</span>
-            </div>
-            <p className="mb-3 text-sm font-semibold normal-case tracking-normal text-[var(--text-main)]">{locationQuestion}</p>
-            <div className="flex flex-wrap items-center gap-2">
-              {locationChoices.map((choice) => (
-                <button
-                  key={choice.id}
-                  type="button"
-                  onClick={() => handleLocationChoice(choice)}
-                  className="rounded-full border border-[var(--accent-main)]/50 bg-[var(--accent-main)]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--accent-main)] transition-colors hover:bg-[var(--accent-main)] hover:text-[#2F241D]"
-                >
-                  {choice.name}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setIsCustomLocationOpen((open) => !open)}
-                className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)] transition-colors hover:border-[var(--accent-main)]"
-              >
-                Otro
-              </button>
-            </div>
-            {isCustomLocationOpen && (
-              <form onSubmit={handleCustomLocationSubmit} className="mt-3 flex gap-2">
-                <input
-                  value={customLocationText}
-                  onChange={(event) => setCustomLocationText(event.target.value)}
-                  placeholder="Ej. Santa Cruz de la Sierra, Bolivia"
-                  className="min-w-0 flex-1 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-3 py-2 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-main)]"
-                />
-                <button type="submit" className="rounded-lg bg-[var(--accent-main)] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2F241D] hover:bg-[var(--accent-hover)] hover:text-white">
-                  Usar
-                </button>
-              </form>
-            )}
-          </div>
-        )}
-
-      </div>
+      <header className="nia-map-header absolute left-1/2 top-0 z-40 w-full max-w-3xl -translate-x-1/2 px-4 md:px-6" aria-label="Explorar proyectos">
+        {renderCatalogGuide()}
+      </header>
 
       <div className="nia-landscape-use-portrait absolute left-1/2 z-30 -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--accent-main)]/45 bg-[var(--surface-panel)]/95 px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] text-[var(--accent-main)] shadow-[var(--shadow-warm)] backdrop-blur dark:bg-[rgba(27,20,17,0.92)]">
         Gira el celular a vertical para ver los inmuebles

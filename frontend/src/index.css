@@ -91,24 +91,6 @@
     min-height: 100vh;
     min-height: 100dvh;
   }
-
-  @media (hover: none) and (pointer: coarse) {
-    .nia-mobile-search-form input,
-    .nia-mobile-guide-panel input,
-    .nia-mobile-guide-panel textarea,
-    .nia-mobile-location-question input {
-      font-size: 16px !important;
-      line-height: 1.25 !important;
-    }
-
-    .nia-mobile-search-form input::placeholder,
-    .nia-mobile-guide-panel input::placeholder,
-    .nia-mobile-location-question input::placeholder {
-      font-size: 16px !important;
-    }
-  }
-  .nia-mobile-filter-chips,
-  .nia-mobile-filter-dock,
   .nia-landscape-use-portrait {
     display: none;
   }
@@ -126,10 +108,50 @@
     isolation: isolate;
   }
 
+  .nia-map-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  }
+
+  .nia-map-icon-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    background: var(--surface-panel);
+    color: var(--text-main);
+    box-shadow: var(--shadow-warm);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .nia-map-icon-button:hover {
+    border-color: var(--accent-main);
+    color: var(--accent-main);
+  }
+
+  .nia-map-icon-button:focus-visible {
+    outline: 2px solid var(--accent-main);
+    outline-offset: 3px;
+  }
+
+  .nia-guide-question {
+    text-shadow: 0 1px 6px var(--surface-page), 0 0 14px var(--surface-page);
+  }
+
   .nia-catalog-options {
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x;
+  }
+
+  .nia-catalog-options > :first-child {
+    margin-inline-start: auto;
+  }
+
+  .nia-catalog-options > :last-child {
+    margin-inline-end: auto;
   }
 
   .nia-project-landing {
@@ -182,63 +204,6 @@
   }
 
   @media (max-width: 640px) and (orientation: portrait) {
-    .nia-mobile-hud {
-      top: calc(env(safe-area-inset-top, 0px) + 1rem);
-      left: 0.85rem;
-      right: 0.85rem;
-      gap: 0.45rem;
-    }
-
-    .nia-mobile-hud > button,
-    .nia-mobile-hud > a {
-      width: 3.1rem;
-      height: 3.1rem;
-      border-radius: 0.9rem;
-    }
-
-    .nia-mobile-search-form {
-      min-height: 3.1rem;
-    }
-
-    .nia-mobile-search-form input {
-      font-size: 0.88rem;
-    }
-
-    .nia-mobile-guide-toggle {
-      top: calc(env(safe-area-inset-top, 0px) + 4.8rem);
-    }
-
-    .nia-mobile-guide-panel,
-    .nia-mobile-location-question {
-      top: calc(env(safe-area-inset-top, 0px) + 7.5rem);
-      max-height: min(42vh, 23rem);
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-
-    .nia-mobile-filter-chips {
-      display: flex;
-      left: 0;
-      right: 0;
-      top: calc(env(safe-area-inset-top, 0px) + 7.9rem);
-      overflow-x: auto;
-      overflow-y: hidden;
-      justify-content: flex-start;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .nia-mobile-filter-chips::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nia-mobile-filter-dock {
-      display: block;
-      left: 50%;
-      top: calc(env(safe-area-inset-top, 0px) + 7.9rem);
-      width: min(25rem, calc(100vw - 1.5rem));
-      transform: translateX(-50%);
-    }
     .nia-property-carousel {
       bottom: calc(env(safe-area-inset-bottom, 0px) + 0.25rem);
       height: 12.4rem;
@@ -294,20 +259,6 @@
   }
 
   @media (max-width: 420px) and (orientation: portrait) {
-    .nia-mobile-hud {
-      left: 0.65rem;
-      right: 0.65rem;
-    }
-
-    .nia-mobile-hud > button,
-    .nia-mobile-hud > a {
-      width: 2.75rem;
-      height: 2.75rem;
-    }
-
-    .nia-mobile-search-form input {
-      font-size: 0.8rem;
-    }
 
     .nia-property-carousel {
       height: 11.9rem;
@@ -332,49 +283,8 @@
     }
   }
 
-  @media (max-width: 920px) and (orientation: landscape) {
-    .nia-mobile-hud {
-      top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
-      left: max(0.9rem, env(safe-area-inset-left, 0px));
-      right: max(0.9rem, env(safe-area-inset-right, 0px));
-      max-width: 61rem;
-      margin-inline: auto;
-    }
-
-    .nia-mobile-hud > button,
-    .nia-mobile-hud > a {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 0.85rem;
-    }
-
-    .nia-mobile-guide-toggle {
-      top: calc(env(safe-area-inset-top, 0px) + 4.15rem);
-    }
-
-    .nia-mobile-guide-panel,
-    .nia-mobile-location-question {
-      top: calc(env(safe-area-inset-top, 0px) + 5.9rem);
-      left: 50%;
-      right: auto;
-      width: min(38rem, calc(100vw - 10rem));
-      max-height: calc(100vh - 14.25rem);
-      transform: translateX(-50%);
-      overflow-y: auto;
-    }
-  }
-
   @media (max-height: 720px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
-    .nia-desktop-hud {
-      top: calc(env(safe-area-inset-top, 0px) + 0.55rem) !important;
-      width: min(38rem, calc(100vw - 20rem)) !important;
-      max-width: none !important;
-      z-index: 40 !important;
-    }
 
-    .nia-desktop-filter-chips,
-    .nia-mobile-filter-chips,
-    .nia-mobile-filter-dock,
     .nia-property-carousel {
       display: none !important;
     }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowDownUp, ChevronLeft, SlidersHorizontal, X } from "lucide-react";
 import type { LocalSearchCriteria } from "../localSearch";
 import { KNOWN_ZONES } from "../localSearch";
@@ -19,6 +19,9 @@ interface Props {
   apartmentCount: number;
   step: CatalogGuideStep;
   onStep: (step: CatalogGuideStep) => void;
+  leadingControl?: ReactNode;
+  trailingControl?: ReactNode;
+  onReset?: () => void;
 }
 
 const QUESTIONS: Record<CatalogGuideStep, string> = {
@@ -73,20 +76,29 @@ export default function CatalogFilters(props: Props) {
   if (criteria.referenceId) chips.push({ key: "referenceId", label: `Ref. ${criteria.referenceId}` });
   const hasFilters = chips.length > 0 || Boolean(props.category);
   const pill = (selected = false) => `shrink-0 min-h-11 rounded-full border px-4 py-2 text-xs font-semibold shadow-md backdrop-blur transition-colors ${selected ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-stone-950" : "border-[var(--border-soft)] bg-[var(--surface-panel)]/95 text-[var(--text-main)] hover:border-[var(--accent-main)]"}`;
-  const reset = () => { onChange({}); props.onCategory(""); props.onSort("recommended"); onStep("category"); };
+  const reset = () => {
+    if (props.onReset) { props.onReset(); return; }
+    onChange({}); props.onCategory(""); props.onSort("recommended"); onStep("category");
+  };
   const smallButton = "inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--text-main)] shadow-sm backdrop-blur";
 
-  return <section className="nia-catalog-guide mt-2 w-full min-w-0" aria-label="Búsqueda guiada">
-    <div className="mb-1.5 flex min-w-0 items-center gap-1.5">
-      {step !== "category" && step !== "results" && <button type="button" onClick={back} className={`${smallButton} !px-1.5`} aria-label="Volver a la pregunta anterior"><ChevronLeft size={16} /></button>}
-      <p ref={headingRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="min-w-0 flex-1 truncate rounded-full bg-[var(--surface-panel)]/95 px-3 py-1.5 text-[11px] font-semibold text-[var(--text-main)] shadow-sm outline-none backdrop-blur">
-        {step === "results" ? `${props.count} ${props.count === 1 ? "resultado" : "resultados"}` : QUESTIONS[step]}
-      </p>
-      {step === "results" ? <>
-        <button type="button" onClick={() => onStep("category")} className={smallButton}><SlidersHorizontal size={13} /> Ajustar</button>
-        <button type="button" onClick={() => onStep("sort")} className={smallButton}><ArrowDownUp size={13} /> Ordenar</button>
-      </> : <button type="button" onClick={() => onStep("results")} className={smallButton}>Ver mapa · {props.count}</button>}
+  return <section className="nia-catalog-guide w-full min-w-0" aria-label="Búsqueda guiada">
+    <div className="mb-2 grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-3">
+      {props.leadingControl || <div aria-hidden="true" />}
+      <div className="flex min-w-0 items-center justify-center gap-1.5">
+        {step !== "category" && step !== "results" && <button type="button" onClick={back} className={`${smallButton} !px-1.5`} aria-label="Volver a la pregunta anterior"><ChevronLeft size={16} /></button>}
+        <p ref={headingRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="nia-guide-question min-w-0 text-center text-xs font-semibold leading-snug text-[var(--text-main)] outline-none">
+          {step === "results" ? `${props.count} ${props.count === 1 ? "resultado" : "resultados"}` : QUESTIONS[step]}
+        </p>
+      </div>
+      {props.trailingControl || <div aria-hidden="true" />}
     </div>
+
+    {step === "results" && <div className="mb-2 flex items-center justify-center gap-2">
+      <button type="button" onClick={() => onStep("category")} className={pill()}><SlidersHorizontal size={13} className="mr-1.5 inline" />Ajustar</button>
+      <button type="button" onClick={() => onStep("sort")} className={pill()}><ArrowDownUp size={13} className="mr-1.5 inline" />Ordenar</button>
+      {hasFilters && <button type="button" className={pill()} onClick={reset}>Limpiar</button>}
+    </div>}
 
     {step !== "results" && !(step === "budget" && customBudget) && <div key={step} className="nia-catalog-options flex w-full items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="group" aria-label={QUESTIONS[step]}>
       {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount], ["", "Todos", props.projectCount + props.apartmentCount]].filter(([value]) => value !== "Departamentos" || SHOW_READY_APARTMENTS).map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
@@ -108,6 +120,7 @@ export default function CatalogFilters(props: Props) {
       {step === "delivery" && ["", ...props.years].map(year => <button key={year} type="button" className={pill((criteria.deliveryYear || "") === year)} aria-pressed={(criteria.deliveryYear || "") === year} onClick={() => { set("deliveryYear", year); onStep("results"); }}>{year ? `Entrega ${year}` : "Cualquier fecha"}</button>)}
 
       {step === "sort" && ([["recommended", "Recomendados"], ["price-asc", "Menor precio"], ["price-desc", "Mayor precio"], ["delivery", "Entrega más próxima"]] as [CatalogSort, string][]).map(([value, label]) => <button key={value} type="button" className={pill(props.sort === value)} aria-pressed={props.sort === value} onClick={() => { props.onSort(value); onStep("results"); }}>{label}</button>)}
+      <button type="button" onClick={() => onStep("results")} className={pill()}>Ver mapa · {props.count}</button>
     </div>}
 
     {step === "budget" && customBudget && <form className="flex min-w-0 items-end gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 p-2 text-[var(--text-main)] shadow-md backdrop-blur" onSubmit={event => {
@@ -123,7 +136,6 @@ export default function CatalogFilters(props: Props) {
     {step === "results" && hasFilters && <div className="nia-catalog-options flex w-full items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar" aria-label="Filtros aplicados">
       {props.category && <button type="button" className={smallButton} aria-label={`Quitar filtro ${props.category}`} onClick={() => props.onCategory("")}>{props.category}<X size={11} /></button>}
       {chips.map(chip => <button key={chip.key} type="button" className={smallButton} aria-label={`Quitar filtro ${chip.label}`} onClick={() => set(chip.key, undefined)}>{chip.label}<X size={11} /></button>)}
-      <button type="button" className={smallButton} onClick={reset}>Limpiar</button>
     </div>}
   </section>;
 }
