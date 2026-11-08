@@ -112,6 +112,10 @@
     padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
   }
 
+  .nia-guide-bar {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+  }
+
   .nia-map-icon-button {
     display: grid;
     place-items: center;
@@ -152,6 +156,73 @@
 
   .nia-catalog-options > :last-child {
     margin-inline-end: auto;
+  }
+
+  @media (min-width: 1024px) {
+    .nia-map-header {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 1.35rem);
+    }
+
+    .nia-guide-bar {
+      grid-template-columns: 52px minmax(0, 1fr) 52px;
+      margin-bottom: 0.85rem;
+      gap: 1rem;
+    }
+
+    .nia-map-icon-button {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+    }
+
+    .nia-map-icon-button svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .nia-catalog-guide .nia-guide-pill svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .nia-catalog-guide .nia-catalog-options {
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow: visible;
+      row-gap: 0.65rem;
+      column-gap: 0.75rem;
+    }
+
+    .nia-catalog-guide .nia-catalog-options > :first-child,
+    .nia-catalog-guide .nia-catalog-options > :last-child {
+      margin-inline: 0;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .nia-map-header {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 1.5rem);
+    }
+
+    .nia-guide-bar {
+      grid-template-columns: 56px minmax(0, 1fr) 56px;
+    }
+
+    .nia-map-icon-button {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+    }
+
+    .nia-map-icon-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nia-catalog-guide .nia-guide-pill svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 
   .nia-project-landing {

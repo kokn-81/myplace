@@ -82,19 +82,19 @@ export default function CatalogFilters(props: Props) {
   if (criteria.operation) chips.push({ key: "operation", label: criteria.operation === "buy" ? "Venta" : criteria.operation === "rent" ? "Alquiler" : "Anticrético" });
   if (criteria.referenceId) chips.push({ key: "referenceId", label: `Ref. ${criteria.referenceId}` });
   const hasFilters = chips.length > 0 || Boolean(props.category);
-  const pill = (selected = false) => `shrink-0 min-h-11 rounded-full border px-4 py-2 text-xs font-semibold shadow-md backdrop-blur transition-colors ${selected ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-stone-950" : "border-[var(--border-soft)] bg-[var(--surface-panel)]/95 text-[var(--text-main)] hover:border-[var(--accent-main)]"}`;
+  const pill = (selected = false) => `nia-guide-pill shrink-0 min-h-11 rounded-full border px-4 py-2 text-xs font-semibold shadow-md backdrop-blur transition-colors lg:min-h-12 lg:px-5 lg:py-2.5 lg:text-[0.95rem] xl:min-h-[3.35rem] xl:px-6 xl:text-base ${selected ? "border-[var(--accent-main)] bg-[var(--accent-main)] text-stone-950" : "border-[var(--border-soft)] bg-[var(--surface-panel)]/95 text-[var(--text-main)] hover:border-[var(--accent-main)]"}`;
   const reset = () => {
     if (props.onReset) { props.onReset(); return; }
     onChange({}); props.onCategory(""); props.onSort("recommended"); onStep("category");
   };
-  const smallButton = "inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--text-main)] shadow-sm backdrop-blur";
+  const smallButton = "nia-guide-chip inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--text-main)] shadow-sm backdrop-blur lg:px-3.5 lg:py-2 lg:text-[0.8rem] xl:px-4 xl:text-sm";
 
   return <section className="nia-catalog-guide w-full min-w-0" aria-label="Búsqueda guiada">
-    <div className="mb-2 grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-3">
+    <div className="nia-guide-bar mb-2 grid items-center gap-3">
       {props.leadingControl || <div aria-hidden="true" />}
       <div className="flex min-w-0 items-center justify-center gap-1.5">
         {step !== "category" && step !== "results" && <button type="button" onClick={back} className={`${smallButton} !px-1.5`} aria-label="Volver a la pregunta anterior"><ChevronLeft size={16} /></button>}
-        <p ref={headingRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="nia-guide-question min-w-0 text-center text-xs font-semibold leading-snug text-[var(--text-main)] outline-none">
+        <p ref={headingRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="nia-guide-question min-w-0 text-center text-xs font-semibold leading-snug text-[var(--text-main)] outline-none lg:text-[0.95rem] xl:text-[1.05rem]">
           {step === "results" ? `${props.count} ${props.count === 1 ? "resultado" : "resultados"}` : QUESTIONS[step]}
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function CatalogFilters(props: Props) {
       {hasFilters && <button type="button" className={pill()} onClick={reset}>Limpiar</button>}
     </div>}
 
-    {step !== "results" && !(step === "budget" && customBudget) && <div key={step} className="nia-catalog-options flex w-full items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="group" aria-label={QUESTIONS[step]}>
+    {step !== "results" && !(step === "budget" && customBudget) && <div key={step} className="nia-catalog-options flex w-full items-center gap-2 overflow-x-auto pb-1 no-scrollbar lg:flex-wrap lg:justify-center lg:gap-x-3 lg:gap-y-2.5 lg:overflow-visible" role="group" aria-label={QUESTIONS[step]}>
       {step === "category" && [["Proyectos", "Proyectos", props.projectCount], ["Departamentos", "Departamentos", props.apartmentCount]].filter(([value]) => value !== "Departamentos" || SHOW_READY_APARTMENTS).map(([value, label, count]) => <button key={value} type="button" aria-pressed={props.category === value} className={pill(props.category === value)} onClick={() => {
         props.onCategory(String(value));
         if (value === "Departamentos" && criteria.deliveryYear) onChange({ ...criteria, deliveryYear: undefined });
@@ -129,17 +129,17 @@ export default function CatalogFilters(props: Props) {
       {step === "sort" && ([["recommended", "Recomendados"], ["price-asc", "Menor precio"], ["price-desc", "Mayor precio"], ["delivery", "Entrega más próxima"]] as [CatalogSort, string][]).map(([value, label]) => <button key={value} type="button" className={pill(props.sort === value)} aria-pressed={props.sort === value} onClick={() => { props.onSort(value); onStep("results"); }}>{label}</button>)}
     </div>}
 
-    {step === "budget" && customBudget && <form className="flex min-w-0 items-end gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 p-2 text-[var(--text-main)] shadow-md backdrop-blur" onSubmit={event => {
+    {step === "budget" && customBudget && <form className="flex min-w-0 items-end gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 p-2 text-[var(--text-main)] shadow-md backdrop-blur lg:gap-3 lg:p-3" onSubmit={event => {
       event.preventDefault();
       onChange({ ...criteria, minBudget: Number(minimum) || undefined, maxBudget: Number(maximum) || undefined, budgetCurrency: currency });
       onStep(afterBudget);
     }}>
-      <label className="min-w-0 flex-1 text-[10px]">Desde {currency}<input className="mt-1 min-h-11 w-full min-w-0 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-2 text-base" type="number" min="0" placeholder="Sin mínimo" value={minimum} onChange={event => setMinimum(event.target.value)} /></label>
-      <label className="min-w-0 flex-1 text-[10px]">Hasta {currency}<input className="mt-1 min-h-11 w-full min-w-0 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-2 text-base" type="number" min={Number(minimum) || 0} placeholder="Sin máximo" value={maximum} onChange={event => setMaximum(event.target.value)} /></label>
+      <label className="min-w-0 flex-1 text-[10px] lg:text-xs">Desde {currency}<input className="mt-1 min-h-11 w-full min-w-0 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-2 text-base lg:min-h-12 lg:px-3" type="number" min="0" placeholder="Sin mínimo" value={minimum} onChange={event => setMinimum(event.target.value)} /></label>
+      <label className="min-w-0 flex-1 text-[10px] lg:text-xs">Hasta {currency}<input className="mt-1 min-h-11 w-full min-w-0 rounded-lg border border-[var(--border-soft)] bg-[var(--surface-control)] px-2 text-base lg:min-h-12 lg:px-3" type="number" min={Number(minimum) || 0} placeholder="Sin máximo" value={maximum} onChange={event => setMaximum(event.target.value)} /></label>
       <button type="submit" className={pill(true)}>Aplicar</button>
     </form>}
 
-    {step === "results" && hasFilters && <div className="nia-catalog-options flex w-full items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar" aria-label="Filtros aplicados">
+    {step === "results" && hasFilters && <div className="nia-catalog-options flex w-full items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar lg:flex-wrap lg:justify-center lg:gap-x-3 lg:gap-y-2.5 lg:overflow-visible" aria-label="Filtros aplicados">
       {props.category && <button type="button" className={smallButton} aria-label={`Quitar filtro ${props.category}`} onClick={() => props.onCategory("")}>{props.category}<X size={11} /></button>}
       {chips.map(chip => <button key={chip.key} type="button" className={smallButton} aria-label={`Quitar filtro ${chip.label}`} onClick={() => set(chip.key, undefined)}>{chip.label}<X size={11} /></button>)}
     </div>}

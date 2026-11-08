@@ -2943,7 +2943,7 @@ export default function MapPage() {
           {user && <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--accent-main)]" />}
         </button>
         <AnimatePresence>
-          {isMenuOpen && <motion.div id="nia-account-menu" initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.96 }} transition={{ duration: 0.16, ease: "easeOut" }} className="absolute right-0 top-14 z-50 origin-top-right">
+          {isMenuOpen && <motion.div id="nia-account-menu" initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.96 }} transition={{ duration: 0.16, ease: "easeOut" }} className="absolute right-0 top-[calc(100%+0.65rem)] z-50 origin-top-right">
             {renderAccountDropdown(() => setIsMenuOpen(false))}
           </motion.div>}
         </AnimatePresence>
@@ -3010,7 +3010,7 @@ export default function MapPage() {
         </AnimatePresence>
       </main>
 
-      <header className="nia-map-header absolute left-1/2 top-0 z-40 w-full max-w-3xl -translate-x-1/2 px-4 md:px-6" aria-label="Explorar proyectos">
+      <header className="nia-map-header absolute left-1/2 top-0 z-40 w-full max-w-3xl -translate-x-1/2 px-4 md:px-6 lg:max-w-[1040px] xl:max-w-[1180px] 2xl:max-w-[1320px]" aria-label="Explorar proyectos">
         {renderCatalogGuide()}
       </header>
 
@@ -3116,7 +3116,7 @@ export default function MapPage() {
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
       {!selectedProperty && (visibleProperties.length > 0 || hasActiveResults) && (
-        <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0">
+        <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0 xl:h-[268px] xl:max-w-[1180px] 2xl:h-[292px] 2xl:max-w-[1320px]">
 
           {visibleProperties.length > 0 && (
             <button
@@ -3197,7 +3197,7 @@ export default function MapPage() {
           onMouseEnter={() => handleCardMouseEnter(p)}
           onMouseLeave={handleCardMouseLeave}
           onClick={() => selectProperty(p)}
-          className={`nia-property-card ${projectCardSummary ? "nia-project-card" : ""} group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none ${
+          className={`nia-property-card ${projectCardSummary ? "nia-project-card" : ""} group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none xl:h-[236px] xl:w-[500px] 2xl:h-[258px] 2xl:w-[560px] ${
             isPromoted
               ? "border-[var(--accent-main)]/60 shadow-[var(--shadow-warm)] dark:border-[var(--accent-main)]/50"
               : isBestSearchMatch
