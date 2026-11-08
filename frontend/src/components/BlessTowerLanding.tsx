@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Building2,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -180,6 +181,14 @@ function roomOf(unit: BlessTowerUnit | undefined): RoomId {
 
 function tipologiaOf(room: RoomId) {
   return ROOM_FILTERS.find((item) => item.id === room)?.tipologia || "Monoambiente";
+}
+
+function coverSpan(values: number[]) {
+  const sizes = values.filter((value) => value > 0);
+  if (sizes.length === 0) return "";
+  const low = Math.round(Math.min(...sizes));
+  const high = Math.round(Math.max(...sizes));
+  return low === high ? `${low} m²` : `${low} a ${high} m²`;
 }
 
 function areaLabel(list: BlessTowerUnit[]) {
@@ -491,41 +500,55 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
-        <div className="relative min-h-[240px] flex-1 md:min-h-0">
-          <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
-          <div className="relative h-[300px] w-full md:absolute md:inset-0 md:h-auto">
-            <img src="/bless_tower/fachada_principal.jpg" alt="Fachada de Bless Tower" className="absolute inset-0 h-full w-full object-contain object-center" />
+      <div className="relative flex shrink-0 flex-col justify-end overflow-hidden md:h-screen md:w-[44%]" style={{ minHeight: "100svh" }}>
+        <img src="/bless_tower/fachada_principal.jpg" alt="Fachada de Bless Tower" className="absolute inset-0 h-full w-full object-cover object-[center_22%]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/75 via-black/40 to-transparent" />
+        <div className="relative z-10 px-5 pb-24 pt-16 text-white lg:px-7 lg:pb-7">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e8d5a8] backdrop-blur-md">
+              <Sparkles size={12} />
+              Preventa · {BLESS_TOWER_CONFIG.floorsCount} niveles
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-3 py-1 text-[10px] font-semibold text-white/90 backdrop-blur-md">
+              <MapPin size={12} className="text-[#e8d5a8]" />
+              {BLESS_TOWER_CONFIG.zone}
+            </span>
           </div>
-        </div>
-        <div className="relative z-10 bg-[#a34a28] px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
-          <img src="/bless_drei/logo-altavida.jpg" alt="Alta Vida" className="mb-3 h-12 w-auto rounded-md md:mb-2 md:h-10" />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f6e7d4]/40 bg-[#5c2414]/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#f6e7d4]">
-            <Sparkles size={12} />
-            Preventa · {BLESS_TOWER_CONFIG.floorsCount} niveles
-          </span>
-          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2">Bless Tower</h1>
-          <p className="mt-1 max-w-sm text-xs text-[#f6e7d4] md:text-sm">{BLESS_TOWER_CONFIG.address}</p>
-          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
-            <div className="rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-3">
-              <p className="text-[10px] uppercase tracking-wider text-[#f6e7d4]">Entrega</p>
-              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.delivery}</p>
+          <h1 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-serif leading-none drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]">
+            <span className="text-4xl font-light tracking-wide md:text-5xl">Bless</span>
+            <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">Tower</span>
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Una piscina con vista a la ciudad, un gimnasio cerca de tu puerta y un cowork para trabajar sin salir de casa.</p>
+          <div className="mt-3 flex max-w-lg gap-2">
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Entrega de obra</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{BLESS_TOWER_CONFIG.delivery}</p>
+              </div>
             </div>
-            <div className="rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-3">
-              <p className="text-[10px] uppercase tracking-wider text-[#f6e7d4]">Constructora</p>
-              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{BLESS_TOWER_CONFIG.builder}</p>
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Constructora</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{BLESS_TOWER_CONFIG.builder}</p>
+              </div>
             </div>
           </div>
-          <div className="mt-3 max-w-sm rounded-xl border border-[#f6e7d4]/25 bg-[#8e3e24] p-4 md:hidden">
-            <div className="flex items-center justify-between border-b border-[#f6e7d4]/20 pb-2 text-[11px] text-[#f6e7d4]">
-              <span className="font-semibold text-white">Lista oficial</span>
-              <span>{libres.length} libres de {units.length}</span>
-            </div>
-            <div className="mt-2.5 space-y-1.5 text-xs">
-              {ROOM_FILTERS.map((filter) => (
-                <div key={filter.id} className="flex items-center justify-between">
-                  <span className="text-[#f6e7d4]">{filter.label}</span>
-                  <span className="font-serif font-bold">{fromRooms(filter.id) ? `Desde USD ${formatBlessUsd(fromRooms(filter.id) as number)}` : "Agotado"}</span>
+          <div className="mt-2 max-w-lg rounded-2xl border border-[#e8d5a8]/30 bg-black/55 px-3.5 py-3 backdrop-blur-md">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#e8d5a8]">Departamentos disponibles</p>
+            <div className="mt-2 space-y-2">
+              {([
+                { label: "Monoambiente", area: coverSpan(units.filter((unit) => unit.tipologia === "Monoambiente").map((unit) => unit.superficieM2)), price: fromMono },
+                { label: "1 Dormitorio", area: coverSpan(units.filter((unit) => unit.tipologia === "1 Dormitorio").map((unit) => unit.superficieM2)), price: from1 },
+                { label: "2 Dormitorios", area: coverSpan(units.filter((unit) => unit.tipologia === "2 Dormitorios").map((unit) => unit.superficieM2)), price: from2 },
+              ] as const).map((row) => (
+                <div key={row.label} className="flex items-end justify-between gap-3 border-t border-white/10 pt-2 first:border-0 first:pt-0">
+                  <div className="min-w-0">
+                    <p className="text-sm text-white">{row.label}</p>
+                    <p className="text-[11px] text-white/70">{row.area}</p>
+                  </div>
+                  <p className="shrink-0 text-right font-serif text-sm font-semibold">{row.price == null ? "Agotado" : `Desde USD ${formatBlessUsd(row.price)}`}</p>
                 </div>
               ))}
             </div>

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Building2,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -142,6 +143,14 @@ const ROOM_FILTERS: { id: TriventoRooms; label: string }[] = [
   { id: "0", label: "Monoambiente" },
   { id: "1", label: "1 dormitorio" },
 ];
+
+function coverSpan(values: number[]) {
+  const sizes = values.filter((value) => value > 0);
+  if (sizes.length === 0) return "";
+  const low = Math.round(Math.min(...sizes));
+  const high = Math.round(Math.max(...sizes));
+  return low === high ? `${low} m²` : `${low} a ${high} m²`;
+}
 
 function RoomFilters({ rooms, onChange }: { rooms: TriventoRooms; onChange: (rooms: TriventoRooms) => void }) {
   return <div className="flex shrink-0 gap-2" role="group" aria-label="Dormitorios">
@@ -407,35 +416,55 @@ export default function TriventoLanding({ property, onClose }: Props) {
         )}
       </div>
 
-      <div className="relative flex min-h-[560px] shrink-0 flex-col bg-[#e8e6e3] md:h-screen md:min-h-0 md:w-[44%]">
-        <div className="relative min-h-[240px] flex-1 md:min-h-0">
-          <div className="h-16 shrink-0 md:hidden" aria-hidden="true" />
-          <div className="relative h-[300px] w-full md:absolute md:inset-0 md:h-auto">
-            <img src="/trivento/fachada.jpg" alt="Fachada de Trivento IV" className="absolute inset-0 h-full w-full object-contain object-center" />
+      <div className="relative flex shrink-0 flex-col justify-end overflow-hidden md:h-screen md:w-[44%]" style={{ minHeight: "100svh" }}>
+        <img src="/trivento/fachada.jpg" alt="Fachada de Trivento IV" className="absolute inset-0 h-full w-full object-cover object-center" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
+        <div className="relative z-10 px-5 pb-24 pt-16 text-white lg:px-7 lg:pb-7">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e8d5a8] backdrop-blur-md">
+              <Sparkles size={12} />
+              Preventa · {TRIVENTO_CONFIG.floorsPublished}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-3 py-1 text-[10px] font-semibold text-white/90 backdrop-blur-md">
+              <MapPin size={12} className="text-[#e8d5a8]" />
+              {TRIVENTO_CONFIG.zone}
+            </span>
           </div>
-        </div>
-        <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
-          <img src="/trivento/logo.png" alt="Trivento IV" className="mb-3 h-14 w-auto brightness-0 invert md:mb-2 md:h-12" />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
-            <Sparkles size={12} />
-            Preventa · Equipetrol
-          </span>
-          <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2 md:text-4xl">Trivento IV</h1>
-          <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">{TRIVENTO_CONFIG.address}</p>
-          <div className="mt-4 max-w-sm md:mt-3">
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
-              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{TRIVENTO_CONFIG.delivery}</p>
+          <h1 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-serif leading-none drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]">
+            <span className="text-4xl font-light tracking-wide md:text-5xl">Trivento</span>
+            <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">IV</span>
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Si buscas tu primer departamento, o una unidad para alquilar en Equipetrol, Trivento IV está pensado para ti.</p>
+          <div className="mt-3 flex max-w-lg gap-2">
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Entrega de obra</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{TRIVENTO_CONFIG.delivery}</p>
+              </div>
+            </div>
+            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
+              <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Constructora</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">Trivento IV</p>
+              </div>
             </div>
           </div>
-          <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md md:hidden">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-stone-300">
-              <span className="font-semibold text-[#e8d5a8]">Lista del {INVENTORY_LABEL}</span>
-              <span>{libres.length} libres de {units.length}</span>
-            </div>
-            <div className="mt-2.5 space-y-1.5 text-xs">
-              <div className="flex items-center justify-between"><span className="text-stone-300">1 dormitorio</span><span className="font-serif font-bold">Desde USD {formatTriventoUsd(dormFrom)}</span></div>
-              <div className="flex items-center justify-between"><span className="text-stone-300">Monoambiente</span><span className="font-serif font-bold">{monoFree ? "Disponible" : "Agotado"}</span></div>
+          <div className="mt-2 max-w-lg rounded-2xl border border-[#e8d5a8]/30 bg-black/55 px-3.5 py-3 backdrop-blur-md">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#e8d5a8]">Departamentos disponibles</p>
+            <div className="mt-2 flex">
+              <div className="min-w-0 flex-1 pr-3">
+                <p className="text-sm text-white">1 Dormitorio</p>
+                <p className="text-[11px] text-white/70">{coverSpan(units.filter((unit) => unit.tipologia === "1 Dormitorio").map((unit) => unit.m2Total))}</p>
+                <p className="mt-1 font-serif text-sm font-semibold leading-tight">{Number.isFinite(dormFrom) ? `Desde USD ${formatTriventoUsd(dormFrom)}` : "Agotado"}</p>
+              </div>
+              <div className="w-px bg-white/15" />
+              <div className="min-w-0 flex-1 pl-3">
+                <p className="text-sm text-white">Monoambiente</p>
+                <p className="text-[11px] text-white/70">{coverSpan(units.filter((unit) => unit.tipologia === "Monoambiente").map((unit) => unit.m2Total))}</p>
+                <p className="mt-1 font-serif text-sm font-semibold leading-tight">{monoFree ? "Disponible" : "Agotado"}</p>
+              </div>
             </div>
           </div>
         </div>

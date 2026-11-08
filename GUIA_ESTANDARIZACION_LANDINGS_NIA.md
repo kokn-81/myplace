@@ -1,6 +1,6 @@
 # N.I.A · Estructura de landing
 
-**Versión:** 2.0
+**Versión:** 2.1
 
 **Referencia que se copia:** `frontend/src/components/BetonBrutLanding.tsx` (Béton Brut II).  
 **Este archivo manda.** Si una versión anterior de esta guía, o una landing vieja, pide otra cosa, se ignora.
@@ -87,21 +87,21 @@ El botón primario es `rounded-xl bg-[#1C1917]` con texto blanco en mayúsculas 
 
 ## 3. Columna izquierda (hero)
 
-La foto no cambia con el scroll. Es la fachada completa, de la cubierta a la planta baja, en `object-contain`. El fondo de la columna es `#e8e6e3` para que el margen de la foto no se lea como un recorte.
+La foto no cambia con el scroll. Ocupa toda la columna, de borde a borde, en `object-cover`. No hay bloque de color debajo ni al lado. No hay fondo `#e8e6e3` ni panel negro, naranja, chocolate o verde en esa columna.
 
-**Móvil**
+El oscurecido es solo un degradado sobre la zona del texto, pegado al pie: `pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-gradient-to-t from-black/75 via-black/35 to-transparent`. Arriba la fachada queda clara.
 
-1. Espaciador `h-16` para que Compartir y Cerrar no tapen la cubierta.
-2. Foto `h-[300px] object-contain`.
-3. Debajo, bloque negro `bg-stone-950` con: logo blanco, pastilla dorada, `h1` con el nombre del edificio, dirección, dos fichas (Entrega y Colaborador) y, solo en móvil, la caja de precios “desde” por dormitorios.
+La columna es `relative flex shrink-0 flex-col justify-end overflow-hidden md:h-screen md:w-[44%]`, con `style={{ minHeight: "100svh" }}`. En el teléfono la foto llena la primera pantalla. El texto va al pie, con `pb-24 lg:pb-7`, para quedar encima de la barra.
 
-**Escritorio**
+Sobre la foto, en este orden:
 
-1. La foto llena el alto que sobra: el marco de la imagen es `md:absolute md:inset-0`. El bloque negro no achica la foto a una estampa.
-2. La caja de precios “desde” lleva `md:hidden`. En escritorio no se muestra.
-3. Al lado de Entrega va el primer colaborador del material, no una caja de “lista de precios”.
+1. Pastilla `bg-black/55` con la fase o la preventa, y otra con el pin y la zona. La tinta de la pastilla es `#e8d5a8`.
+2. `h1` con el nombre del edificio. La primera palabra va blanca. El resto va `#e8d5a8`. No es “Vive en…”. Ese título vive en el `h2` del panel derecho.
+3. Una línea corta que ya exista en el proyecto. No se inventa otra.
+4. Dos fichas de vidrio en fila (`flex`, no `grid`): Entrega y Constructora. Si el proyecto ya dice Colaborador, esa ficha conserva esa palabra. Fondo `bg-black/40 backdrop-blur`, borde `border-white/15`.
+5. Tarjeta `bg-black/55`: “Departamentos disponibles”. Cada tipo muestra el rango de m² calculado con las unidades y “Desde USD” del contado. Si no hay libres, “Agotado”. Se ve en teléfono y en escritorio. No dice “en vivo”.
 
-El `h1` de esta columna es el nombre del edificio. No es “Vive en…”. Ese título vive en el `h2` del panel derecho.
+No hay logo sobre un rectángulo de color. Compartir y Cerrar siguen arriba a la derecha de la pantalla. Brochure no va en esta columna.
 
 ---
 
@@ -250,7 +250,8 @@ Se oculta cuando `activeSection === "cierre"`.
 - Hero que cambia de foto al hacer scroll.
 - Paleta naranja, verde de marca o botones verde WhatsApp.
 - Partir el escritorio en 42 / 58.
-- Caja de “lista de precios” al lado de Entrega. Ahí va el colaborador.
+- Caja de “lista de precios” al lado de Entrega. Ahí va la constructora, o el colaborador si el proyecto ya usa esa palabra.
+- Bloque de color debajo o al lado de la fachada. La portada es la foto, con degradado solo donde va el texto.
 - Plusvalía proyectada o cuarta columna en la cotización.
 - Escribir “en vivo” si no hay Excel conectado.
 - Inventar seña, precio de baulera, acabado o cargo.
@@ -263,7 +264,7 @@ Se oculta cuando `activeSection === "cierre"`.
 
 ## 10. Lista de control antes de dar por copiada la estructura
 
-1. Escritorio 44 / 56. Móvil, una columna. Fachada completa, sin recortar la cubierta ni la planta baja.
+1. Escritorio 44 / 56. Móvil, una columna. La fachada llena la columna. El texto va sobre un degradado al pie. No hay bloque de color.
 2. Arriba a la derecha: Compartir y, si aplica, Cerrar. Nada más.
 3. Barra inferior: desde, entrega, Brochure, Elegir unidad. Oculta en `#cierre`. Sin compartir.
 4. Menú circular negro escondido hasta pasar la navegación de `#intro`.
