@@ -337,6 +337,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
     || null;
   const extra = ADDONS.find((item) => item.id === addon)?.amount || 0;
   const quote = quoteUnit(activeUnit, paymentPlan, extra);
+  const selectedCash = activeUnit && activeUnit.precioContado > 0 ? activeUnit.precioContado : null;
   const amenity = AMENITY_SLIDES[amenityIndex];
 
   const priceLabel = (current: Slide) => {
@@ -730,7 +731,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                       </button>
                     ))}
                   </div>
-                  <ModelFrame slide={slide} index={slideIndex} total={slides.length} price={priceLabel(slide)} frameClass="min-h-0 flex-1" onPrev={() => shiftModel(-1)} onNext={() => shiftModel(1)} onOpen={(view) => openSlide(slide, view)} onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }} onTouchEnd={(event) => { if (modelTouch.current == null) return; const dx = event.changedTouches[0].clientX - modelTouch.current; if (dx > 40) shiftModel(-1); if (dx < -40) shiftModel(1); modelTouch.current = null; }} />
+                  <ModelFrame slide={slide} index={slideIndex} total={slides.length} price={selectedCash != null ? `USD ${formatBlessUsd(selectedCash)}` : priceLabel(slide)} frameClass="min-h-0 flex-1" onPrev={() => shiftModel(-1)} onNext={() => shiftModel(1)} onOpen={(view) => openSlide(slide, view)} onTouchStart={(event) => { modelTouch.current = event.changedTouches[0].clientX; }} onTouchEnd={(event) => { if (modelTouch.current == null) return; const dx = event.changedTouches[0].clientX - modelTouch.current; if (dx > 40) shiftModel(-1); if (dx < -40) shiftModel(1); modelTouch.current = null; }} />
                 </div>
               </div>
             )}
@@ -738,7 +739,10 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</p>
-                <button type="button" onClick={openFloorPlan} className="text-[11px] font-semibold uppercase tracking-wider text-[#816127]">Ver distribución de pisos</button>
+                <span className="flex items-center gap-3">
+                  {selectedCash != null && <span className="text-xs font-semibold text-[#9a7b45]">USD {formatBlessUsd(selectedCash)}</span>}
+                  <button type="button" onClick={openFloorPlan} className="text-[11px] font-semibold uppercase tracking-wider text-[#816127]">Ver distribución de pisos</button>
+                </span>
               </div>
               <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
@@ -832,7 +836,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
           <div>
-            <p className="text-xs text-stone-700">Desde USD {formatBlessUsd(fromAny || BLESS_DREI_CONFIG.minPriceUsd)} · {BLESS_DREI_CONFIG.delivery}</p>
+            <p className="text-xs text-stone-700">{selectedCash != null ? `USD ${formatBlessUsd(selectedCash)} · ${BLESS_DREI_CONFIG.delivery}` : `Desde USD ${formatBlessUsd(fromAny || BLESS_DREI_CONFIG.minPriceUsd)} · ${BLESS_DREI_CONFIG.delivery}`}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva con USD {formatBlessUsd(BLESS_DREI_CONFIG.reservaUsd)}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

@@ -380,6 +380,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   const floors = unitsForModel(units, selectedModel);
   const activeUnit = floors.find((unit) => unitKey(unit) === selectedKey) || null;
   const quote = activeUnit && activeUnit.status === "disponible" && activeUnit.cashTotal > 0 ? quoteGardenUnit(activeUnit, paymentPlan, addon) : null;
+  const selectedCash = activeUnit && activeUnit.status === "disponible" && activeUnit.cashTotal > 0 ? activeUnit.cashTotal : null;
   const amenity = AMENITY_SLIDES[amenityIndex];
 
   const roomCount = useMemo(() => {
@@ -870,7 +871,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   area={areaLabel(units, currentModel)}
                   index={slideIndex}
                   total={slides.length}
-                  price={priceForModel(currentModel)}
+                  price={selectedCash != null ? `USD ${formatGardenZenUsd(selectedCash)}` : priceForModel(currentModel)}
                   frameClass="min-h-0 flex-1"
                   onPrev={() => shiftModel(-1)}
                   onNext={() => shiftModel(1)}
@@ -882,7 +883,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Unidad</p>
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <p className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Unidad</p>
+                {selectedCash != null && <span className="font-semibold text-[#7a3218]">USD {formatGardenZenUsd(selectedCash)}</span>}
+              </div>
               <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
                   const current = activeUnit ? unitKey(activeUnit) === unitKey(floor) : false;
@@ -998,7 +1002,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f8f1e7]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
           <div>
-            <p className="text-xs text-stone-700">{fromAny == null ? GARDEN_ZEN_CONFIG.delivery : `Desde USD ${formatGardenZenUsd(fromAny)} · ${GARDEN_ZEN_CONFIG.delivery}`}</p>
+            <p className="text-xs text-stone-700">{selectedCash != null ? `USD ${formatGardenZenUsd(selectedCash)} · ${GARDEN_ZEN_CONFIG.delivery}` : fromAny == null ? GARDEN_ZEN_CONFIG.delivery : `Desde USD ${formatGardenZenUsd(fromAny)} · ${GARDEN_ZEN_CONFIG.delivery}`}</p>
             <p className="hidden text-[10px] font-medium text-[#7a3218] sm:block">Reserva USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

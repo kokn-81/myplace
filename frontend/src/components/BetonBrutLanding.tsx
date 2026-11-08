@@ -290,6 +290,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
   const floors = unitsForModel(selectedModelId);
   const selectedModel = BETON_MODELS.find((model) => model.id === selectedModelId) || currentModel;
   const quote = activeUnit && activeUnit.estado === "LIBRE" ? quoteBetonUnit(activeUnit, paymentPlan, addon) : null;
+  const selectedCash = activeUnit && activeUnit.estado === "LIBRE" && activeUnit.precioContado != null ? activeUnit.precioContado : null;
 
   const roomCount = useMemo(() => {
     return {
@@ -707,7 +708,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
                 model={currentModel}
                 index={slideIndex}
                 total={slides.length}
-                price={(() => {
+                price={selectedCash != null ? `USD ${formatBetonUsd(selectedCash)}` : (() => {
                   const freeUnits = unitsForModel(currentModel.id).filter((unit) => unit.precioContado != null);
                   if (freeUnits.length === 0) return "Vendido";
                   const amount = Math.min(...freeUnits.map((unit) => unit.precioContado as number));
@@ -726,9 +727,12 @@ export default function BetonBrutLanding({ onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <button type="button" onClick={() => setZoom({ view: "solo", src: "/beton_brut/esquema.jpg", title: "Distribución del edificio", caption: "Subsuelo, planta baja, pisos 1 a 7 y área social." })} className="font-semibold text-[#816127]">
-                  Ver distribución de pisos
-                </button>
+                <span className="flex items-center gap-3">
+                  {selectedCash != null && <span className="font-semibold text-[#9a7b45]">USD {formatBetonUsd(selectedCash)}</span>}
+                  <button type="button" onClick={() => setZoom({ view: "solo", src: "/beton_brut/esquema.jpg", title: "Distribución del edificio", caption: "Subsuelo, planta baja, pisos 1 a 7 y área social." })} className="font-semibold text-[#816127]">
+                    Ver distribución de pisos
+                  </button>
+                </span>
               </div>
               <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
@@ -837,7 +841,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
           <div>
-            <p className="text-xs text-stone-700">Desde USD {formatBetonUsd(fromAny)} · {BETON_BRUT_CONFIG.delivery}</p>
+            <p className="text-xs text-stone-700">{selectedCash != null ? `USD ${formatBetonUsd(selectedCash)} · ${BETON_BRUT_CONFIG.delivery}` : `Desde USD ${formatBetonUsd(fromAny)} · ${BETON_BRUT_CONFIG.delivery}`}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Consulta el monto de reserva</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

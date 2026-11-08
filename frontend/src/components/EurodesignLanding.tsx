@@ -381,6 +381,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
           rate: activeUnit.cuotas.perM2,
         }
     : null;
+  const selectedCash = activeUnit && activeUnit.status === "disponible" && activeUnit.cashTotal > 0 ? activeUnit.cashTotal : null;
 
   const roomCount = useMemo(() => ({
     "1": EURODESIGN_MODELOS.filter((model) => model.rooms === 1).length,
@@ -795,7 +796,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
                     slide={currentSlide}
                     index={slideIndex}
                     total={slides.length}
-                    price={priceLabel(currentSlide, units)}
+                    price={selectedCash != null ? `USD ${formatEurodesignUsd(selectedCash)}` : priceLabel(currentSlide, units)}
                     frameClass="min-h-0 flex-1"
                     onPrev={() => shiftModel(-1)}
                     onNext={() => shiftModel(1)}
@@ -816,9 +817,12 @@ export default function EurodesignLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <button type="button" onClick={() => setZoom({ view: "solo", src: "/eurodesign/plano-distribucion.jpg", title: "Distribución del edificio", caption: "Planta de pisos de Tower Eurodesign." })} className="font-semibold text-[#816127]">
-                  Ver distribución de pisos
-                </button>
+                <span className="flex items-center gap-3">
+                  {selectedCash != null && <span className="font-semibold text-[#9a7b45]">USD {formatEurodesignUsd(selectedCash)}</span>}
+                  <button type="button" onClick={() => setZoom({ view: "solo", src: "/eurodesign/plano-distribucion.jpg", title: "Distribución del edificio", caption: "Planta de pisos de Tower Eurodesign." })} className="font-semibold text-[#816127]">
+                    Ver distribución de pisos
+                  </button>
+                </span>
               </div>
               <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
@@ -923,7 +927,7 @@ export default function EurodesignLanding({ property, onClose }: Props) {
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
           <div>
-            <p className="text-xs text-stone-700">Desde USD {formatEurodesignUsd(fromAny || EURODESIGN_CONFIG.minPriceUsd)} · {EURODESIGN_DELIVERY}</p>
+            <p className="text-xs text-stone-700">{selectedCash != null ? `USD ${formatEurodesignUsd(selectedCash)} · ${EURODESIGN_DELIVERY}` : `Desde USD ${formatEurodesignUsd(fromAny || EURODESIGN_CONFIG.minPriceUsd)} · ${EURODESIGN_DELIVERY}`}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva con USD {formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

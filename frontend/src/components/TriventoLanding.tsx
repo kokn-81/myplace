@@ -265,6 +265,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
     || floors.find((unit) => unit.estado === "LIBRE")
     || null;
   const quote = quoteTriventoUnit(activeUnit, paymentPlan);
+  const selectedCash = activeUnit && (activeUnit.precioContado || 0) > 0 ? activeUnit.precioContado : null;
   const amenity = AMENITY_SLIDES[amenityIndex];
 
   const modelPrice = (modelId: string) => {
@@ -675,7 +676,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
                   slide={slide}
                   index={slideIndex}
                   total={slides.length}
-                  price={modelPrice(slide.model.id)}
+                  price={selectedCash != null ? `USD ${formatTriventoUsd(selectedCash)}` : modelPrice(slide.model.id)}
                   frameClass="min-h-0 flex-1"
                   onPrev={() => shiftModel(-1)}
                   onNext={() => shiftModel(1)}
@@ -695,7 +696,10 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <button type="button" className="text-right font-semibold text-[#816127]" onClick={() => setZoom({ view: "solo", title: "Distribución de pisos", caption: `${slide.name} resaltado en la planta tipo · ${TRIVENTO_CONFIG.floorsPublished}`, preview: slide.plan, plan: slide.plan, ficha: slide.ficha })}>Ver distribución de pisos</button>
+                <span className="flex items-center gap-3">
+                  {selectedCash != null && <span className="font-semibold text-[#9a7b45]">USD {formatTriventoUsd(selectedCash)}</span>}
+                  <button type="button" className="text-right font-semibold text-[#816127]" onClick={() => setZoom({ view: "solo", title: "Distribución de pisos", caption: `${slide.name} resaltado en la planta tipo · ${TRIVENTO_CONFIG.floorsPublished}`, preview: slide.plan, plan: slide.plan, ficha: slide.ficha })}>Ver distribución de pisos</button>
+                </span>
               </div>
               <div className="nia-trivento-floor-grid grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
@@ -788,7 +792,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
 
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md md:left-[44%]">
-          <p className="truncate text-xs text-stone-700">Desde USD {formatTriventoUsd(minTicket)} · {TRIVENTO_CONFIG.delivery}</p>
+          <p className="truncate text-xs text-stone-700">{selectedCash != null ? `USD ${formatTriventoUsd(selectedCash)} · ${TRIVENTO_CONFIG.delivery}` : `Desde USD ${formatTriventoUsd(minTicket)} · ${TRIVENTO_CONFIG.delivery}`}</p>
           <div className="flex shrink-0 items-center gap-1.5">
             <a href={TRIVENTO_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-800">
               <Download size={14} className="text-[#9a7b45]" />
