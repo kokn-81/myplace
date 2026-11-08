@@ -210,14 +210,16 @@ function slidesFor(units: BlessTowerUnit[], room: RoomId): Slide[] {
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([modelo, list]) => {
       const plano = list.find((unit) => unit.planoUrl)?.planoUrl || "/bless_tower/fachada_principal.jpg";
+      const letter = modelo.trim().toLowerCase();
+      const cropped = /^[a-y]$/.test(letter);
       return {
         id: modelo,
         name: `Modelo ${modelo}`,
         areaLabel: areaLabel(list),
         where: tipologia,
         detail: "Plano del modelo publicado",
-        preview: plano,
-        plan: plano,
+        preview: cropped ? `/bless_tower/modelos/${letter}.jpg` : plano,
+        plan: cropped ? `/bless_tower/fichas/${letter}.jpg` : plano,
       };
     });
 }
@@ -267,7 +269,7 @@ function ModelFrame({
   frameClass: string;
   onPrev: () => void;
   onNext: () => void;
-  onOpen: (view: "depto" | "planta") => void;
+  onOpen: (view: "depto" | "planta" | "ficha") => void;
   onTouchStart: (event: TouchEvent<HTMLDivElement>) => void;
   onTouchEnd: (event: TouchEvent<HTMLDivElement>) => void;
 }) {
@@ -283,8 +285,8 @@ function ModelFrame({
         <p className="shrink-0 pt-0.5 text-[11px] text-stone-400">{index + 1}/{total}</p>
       </div>
       <div className="relative min-h-0 flex-1 bg-white">
-        <button type="button" onClick={() => onOpen("depto")} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver ${slide.name} completo`}>
-          <img src={slide.preview} alt={`${slide.name}, el departamento completo`} className="max-h-full max-w-full object-contain" />
+        <button type="button" onClick={() => onOpen("ficha")} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver la ficha de ${slide.name}`}>
+          <img src={slide.preview} alt={`${slide.name}, el departamento`} className="max-h-full max-w-full object-contain" />
         </button>
         {total > 1 && (
           <>
@@ -294,10 +296,10 @@ function ModelFrame({
         )}
       </div>
       <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
-        <img src={slide.plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
+        <img src={slide.preview} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
         <span className="min-w-0">
           <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">En el piso</span>
-          <span className="block text-xs leading-snug text-stone-600">Toca el departamento para verlo entero, o abre la planta.</span>
+          <span className="block text-xs leading-snug text-stone-600">Toca el departamento para ver la ficha completa.</span>
         </span>
       </button>
     </div>
@@ -429,7 +431,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
     setSelectedCodigo(free?.codigo || "");
   };
 
-  const openSlide = (current: Slide, view: "depto" | "planta") => {
+  const openSlide = (current: Slide, view: "depto" | "planta" | "ficha") => {
     setZoom({
       view,
       title: current.name,
