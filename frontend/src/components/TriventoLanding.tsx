@@ -26,15 +26,20 @@ import {
   TRIVENTO_INVENTORY_DATE,
   TRIVENTO_MODELS,
   TRIVENTO_UNITS,
-  TriventoModel,
   TriventoPlan,
   TriventoUnit,
   availableUnits,
   cheapestAvailable,
   formatTriventoM2,
   formatTriventoUsd,
-  minRate,
 } from "../triventoInventory";
+import {
+  firstAvailableTriventoSelection,
+  quoteTriventoUnit,
+  triventoSlidesForRooms,
+  type TriventoRooms,
+  type TriventoSlide as Slide,
+} from "../triventoPresentation";
 
 interface Props {
   property: Property;
@@ -42,18 +47,6 @@ interface Props {
 }
 
 type ZoomView = "depto" | "planta" | "ficha" | "solo";
-
-type Slide = {
-  id: string;
-  name: string;
-  areaLabel: string;
-  where: string;
-  detail: string;
-  preview: string;
-  plan: string;
-  ficha: string;
-  model: TriventoModel;
-};
 
 const AMENITY_SLIDES = [
   {
@@ -99,7 +92,7 @@ const EQUIPMENT = [
     id: "clima",
     room: "Climatización",
     title: "Llegas y el clima ya está",
-    image: "/trivento/vista_01.jpg",
+    image: "/trivento/vista_04.jpg",
     contain: false,
     items: [
       "2 aires acondicionados de 12.000 BTU en el departamento de 1 dormitorio.",
@@ -110,7 +103,7 @@ const EQUIPMENT = [
     id: "cocina",
     room: "Cocina",
     title: "La cocina entra en uso",
-    image: "/trivento/vista_03.jpg",
+    image: "/trivento/vista_05.jpg",
     contain: false,
     items: ["1 horno o microondas incluido, para que la unidad no te espere vacía."],
   },
@@ -130,7 +123,7 @@ const SECTIONS = [
   { id: "amenidades", label: "Áreas sociales" },
   { id: "tipologias", label: "Tipologías" },
   { id: "equipamiento", label: "Equipamiento" },
-  { id: "constructora", label: "Constructora" },
+  { id: "constructora", label: "Proyecto" },
   { id: "pago", label: "Formas de pago" },
   { id: "disponibilidad", label: "Disponibilidad" },
   { id: "cierre", label: "Cierre" },
@@ -145,38 +138,28 @@ function listLabel(isoDate: string) {
 
 const INVENTORY_LABEL = listLabel(TRIVENTO_INVENTORY_DATE);
 
-function slideFor(model: TriventoModel): Slide {
-  return {
-    id: model.id,
-    name: model.titulo,
-    areaLabel: `${formatTriventoM2(model.m2Total)} m²`,
-    where: model.posicion,
-    detail: `${model.tipologia} · depto ${formatTriventoM2(model.m2Depto)} m² + balcón ${formatTriventoM2(model.m2Balcon)} m²`,
-    preview: model.render,
-    plan: model.id === "01" ? "/trivento/plano_01.jpg" : model.iso,
-    ficha: model.iso,
-    model,
-  };
-}
+const ROOM_FILTERS: { id: TriventoRooms; label: string }[] = [
+  { id: "0", label: "Monoambiente" },
+  { id: "1", label: "1 dormitorio" },
+];
 
-const SLIDES = TRIVENTO_MODELS.map(slideFor);
+function RoomFilters({ rooms, onChange }: { rooms: TriventoRooms; onChange: (rooms: TriventoRooms) => void }) {
+  return <div className="flex shrink-0 gap-2" role="group" aria-label="Dormitorios">
+    {ROOM_FILTERS.map((filter) => {
+      const count = TRIVENTO_MODELS.filter((model) => model.dormitorios === Number(filter.id)).length;
+      return <button key={filter.id} type="button" aria-pressed={rooms === filter.id} onClick={() => onChange(filter.id)} className={`min-w-0 flex-1 rounded-2xl border px-3 py-2 text-left ${rooms === filter.id ? "border-[#9a7b45] bg-white shadow-md ring-1 ring-[#9a7b45]" : "border-stone-200 bg-white/80"}`}>
+        <span className="block text-[11px] font-semibold uppercase tracking-wider text-[#9a7b45]">{filter.label}</span>
+        <span className="block text-[11px] text-stone-500">{count} {count === 1 ? "modelo" : "modelos"}</span>
+      </button>;
+    })}
+  </div>;
+}
 
 function rateBounds(plan: TriventoPlan, units: TriventoUnit[]) {
   const rates = availableUnits(units)
     .map((unit) => (plan === "contado" ? unit.puContado : unit.puCredito))
     .filter((rate): rate is number => rate != null);
   return { min: Math.min(...rates), max: Math.max(...rates) };
-}
-
-function quoteUnit(unit: TriventoUnit | null, plan: TriventoPlan) {
-  if (!unit || unit.estado !== "LIBRE" || unit.precioContado == null || unit.precioCredito == null) return null;
-  if (plan === "contado") {
-    return { total: unit.precioContado, initial: unit.precioContado, balance: null as number | null, rate: unit.puContado || 0 };
-  }
-  const total = unit.precioCredito;
-  const initial = Math.round(total * 50) / 100;
-  const balance = Math.round((total - initial) * 100) / 100;
-  return { total, initial, balance, rate: unit.puCredito || 0 };
 }
 
 function ModelFrame({
@@ -237,6 +220,7 @@ function ModelFrame({
 
 export default function TriventoLanding({ property, onClose }: Props) {
   const cheapest = cheapestAvailable();
+  const initialRooms: TriventoRooms = cheapest.tipologia === "Monoambiente" ? "0" : "1";
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
@@ -246,7 +230,8 @@ export default function TriventoLanding({ property, onClose }: Props) {
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [amenityIndex, setAmenityIndex] = useState(0);
-  const [modelIndex, setModelIndex] = useState(Math.max(0, TRIVENTO_MODELS.findIndex((model) => model.id === cheapest.modelo)));
+  const [rooms, setRooms] = useState<TriventoRooms>(initialRooms);
+  const [modelIndex, setModelIndex] = useState(Math.max(0, triventoSlidesForRooms(initialRooms).findIndex((item) => item.id === cheapest.modelo)));
   const [selectedCodigo, setSelectedCodigo] = useState(cheapest.codigo);
   const [paymentPlan, setPaymentPlan] = useState<TriventoPlan>("contado");
   const [zoom, setZoom] = useState<{ view: ZoomView; title: string; caption: string; preview: string; plan: string; ficha: string } | null>(null);
@@ -260,7 +245,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
   const minTicket = Math.min(...libres.map((unit) => unit.precioContado || Infinity));
   const dormFrom = Math.min(...libres.filter((unit) => unit.tipologia === "1 Dormitorio").map((unit) => unit.precioContado || Infinity));
   const monoFree = libres.some((unit) => unit.tipologia === "Monoambiente");
-  const slide = SLIDES[modelIndex] || SLIDES[0];
+  const slides = useMemo(() => triventoSlidesForRooms(rooms), [rooms]);
+  const slideIndex = ((modelIndex % slides.length) + slides.length) % slides.length;
+  const slide = slides[slideIndex];
   const floors = useMemo(
     () => units.filter((unit) => unit.modelo === slide.model.codigo).slice().sort((a, b) => a.piso - b.piso),
     [slide.model.codigo, units]
@@ -268,7 +255,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
   const activeUnit = floors.find((unit) => unit.codigo === selectedCodigo && unit.estado === "LIBRE")
     || floors.find((unit) => unit.estado === "LIBRE")
     || null;
-  const quote = quoteUnit(activeUnit, paymentPlan);
+  const quote = quoteTriventoUnit(activeUnit, paymentPlan);
   const amenity = AMENITY_SLIDES[amenityIndex];
 
   const modelPrice = (modelId: string) => {
@@ -319,10 +306,30 @@ export default function TriventoLanding({ property, onClose }: Props) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  useEffect(() => {
+    if (!zoom && !showSectionMenu) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (zoom) setZoom(null);
+      else setShowSectionMenu(false);
+    };
+    window.addEventListener("keydown", onKeyDown, true);
+    return () => window.removeEventListener("keydown", onKeyDown, true);
+  }, [zoom, showSectionMenu]);
+
+  const chooseRooms = (next: TriventoRooms) => {
+    const selection = firstAvailableTriventoSelection(triventoSlidesForRooms(next), units);
+    setRooms(next);
+    setModelIndex(selection.index);
+    setSelectedCodigo(selection.unit?.codigo || "");
+  };
+
   const shiftModel = (dir: number) => {
-    const next = (modelIndex + dir + SLIDES.length) % SLIDES.length;
+    const next = (slideIndex + dir + slides.length) % slides.length;
     setModelIndex(next);
-    const free = units.find((unit) => unit.modelo === SLIDES[next].model.codigo && unit.estado === "LIBRE");
+    const free = units.find((unit) => unit.modelo === slides[next].model.codigo && unit.estado === "LIBRE");
     setSelectedCodigo(free?.codigo || "");
   };
 
@@ -388,7 +395,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
   };
 
   return (
-    <div className="nia-project-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
+    <div className="nia-project-landing nia-trivento-landing fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-y-contain bg-[#f7f5f0] font-sans text-stone-900 md:flex-row md:overflow-hidden">
       <div className="fixed right-4 top-4 z-[120] flex items-center gap-2 md:right-7 md:top-7">
         <button type="button" onClick={handleShare} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white/95 text-stone-800 shadow-xl" aria-label="Compartir">
           {shareFeedback ? <Check size={18} className="text-emerald-600" /> : <Share2 size={18} />}
@@ -408,21 +415,17 @@ export default function TriventoLanding({ property, onClose }: Props) {
           </div>
         </div>
         <div className="relative z-10 bg-stone-950 px-6 pb-6 pt-5 text-white md:px-8 md:pb-5 md:pt-4">
-          <img src="/trivento/logo.png" alt="Trivento IV" className="mb-3 h-14 w-auto md:mb-2 md:h-12" />
+          <img src="/trivento/logo.png" alt="Trivento IV" className="mb-3 h-14 w-auto brightness-0 invert md:mb-2 md:h-12" />
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e8d5a8]/40 bg-[#9a7b45]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e8d5a8]">
             <Sparkles size={12} />
             Preventa · Equipetrol
           </span>
           <h1 className="mt-2.5 font-serif text-4xl font-light tracking-wide text-white md:mt-2 md:text-4xl">Trivento IV</h1>
           <p className="mt-1 max-w-sm text-xs text-stone-300 md:text-sm">{TRIVENTO_CONFIG.address}</p>
-          <div className="mt-4 grid max-w-sm grid-cols-2 gap-3 md:mt-3">
+          <div className="mt-4 max-w-sm md:mt-3">
             <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
               <p className="text-[10px] uppercase tracking-wider text-stone-400">Entrega</p>
               <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">{TRIVENTO_CONFIG.delivery}</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-stone-400">Constructora</p>
-              <p className="mt-0.5 text-xs font-semibold text-white md:text-sm">Trivento IV</p>
             </div>
           </div>
           <div className="mt-3 max-w-sm rounded-xl border border-white/15 bg-black/55 p-4 backdrop-blur-md md:hidden">
@@ -530,10 +533,11 @@ export default function TriventoLanding({ property, onClose }: Props) {
                 <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Cinco maneras de entrar. Elige la tuya.</h3>
                 <p className="mt-1 text-xs text-stone-500">Cada piso repite la misma planta: tres departamentos a la fachada y dos atrás.</p>
               </div>
+              <RoomFilters rooms={rooms} onChange={chooseRooms} />
               <ModelFrame
                 slide={slide}
-                index={modelIndex}
-                total={SLIDES.length}
+                index={slideIndex}
+                total={slides.length}
                 frameClass="min-h-0 flex-1"
                 onPrev={() => shiftModel(-1)}
                 onNext={() => shiftModel(1)}
@@ -575,9 +579,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
           </section>
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
-            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Constructora</span>
-            <div className="inline-flex rounded-xl bg-stone-950 px-4 py-3">
-              <img src="/trivento/logo.png" alt="Trivento IV" className="h-16 w-auto" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Proyecto</span>
+            <div className="inline-flex">
+              <img src="/trivento/logo.png" alt="Trivento IV" className="h-14 w-auto" />
             </div>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Sabes cuándo entras y en qué dólar se cobra.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
@@ -637,10 +641,11 @@ export default function TriventoLanding({ property, onClose }: Props) {
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
                 <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Modelo</p>
+                <RoomFilters rooms={rooms} onChange={chooseRooms} />
                 <ModelFrame
                   slide={slide}
-                  index={modelIndex}
-                  total={SLIDES.length}
+                  index={slideIndex}
+                  total={slides.length}
                   price={modelPrice(slide.model.id)}
                   frameClass="min-h-0 flex-1"
                   onPrev={() => shiftModel(-1)}
@@ -661,9 +666,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <span className="text-stone-400">Verde = disponible · Gris = agotado</span>
+                <button type="button" className="text-right font-semibold text-[#816127]" onClick={() => setZoom({ view: "solo", title: "Distribución de pisos", caption: `${slide.name} resaltado en la planta tipo · ${TRIVENTO_CONFIG.floorsPublished}`, preview: slide.plan, plan: slide.plan, ficha: slide.ficha })}>Ver distribución de pisos</button>
               </div>
-              <div className="grid grid-cols-5 gap-1.5 rounded-xl border border-stone-200 bg-white p-2">
+              <div className="nia-trivento-floor-grid grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
                   const libre = floor.estado === "LIBRE";
                   const current = activeUnit?.codigo === floor.codigo;
@@ -677,9 +682,12 @@ export default function TriventoLanding({ property, onClose }: Props) {
               </div>
             </div>
 
-            <div className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-600">
-              <p className="text-xs font-semibold uppercase tracking-wider text-stone-900">Paso 3 · Parqueo</p>
-              <p className="mt-2">El número de abajo es solo tu departamento. Parqueo y baulera no tienen precio publicado: tu asesor te los confirma aparte, si los quieres sumar.</p>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 3 · Adicional</p>
+              <div className="rounded-xl border border-stone-900 bg-stone-900 p-3 text-white">
+                <p className="text-sm font-bold">Solo el departamento</p>
+                <p className="mt-1 text-xs text-stone-300">Parqueo y baulera se consultan por separado y no están incluidos en esta cotización.</p>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -695,6 +703,8 @@ export default function TriventoLanding({ property, onClose }: Props) {
                 </button>
               </div>
             </div>
+
+            {!activeUnit && <p className="rounded-xl border border-stone-200 bg-stone-100 p-4 text-sm text-stone-600">Este modelo no tiene unidades disponibles. Elige otra tipología para conocer sus pisos y precios.</p>}
 
             {activeUnit && quote && (
               <div className="space-y-4 rounded-2xl bg-stone-900 p-5 text-white shadow-xl">
@@ -735,7 +745,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
             )}
           </section>
 
-          <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-[48vh] text-center">
+          <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
             <h3 className="font-serif text-3xl font-light text-[#1C1917]">Asegura tu lugar en Equipetrol.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Si tienes dudas, escríbenos. Te ayudamos a comparar modelos, confirmar la lista del {INVENTORY_LABEL} y reservar el departamento. Quedan {libres.length} unidades, desde USD {formatTriventoUsd(minTicket)} al contado, con entrega en {TRIVENTO_CONFIG.delivery}.
@@ -793,13 +803,13 @@ export default function TriventoLanding({ property, onClose }: Props) {
                 <X size={18} />
               </button>
             </div>
-            <div className="flex justify-center gap-1.5 px-4 pb-2">
+            {zoom.view !== "solo" && <div className="flex justify-center gap-1.5 px-4 pb-2">
               {(["depto", "planta", "ficha"] as const).map((view) => (
                 <button key={view} type="button" onClick={() => setZoom({ ...zoom, view })} className={`rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider ${zoom.view === view ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>
                   {view === "depto" ? "Departamento" : view === "planta" ? "Planta" : "Ficha"}
                 </button>
               ))}
-            </div>
+            </div>}
             <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-4 md:px-10">
               <img
                 src={zoom.view === "planta" ? zoom.plan : zoom.view === "ficha" ? zoom.ficha : zoom.preview}

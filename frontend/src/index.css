@@ -187,6 +187,9 @@
     .nia-project-landing .grid[class*="grid-cols-"] {
       grid-template-columns: minmax(0, 1fr);
     }
+    .nia-project-landing.nia-trivento-landing .nia-trivento-floor-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
     .nia-property-card {
       max-width: calc(100vw - 2rem) !important;
     }
