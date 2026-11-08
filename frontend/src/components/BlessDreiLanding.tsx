@@ -689,7 +689,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
           <div className="flex justify-end pt-1">
             <a
-              href="https://maps.google.com/?q=-17.7612,-63.1970"
+              href="https://maps.app.goo.gl/S9snbQg9CiKbUkY59?g_st=ic"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#a34a28] hover:text-[#5c2414] transition-colors"

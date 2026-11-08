@@ -755,7 +755,7 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
           {/* Botón de Google Maps */}
           <div className="flex justify-end pt-1">
             <a
-              href="https://maps.google.com/?q=-17.7665,-63.1785"
+              href="https://maps.app.goo.gl/qj6FGP2a7BSe9rVo8?g_st=ic"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#8e3e24] hover:text-[#5c2414] transition-colors"

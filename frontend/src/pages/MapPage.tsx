@@ -349,8 +349,8 @@ export const SYNTHETIC_EURODESIGN_PROPERTY: Property = {
   area: "Equipetrol",
   city: "Santa Cruz de la Sierra",
   zone: "Equipetrol",
-  lat: -17.7664938,
-  lng: -63.1973439,
+  lat: -17.7665385,
+  lng: -63.1971325,
   operation: "Venta",
   type: "Proyecto (preventa)",
   description: "Torre residencial de 18 pisos en Equipetrol Norte a pasos de Av. San Martín. Departamentos de 1 y 2 dormitorios y locales comerciales en PB. Rooftop Piso 18 con vista 360°, piscina panorámica y amenidades de categoría superior.",
@@ -697,8 +697,8 @@ export const SYNTHETIC_GARDEN_ZEN_PROPERTY: Property = {
   area: "Equipetrol Norte / Calle Dra. María de Oliveira",
   city: "Santa Cruz de la Sierra",
   zone: "Equipetrol",
-  lat: -17.7615,
-  lng: -63.1972,
+  lat: -17.7561784,
+  lng: -63.1953552,
   operation: "Venta",
   type: "Proyecto (preventa)",
   description: "Torre residencial eco-sostenible de 16 pisos en Equipetrol Norte (Calle Dra. María de Oliveira). Paneles solares (50% menos expensas), riego pluvial automatizado, piscina sinfín en rooftop, gym inteligente, co-work, pet spa y doble churrasquera. Entrega Marzo 2027.",
@@ -745,8 +745,8 @@ export const SYNTHETIC_BLESS_TOWER_PROPERTY: Property = {
   area: "Av. Cristo Redentor entre 2° y 3° Anillo",
   city: "Santa Cruz de la Sierra",
   zone: "Norte",
-  lat: -17.7635,
-  lng: -63.1785,
+  lat: -17.7638323,
+  lng: -63.1804865,
   operation: "Venta",
   type: "Proyecto (preventa)",
   description: "Exclusiva torre de 30 niveles sobre la Av. Cristo Redentor entre 2° y 3° anillo interno. Departamentos inteligentes con cerradura digital, aires acondicionados instalados, piscina sin fin en rooftop, churrasqueras gourmet, área de fogatero, sala gamer y coworking.",
@@ -791,8 +791,8 @@ export const SYNTHETIC_BLESS_DREI_PROPERTY: Property = {
   area: "Calle Alejandro Ramírez entre 3° y 4° Anillo",
   city: "Santa Cruz de la Sierra",
   zone: "Equipetrol",
-  lat: -17.7642,
-  lng: -63.1958,
+  lat: -17.7607568,
+  lng: -63.1960473,
   operation: "Venta",
   type: "Proyecto (preventa)",
   description: "Edificio residencial premium de 16 niveles en el corazón de Equipetrol, sobre calle Alejandro Ramírez a metros de la Av. San Martín. Piscina panorámica en rooftop, fitness studio, coworking y cerraduras inteligentes.",
@@ -935,6 +935,20 @@ export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
 
 
 
+// Pines de los enlaces oficiales de Google Maps. Se aplican aunque el snapshot o la API traigan otra coordenada.
+const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
+  "1816": { lat: -17.7665385, lng: -63.1971325 },
+  "garden-zen": { lat: -17.7561784, lng: -63.1953552 },
+  "bless-tower": { lat: -17.7638323, lng: -63.1804865 },
+  "bless-drei": { lat: -17.7607568, lng: -63.1960473 },
+};
+
+const withOfficialPin = (property: Property, pinId: string): Property => {
+  const pin = OFFICIAL_MAP_PINS[pinId];
+  if (!pin || (property.lat === pin.lat && property.lng === pin.lng)) return property;
+  return { ...property, lat: pin.lat, lng: pin.lng };
+};
+
 const prioritizeRecommended = (list: Property[]): Property[] => {
   const priorityItems: Property[] = [];
 
@@ -945,25 +959,25 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   // Opción 2: Tower Eurodesign
   const eurodesign = (list && list.find((p) => String(p.id) === "1816" || isEurodesignProperty(p))) || SYNTHETIC_EURODESIGN_PROPERTY;
   if (eurodesign && !priorityItems.some((p) => String(p.id) === String(eurodesign.id))) {
-    priorityItems.push(eurodesign);
+    priorityItems.push(withOfficialPin(eurodesign, "1816"));
   }
 
   // Opción 3: Garden Zen (Equipetrol Norte)
   const gardenZen = (list && list.find((p) => String(p.id) === "garden-zen" || isGardenZenProperty(p))) || SYNTHETIC_GARDEN_ZEN_PROPERTY;
   if (gardenZen && !priorityItems.some((p) => String(p.id) === String(gardenZen.id))) {
-    priorityItems.push(gardenZen);
+    priorityItems.push(withOfficialPin(gardenZen, "garden-zen"));
   }
 
   // Opción 4: Bless Tower (Av. Cristo Redentor - Alta Vida)
   const blessTower = (list && list.find((p) => String(p.id) === "bless-tower" || isBlessTowerProperty(p))) || SYNTHETIC_BLESS_TOWER_PROPERTY;
   if (blessTower && !priorityItems.some((p) => String(p.id) === String(blessTower.id))) {
-    priorityItems.push(blessTower);
+    priorityItems.push(withOfficialPin(blessTower, "bless-tower"));
   }
 
   // Opción 5: Bless Drei (Equipetrol - Alta Vida)
   const blessDrei = (list && list.find((p) => String(p.id) === "bless-drei" || isBlessDreiProperty(p))) || SYNTHETIC_BLESS_DREI_PROPERTY;
   if (blessDrei && !priorityItems.some((p) => String(p.id) === String(blessDrei.id))) {
-    priorityItems.push(blessDrei);
+    priorityItems.push(withOfficialPin(blessDrei, "bless-drei"));
   }
 
   // Opción 6: Trivento IV (Equipetrol - Trivento)

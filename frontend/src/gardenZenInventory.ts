@@ -49,7 +49,7 @@ export const GARDEN_ZEN_CONFIG = {
   reservaUsd: 5000,
   minPriceUsd: 59600,
   driveUrl: "https://drive.google.com/drive/folders/15ckBWfu8u0HOc4RR-VjhJsrD37G2a8ig",
-  mapsUrl: "https://maps.app.goo.gl/Qg9vW79CuNsL3Qex8?g_st=ac",
+  mapsUrl: "https://maps.app.goo.gl/zfLxQ9cxuLfJZuQ67?g_st=ic",
   sheetUrl: "https://docs.google.com/spreadsheets/d/131d0GDjOhvHerSya1izI1CS6qIBkBV6a/edit?usp=sharing",
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/131d0GDjOhvHerSya1izI1CS6qIBkBV6a/export?format=csv&gid=1727984128",
   parkingsCsvUrl: "https://docs.google.com/spreadsheets/d/131d0GDjOhvHerSya1izI1CS6qIBkBV6a/export?format=csv&gid=2088384023",

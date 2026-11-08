@@ -52,7 +52,7 @@ export const EURODESIGN_CONFIG = {
   sheetUrl: "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/htmlview",
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/1Q_xIcd1ta6cac89jDJdYgm87l0saHrBzbtxay32_SMA/export?format=csv",
   brochurePdfUrl: "/eurodesign/presentacion_eurodesign_tower.pdf",
-  mapsUrl: "https://www.google.com/maps/place/17%C2%B045'41.4%22S+63%C2%B011'49.9%22W/@-17.7615,-63.197194,17z",
+  mapsUrl: "https://maps.app.goo.gl/ZYFsaw2LoBNeSSk57?g_st=ic",
   amenities: [
     "Piscina Panorámica & Sky Deck 360° en Piso 18",
     "Sky Bar & Piscina Nocturna climatizada",
