@@ -411,6 +411,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   const floors = unitsForModel(units, selectedModel);
   const activeUnit = floors.find((unit) => unitKey(unit) === selectedKey) || null;
   const quote = activeUnit && activeUnit.status === "disponible" ? quoteOnaUnit(activeUnit, paymentPlan, addon) : null;
+  const selectedCash = activeUnit && activeUnit.status === "disponible" ? activeUnit.cash : null;
 
   const roomCount = useMemo(() => {
     return {
@@ -919,7 +920,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   model={currentModel}
                   index={slideIndex}
                   total={slides.length}
-                  price={priceForModel(currentModel)}
+                  price={selectedCash != null ? `USD ${formatOnaUsd(selectedCash)}` : priceForModel(currentModel)}
                   frameClass="min-h-0 flex-1"
                   onPrev={() => shiftModel(-1)}
                   onNext={() => shiftModel(1)}
@@ -933,9 +934,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</span>
-                <button type="button" onClick={() => setZoom({ view: "solo", src: "/ona/esquema.jpg", title: "Distribución de pisos", caption: "Planta tipo, área social, primer piso, planta baja y subsuelo." })} className="font-semibold text-[#816127]">
-                  Ver distribución de pisos
-                </button>
+                {selectedCash != null && <span className="font-semibold text-[#9a7b45]">USD {formatOnaUsd(selectedCash)}</span>}
               </div>
               <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-5">
                 {floors.map((floor) => {
@@ -949,6 +948,9 @@ export default function OnaLanding({ property, onClose }: Props) {
                   );
                 })}
               </div>
+              <button type="button" onClick={() => setZoom({ view: "solo", src: "/ona/planta-tipo.jpg", title: "Planta tipo", caption: "Pisos 2 al 14. Departamentos 1 a 5." })} className="block w-full overflow-hidden rounded-xl border border-stone-200 bg-white p-2">
+                <img src="/ona/planta-tipo.jpg" alt="Planta tipo de ONA, pisos 2 al 14" className="mx-auto w-full object-contain" />
+              </button>
             </div>
 
             <div className="space-y-2">
@@ -1046,7 +1048,7 @@ export default function OnaLanding({ property, onClose }: Props) {
       {activeSection !== "cierre" && (
         <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-3 border-t border-stone-200 bg-[#f7f5f0]/95 px-5 py-3 backdrop-blur-md lg:left-[44%]">
           <div>
-            <p className="text-xs text-stone-700">{fromAny == null ? ONA_DELIVERY : `Desde USD ${formatOnaUsd(fromAny)} · ${ONA_DELIVERY}`}</p>
+            <p className="text-xs text-stone-700">{selectedCash != null ? `USD ${formatOnaUsd(selectedCash)} · ${ONA_DELIVERY}` : fromAny == null ? ONA_DELIVERY : `Desde USD ${formatOnaUsd(fromAny)} · ${ONA_DELIVERY}`}</p>
             <p className="hidden text-[10px] font-medium text-[#9a7b45] sm:block">Reserva USD {formatOnaUsd(ONA_RESERVE_USD)}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
