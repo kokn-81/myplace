@@ -199,10 +199,18 @@ Centrada. Título, un párrafo, enlace “Hablar con un asesor”. `pb-16`. Al e
 
 Una sola tarjeta, usada en `#tipologias` y en el paso 1.
 
-1. Cabecera: nombre del modelo en mayúsculas `#9a7b45`, metros y ubicación, una línea de detalle, y en disponibilidad el precio desde. A la derecha, `{n}/{total}`.
+1. Cabecera: nombre del modelo en mayúsculas `#9a7b45`, metros y ubicación, una línea de detalle, y en disponibilidad el precio desde. A la derecha, `{n}/{total}` resaltado como indica la actualización de Codex de abajo.
 2. Foto del departamento completo, `object-contain`, centrada, con margen blanco dentro del archivo. El balcón y el ala de servicio no tocan el borde del JPEG ni quedan debajo de la barra. No se usa la hoja entera del brochure como miniatura.
 3. Flechas solo si hay más de un modelo en el filtro.
 4. Franja “En el piso”: miniatura de la planta (`h-14 w-16`) y el texto de esa franja. `pr-16` para dejar libre el menú circular.
+
+> **Comentario de Codex · Actualización del 8 de noviembre de 2026: contador de modelos.**
+>
+> Por indicación del usuario, el contador `1/10` debe destacar para que se entienda que hay varios modelos para recorrer. Se aplica tanto en **Tipologías** como en **Disponibilidad**, usando el mismo `ModelFrame` en las dos secciones.
+>
+> Presentarlo como una pastilla informativa: número en dorado oscuro `#816127`, fondo claro `#f7f5f0` y borde dorado `#9a7b45` al 40%. Tamaño de **16 px en móvil y 18 px desde `sm`**, negrita y cifras tabulares. Mantenerlo arriba a la derecha, sin comprimir la foto del departamento. Referencia: `min-w-[4.25rem] rounded-full border border-[#9a7b45]/40 bg-[#f7f5f0] px-3 py-1.5 text-center text-base font-bold leading-none tabular-nums text-[#816127] shadow-sm sm:text-lg`.
+>
+> Es un indicador, no un botón. Conserva el índice y el total reales del filtro elegido y se actualiza al cambiar de modelo. Primera aplicación: **Tower Eurodesign**.
 
 Archivos: vista del departamento en `/…/modelos/{id}.jpg`. Planta, con la unidad marcada, en `/…/planos/{id}.jpg`. Ficha completa del brochure en `/…/fichas/{id}.jpg`.
 
