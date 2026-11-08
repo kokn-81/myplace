@@ -837,8 +837,8 @@ export const SYNTHETIC_TRIVENTO_PROPERTY: Property = {
   area: "Av. San Martín y Calle A. Ramírez",
   city: "Santa Cruz de la Sierra",
   zone: "Equipetrol",
-  lat: -17.7612,
-  lng: -63.197,
+  lat: -17.7612374,
+  lng: -63.1969378,
   operation: "Venta",
   type: "Proyecto (preventa)",
   description: "Preventa en Equipetrol, sobre Av. San Martín y Calle A. Ramírez. Basamento de 5 pisos con monoambientes y departamentos de 1 dormitorio. Entrega en noviembre 2027. Precios al tipo de cambio BCB.",
@@ -941,6 +941,7 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "garden-zen": { lat: -17.7561784, lng: -63.1953552 },
   "bless-tower": { lat: -17.7638323, lng: -63.1804865 },
   "bless-drei": { lat: -17.7607568, lng: -63.1960473 },
+  "trivento-iv": { lat: -17.7612374, lng: -63.1969378 },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -983,7 +984,7 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   // Opción 6: Trivento IV (Equipetrol - Trivento)
   const trivento = (list && list.find((p) => String(p.id) === "trivento-iv" || isTriventoProperty(p))) || SYNTHETIC_TRIVENTO_PROPERTY;
   if (trivento && !priorityItems.some((p) => String(p.id) === String(trivento.id))) {
-    priorityItems.push(trivento);
+    priorityItems.push(withOfficialPin(trivento, "trivento-iv"));
   }
 
   const betonBrut = (list && list.find((p) => String(p.id) === "beton-brut-ii" || isBetonBrutProperty(p))) || SYNTHETIC_BETON_BRUT_PROPERTY;

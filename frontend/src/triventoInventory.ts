@@ -49,8 +49,10 @@ export const TRIVENTO_CONFIG = {
   city: "Santa Cruz de la Sierra",
   delivery: "Noviembre 2027",
   exchange: "Tipo de cambio BCB",
-  lat: -17.7612,
-  lng: -63.197,
+  // Pin del lugar "Trivento IV" en el enlace oficial (3d/4d). El @ del mismo URL es la cámara, corrida al oeste.
+  lat: -17.7612374,
+  lng: -63.1969378,
+  mapsUrl: "https://maps.app.goo.gl/ykNGfzAeaQGgTaKs8",
   totalUnits: 25,
   floorsPublished: "Pisos 1 a 5",
   brochurePdfUrl: "/trivento/brochure.pdf",
