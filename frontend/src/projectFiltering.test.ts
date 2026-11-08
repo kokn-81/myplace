@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isProjectOrPreventa } from "./projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject } from "./projectIdentity";
+import { isCatalogPropertyVisible } from "./catalogVisibility";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
 
@@ -37,6 +38,33 @@ test("isGardenZenProperty: reconoce el proyecto Garden Zen en Equipetrol", () =>
 
   const randomProperty: Partial<Property> = { id: "999", title: "Casa con amplio jardin y estilo rustico" };
   assert.equal(isGardenZenProperty(randomProperty as Property), false);
+});
+
+test("Trivento keeps its project identity when the API refresh includes an individual apartment", () => {
+  const project = { id: "trivento-iv", title: "TRIVENTO IV", type: "Proyecto (preventa)" } as Property;
+  // Actual record returned by /inmuebles/resumen; it previously replaced the project.
+  const apartment = { id: "1322", title: "Monoambiente · Trivento Iv Equipetrol", type: "Departamento", operation: "Venta" } as Property;
+
+  assert.equal(isTriventoProperty(project), true);
+  assert.equal(isTriventoProperty(apartment), false);
+  assert.equal(isProjectOrPreventa(apartment), false);
+  assert.equal(isCatalogPropertyVisible(apartment), false);
+  assert.equal(isTargetProject(apartment, "trivento-iv"), false);
+  assert.equal([apartment, project].find(isTriventoProperty), project);
+  assert.equal([apartment].find(isTriventoProperty), undefined);
+});
+
+test("Trivento recognizes project aliases and typed projects without treating the building name alone as a project", () => {
+  for (const id of ["trivento-iv", "trivento", "triventoiv", "trivento-4"]) {
+    assert.equal(isTriventoProperty({ id } as Property), true);
+  }
+  assert.equal(isTriventoProperty({ id: "new-project", title: "Trivento IV", type: "Proyecto" } as Property), true);
+  assert.equal(isTriventoProperty({ id: "new-project", titulo: "Trivento IV", tipo_inmueble: "Proyecto (preventa)" } as unknown as Property), true);
+  for (const operation of ["Venta", "Alquiler"]) {
+    const apartment = { id: "other-unit", title: "Departamento", complejoNombre: "TRIVENTO IV", type: "Departamento", operation } as Property;
+    assert.equal(isTriventoProperty(apartment), false);
+  }
+  assert.equal(isTriventoProperty({ id: "unknown", title: "Trivento IV" } as Property), false);
 });
 
 test("isDomusProperty: reconoce los 7 desarrollos DOMUS pero no reventas ni alquileres individuales", () => {

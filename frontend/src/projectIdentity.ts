@@ -1,4 +1,5 @@
 import type { Property } from "./types";
+import { isProjectType } from "./types";
 
 export const isOnaProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
@@ -78,7 +79,12 @@ export const isTriventoProperty = (p: Property | null | undefined): boolean => {
   const sId = String(p.id).toLowerCase();
   const sTitle = String(p.title || (p as any).titulo || "").trim().toLowerCase();
   const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "").trim().toLowerCase();
-  return sId === "trivento-iv" || sId.startsWith("trivento") || sTitle.includes("trivento") || sCmp.includes("trivento");
+  if (sId === "trivento-iv" || sId.startsWith("trivento")) return true;
+
+  // The API also lists individual apartments in this building (e.g. #1322).
+  // Their building name must not replace the curated project during refresh.
+  const type = p.type || (p as any).tipo_inmueble;
+  return isProjectType(type) && (sTitle.includes("trivento") || sCmp.includes("trivento"));
 };
 
 export const isTriventoSlug = (value: string): boolean => {
