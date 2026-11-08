@@ -283,7 +283,7 @@ function ModelFrame({
           <p className="truncate text-xs text-stone-600">{area}</p>
           {price ? <p className="mt-0.5 text-sm font-semibold text-[#7a3218]">{price}</p> : null}
         </div>
-        <p className="shrink-0 pt-0.5 text-[11px] text-stone-400">{index + 1}/{total}</p>
+        <p className="min-w-[4.25rem] shrink-0 rounded-full border border-[#7a3218]/40 bg-[#f8f1e7] px-3 py-1.5 text-center text-base font-bold leading-none tabular-nums text-[#5c2414] shadow-sm sm:text-lg" title={`Modelo ${index + 1} de ${total}`}>{index + 1}/{total}</p>
       </div>
       <div className="relative min-h-0 flex-1 bg-white">
         <button type="button" onClick={onOpen} className="absolute inset-0 flex items-center justify-center p-2" aria-label={`Ver planta ${model.name}`}>
