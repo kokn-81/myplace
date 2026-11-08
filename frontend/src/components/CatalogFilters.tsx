@@ -127,7 +127,6 @@ export default function CatalogFilters(props: Props) {
       {step === "delivery" && ["", ...props.years].map(year => <button key={year} type="button" className={pill((criteria.deliveryYear || "") === year)} aria-pressed={(criteria.deliveryYear || "") === year} onClick={() => { set("deliveryYear", year); onStep("results"); }}>{year ? `Entrega ${year}` : "Cualquier fecha"}</button>)}
 
       {step === "sort" && ([["recommended", "Recomendados"], ["price-asc", "Menor precio"], ["price-desc", "Mayor precio"], ["delivery", "Entrega más próxima"]] as [CatalogSort, string][]).map(([value, label]) => <button key={value} type="button" className={pill(props.sort === value)} aria-pressed={props.sort === value} onClick={() => { props.onSort(value); onStep("results"); }}>{label}</button>)}
-      <button type="button" onClick={() => onStep("results")} className={pill()}>Ver mapa · {props.count}</button>
     </div>}
 
     {step === "budget" && customBudget && <form className="flex min-w-0 items-end gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 p-2 text-[var(--text-main)] shadow-md backdrop-blur" onSubmit={event => {
