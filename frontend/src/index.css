@@ -160,68 +160,52 @@
 
   @media (min-width: 1024px) {
     .nia-map-header {
-      padding-top: calc(env(safe-area-inset-top, 0px) + 1.35rem);
+      padding-top: calc(env(safe-area-inset-top, 0px) + 0.85rem);
     }
 
     .nia-guide-bar {
-      grid-template-columns: 52px minmax(0, 1fr) 52px;
-      margin-bottom: 0.85rem;
-      gap: 1rem;
+      grid-template-columns: 40px minmax(0, 1fr) 40px;
+      margin-bottom: 0.35rem;
+      gap: 0.75rem;
     }
 
     .nia-map-icon-button {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 18px rgba(58, 33, 25, 0.12);
     }
 
     .nia-map-icon-button svg {
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
     }
 
     .nia-catalog-guide .nia-guide-pill svg {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
+    }
+
+    .nia-carousel-arrow {
+      padding: 0.45rem;
+    }
+
+    .nia-carousel-arrow svg {
+      width: 18px;
+      height: 18px;
     }
 
     .nia-catalog-guide .nia-catalog-options {
       flex-wrap: wrap;
       justify-content: center;
       overflow: visible;
-      row-gap: 0.65rem;
-      column-gap: 0.75rem;
+      row-gap: 0.45rem;
+      column-gap: 0.5rem;
     }
 
     .nia-catalog-guide .nia-catalog-options > :first-child,
     .nia-catalog-guide .nia-catalog-options > :last-child {
       margin-inline: 0;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .nia-map-header {
-      padding-top: calc(env(safe-area-inset-top, 0px) + 1.5rem);
-    }
-
-    .nia-guide-bar {
-      grid-template-columns: 56px minmax(0, 1fr) 56px;
-    }
-
-    .nia-map-icon-button {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-    }
-
-    .nia-map-icon-button svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .nia-catalog-guide .nia-guide-pill svg {
-      width: 18px;
-      height: 18px;
     }
   }
 

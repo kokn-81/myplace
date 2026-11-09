@@ -3010,7 +3010,7 @@ export default function MapPage() {
         </AnimatePresence>
       </main>
 
-      <header className="nia-map-header absolute left-1/2 top-0 z-40 w-full max-w-3xl -translate-x-1/2 px-4 md:px-6 lg:max-w-[1040px] xl:max-w-[1180px] 2xl:max-w-[1320px]" aria-label="Explorar proyectos">
+      <header className="nia-map-header absolute left-1/2 top-0 z-40 w-full max-w-3xl -translate-x-1/2 px-4 md:px-6 lg:max-w-[920px]" aria-label="Explorar proyectos">
         {renderCatalogGuide()}
       </header>
 
@@ -3019,7 +3019,7 @@ export default function MapPage() {
       </div>
       {/* Indicador / Toggle para opciones sugeridas */}
       {hasFinishedAiSearch && (
-        <div className="absolute bottom-[245px] left-1/2 z-20 -translate-x-1/2 md:bottom-[255px]">
+        <div className="absolute bottom-[245px] left-1/2 z-20 -translate-x-1/2 md:bottom-[255px] lg:bottom-[236px]">
           {showSuggested ? (
             <div className="flex items-center gap-2 rounded-full border border-amber-500/50 bg-[var(--surface-panel)]/95 px-4 py-1.5 shadow-md backdrop-blur dark:bg-[rgba(27,20,17,0.95)]">
               <Sparkles size={13} className="text-amber-500 shrink-0" />
@@ -3055,7 +3055,7 @@ export default function MapPage() {
 
       {/* BANNER DE EDIFICIO Y SUBFILTROS DE PISO/TIPOLOGIA (OPCION A) */}
       {selectedBuildingGroup && (
-        <div className="absolute bottom-[240px] md:bottom-[255px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 w-full max-w-[95vw] md:max-w-2xl px-2 pointer-events-auto">
+        <div className="absolute bottom-[240px] md:bottom-[255px] lg:bottom-[236px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 w-full max-w-[95vw] md:max-w-2xl px-2 pointer-events-auto">
           <div className="flex items-center justify-between gap-3 w-full bg-[var(--surface-panel)]/95 dark:bg-[rgba(27,20,17,0.95)] border border-[var(--accent-main)]/60 px-3.5 py-1.5 rounded-2xl shadow-xl backdrop-blur">
             <div className="flex items-center gap-2 min-w-0">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-main)]/20 text-[var(--accent-main)]">
@@ -3116,13 +3116,13 @@ export default function MapPage() {
 
       {/* CAPA 2: VISOR EDITORIAL PANORAMICO (Formato Ejecutivo) */}
       {!selectedProperty && (visibleProperties.length > 0 || hasActiveResults) && (
-        <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0 xl:h-[268px] xl:max-w-[1180px] 2xl:h-[292px] 2xl:max-w-[1320px]">
+        <div className="nia-property-carousel absolute left-0 right-0 z-20 flex h-[230px] w-full items-center justify-center px-4 md:bottom-8 md:left-1/2 md:right-auto md:h-[240px] md:w-[98%] md:max-w-[1040px] md:-translate-x-1/2 md:justify-between md:gap-4 md:px-0 lg:bottom-5 lg:h-[208px] lg:max-w-[920px] lg:gap-3">
 
           {visibleProperties.length > 0 && (
             <button
               onClick={() => setCurrentIndex(prev => Math.max(0, prev - carouselStep))}
               disabled={currentIndex === 0}
-              className="nia-carousel-arrow nia-carousel-arrow-left absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
+              className="nia-carousel-arrow nia-carousel-arrow-left absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0 lg:p-2 lg:shadow-md"
             >
               <ChevronLeft size={28} />
             </button>
@@ -3197,7 +3197,7 @@ export default function MapPage() {
           onMouseEnter={() => handleCardMouseEnter(p)}
           onMouseLeave={handleCardMouseLeave}
           onClick={() => selectProperty(p)}
-          className={`nia-property-card ${projectCardSummary ? "nia-project-card" : ""} group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none xl:h-[236px] xl:w-[500px] 2xl:h-[258px] 2xl:w-[560px] ${
+          className={`nia-property-card ${projectCardSummary ? "nia-project-card" : ""} group relative flex h-[210px] w-full max-w-[400px] shrink-0 cursor-pointer flex-row overflow-hidden rounded-2xl border bg-[var(--surface-panel)] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-[var(--surface-panel)] md:w-[430px] md:max-w-none lg:h-[188px] lg:w-[390px] ${
             isPromoted
               ? "border-[var(--accent-main)]/60 shadow-[var(--shadow-warm)] dark:border-[var(--accent-main)]/50"
               : isBestSearchMatch
@@ -3373,7 +3373,7 @@ export default function MapPage() {
             <button
               onClick={() => setCurrentIndex(prev => Math.min(Math.max(0, carouselProperties.length - carouselStep), prev + carouselStep))}
               disabled={currentIndex + carouselStep >= carouselProperties.length}
-              className="nia-carousel-arrow nia-carousel-arrow-right absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0"
+              className="nia-carousel-arrow nia-carousel-arrow-right absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-[var(--accent-main)]/85 p-3 text-[#2F241D] shadow-xl transition-all hover:bg-[var(--accent-hover)] hover:text-white disabled:opacity-30 dark:bg-[rgba(27,20,17,0.94)] dark:text-[var(--text-main)] md:static md:translate-y-0 md:shrink-0 lg:p-2 lg:shadow-md"
             >
               <ChevronRight size={28} />
             </button>
