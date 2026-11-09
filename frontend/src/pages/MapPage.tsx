@@ -63,6 +63,7 @@ import { catalogPrice, sortCatalogResults, propertyPath, propertyIdFromLocation 
 import { useInventoryRevision, refreshProjectInventories } from "../projectInventory";
 import { isCatalogPropertyVisible } from "../catalogVisibility";
 import { ONA_DELIVERY } from "../onaInventory";
+import { DOMUS_PROJECTS_CONFIG } from "../domusInventory";
 
 const MAPBOX_TOKEN =
   process.env.VITE_MAPBOX_TOKEN ||
@@ -394,18 +395,18 @@ export const SYNTHETIC_DOMUS_BLACK_PROPERTY: Property = {
   area: "Equipetrol Norte",
   city: "Santa Cruz de la Sierra",
   zone: "Equipetrol",
-  lat: -17.7625,
-  lng: -63.1950,
+  lat: DOMUS_PROJECTS_CONFIG["domus-black"].lat,
+  lng: DOMUS_PROJECTS_CONFIG["domus-black"].lng,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "Arquitectura sobria y contemporánea en Equipetrol Norte. Monoambientes, 1, 2 y 3 dormitorios. Rooftop con piscina de mármol negro, lounge social y churrasqueras.",
+  description: DOMUS_PROJECTS_CONFIG["domus-black"].tagline,
   amenities: ["piscina", "churrasquera", "gimnasio", "coworking", "seguridad"],
   images: [
-    "/domus/domus_black/arte_principal.jpg",
-    "/domus/domus_black/arte_secundario.jpg",
-    "/domus/domus_black/brochure_p01.jpg",
-    "/domus/domus_black/brochure_p02.jpg",
-    "/domus/domus_black/brochure_p03.jpg",
+    "/domus/domus_black/fachada_principal.jpg",
+    "/domus/domus_black/amenidades/piscina-interior.jpg",
+    "/domus/domus_black/amenidades/piscina-exterior.jpg",
+    "/domus/domus_black/amenidades/gimnasio.jpg",
+    "/domus/domus_black/ubicacion-oficial.jpg",
   ],
   currency: "$ (USD)",
   exchangeRate: "Oficial",
@@ -419,7 +420,7 @@ export const SYNTHETIC_DOMUS_BLACK_PROPERTY: Property = {
   ocupacion: "Disponible",
   superficieM2: 47.3,
   amoblado: false,
-  fechaEntrega: "Preventa Etapa 2",
+  fechaEntrega: DOMUS_PROJECTS_CONFIG["domus-black"].delivery,
   avanceObra: 60,
   faseObra: "En Construcción",
   totalUnidades: 141,

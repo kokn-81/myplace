@@ -1,11 +1,55 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import { domusBlackModelArt } from "./domusBlackContent";
 import {
   DOMUS_PROJECTS_CONFIG,
   DOMUS_BASELINE_UNITS,
   formatDomusUsd,
   parseDomusLiveCsv,
 } from "./domusInventory";
+
+test("Black assigns apartment images by model family instead of bedroom count", () => {
+  const a = domusBlackModelArt("A1", 1);
+  const d = domusBlackModelArt("D1", 1);
+  assert.match(a.preview!, /familia-a\.jpg$/);
+  assert.match(d.preview!, /familia-d\.jpg$/);
+  assert.notEqual(a.preview, d.preview);
+  assert.equal(domusBlackModelArt("A4", 1).preview, a.preview);
+  assert.match(domusBlackModelArt("E2", 0).preview!, /familia-e\.jpg$/);
+  assert.match(domusBlackModelArt("I1", 2).preview!, /familia-i\.jpg$/);
+  assert.match(domusBlackModelArt("L", 3).preview!, /familia-l\.jpg$/);
+  assert.match(domusBlackModelArt("M1", 3).preview!, /familia-m\.jpg$/);
+});
+
+test("Black never substitutes an unrelated apartment when model or bedrooms do not match", () => {
+  assert.deepEqual(domusBlackModelArt("A5", 1), {});
+  assert.deepEqual(domusBlackModelArt("A1", 2), {});
+  assert.deepEqual(domusBlackModelArt("E1", 1), {});
+  assert.deepEqual(domusBlackModelArt("Unknown", 0), {});
+  assert.deepEqual(domusBlackModelArt("A10", 1), {});
+});
+
+test("every Black inventory model has an existing complete apartment, floor diagram and reference sheet", () => {
+  const previews = new Set<string>();
+  for (const unit of DOMUS_BASELINE_UNITS["domus-black"]) {
+    const art = domusBlackModelArt(unit.modelo, unit.rooms);
+    for (const kind of ["preview", "plan", "full"] as const) {
+      assert.ok(art[kind], `${unit.modelo} needs ${kind}`);
+      assert.ok(existsSync(new URL(`../public${art[kind]}`, import.meta.url)), `${unit.modelo}: missing ${kind} file`);
+    }
+    previews.add(art.preview!);
+  }
+  assert.equal(previews.size, 13, "the 31 models belong to 13 official visual families");
+});
+
+test("Black uses the location provided by the owner", () => {
+  const config = DOMUS_PROJECTS_CONFIG["domus-black"];
+  assert.equal(config.lat, -17.7592768);
+  assert.equal(config.lng, -63.1938648);
+  assert.equal(config.mapsUrl, "https://maps.app.goo.gl/YT5FEU6qL7Z43ohC8");
+  assert.doesNotMatch(config.address, /Enrique Finot/);
+});
 
 test("domus inventory has valid project configurations", () => {
   const projectIds = ["domus-black", "domus-gold", "domus-onix", "domus-insignia", "domus-luxury", "domus-tower", "domus-infinity"];

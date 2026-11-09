@@ -28,6 +28,10 @@ import {
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
 import { DOMUS_COMMERCIAL_COPY } from "../domusCommercialCopy";
+import {
+  DOMUS_BLACK_MEDIA, DOMUS_BLACK_AMENITIES, DOMUS_BLACK_AMENITY_HIGHLIGHTS,
+  DOMUS_BLACK_EQUIPMENT, domusBlackModelArt, domusBlackModelDetail,
+} from "../domusBlackContent";
 
 interface Props {
   property: Property;
@@ -50,6 +54,7 @@ interface DomusModel {
   areaM2: number;
   detail: string;
   art: ModelArt;
+  planShowsFloor?: boolean;
 }
 
 interface AmenitySlide {
@@ -73,13 +78,6 @@ const SECTIONS = [
   { id: "cierre", label: "Cierre" },
 ];
 
-const BLACK_SHEETS = [
-  "/domus/domus_black/brochure_p02.jpg",
-  "/domus/domus_black/brochure_p03.jpg",
-  "/domus/domus_black/brochure_p04.jpg",
-  "/domus/domus_black/brochure_p05.jpg",
-];
-
 const ONIX_MODELS = ["a2", "b1", "c1", "d1", "e1"];
 
 const PROJECT_META: Record<string, {
@@ -93,25 +91,35 @@ const PROJECT_META: Record<string, {
   nearby?: string[];
   floorPlate?: { href?: string; src?: string; title: string; caption: string };
   amenities: AmenitySlide[];
+  amenityHighlights?: string[];
+  amenityNote?: string;
+  equipment?: typeof DOMUS_BLACK_EQUIPMENT;
+  developerImage?: { src: string; title: string; caption: string; label: string; width: number; height: number };
 }> = {
   "domus-black": {
     sharePath: "/domus-black",
     hero: "/domus/domus_black/fachada_principal.jpg",
-    delivery: null,
+    delivery: DOMUS_PROJECTS_CONFIG["domus-black"].delivery,
     stage: "Etapa 2",
     listLabel: "8 de noviembre de 2026",
     brochure: "https://drive.google.com/file/d/16OM2mFA5QhqxfxOrFTMIVRWMVLrxWLPt/view",
+    lugarImage: DOMUS_BLACK_MEDIA.location,
+    nearby: ["Ventura Mall", "Patio Design", "Supermercados Fidalga e Hipermaxi", "Green Tower y Manzana 40", "Hotel Los Tajibos", "Clínica Dockweiler"],
     floorPlate: {
-      href: "https://drive.google.com/file/d/1zkUYsY9fXnwWkUE_giz01tb4xxpEbiZb/view",
-      title: "Distribución de plantas",
-      caption: "Ubica tu departamento dentro del edificio.",
+      src: DOMUS_BLACK_MEDIA.building,
+      title: "Cómo se organiza Domus Black",
+      caption: "Corte arquitectónico referencial del brochure. Consulta el sector y los accesos de tu unidad.",
     },
-    amenities: [
-      { name: "Una partida entre amigos", category: "Sala de juegos", description: "Haz de una partida de billar el motivo para reunirte y disfrutar el tiempo libre en tu edificio.", image: "/domus/domus_black/social_03.jpg" },
-      { name: "Tu entrenamiento, más cerca", category: "Gimnasio", description: "Encuentra un espacio para moverte, entrenar y mantener tu rutina dentro del edificio.", image: "/domus/domus_black/social_01.jpg" },
-      { name: "El asado también puede ser en casa", category: "Churrasquera y comedor", description: "Recibe a tus amigos en un ambiente con parrilla, barra y espacio para compartir la mesa.", image: "/domus/domus_black/social_02.jpg" },
-      { name: "Una pausa para conversar", category: "Lounge social", description: "Comparte una charla o disfruta un momento de descanso en los livings del área social.", image: "/domus/domus_black/social_04.jpg" },
-    ],
+    amenities: DOMUS_BLACK_AMENITIES,
+    amenityHighlights: DOMUS_BLACK_AMENITY_HIGHLIGHTS,
+    amenityNote: "El edificio diferencia los espacios de uso común y los del sector residencial. Confirma las áreas a las que accede la unidad que elijas.",
+    equipment: DOMUS_BLACK_EQUIPMENT,
+    developerImage: {
+      src: DOMUS_BLACK_MEDIA.portfolio,
+      title: "La colección de Alborada Group",
+      caption: "Proyectos presentados por Alborada Group en el brochure de Domus Black.",
+      label: "Conocer los proyectos de Alborada Group", width: 1429, height: 2178,
+    },
   },
   "domus-gold": {
     sharePath: "/domus-gold",
@@ -251,13 +259,7 @@ function artFor(projectId: string, modelo: string, rooms: number): ModelArt {
       };
     }
   }
-  if (projectId === "domus-black" && rooms >= 0 && rooms <= 3) {
-    return {
-      preview: `/domus/domus_black/modelos/rooms-${rooms}.jpg`,
-      plan: `/domus/domus_black/planos/rooms-${rooms}.jpg`,
-      full: BLACK_SHEETS[rooms],
-    };
-  }
+  if (projectId === "domus-black") return domusBlackModelArt(modelo, rooms);
   return {};
 }
 
@@ -403,8 +405,8 @@ function ModelFrame({
         <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
           <img src={model.art.plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
           <span className="min-w-0">
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">Distribución</span>
-            <span className="block text-xs leading-snug text-stone-600">Amplía el plano y conoce la distribución del departamento.</span>
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">{model.planShowsFloor ? "En el piso" : "Distribución"}</span>
+            <span className="block text-xs leading-snug text-stone-600">{model.planShowsFloor ? "Ubica la familia de este modelo en la planta." : "Amplía el plano y conoce la distribución del departamento."}</span>
           </span>
         </button>
       ) : null}
@@ -417,6 +419,11 @@ export default function DomusLanding({ property, onClose }: Props) {
   const project: DomusProjectConfig = DOMUS_PROJECTS_CONFIG[projectId] || DOMUS_PROJECTS_CONFIG["domus-black"];
   const meta = PROJECT_META[projectId] || PROJECT_META["domus-black"];
   const copy = DOMUS_COMMERCIAL_COPY[projectId] || DOMUS_COMMERCIAL_COPY["domus-black"];
+  const developerImage = meta.developerImage || {
+    src: ALBORADA_PROJECTS_IMAGE, title: "Alborada Group · Proyectos Domus",
+    caption: "Conoce los siete edificios Domus y sus fechas de entrega.",
+    label: "Ver proyectos y fechas de entrega", width: 1280, height: 1600,
+  };
   const inventory = domusInventories[projectId] || domusInventories["domus-black"];
   const [units, setUnits] = useInventory(inventory);
   const rightPanelRef = useRef<HTMLDivElement>(null);
@@ -474,8 +481,9 @@ export default function DomusLanding({ property, onClose }: Props) {
           name: `Modelo ${id}`,
           rooms: activeRooms,
           areaM2: low,
-          detail: high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
+          detail: projectId === "domus-black" ? domusBlackModelDetail(id, activeRooms) : high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
           art: artFor(projectId, id, activeRooms),
+          planShowsFloor: projectId === "domus-black",
         } satisfies DomusModel;
       });
   }, [units, activeRooms, projectId]);
@@ -618,7 +626,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     setZoom({
       view,
       title: currentModel.name,
-      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}`,
+      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}${projectId === "domus-black" ? " · Imagen referencial de la familia del modelo. La orientación y superficie dependen de la unidad." : ""}`,
       art: currentModel.art,
     });
   };
@@ -811,7 +819,7 @@ export default function DomusLanding({ property, onClose }: Props) {
                 {meta.nearby.map((place) => <li key={place}>{place}</li>)}
               </ul>
             )}
-            <a href={`https://maps.google.com/?q=${project.lat},${project.lng}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
+            <a href={project.mapsUrl || `https://maps.google.com/?q=${project.lat},${project.lng}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Explorar la ubicación en el mapa <ArrowRight size={14} />
             </a>
           </section>
@@ -838,6 +846,19 @@ export default function DomusLanding({ property, onClose }: Props) {
                 </div>
               </div>
             )}
+            {meta.amenityHighlights && (
+              <>
+                <div className="flex flex-wrap justify-center gap-2" aria-label="Elegir área social">
+                  {meta.amenities.map((slide, index) => (
+                    <button key={slide.image} type="button" onClick={() => setAmenityIndex(index)} aria-label={`Ver ${slide.category}`} aria-pressed={amenityIndex % meta.amenities.length === index} className={`h-1.5 rounded-full transition-all ${amenityIndex % meta.amenities.length === index ? "w-6 bg-[#9a7b45]" : "w-1.5 bg-stone-300"}`} />
+                  ))}
+                </div>
+                <ul className="grid grid-cols-2 gap-2 text-sm text-stone-700">
+                  {meta.amenityHighlights.map((item) => <li key={item} className="rounded-xl border border-stone-200 bg-white px-3 py-2">{item}</li>)}
+                </ul>
+              </>
+            )}
+            {meta.amenityNote && <p className="text-xs leading-relaxed text-stone-500">{meta.amenityNote}</p>}
           </section>
 
           <section id="tipologias" className="mt-20 scroll-mt-2 border-t border-stone-200/80 pt-6">
@@ -880,7 +901,23 @@ export default function DomusLanding({ property, onClose }: Props) {
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">{copy.equipmentTitle}</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">{copy.equipmentBody}</p>
-            {currentModel?.art.preview && (
+            {meta.equipment ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {meta.equipment.map((group) => (
+                  <article key={group.title} className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+                    <button type="button" onClick={() => setZoom({ view: "solo", src: group.image, title: group.imageLabel, caption: "Detalle de equipamiento publicado en el brochure de Domus Black." })} className="block w-full border-b border-stone-100 bg-white p-3" aria-label={`Ampliar ${group.imageLabel}`}>
+                      <img src={group.image} alt={group.imageLabel} loading="lazy" className="max-h-[320px] w-full object-contain" />
+                    </button>
+                    <div className="space-y-3 p-5">
+                      <h4 className="font-serif text-xl text-stone-900">{group.title}</h4>
+                      <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-stone-600 marker:text-[#9a7b45]">
+                        {group.items.map((item) => <li key={item}>{item}</li>)}
+                      </ul>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : currentModel?.art.preview && (
               <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
                 <img src={currentModel.art.preview} alt={currentModel.name} className="aspect-[16/10] w-full object-contain bg-white" />
               </div>
@@ -898,21 +935,21 @@ export default function DomusLanding({ property, onClose }: Props) {
             </p>
             <button
               type="button"
-              onClick={() => setZoom({ view: "solo", src: ALBORADA_PROJECTS_IMAGE, title: "Alborada Group · Proyectos Domus", caption: "Conoce los siete edificios Domus y sus fechas de entrega." })}
+              onClick={() => setZoom({ view: "solo", src: developerImage.src, title: developerImage.title, caption: developerImage.caption })}
               className="block w-full overflow-hidden rounded-2xl border border-stone-200 bg-black shadow-sm"
-              aria-label="Ampliar los proyectos Domus de Alborada Group"
+              aria-label={meta.developerImage ? `Ampliar ${developerImage.title}` : "Ampliar los proyectos Domus de Alborada Group"}
             >
               <img
-                src={ALBORADA_PROJECTS_IMAGE}
-                alt="Alborada Group y RE/MAX Black: los siete proyectos Domus y sus fechas de entrega"
-                width={1280}
-                height={1600}
+                src={developerImage.src}
+                alt={meta.developerImage ? developerImage.title : "Alborada Group y RE/MAX Black: los siete proyectos Domus y sus fechas de entrega"}
+                width={developerImage.width}
+                height={developerImage.height}
                 loading="lazy"
                 decoding="async"
                 className="block h-auto w-full"
               />
               <span className="flex items-center justify-center gap-2 bg-white px-4 py-3 text-xs font-semibold text-[#816127]">
-                Ver proyectos y fechas de entrega <ArrowRight size={14} />
+                {developerImage.label} <ArrowRight size={14} />
               </span>
             </button>
           </section>

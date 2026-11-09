@@ -21,6 +21,14 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 ### [DOMUS Black](https://nia-web.com/domus-black)
 
+**Actualización con el material aportado por el usuario:** se resolvieron los pendientes visuales de esta sección. Las 31 variantes del inventario se relacionan con 13 familias oficiales A–M. Cada familia tiene departamento completo, planta con su ubicación y ficha individual con plano 2D. Se incorporaron la ubicación de la página 5, el corte del edificio de la página 7, diez imágenes de áreas sociales, el equipamiento de las páginas 27 y 29 y el portafolio de Alborada de la página 2. La siguiente lista conserva los hallazgos de la revisión inicial como antecedente.
+
+La ubicación se corrigió con [el pin confirmado por el usuario](https://maps.app.goo.gl/YT5FEU6qL7Z43ohC8): latitud −17,7592768 y longitud −63,1938648. Se retiró la dirección anterior de Enrique Finot y se conserva «Equipetrol Norte» como referencia de zona, sin inventar una dirección postal. La entrega de noviembre de 2028 procede del afiche aportado por el usuario.
+
+Validación de esta actualización de Black: 54 imágenes verificadas, 99 pruebas aprobadas, tipos y compilación correctos. Las nueve secciones se conservan y el HTML generado de los otros seis DOMUS coincide con la versión anterior. Los datos de unidades, precios y funciones de cotización no cambiaron.
+
+**Criterio ante las erratas del brochure:** E aparece como un dormitorio en la página 33, pero su plano individual y el inventario lo identifican como monoambiente; F figura con 55,20 m² en el brochure y con 52,20 m² en los planos y en el inventario; la fila I de la página 34 repite por error el código A. Se mantienen los dormitorios y metrajes de la lista vigente, se usan las fichas individuales correctas y no se altera ningún precio. Del corte de la página 7 se extrajo el edificio, omitiendo el recuadro antiguo de 137 unidades y los rótulos inconsistentes. El cotizador sigue leyendo las 141 unidades del inventario.
+
 **Lo incorrecto**
 
 - El código elige imágenes por cantidad de dormitorios, sin distinguir el modelo. Reutiliza cuatro láminas para 31 combinaciones de modelo y dormitorios.
@@ -126,9 +134,9 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 ## Pendientes comunes y material útil
 
-- **Ubicación:** seis landings no tienen imagen de ubicación conectada; Insignia sí. Luxury, Tower e Infinity ya tienen el mapa entre sus archivos locales. Black y Gold lo incluyen en sus brochures. Onix requiere revisar material adicional.
-- **Equipamiento:** ninguna de las siete presenta una galería específica de acabados. Black y Onix reutilizan imágenes de modelos; las otras cinco muestran texto y enlace al brochure.
-- **Constructora — actualizado:** se incorporó en las siete landings el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y los siete edificios. Se muestra completo, sin recorte y con opción de ampliarlo. El archivo compartido es `frontend/public/domus/alborada-proyectos-entregas.jpg`.
+- **Ubicación:** Black e Insignia ya tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales; Gold lo incluye en su brochure. Onix requiere revisar material adicional.
+- **Equipamiento:** Black ya tiene tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Onix todavía reutiliza imágenes de modelos; las otras cinco muestran texto y enlace al brochure.
+- **Constructora — actualizado:** Black utiliza el portafolio de Alborada de la página 2 de su brochure. Los otros seis DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Ambas imágenes se muestran completas y se pueden ampliar.
 - Para integrar piezas nuevas: identificar edificio, ambiente o código de modelo; enviar el render completo, sin precios impresos. Preferir fachada vertical de al menos 1.600 px de alto, escenas sociales de al menos 1.600 px de ancho y planos legibles con el departamento entero. Conservar el PDF original para extraer sin perder calidad.
 
 ## Datos que necesitan confirmación

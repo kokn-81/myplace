@@ -57,6 +57,7 @@ export interface DomusProjectConfig {
   city: string;
   lat: number;
   lng: number;
+  mapsUrl?: string;
   delivery: string;
   floorsCount: number;
   totalUnitsCount: number;
@@ -84,11 +85,12 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
     tagline: DOMUS_COMMERCIAL_COPY["domus-black"].hero,
     developer: "Alborada Group Bolivia SRL",
     zone: "Equipetrol Norte",
-    address: "Calle Enrique Finot esq. Calle 9 Oeste, Equipetrol Norte",
+    address: "Equipetrol Norte",
     city: "Santa Cruz de la Sierra",
-    lat: -17.7625,
-    lng: -63.1950,
-    delivery: "Preventa Etapa 2",
+    lat: -17.7592768,
+    lng: -63.1938648,
+    mapsUrl: "https://maps.app.goo.gl/YT5FEU6qL7Z43ohC8",
+    delivery: "Noviembre 2028",
     floorsCount: 16,
     totalUnitsCount: 141,
     availableUnitsCount: 24,
