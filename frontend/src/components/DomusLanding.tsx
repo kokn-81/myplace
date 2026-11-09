@@ -59,6 +59,8 @@ interface AmenitySlide {
   image: string;
 }
 
+const ALBORADA_PROJECTS_IMAGE = "/domus/alborada-proyectos-entregas.jpg";
+
 const SECTIONS = [
   { id: "intro", label: "Inicio" },
   { id: "lugar", label: "Ubicación" },
@@ -894,6 +896,25 @@ export default function DomusLanding({ property, onClose }: Props) {
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
               {copy.developerBody}
             </p>
+            <button
+              type="button"
+              onClick={() => setZoom({ view: "solo", src: ALBORADA_PROJECTS_IMAGE, title: "Alborada Group · Proyectos Domus", caption: "Conoce los siete edificios Domus y sus fechas de entrega." })}
+              className="block w-full overflow-hidden rounded-2xl border border-stone-200 bg-black shadow-sm"
+              aria-label="Ampliar los proyectos Domus de Alborada Group"
+            >
+              <img
+                src={ALBORADA_PROJECTS_IMAGE}
+                alt="Alborada Group y RE/MAX Black: los siete proyectos Domus y sus fechas de entrega"
+                width={1280}
+                height={1600}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full"
+              />
+              <span className="flex items-center justify-center gap-2 bg-white px-4 py-3 text-xs font-semibold text-[#816127]">
+                Ver proyectos y fechas de entrega <ArrowRight size={14} />
+              </span>
+            </button>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">

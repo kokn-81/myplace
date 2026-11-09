@@ -128,7 +128,7 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 - **Ubicación:** seis landings no tienen imagen de ubicación conectada; Insignia sí. Luxury, Tower e Infinity ya tienen el mapa entre sus archivos locales. Black y Gold lo incluyen en sus brochures. Onix requiere revisar material adicional.
 - **Equipamiento:** ninguna de las siete presenta una galería específica de acabados. Black y Onix reutilizan imágenes de modelos; las otras cinco muestran texto y enlace al brochure.
-- **Constructora:** falta un recurso visual de Alborada en esta sección de las siete páginas. El logotipo puede recuperarse del material oficial.
+- **Constructora — actualizado:** se incorporó en las siete landings el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y los siete edificios. Se muestra completo, sin recorte y con opción de ampliarlo. El archivo compartido es `frontend/public/domus/alborada-proyectos-entregas.jpg`.
 - Para integrar piezas nuevas: identificar edificio, ambiente o código de modelo; enviar el render completo, sin precios impresos. Preferir fachada vertical de al menos 1.600 px de alto, escenas sociales de al menos 1.600 px de ancho y planos legibles con el departamento entero. Conservar el PDF original para extraer sin perder calidad.
 
 ## Datos que necesitan confirmación
