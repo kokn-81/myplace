@@ -32,6 +32,14 @@ import {
   DOMUS_BLACK_MEDIA, DOMUS_BLACK_AMENITIES, DOMUS_BLACK_AMENITY_HIGHLIGHTS,
   DOMUS_BLACK_EQUIPMENT, domusBlackModelArt, domusBlackModelDetail,
 } from "../domusBlackContent";
+import {
+  DOMUS_GOLD_MEDIA, DOMUS_GOLD_AMENITIES, DOMUS_GOLD_AMENITY_HIGHLIGHTS,
+  DOMUS_GOLD_EQUIPMENT, domusGoldModelArt, domusGoldModelDetail,
+} from "../domusGoldContent";
+import {
+  ALBORADA_FURNISHED_RATE, ALBORADA_FURNISHED_IMAGE, ALBORADA_FURNISHED_ITEMS,
+  ALBORADA_SPECIAL_SERVICES, supportsAlboradaFurnished, quoteAlboradaFurnished, formatAlboradaUsd,
+} from "../alboradaServices";
 
 interface Props {
   property: Property;
@@ -124,16 +132,26 @@ const PROJECT_META: Record<string, {
   "domus-gold": {
     sharePath: "/domus-gold",
     hero: "/domus/domus_gold/fachada_torre.jpg",
-    delivery: null,
+    delivery: DOMUS_PROJECTS_CONFIG["domus-gold"].delivery,
     stage: "Etapa 2",
     listLabel: "8 de noviembre de 2026",
     brochure: "https://drive.google.com/file/d/15oGaN86t2c69OaGZ3qX9ThN5-8kUJD2y/view",
-    amenities: [
-      { name: "Tu plan para las tardes de calor", category: "Piscina", description: "Refresca el día y disfruta del agua en un espacio que amplía la vida de tu hogar.", image: "/domus/domus_gold/social_piscina.jpg" },
-      { name: "Una bienvenida que se disfruta", category: "Lobby", description: "Llega a casa o recibe a tus visitas en un lobby que forma parte de la experiencia Gold.", image: "/domus/domus_gold/lobby_real.jpg" },
-      { name: "Desconecta junto al agua", category: "Deck de descanso", description: "Haz una pausa, disfruta el aire libre y encuentra tu momento de descanso al lado de la piscina.", image: "/domus/domus_gold/social_deck.jpg" },
-      { name: "La mesa lista para tus encuentros", category: "Churrasquera", description: "Reúne a los tuyos alrededor de un asado y disfruta de un espacio para compartir sin salir del edificio.", image: "/domus/domus_gold/social_churrasquera.jpg" },
-    ],
+    lugarImage: DOMUS_GOLD_MEDIA.location,
+    floorPlate: {
+      src: DOMUS_GOLD_MEDIA.building,
+      title: "Conoce la distribución de Domus Gold",
+      caption: "Esquema referencial del brochure. Confirma el sector, los accesos y las áreas sociales de tu unidad.",
+    },
+    amenities: DOMUS_GOLD_AMENITIES,
+    amenityHighlights: DOMUS_GOLD_AMENITY_HIGHLIGHTS,
+    amenityNote: "El proyecto distingue los sectores de estancias cortas y de vida residencial. Consulta las áreas y accesos que corresponden a tu departamento.",
+    equipment: DOMUS_GOLD_EQUIPMENT,
+    developerImage: {
+      src: DOMUS_GOLD_MEDIA.portfolio,
+      title: "La colección de Alborada Group",
+      caption: "Proyectos presentados por Alborada Group en el brochure de Domus Gold.",
+      label: "Descubrir los proyectos de Alborada Group", width: 1429, height: 2178,
+    },
   },
   "domus-onix": {
     sharePath: "/domus-onix",
@@ -260,6 +278,7 @@ function artFor(projectId: string, modelo: string, rooms: number): ModelArt {
     }
   }
   if (projectId === "domus-black") return domusBlackModelArt(modelo, rooms);
+  if (projectId === "domus-gold") return domusGoldModelArt(modelo, rooms);
   return {};
 }
 
@@ -441,6 +460,7 @@ export default function DomusLanding({ property, onClose }: Props) {
   const [selectedUnitNumber, setSelectedUnitNumber] = useState("");
   const [plan, setPlan] = useState<PlanId>("contado");
   const [addon, setAddon] = useState<AddonId>("none");
+  const [furnishedSelected, setFurnishedSelected] = useState(false);
   const [zoom, setZoom] = useState<
     | { view: "depto" | "planta" | "ficha"; title: string; caption: string; art: ModelArt }
     | { view: "solo"; title: string; caption: string; src: string }
@@ -481,9 +501,9 @@ export default function DomusLanding({ property, onClose }: Props) {
           name: `Modelo ${id}`,
           rooms: activeRooms,
           areaM2: low,
-          detail: projectId === "domus-black" ? domusBlackModelDetail(id, activeRooms) : high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
+          detail: projectId === "domus-black" ? domusBlackModelDetail(id, activeRooms) : projectId === "domus-gold" ? domusGoldModelDetail(id, activeRooms) : high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
           art: artFor(projectId, id, activeRooms),
-          planShowsFloor: projectId === "domus-black",
+          planShowsFloor: projectId === "domus-black" || projectId === "domus-gold",
         } satisfies DomusModel;
       });
   }, [units, activeRooms, projectId]);
@@ -499,6 +519,10 @@ export default function DomusLanding({ property, onClose }: Props) {
   const activeUnit = modelUnits.find((unit) => unit.unitNumber === selectedUnitNumber) || modelUnits.find((unit) => unit.status === "disponible") || modelUnits[0] || null;
   const addonUsd = addonAmount(projectId, addon, plan);
   const quote = quoteUnit(activeUnit, plan, addonUsd);
+  const hasFurnished = supportsAlboradaFurnished(projectId);
+  const furnishedOffer = quoteAlboradaFurnished(projectId, quote ? activeUnit : null, true);
+  const furnishedQuote = furnishedSelected ? furnishedOffer : null;
+  const totalWithFurnished = quote ? quote.total + (furnishedQuote?.amount || 0) : null;
   const selectedCash = activeUnit && activeUnit.status === "disponible" && listedPrice(activeUnit) > 0 ? listedPrice(activeUnit) : null;
   const fromAny = minListed(units);
   const freeCount = units.filter((unit) => unit.status === "disponible").length;
@@ -512,6 +536,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     setModelIndex(0);
     setSelectedUnitNumber("");
     setAddon("none");
+    setFurnishedSelected(false);
     setAmenityIndex(0);
   }, [projectId]);
 
@@ -626,7 +651,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     setZoom({
       view,
       title: currentModel.name,
-      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}${projectId === "domus-black" ? " · Imagen referencial de la familia del modelo. La orientación y superficie dependen de la unidad." : ""}`,
+      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}${projectId === "domus-black" || projectId === "domus-gold" ? " · Imagen referencial de la familia del modelo. La orientación y superficie dependen de la unidad." : ""}`,
       art: currentModel.art,
     });
   };
@@ -662,8 +687,8 @@ export default function DomusLanding({ property, onClose }: Props) {
       propertyRef: projectId,
       operacion: "Preventa",
       zona: project.zone,
-      presupuesto: quote ? String(quote.total) : undefined,
-      extraFilters: activeUnit ? { unidad: activeUnit.unitNumber, piso: activeUnit.floor, modelo: activeUnit.modelo, plan, adicional: addon } : { plan },
+      presupuesto: totalWithFurnished != null ? String(totalWithFurnished) : undefined,
+      extraFilters: activeUnit ? { unidad: activeUnit.unitNumber, piso: activeUnit.floor, modelo: activeUnit.modelo, plan, adicional: addon, ...(hasFurnished ? { furnished: !!furnishedQuote, furnishedUsd: furnishedQuote?.amount || 0 } : {}) } : { plan },
     }).catch(() => {});
     const unitLine = activeUnit
       ? `Unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, modelo ${activeUnit.modelo} (${formatM2(activeUnit.areaM2)} m²)`
@@ -671,10 +696,13 @@ export default function DomusLanding({ property, onClose }: Props) {
     const addonLine = addon === "none" || projectId !== "domus-insignia"
       ? ""
       : `\n• Parqueo: USD ${formatDomusUsd(addonUsd)}`;
-    const money = quote
-      ? `\n• Inversión total: USD ${formatDomusUsd(quote.total)}\n• A la firma: USD ${formatDomusUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? (plan === "hastaEntrega" ? "el total se cancela hasta la entrega" : "sin saldo pendiente") : `USD ${formatDomusUsd(quote.balance)}`}`
+    const furnishedLine = furnishedQuote
+      ? `\n• Furnished Alborada: ${formatM2(furnishedQuote.areaM2)} m² × USD ${ALBORADA_FURNISHED_RATE}/m² = USD ${formatAlboradaUsd(furnishedQuote.amount)}. Forma de pago y colección por confirmar con Alborada.`
       : "";
-    const text = `Hola, vengo de N.I.A y me interesa comprar en ${display} (${project.address}):\n\n• ${unitLine}\n• Modalidad: ${planTitle(plan)}${addonLine}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
+    const money = quote
+      ? `\n• Inversión total${furnishedQuote ? " con furnished" : ""}: USD ${furnishedQuote ? formatAlboradaUsd(totalWithFurnished!) : formatDomusUsd(quote.total)}\n• A la firma${furnishedQuote ? " (solo departamento)" : ""}: USD ${formatDomusUsd(quote.initial)}\n• Saldo contra entrega${furnishedQuote ? " del departamento" : ""}: ${quote.balance == null ? (plan === "hastaEntrega" ? "el total se cancela hasta la entrega" : "sin saldo pendiente") : `USD ${formatDomusUsd(quote.balance)}`}`
+      : "";
+    const text = `Hola, vengo de N.I.A y me interesa comprar en ${display} (${project.address}):\n\n• ${unitLine}\n• Modalidad: ${planTitle(plan)}${addonLine}${furnishedLine}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -905,7 +933,7 @@ export default function DomusLanding({ property, onClose }: Props) {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {meta.equipment.map((group) => (
                   <article key={group.title} className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-                    <button type="button" onClick={() => setZoom({ view: "solo", src: group.image, title: group.imageLabel, caption: "Detalle de equipamiento publicado en el brochure de Domus Black." })} className="block w-full border-b border-stone-100 bg-white p-3" aria-label={`Ampliar ${group.imageLabel}`}>
+                    <button type="button" onClick={() => setZoom({ view: "solo", src: group.image, title: group.imageLabel, caption: `Detalle de equipamiento publicado en el brochure de ${display}.` })} className="block w-full border-b border-stone-100 bg-white p-3" aria-label={`Ampliar ${group.imageLabel}`}>
                       <img src={group.image} alt={group.imageLabel} loading="lazy" className="max-h-[320px] w-full object-contain" />
                     </button>
                     <div className="space-y-3 p-5">
@@ -922,6 +950,13 @@ export default function DomusLanding({ property, onClose }: Props) {
                 <img src={currentModel.art.preview} alt={currentModel.name} className="aspect-[16/10] w-full object-contain bg-white" />
               </div>
             )}
+            <details className="rounded-2xl border border-stone-200 bg-white p-5">
+              <summary className="cursor-pointer font-serif text-xl text-stone-900">Más resuelto, para tu día a día.</summary>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Conoce los servicios especiales de Alborada y elige los que acompañan tu rutina. Consulta su disponibilidad, condiciones y cargos para tu proyecto.</p>
+              <ul className="mt-4 grid grid-cols-1 gap-3 text-sm text-stone-600 sm:grid-cols-2">
+                {ALBORADA_SPECIAL_SERVICES.map((service) => <li key={service} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-[#9a7b45]" />{service}</li>)}
+              </ul>
+            </details>
             <a href={meta.brochure} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-[#816127]">
               <Download size={15} /> {projectId === "domus-onix" ? "Explorar las láminas del proyecto" : "Conocer acabados y detalles"} <ArrowRight size={14} />
             </a>
@@ -1080,8 +1115,31 @@ export default function DomusLanding({ property, onClose }: Props) {
               </div>
             )}
 
+            {hasFurnished && (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 3 · Amoblamiento opcional</p>
+                <p className="text-sm text-stone-600">Imagina llegar y empezar a disfrutar. Suma el servicio furnished de Alborada por USD {ALBORADA_FURNISHED_RATE}/m².</p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button type="button" aria-pressed={!furnishedSelected} onClick={() => setFurnishedSelected(false)} className={`rounded-xl border p-3 text-left ${!furnishedSelected ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">Sin amoblamiento</p>
+                    <p className={`text-xs ${!furnishedSelected ? "text-stone-300" : "text-stone-500"}`}>Con el equipamiento de entrega del departamento</p>
+                  </button>
+                  <button type="button" disabled={!furnishedOffer} aria-pressed={furnishedSelected} onClick={() => setFurnishedSelected(true)} className={`rounded-xl border p-3 text-left disabled:cursor-not-allowed disabled:opacity-50 ${furnishedSelected ? "border-[#9a7b45] bg-[#9a7b45] text-white" : "border-stone-200 bg-white"}`}>
+                    <p className="text-sm font-bold">Con furnished Alborada</p>
+                    <p className={`text-xs ${furnishedSelected ? "text-white/90" : "text-stone-500"}`}>{furnishedOffer ? `+ USD ${formatAlboradaUsd(furnishedOffer.amount)} · ${formatM2(furnishedOffer.areaM2)} m²` : "Elige una unidad disponible para cotizar"}</p>
+                  </button>
+                </div>
+                <details className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-600">
+                  <summary className="cursor-pointer font-semibold text-[#816127]">Descubre qué incluye furnished</summary>
+                  <ul className="mt-3 list-disc space-y-2 pl-4">{ALBORADA_FURNISHED_ITEMS.map((item) => <li key={item}>{item}</li>)}</ul>
+                  <p className="mt-3 text-xs leading-relaxed">La colección, el alcance y la forma de pago se confirman con Alborada. El amoblamiento se cotiza por separado del plan del departamento.</p>
+                  <button type="button" onClick={() => setZoom({ view: "solo", src: ALBORADA_FURNISHED_IMAGE, title: "Furnished Alborada", caption: "Servicio opcional publicado para Domus Gold y Domus Black: USD 150/m². Confirma la colección y condiciones con Alborada." })} className="mt-3 inline-flex items-center gap-2 font-semibold text-[#816127]">Ver propuesta de Alborada <ArrowRight size={14} /></button>
+                </details>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso {projectId === "domus-insignia" ? "4" : "3"} · Plan de pago</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso {projectId === "domus-insignia" || hasFurnished ? "4" : "3"} · Plan de pago</p>
               <div className={`grid grid-cols-1 gap-2 ${plans.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
                 {plans.map((item) => (
                   <button key={item} type="button" onClick={() => setPlan(item)} className={`rounded-xl border p-3 text-left ${plan === item ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
@@ -1103,17 +1161,17 @@ export default function DomusLanding({ property, onClose }: Props) {
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Inversión total</p>
-                    <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{formatDomusUsd(quote.total)}</p>
-                    <p className="mt-1 text-[10px] text-stone-400">{quote.rate ? `USD ${formatDomusUsd(quote.rate)}/m²` : ""}{quote.addon ? ` + adicional USD ${formatDomusUsd(quote.addon)}` : ""}</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{furnishedQuote ? "Total con furnished" : "Inversión total"}</p>
+                    <p className="mt-1 font-serif text-2xl font-bold leading-tight"><span className="block font-mono text-xs font-normal text-stone-400">USD</span>{furnishedQuote ? formatAlboradaUsd(totalWithFurnished!) : formatDomusUsd(quote.total)}</p>
+                    <p className="mt-1 text-[10px] text-stone-400">{quote.rate ? `${furnishedQuote ? "Departamento: " : ""}USD ${formatDomusUsd(quote.rate)}/m²` : ""}{quote.addon ? ` + adicional USD ${formatDomusUsd(quote.addon)}` : ""}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{plan === "hastaEntrega" ? "Pago hasta la entrega" : `Cuota inicial (${quote.pct}%)`}</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{plan === "hastaEntrega" ? "Pago hasta la entrega" : furnishedQuote ? `Inicial del departamento (${quote.pct}%)` : `Cuota inicial (${quote.pct}%)`}</p>
                     <p className="mt-1 font-serif text-2xl font-bold leading-tight text-emerald-400"><span className="block font-mono text-xs font-normal text-emerald-500/80">USD</span>{formatDomusUsd(quote.initial)}</p>
                     <p className="mt-1 text-[10px] text-stone-400">{plan === "contado" ? "A la firma del contrato" : plan === "hastaEntrega" ? "Total del plan elegido" : "A la firma del contrato"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Saldo contra entrega</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{furnishedQuote ? "Saldo del departamento" : "Saldo contra entrega"}</p>
                     {quote.balance == null ? (
                       <>
                         <p className="mt-1 font-serif text-2xl font-bold leading-tight text-stone-500"><span className="block font-mono text-xs font-normal text-stone-500">USD</span>—</p>
@@ -1127,6 +1185,13 @@ export default function DomusLanding({ property, onClose }: Props) {
                     )}
                   </div>
                 </div>
+                {furnishedQuote && (
+                  <div className="space-y-2 rounded-xl border border-[#9a7b45]/50 bg-white/5 p-4 text-xs leading-relaxed text-stone-300" aria-live="polite">
+                    <p>Departamento: USD {formatDomusUsd(quote.total)} · Furnished: USD {formatAlboradaUsd(furnishedQuote.amount)}</p>
+                    <p className="font-semibold text-[#E8D5A8]">Amoblamiento: {formatM2(furnishedQuote.areaM2)} m² × USD {furnishedQuote.rate}/m².</p>
+                    <p>La inicial y el saldo corresponden al departamento. El pago del amoblamiento se acuerda por separado con Alborada.</p>
+                  </div>
+                )}
                 <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {activeUnit.unitNumber}

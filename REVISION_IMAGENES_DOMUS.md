@@ -12,8 +12,8 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 ## Prioridades
 
-1. **Black:** corregir la asociación de imágenes con modelos. Hay planos de monoambientes mostrándose en grupos de uno y tres dormitorios, y un plano de un dormitorio en el grupo de dos.
-2. **Gold, Insignia, Luxury, Tower e Infinity:** incorporar planos por modelo; actualmente el visor muestra una indicación de consulta en lugar del departamento.
+1. **Black y Gold — resuelto en código:** se asociaron las imágenes oficiales con cada familia de modelos y se completaron ubicación, equipamiento, áreas sociales y portafolio.
+2. **Insignia, Luxury, Tower e Infinity:** incorporar planos por modelo; actualmente el visor muestra una indicación de consulta en lugar del departamento.
 3. **Onix:** sustituir los recortes de interiores por vistas completas de cada departamento y completar los modelos sin imagen.
 4. Incorporar ubicación y equipamiento, y mejorar las fachadas de menor resolución.
 
@@ -48,15 +48,17 @@ Validación de esta actualización de Black: 54 imágenes verificadas, 99 prueba
 
 ### [DOMUS Gold](https://nia-web.com/domus-gold)
 
-**Lo observado:** fachada, piscina, lobby, deck y churrasquera corresponden a sus secciones. No identifiqué una imagen activa que represente otro ambiente.
+**Actualización con el material aportado por el usuario:** las 38 variantes del inventario están asociadas a nueve familias oficiales A–I. Cada familia dispone de vista completa del departamento, plano con su posición en el piso y ficha con ambas vistas. Se incorporaron el portafolio de la página 2, el mapa de la página 5, el esquema del edificio de la página 7, diez renders sociales y las láminas de equipamiento de las páginas 23 y 25. La fachada vertical se conserva. Se reescribieron los textos comerciales a partir del brochure, sin promesas de rentabilidad.
 
-**Qué falta**
+La ubicación usa [el pin aportado por el usuario](https://maps.app.goo.gl/PW67vhEjAJqrMzPb8): latitud −17,7702451 y longitud −63,1970063. Se conserva «Equipetrol» como zona, sin inventar una dirección postal. La entrega de noviembre de 2028 procede del afiche del usuario.
 
-- Planos e imágenes completos para las **38 combinaciones de modelo y dormitorios** del catálogo.
-- Imagen de ubicación y material visual de cocina, baño y equipamiento.
-- Planta general para ubicar los departamentos dentro del piso.
+**Erratas del brochure:** B, C y E se rotulan como un dormitorio, pero las imágenes y el inventario los identifican como monoambientes. La descripción de I repite un metraje de 153 m² que no corresponde a sus unidades de 73,20–74,70 m². Las páginas de concepto, distribución y acabados tampoco coinciden en los números de los pisos sociales. Los textos no repiten estos datos contradictorios; el cotizador mantiene los dormitorios, superficies y precios del inventario. Los renders son referencias de la familia; la orientación concreta se confirma para cada unidad.
 
-**Qué se puede aprovechar:** la fachada principal y los renders sociales actuales. El [brochure oficial](https://drive.google.com/file/d/15oGaN86t2c69OaGZ3qX9ThN5-8kUJD2y/view) ya contiene ubicación y tipologías; se pueden extraer y asociar sin pedir otro brochure.
+**Furnished — solo Gold y Black, por indicación expresa del usuario:** opción desactivada inicialmente, a USD 150/m² según la página 8 de ambos brochures. Se calcula con la superficie de la unidad seleccionada y se suma al total. La inicial y el saldo del departamento no cambian: la forma de pago del amoblamiento se acuerda por separado con Alborada porque no está publicada. La opción no aparece en los otros cinco DOMUS ni en unidades sin cotización disponible. El contacto de WhatsApp preparado conserva el desglose, sin enviar mensajes automáticamente.
+
+**Servicios especiales de Alborada:** se incorporó un bloque desplegable en los siete DOMUS con cafetería/room service, limpieza, vending, lockers, asistencia y equipaje, carga eléctrica, inflado y lavado. Se indica que disponibilidad, condiciones y cargos deben confirmarse para cada proyecto; no se presentan como servicios gratuitos incluidos.
+
+**Material pendiente opcional:** originales de mayor resolución de los departamentos, si existen. Las imágenes extraídas del PDF comprimido se muestran completas y pueden ampliarse; las variantes de una misma familia comparten el render referencial del brochure.
 
 ### [DOMUS Onix](https://nia-web.com/domus-onix)
 
@@ -134,9 +136,9 @@ Validación de esta actualización de Black: 54 imágenes verificadas, 99 prueba
 
 ## Pendientes comunes y material útil
 
-- **Ubicación:** Black e Insignia ya tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales; Gold lo incluye en su brochure. Onix requiere revisar material adicional.
-- **Equipamiento:** Black ya tiene tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Onix todavía reutiliza imágenes de modelos; las otras cinco muestran texto y enlace al brochure.
-- **Constructora — actualizado:** Black utiliza el portafolio de Alborada de la página 2 de su brochure. Los otros seis DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Ambas imágenes se muestran completas y se pueden ampliar.
+- **Ubicación:** Black, Gold e Insignia tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales. Onix requiere revisar material adicional.
+- **Equipamiento:** Black y Gold tienen tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Onix todavía reutiliza imágenes de modelos; las otras cuatro muestran texto y enlace al brochure.
+- **Constructora — actualizado:** Black y Gold utilizan el portafolio de Alborada de la página 2 de sus respectivos brochures. Los otros cinco DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Las imágenes se muestran completas y se pueden ampliar.
 - Para integrar piezas nuevas: identificar edificio, ambiente o código de modelo; enviar el render completo, sin precios impresos. Preferir fachada vertical de al menos 1.600 px de alto, escenas sociales de al menos 1.600 px de ancho y planos legibles con el departamento entero. Conservar el PDF original para extraer sin perder calidad.
 
 ## Datos que necesitan confirmación
@@ -153,4 +155,4 @@ Se revisaron el código servido por nia-web.com, los archivos visuales utilizado
 
 La comparación de código verificó que las nueve secciones, sus clases y controles, las imágenes, los datos de inventario y las funciones de precio permanecen iguales. Se renderizaron las siete landings con inventario para comprobar el contenido generado. No se realizó una prueba interactiva de navegador: la conexión visual del navegador no estuvo disponible.
 
-Validación de la versión preparada para publicar: compilación de producción correcta, revisión de tipos sin errores y 95 pruebas aprobadas.
+Validación de la actualización Gold/furnished: 43 imágenes nuevas decodificadas y revisadas; 105 pruebas aprobadas, revisión de tipos sin errores y compilación de producción correcta sobre una copia aislada de los cambios preparados. Se comprobaron 318 escenarios financieros con y sin furnished. Las nueve secciones se conservan en los siete edificios; los otros seis mantienen sus imágenes, modelos y cantidades de unidades. Los datos de unidades y las funciones de precio del departamento permanecen idénticos a la versión anterior. La comprobación de HTML generado no sustituye una prueba interactiva de navegador.

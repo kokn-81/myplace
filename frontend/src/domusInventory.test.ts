@@ -2,12 +2,73 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { domusBlackModelArt } from "./domusBlackContent";
+import { domusGoldModelArt } from "./domusGoldContent";
+import { quoteAlboradaFurnished, supportsAlboradaFurnished, formatAlboradaUsd } from "./alboradaServices";
 import {
   DOMUS_PROJECTS_CONFIG,
   DOMUS_BASELINE_UNITS,
   formatDomusUsd,
   parseDomusLiveCsv,
 } from "./domusInventory";
+
+test("Gold maps all 38 inventory models to the nine official apartment families", () => {
+  const previews = new Set<string>();
+  const models = new Set<string>();
+  for (const unit of DOMUS_BASELINE_UNITS["domus-gold"]) {
+    const art = domusGoldModelArt(unit.modelo, unit.rooms);
+    for (const kind of ["preview", "plan", "full"] as const) {
+      assert.ok(art[kind], `${unit.modelo} needs ${kind}`);
+      assert.ok(existsSync(new URL(`../public${art[kind]}`, import.meta.url)), `${unit.modelo}: missing ${kind}`);
+    }
+    previews.add(art.preview!);
+    models.add(`${unit.modelo}:${unit.rooms}`);
+  }
+  assert.equal(previews.size, 9);
+  assert.equal(models.size, 38);
+});
+
+test("Gold uses model identity and inventory bedrooms rather than incorrect brochure captions", () => {
+  assert.match(domusGoldModelArt("B12", 0).preview!, /familia-b\.jpg$/);
+  assert.match(domusGoldModelArt("C2", 0).preview!, /familia-c\.jpg$/);
+  assert.match(domusGoldModelArt("E4", 0).preview!, /familia-e\.jpg$/);
+  assert.match(domusGoldModelArt("H2", 3).preview!, /familia-h\.jpg$/);
+  assert.match(domusGoldModelArt("Modelo I-2", 2).preview!, /familia-i\.jpg$/);
+  for (const [model, rooms] of [["B13", 0], ["A13", 1], ["B1", 1], ["E1", 1], ["H1", 2], ["Unknown", 0]] as const) {
+    assert.deepEqual(domusGoldModelArt(model, rooms), {});
+  }
+});
+
+test("Gold uses the precise location provided by the owner", () => {
+  const config = DOMUS_PROJECTS_CONFIG["domus-gold"];
+  assert.equal(config.lat, -17.7702451);
+  assert.equal(config.lng, -63.1970063);
+  assert.equal(config.mapsUrl, "https://maps.app.goo.gl/PW67vhEjAJqrMzPb8");
+});
+
+test("furnished is an optional extra only for Gold and Black", () => {
+  for (const id of Object.keys(DOMUS_PROJECTS_CONFIG)) {
+    assert.equal(supportsAlboradaFurnished(id), id === "domus-gold" || id === "domus-black");
+    const unit = { areaM2: 47.3, status: "disponible" };
+    assert.equal(quoteAlboradaFurnished(id, unit, false), null);
+    if (!supportsAlboradaFurnished(id)) assert.equal(quoteAlboradaFurnished(id, unit, true), null);
+  }
+});
+
+test("furnished follows the selected unit's exact area and preserves cents", () => {
+  assert.deepEqual(quoteAlboradaFurnished("domus-black", { areaM2: 47.3, status: "disponible" }, true), { areaM2: 47.3, rate: 150, amount: 7095 });
+  assert.equal(quoteAlboradaFurnished("domus-gold", { areaM2: 47.75, status: "disponible" }, true)!.amount, 7162.5);
+  const i1 = DOMUS_BASELINE_UNITS["domus-gold"].find((unit) => unit.modelo === "I1")!;
+  assert.equal(i1.areaM2, 74.7);
+  // Simulate this model becoming available without changing its real area.
+  assert.equal(quoteAlboradaFurnished("domus-gold", { ...i1, status: "disponible" }, true)!.amount, 11205);
+  assert.equal(formatAlboradaUsd(7162.5), "7.162,5");
+});
+
+test("furnished cannot be quoted for unavailable units or invalid areas", () => {
+  assert.equal(quoteAlboradaFurnished("domus-gold", null, true), null);
+  for (const status of ["vendido", "reservado"]) assert.equal(quoteAlboradaFurnished("domus-gold", { areaM2: 50, status }, true), null);
+  for (const areaM2 of [0, -1, NaN, Infinity]) assert.equal(quoteAlboradaFurnished("domus-black", { areaM2, status: "disponible" }, true), null);
+});
 
 test("Black assigns apartment images by model family instead of bedroom count", () => {
   const a = domusBlackModelArt("A1", 1);
