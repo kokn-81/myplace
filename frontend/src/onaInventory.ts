@@ -1310,10 +1310,14 @@ export function parseOnaCsvText(csvText: string): OnaUnit[] {
   };
 
   const units: OnaUnit[] = [];
+  let floor = 0;
   for (const r of lines) {
-    if (r[0] && r[0].includes("Piso") && r[1] && r[1].startsWith("TIPO")) {
-      const floorMatch = r[0].match(/(\d+)/);
-      const floor = floorMatch ? parseInt(floorMatch[1], 10) : 0;
+    if (r[1] && r[1].startsWith("TIPO")) {
+      if (r[0] && r[0].includes("Piso")) {
+        const floorMatch = r[0].match(/(\d+)/);
+        floor = floorMatch ? parseInt(floorMatch[1], 10) : 0;
+      }
+      if (!floor) continue;
       const tipo = r[1].replace("TIPO", "").trim();
       const rooms = r[2]?.includes("1") ? 1 : 2;
       const interiorM2 = parseNum(r[3]) || 0;
@@ -1354,7 +1358,7 @@ export function parseOnaCsvText(csvText: string): OnaUnit[] {
   return units.length > 0 ? units : ONA_UNITS;
 }
 
-const ONA_LIVE_CACHE_KEY = "ona.live_inventory_cache.v2";
+const ONA_LIVE_CACHE_KEY = "ona.live_inventory_cache.v3";
 
 export async function fetchOnaLiveUnits(): Promise<{ units: OnaUnit[]; source: "live_sheet" | "cached" | "snapshot" }> {
   if (typeof window === "undefined") {
