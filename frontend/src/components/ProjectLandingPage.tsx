@@ -9,10 +9,11 @@ import BlessTowerLanding from "./BlessTowerLanding";
 import BlessDreiLanding from "./BlessDreiLanding";
 import TriventoLanding from "./TriventoLanding";
 import BetonBrutLanding from "./BetonBrutLanding";
+import VerticalGuemesLanding from "./VerticalGuemesLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
-import { isOnaProperty } from "../projectIdentity";
+import { isOnaProperty, isVerticalGuemesProperty } from "../projectIdentity";
 
 interface Props {
   property: Property;
@@ -30,6 +31,10 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isTrivento) {
     return <TriventoLanding property={property} onClose={onClose} />;
+  }
+
+  if (isVerticalGuemesProperty(property)) {
+    return <VerticalGuemesLanding property={property} onClose={onClose} />;
   }
 
   const betonTitle = `${property.title || ""} ${property.complejoNombre || ""}`

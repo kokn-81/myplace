@@ -109,6 +109,14 @@
       "destination": "/api/project-og?project=beton-brut-ii"
     },
     {
+      "source": "/vertical-guemes",
+      "destination": "/api/project-og?project=vertical-guemes"
+    },
+    {
+      "source": "/verticalguemes",
+      "destination": "/api/project-og?project=vertical-guemes"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

@@ -7,6 +7,7 @@ import { BLESS_DREI_BASELINE_UNITS, fetchBlessDreiLiveUnits } from "./blessDreiI
 import { DOMUS_BASELINE_UNITS, fetchDomusLiveUnits } from "./domusInventory";
 import { TRIVENTO_UNITS } from "./triventoInventory";
 import { BETON_UNITS } from "./betonBrutInventory";
+import { VERTICAL_UNITS } from "./verticalGuemesInventory";
 
 export function createInventoryResource<T>(baseline: T[], load: () => Promise<T[]>) {
   let snapshot = baseline;
@@ -48,6 +49,7 @@ export function getProjectAvailableUnits(id: string): CatalogUnit[] | null {
   if (id === "bless-drei") return blessDreiInventory.get().filter(u => u.estado === "LIBRE").map(u => ({ rooms: u.tipologia === "Monoambiente" ? 0 : 1, price: u.precioContado }));
   if (id === "trivento-iv") return TRIVENTO_UNITS.filter(u => u.estado === "LIBRE").map(u => ({ rooms: u.tipologia === "Monoambiente" ? 0 : 1, price: u.precioContado || 0 }));
   if (id === "beton-brut-ii") return BETON_UNITS.filter(u => u.estado === "LIBRE").map(u => ({ rooms: Number(u.rooms), price: u.precioContado || 0 }));
+  if (id === "vertical-guemes" || id === "verticalguemes") return VERTICAL_UNITS.filter(u => u.estado === "LIBRE").map(u => ({ rooms: Number(u.rooms), price: u.cash }));
   if (domusInventories[id]) return domusInventories[id].get().filter(u => u.status === "disponible").map(u => ({ rooms: u.rooms, price: u.cashTotal }));
   return null;
 }

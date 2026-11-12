@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject } from "./projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug } from "./projectIdentity";
 import { isCatalogPropertyVisible } from "./catalogVisibility";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
@@ -124,3 +124,29 @@ test("isProjectOrPreventa: en el catalogo completo filtra exactamente los 14 pro
     assert.ok(projectIds.has(expectedId), `El proyecto con ID ${expectedId} no fue encontrado en los resultados`);
   }
 });
+
+test("Vertical Güemes no se confunde con la calle Güemes ni con otro vertical", () => {
+  const street: Partial<Property> = { id: "900", title: "Casa en calle Güemes", complejoNombre: "Edificio Güemes" };
+  const other: Partial<Property> = { id: "901", title: "Vertical Tower", complejoNombre: "Vertical 60" };
+  const resale: Partial<Property> = { id: "902", title: "Departamento Vertical Güemes", type: "Departamento" };
+  const project: Partial<Property> = { id: "vertical-guemes", title: "VERTICAL GÜEMES · Equipetrol" };
+  assert.equal(isVerticalGuemesProperty(street as Property), false);
+  assert.equal(isVerticalGuemesProperty(other as Property), false);
+  assert.equal(isVerticalGuemesProperty(resale as Property), false);
+  assert.equal(isVerticalGuemesProperty(project as Property), true);
+  assert.equal(isVerticalGuemesSlug("vertical"), false);
+  assert.equal(isVerticalGuemesSlug("guemes"), false);
+  assert.equal(isVerticalGuemesSlug("vertical-guemes"), true);
+  assert.equal(isVerticalGuemesSlug("Vertical Güemes"), true);
+  assert.equal(projectsStillFourteen(catalogSnapshot), 14);
+});
+
+function projectsStillFourteen(snapshot: unknown) {
+  const catalog = (snapshot as any[]).map((raw) => ({
+    ...raw,
+    title: raw.title || raw.titulo,
+    operation: raw.operation || raw.operacion,
+    type: raw.type || raw.tipo,
+  }));
+  return catalog.filter((p) => isProjectOrPreventa(p)).length;
+}

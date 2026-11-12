@@ -106,6 +106,18 @@ export const PROJECTS = {
     canonicalPath: "/beton-brut-ii",
     appUrl: "/?proyecto=beton-brut-ii",
   },
+  "vertical-guemes": {
+    id: "vertical-guemes",
+    title: "Vertical Güemes · Preventa en Equipetrol",
+    description:
+      "Departamentos de 1, 2 y 3 dormitorios en calle Manuel Güemes, Equipetrol, desde USD 72.369,50. Entrega en 2028.",
+    image: `${SITE}/vertical_guemes/fachada.jpg`,
+    imageAlt: "Fachada de Vertical Güemes en Equipetrol",
+    imageWidth: 1800,
+    imageHeight: 1013,
+    canonicalPath: "/vertical-guemes",
+    appUrl: "/?proyecto=vertical-guemes",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -146,6 +158,8 @@ const PATH_ALIASES = {
   "beton-brut": "beton-brut-ii",
   betonbrut: "beton-brut-ii",
   betonbrut2: "beton-brut-ii",
+  "vertical-guemes": "vertical-guemes",
+  verticalguemes: "vertical-guemes",
 };
 
 function fromQuery(value) {
@@ -157,6 +171,8 @@ function fromQuery(value) {
   if (q.includes("euro")) return PROJECTS.eurodesign;
   if (PROJECTS[q]) return PROJECTS[q];
   if (q.includes("domus")) return PROJECTS["domus-black"];
+  const plain = q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (plain.includes("vertical") && plain.includes("guemes")) return PROJECTS["vertical-guemes"];
   if (q.includes("beton")) return PROJECTS["beton-brut-ii"];
   return null;
 }

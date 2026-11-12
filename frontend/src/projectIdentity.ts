@@ -108,6 +108,30 @@ export const isBetonBrutSlug = (value: string): boolean => {
   return q === "beton-brut-ii" || q === "beton-brut" || q === "betonbrut" || q === "betonbrut-ii" || q === "betonbrut2" || q.includes("beton brut") || q.includes("beton-brut");
 };
 
+const normalizeVertical = (value: string) =>
+  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+const mentionsVerticalGuemes = (value: string) => {
+  const q = normalizeVertical(value);
+  return q.includes("vertical") && q.includes("guemes");
+};
+
+export const isVerticalGuemesProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id));
+  if (sId === "vertical-guemes") return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = normalizeVertical(String(p.title || (p as any).titulo || ""));
+  const sCmp = normalizeVertical(String(p.complejoNombre || (p as any).complejo_nombre || ""));
+  return mentionsVerticalGuemes(sTitle) || mentionsVerticalGuemes(sCmp);
+};
+
+export const isVerticalGuemesSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return q === "vertical-guemes" || q === "verticalguemes" || mentionsVerticalGuemes(q);
+};
+
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
@@ -152,6 +176,9 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isBetonBrutSlug(q)) {
     return isBetonBrutProperty(p);
   }
+  if (isVerticalGuemesSlug(q)) {
+    return isVerticalGuemesProperty(p);
+  }
   if (
     q.includes("domus") ||
     q.startsWith("domus-") ||
@@ -180,6 +207,7 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isBlessTowerProperty(p) ||
     isBlessDreiProperty(p) ||
     isTriventoProperty(p) ||
-    isBetonBrutProperty(p)
+    isBetonBrutProperty(p) ||
+    isVerticalGuemesProperty(p)
   );
 };

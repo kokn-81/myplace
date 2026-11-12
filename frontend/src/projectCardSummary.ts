@@ -6,6 +6,7 @@ import { BLESS_TOWER_BASELINE_UNITS, BLESS_TOWER_CONFIG } from "./blessTowerInve
 import { BLESS_DREI_BASELINE_UNITS, BLESS_DREI_CONFIG } from "./blessDreiInventory";
 import { TRIVENTO_CONFIG, TRIVENTO_MODELS } from "./triventoInventory";
 import { BETON_BRUT_CONFIG } from "./betonBrutInventory";
+import { VERTICAL_GUEMES_CONFIG } from "./verticalGuemesInventory";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -95,6 +96,14 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     bedrooms: [1, 2, 3],
     sourceUrl: BETON_BRUT_CONFIG.brochurePdfUrl,
   },
+  "vertical-guemes": {
+    name: VERTICAL_GUEMES_CONFIG.name,
+    builder: VERTICAL_GUEMES_CONFIG.builder,
+    address: `${VERTICAL_GUEMES_CONFIG.address}, ${VERTICAL_GUEMES_CONFIG.zone}`,
+    delivery: VERTICAL_GUEMES_CONFIG.delivery,
+    bedrooms: [1, 2, 3],
+    sourceUrl: VERTICAL_GUEMES_CONFIG.brochurePdfUrl,
+  },
   ...Object.fromEntries(Object.values(DOMUS_PROJECTS_CONFIG).map((project) => [project.id, {
     name: project.name,
     builder: project.developer,
@@ -121,6 +130,7 @@ const PROJECT_ALIASES: Record<string, string> = {
   "beton-brut": "beton-brut-ii",
   betonbrut: "beton-brut-ii",
   betonbrut2: "beton-brut-ii",
+  verticalguemes: "vertical-guemes",
   domus: "domus-black",
   "domus-lux": "domus-luxury",
 };

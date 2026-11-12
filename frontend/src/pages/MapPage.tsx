@@ -1,5 +1,5 @@
-import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
-export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -919,6 +919,49 @@ export const SYNTHETIC_BETON_BRUT_PROPERTY: Property = {
   planesPago: "Contado USD 1.700/m² o plan 30-60 a USD 1.800/m². Parqueo USD 13.000. La lista no publica seña.",
 };
 
+export const SYNTHETIC_VERTICAL_GUEMES_PROPERTY: Property = {
+  id: "vertical-guemes",
+  title: "VERTICAL GÜEMES · Equipetrol",
+  price: 72369.5,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Calle Manuel Güemes",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7699027,
+  lng: -63.1910632,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "59 departamentos de 1, 2 y 3 dormitorios en calle Manuel Güemes, Equipetrol. 20 niveles. Entrega en 2028. Lista de precios del 5/11/2026.",
+  amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
+  images: [
+    "/vertical_guemes/fachada.jpg",
+    "/vertical_guemes/social/piscina.jpg",
+    "/vertical_guemes/social/lobby.jpg",
+    "/vertical_guemes/social/gimnasio.jpg",
+    "/vertical_guemes/social/churrasquera.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "VERTICAL GÜEMES",
+  ocupacion: "Disponible",
+  superficieM2: 49.91,
+  amoblado: false,
+  fechaEntrega: "2028",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  totalUnidades: 59,
+  unidadesDisponibles: 23,
+  reservaUsd: 0,
+  planesPago: "Contado, aporte 75% o aporte 50%. Parqueo desde USD 13.580. La lista no publica seña.",
+};
+
 
 
 
@@ -940,6 +983,7 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "bless-tower": { lat: -17.7638323, lng: -63.1804865 },
   "bless-drei": { lat: -17.7607568, lng: -63.1960473 },
   "trivento-iv": { lat: -17.7612374, lng: -63.1969378 },
+  "vertical-guemes": { lat: -17.7699027, lng: -63.1910632 },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -990,6 +1034,11 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     priorityItems.push(betonBrut);
   }
 
+  const verticalGuemes = (list && list.find((p) => String(p.id) === "vertical-guemes" || isVerticalGuemesProperty(p))) || SYNTHETIC_VERTICAL_GUEMES_PROPERTY;
+  if (verticalGuemes && !priorityItems.some((p) => String(p.id) === String(verticalGuemes.id))) {
+    priorityItems.push(withOfficialPin(verticalGuemes, "vertical-guemes"));
+  }
+
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
     const existing = (list && list.find((p) => String(p.id) === String(domusProp.id))) || domusProp;
@@ -1035,7 +1084,8 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
     isBlessTowerProperty(p) ||
     isBlessDreiProperty(p) ||
     isTriventoProperty(p) ||
-    isBetonBrutProperty(p)
+    isBetonBrutProperty(p) ||
+    isVerticalGuemesProperty(p)
   )
     return true;
   return (
@@ -1400,6 +1450,7 @@ export default function MapPage() {
     const isBDPath = pathname.startsWith("/bless-drei") || pathname.startsWith("/blessdrei");
     const isTriventoPath = pathname.startsWith("/trivento");
     const isBetonPath = pathname.startsWith("/beton-brut") || pathname.startsWith("/betonbrut");
+    const isVerticalPath = pathname.startsWith("/vertical-guemes") || pathname.startsWith("/verticalguemes");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1426,6 +1477,8 @@ export default function MapPage() {
         ? "trivento-iv"
         : isBetonPath
         ? "beton-brut-ii"
+        : isVerticalPath
+        ? "vertical-guemes"
         : isDomusPath
         ? domusSlug || "domus-black"
         : isZenPath
@@ -1437,6 +1490,9 @@ export default function MapPage() {
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isBetonBrutSlug(proyecto)) {
       selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isVerticalGuemesSlug(proyecto)) {
+      selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -1485,6 +1541,8 @@ export default function MapPage() {
       document.title = "Trivento IV · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isBetonBrutProperty(selectedProperty)) {
       document.title = "Béton Brut II · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isVerticalGuemesProperty(selectedProperty)) {
+      document.title = "Vertical Güemes · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isDomusProperty(selectedProperty)) {
       document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
@@ -1512,7 +1570,8 @@ export default function MapPage() {
               isBlessTowerProperty(current) ||
               isBlessDreiProperty(current) ||
               isTriventoProperty(current) ||
-              isBetonBrutProperty(current)
+              isBetonBrutProperty(current) ||
+              isVerticalGuemesProperty(current)
             ) {
               setCurrentIndex(0);
             }
@@ -1525,6 +1584,8 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_TRIVENTO_PROPERTY, { skipHistoryPush: true });
         } else if (isBetonBrutSlug(proyecto)) {
           selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
+        } else if (isVerticalGuemesSlug(proyecto)) {
+          selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
         } else if (target) {
           selectProperty(target, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
@@ -1562,7 +1623,8 @@ export default function MapPage() {
         isBlessTowerProperty(target) ||
         isBlessDreiProperty(target) ||
         isTriventoProperty(target) ||
-        isBetonBrutProperty(target)
+        isBetonBrutProperty(target) ||
+        isVerticalGuemesProperty(target)
       ) {
         setCurrentIndex(0);
       }
@@ -3390,7 +3452,8 @@ export default function MapPage() {
           isBlessTowerProperty(selectedProperty) ||
           isBlessDreiProperty(selectedProperty) ||
           isTriventoProperty(selectedProperty) ||
-          isBetonBrutProperty(selectedProperty)) ? (
+          isBetonBrutProperty(selectedProperty) ||
+          isVerticalGuemesProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div
