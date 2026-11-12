@@ -1,8 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { domusBlackModelArt } from "./domusBlackContent";
 import { domusGoldModelArt } from "./domusGoldContent";
+import { domusOnixModelArt } from "./domusOnixContent";
 import { quoteAlboradaFurnished, supportsAlboradaFurnished, formatAlboradaUsd } from "./alboradaServices";
 import {
   DOMUS_PROJECTS_CONFIG,
@@ -10,6 +11,79 @@ import {
   formatDomusUsd,
   parseDomusLiveCsv,
 } from "./domusInventory";
+
+const onixCsv = readFileSync(new URL("./fixtures/domus-onix-2026-11-12.csv", import.meta.url), "utf8");
+
+test("Onix covers all 17 inventory models with eight official visual families", () => {
+  const previews = new Set<string>();
+  const models = new Set<string>();
+  for (const unit of DOMUS_BASELINE_UNITS["domus-onix"]) {
+    const art = domusOnixModelArt(unit.modelo, unit.rooms);
+    for (const kind of ["preview", "plan", "full"] as const) {
+      assert.ok(art[kind], `${unit.modelo} needs ${kind}`);
+      assert.ok(existsSync(new URL(`../public${art[kind]}`, import.meta.url)), `${unit.modelo}: missing ${kind}`);
+    }
+    previews.add(art.preview!);
+    models.add(`${unit.modelo}:${unit.rooms}`);
+  }
+  assert.equal(previews.size, 8);
+  assert.equal(models.size, 17);
+  assert.match(domusOnixModelArt("PH - G2", 3).preview!, /familia-g\.jpg$/);
+  assert.match(domusOnixModelArt("PH - H", 2).preview!, /familia-h\.jpg$/);
+  for (const [id, rooms] of [["A6", 0], ["B3", 1], ["A1", 1], ["PH - G1", 2], ["PH - H", 3], ["Unknown", 0]] as const) {
+    assert.deepEqual(domusOnixModelArt(id, rooms), {});
+  }
+});
+
+test("Onix uses the supplied pin and exact published availability tab", () => {
+  const config = DOMUS_PROJECTS_CONFIG["domus-onix"];
+  assert.equal(config.lat, -17.7666139);
+  assert.equal(config.lng, -63.2044674);
+  assert.equal(config.mapsUrl, "https://maps.app.goo.gl/UzmjCM2J1xXhhKS39");
+  assert.equal(new URL(config.sheetCsvUrl).searchParams.get("gid"), "875386348");
+});
+
+test("Onix uses the 156 real rows and 14 available units, not the sheet's 158 header", () => {
+  const parsed = parseDomusLiveCsv(onixCsv, "domus-onix");
+  assert.equal(parsed.length, 156);
+  assert.equal(new Set(parsed.map(unit => unit.unitNumber)).size, 156);
+  const available = parsed.filter(unit => unit.status === "disponible");
+  assert.equal(available.length, 14);
+  assert.equal(Math.min(...available.map(unit => unit.cashTotal)), 68255);
+  assert.equal(Math.max(...available.map(unit => unit.cashTotal)), 156512);
+  assert.deepEqual(parsed, DOMUS_BASELINE_UNITS["domus-onix"]);
+});
+
+test("Onix preserves published cents and computes percentage deposits without whole-dollar rounding", () => {
+  const parsed = parseDomusLiveCsv(onixCsv, "domus-onix");
+  const b1 = parsed.find(unit => unit.unitNumber === "502")!;
+  assert.equal(b1.cashTotal, 68255);
+  assert.equal(b1.initial60Total, 70592.5);
+  assert.equal(b1.cuotaInicial60, 42355.5);
+  assert.equal(b1.initial60Total! - b1.cuotaInicial60!, 28237);
+  const c2 = parsed.find(unit => unit.unitNumber === "507")!;
+  assert.equal(c2.initial60Total, 81615.5);
+  assert.equal(c2.cuotaInicial60, 48969.3);
+  assert.equal(formatAlboradaUsd(c2.cuotaInicial60!), "48.969,3");
+});
+
+test("Onix preserves floor-4 exterior areas and never invents prices for unavailable models", () => {
+  const parsed = parseDomusLiveCsv(onixCsv, "domus-onix");
+  const e2 = parsed.find(unit => unit.unitNumber === "404")!;
+  assert.equal(e2.areaM2, 136.7);
+  assert.equal(e2.slabAreaM2, 59);
+  assert.equal(e2.cashTotal, 156512);
+  assert.equal(e2.cuotaInicial40, 66892.8);
+  const d2 = parsed.find(unit => unit.unitNumber === "405")!;
+  assert.equal(d2.areaM2, 136.9);
+  assert.equal(d2.slabAreaM2, 72);
+  const sold = parsed.find(unit => unit.unitNumber === "501")!;
+  assert.equal(sold.status, "vendido");
+  assert.equal(sold.cashTotal, 0);
+  assert.equal(sold.initial40Total, 0);
+  assert.equal(sold.initial60Total, undefined);
+  assert.equal(parsed.find(unit => unit.modelo === "PH - G1")!.areaM2, 155.85);
+});
 
 test("Gold maps all 38 inventory models to the nine official apartment families", () => {
   const previews = new Set<string>();

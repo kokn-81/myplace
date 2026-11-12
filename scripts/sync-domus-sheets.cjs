@@ -16,7 +16,7 @@ const SHEETS = [
   {
     id: 'domus-onix',
     name: 'DOMUS ONIX',
-    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSp7JjKeLRMUqpFbApzC2JYUPHH0u7Zb0A7k3pzWljtA3kLfU6CZuk0oY8KiFnFDKOId9_iu3CzsovJ/pub?output=csv',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSp7JjKeLRMUqpFbApzC2JYUPHH0u7Zb0A7k3pzWljtA3kLfU6CZuk0oY8KiFnFDKOId9_iu3CzsovJ/pub?gid=875386348&single=true&output=csv',
   },
   {
     id: 'domus-insignia',

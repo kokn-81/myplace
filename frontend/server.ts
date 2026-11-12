@@ -164,9 +164,9 @@ app.get(["/domus", "/domus-black", "/domus-gold", "/domus-onix", "/domus-insigni
       img: "https://nia-web.com/domus/domus-gold-fachada.jpg",
     },
     "domus-onix": {
-      title: "DOMUS Onix · Preventa en Radial 23 / Sirari",
-      desc: "Departamentos en preventa desde USD 45.900 en Radial 23 (Barrio Sirari). Arquitectura premium y amenidades de primer nivel.",
-      img: "https://nia-web.com/domus/domus-onix-fachada.jpg",
+      title: "DOMUS Onix · Preventa en Equipetrol / Sirari",
+      desc: "Tu hogar inteligente entre Equipetrol y Sirari, con piscina panorámica y spa. Unidades disponibles desde USD 68.255 según la lista del 12 de noviembre de 2026.",
+      img: "https://nia-web.com/domus/domus_onix/fachada-oficial.jpg",
     },
     "domus-insignia": {
       title: "DOMUS Insignia · Preventa en Equipetrol",

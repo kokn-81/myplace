@@ -58,8 +58,8 @@ export const PROJECTS = {
     "domus-onix",
     "DOMUS Onix",
     "Equipetrol / Sirari",
-    46647,
-    "/domus/domus_onix/lobby_cafeteria.jpg"
+    68255,
+    "/domus/domus_onix/fachada-oficial.jpg"
   ),
   "domus-insignia": domus(
     "domus-insignia",

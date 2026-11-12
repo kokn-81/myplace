@@ -12,9 +12,9 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 ## Prioridades
 
-1. **Black y Gold — resuelto en código:** se asociaron las imágenes oficiales con cada familia de modelos y se completaron ubicación, equipamiento, áreas sociales y portafolio.
+1. **Black, Gold y Onix — resuelto en código:** se asociaron las imágenes oficiales con cada familia de modelos y se completaron ubicación, equipamiento, áreas sociales y portafolio.
 2. **Insignia, Luxury, Tower e Infinity:** incorporar planos por modelo; actualmente el visor muestra una indicación de consulta en lugar del departamento.
-3. **Onix:** sustituir los recortes de interiores por vistas completas de cada departamento y completar los modelos sin imagen.
+3. **Onix — actualizado el 12 de noviembre:** vistas completas, 17 modelos cubiertos y disponibilidad conectada a la pestaña exacta aportada por el usuario.
 4. Incorporar ubicación y equipamiento, y mejorar las fachadas de menor resolución.
 
 ## Estado por proyecto
@@ -62,20 +62,21 @@ La ubicación usa [el pin aportado por el usuario](https://maps.app.goo.gl/PW67v
 
 ### [DOMUS Onix](https://nia-web.com/domus-onix)
 
-**Lo incorrecto o poco útil**
+**Actualización del 12 de noviembre de 2026:** se incorporó el [brochure completo aportado por el usuario](https://drive.google.com/file/d/1x7DKcHymwGKUx9dVC4T-72a1HjKVuFm3/view), de 34 páginas. Los 17 modelos de la lista están asociados a ocho familias oficiales A–H, incluidos los penthouses G1/G2 y H. Cada familia muestra el departamento entero con margen blanco, su posición en la planta y una ficha visual con render, planta e interior. Se conservaron las máscaras de transparencia del PDF; no se usaron los antiguos recortes estrechos. Las variantes comparten el render referencial de su familia.
 
-- Las cinco imágenes conectadas a modelos son recortes estrechos del interior; no dejan entender el departamento completo. Sus fichas completas tienen textos y precios impresos, que pueden quedar desactualizados respecto del cotizador.
-- El carrusel social muestra **planos arquitectónicos** de planta baja, piso 3 y piscina del piso 21. Sirven para explicar distribución, pero faltan renders que permitan imaginar esos ambientes. Los textos ahora identifican que son planos.
-- La fachada es una composición horizontal con márgenes; conviene una fachada vertical limpia para la portada.
-- El botón de planta baja no sustituye la planta del piso donde está el departamento elegido.
+La fachada vertical limpia se usa en la landing, la tarjeta del mapa y la imagen para compartir. Se añadieron el mapa de la página 4, doce renders sociales, el equipamiento de las páginas 22–23 y el portafolio de Alborada de la página 2. Los textos comerciales describen beneficios y ambientes concretos sin prometer rendimientos. Se conservan las nueve secciones y el mismo visor/carrusel de los demás DOMUS.
 
-**Qué falta**
+La ubicación usa [el pin confirmado por el usuario](https://maps.app.goo.gl/UzmjCM2J1xXhhKS39): latitud −17,7666139 y longitud −63,2044674. Se retiró la dirección postal no verificada y se mantiene «Equipetrol / Sirari». La entrega de agosto de 2028 procede del afiche aportado previamente por el usuario.
 
-- Vista completa y plano de los modelos ya conectados: **A2, B1, C1, D1 y E1**.
-- Imagen para los otros **12 modelos**: F, E2, D2, A1, A3, A4, C2, B2, A5, PH-G1, PH-H y PH-G2.
-- Renders oficiales de piscina, área social, gimnasio y lobby; mapa de ubicación y material de acabados/equipamiento.
+**Disponibilidad:** la conexión apunta a la pestaña `875386348` de la [planilla publicada](https://docs.google.com/spreadsheets/d/e/2PACX-1vSp7JjKeLRMUqpFbApzC2JYUPHH0u7Zb0A7k3pzWljtA3kLfU6CZuk0oY8KiFnFDKOId9_iu3CzsovJ/pubhtml#gid=875386348), consultada el 12 de noviembre de 2026. Sus filas contienen **156 unidades y 14 disponibles**; la cabecera dice 158, pero no se inventaron las dos filas faltantes. El mínimo disponible al contado es USD 68.255. Las otras 142 se muestran como «no disponibles», porque la hoja no permite distinguir vendidas de reservadas. Los estados internos conservan el esquema existente y las unidades no disponibles no se cotizan.
 
-**Qué se puede aprovechar:** las láminas locales 05–12 contienen plantas de las familias A–H y pueden servir para las distribuciones. El [PDF conectado](https://drive.google.com/file/d/1Xk8zJaFDr-z4VZLd9C-7UX7XWpIeGW-0/view) es un juego de láminas, no un brochure completo de acabados. **Aquí sí sería especialmente útil un brochure comercial o renders originales adicionales.**
+**Precios y superficies:** se actualizaron el inventario inicial y la copia de respaldo de Onix con las filas oficiales. Se conservaron los centavos de los totales y de los anticipos, sin cambiar el redondeo de los otros seis DOMUS. Las unidades 404 y 405 incluyen losas exteriores de 59 y 72 m² en la hoja; se muestran por separado dentro de su superficie total y se aclara que el render estándar no las representa. No se calcula una superficie interior por diferencia ni se inventa un precio para una unidad sin importe publicado. Furnished sigue limitado a Gold y Black.
+
+**Diferencias de las fuentes:** el brochure rotula el penthouse G con 151,6 m² y la lista vigente con 155,85 m²; el cotizador usa la lista. Las fichas visuales reúnen las imágenes oficiales sin repetir el metraje impreso antiguo. El brochure describe 22 niveles y áreas sociales en los niveles 3 y 21, mientras la planilla lista departamentos hasta el piso 23 e incluye unidades en el 21. Por ello los nuevos textos comerciales no afirman números de pisos sociales ni un total de niveles. La distribución definitiva debe confirmarse con Alborada; el brochure original sigue accesible.
+
+**Material opcional que mejoraría aún más la ficha:** originales de mayor resolución, planos específicos de las losas de 404/405 y confirmación de la numeración definitiva de niveles. La presentación ya tiene imágenes para todos los modelos y ambientes principales.
+
+**Validación de Onix:** 42 imágenes nuevas verificadas; 111 pruebas aprobadas, revisión de tipos y compilación de producción correctas en una copia aislada de los archivos preparados. Se comprobaron los 42 casos de cotización de las 14 unidades disponibles en los tres planes, incluidos los centavos, los saldos y las losas exteriores. También se verificó que las unidades no disponibles no generan cotización, que el enlace para compartir usa la fachada y el precio inicial correctos, y que los otros seis DOMUS conservan su HTML generado, inventarios, configuración y textos. Las funciones de cotización compartidas permanecen iguales. La validación de HTML generado no equivale a una prueba interactiva de navegador.
 
 ### [DOMUS Insignia](https://nia-web.com/domus-insignia)
 
@@ -136,9 +137,9 @@ La ubicación usa [el pin aportado por el usuario](https://maps.app.goo.gl/PW67v
 
 ## Pendientes comunes y material útil
 
-- **Ubicación:** Black, Gold e Insignia tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales. Onix requiere revisar material adicional.
-- **Equipamiento:** Black y Gold tienen tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Onix todavía reutiliza imágenes de modelos; las otras cuatro muestran texto y enlace al brochure.
-- **Constructora — actualizado:** Black y Gold utilizan el portafolio de Alborada de la página 2 de sus respectivos brochures. Los otros cinco DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Las imágenes se muestran completas y se pueden ampliar.
+- **Ubicación:** Black, Gold, Onix e Insignia tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales.
+- **Equipamiento:** Black, Gold y Onix tienen tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Los otros cuatro muestran texto y enlace al brochure.
+- **Constructora — actualizado:** Black, Gold y Onix utilizan el portafolio de Alborada de la página 2 de sus respectivos brochures. Los otros cuatro DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Las imágenes se muestran completas y se pueden ampliar.
 - Para integrar piezas nuevas: identificar edificio, ambiente o código de modelo; enviar el render completo, sin precios impresos. Preferir fachada vertical de al menos 1.600 px de alto, escenas sociales de al menos 1.600 px de ancho y planos legibles con el departamento entero. Conservar el PDF original para extraer sin perder calidad.
 
 ## Datos que necesitan confirmación
