@@ -170,8 +170,8 @@ app.get(["/domus", "/domus-black", "/domus-gold", "/domus-onix", "/domus-insigni
     },
     "domus-insignia": {
       title: "DOMUS Insignia · Preventa en Equipetrol",
-      desc: "Departamentos de 1 y 2 dormitorios en Equipetrol Norte desde USD 65.500. Entrega 2026 y 2027.",
-      img: "https://nia-web.com/domus/domus-insignia-fachada.jpg",
+      desc: "Tu hogar inteligente en Plaza Italia, con piscina, cowork y gimnasio. Unidades disponibles desde USD 66.304,10. Entrega febrero de 2027 según la lista vigente.",
+      img: "https://nia-web.com/domus/domus_insignia/fachada-oficial.jpg",
     },
     "domus-luxury": {
       title: "DOMUS Luxury · Unidades Exclusivas en Equipetrol",

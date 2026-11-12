@@ -20,8 +20,8 @@ const SHEETS = [
   },
   {
     id: 'domus-insignia',
-    name: 'DOMUS INSIGNIA (2026)',
-    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcBNsO5La-GCWYesZy68Lkxyn31_Hf_HUgKl-IlnQ8G_NSkNlP_KUSMd4hVgDG02URzCCmx6BIk0Sq/pub?gid=1272616038&single=true&output=csv',
+    name: 'DOMUS INSIGNIA (GLOBAL)',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcBNsO5La-GCWYesZy68Lkxyn31_Hf_HUgKl-IlnQ8G_NSkNlP_KUSMd4hVgDG02URzCCmx6BIk0Sq/pub?gid=419071271&single=true&output=csv',
   },
   {
     id: 'domus-luxury',

@@ -41,6 +41,10 @@ import {
   DOMUS_ONIX_EQUIPMENT, domusOnixModelArt, domusOnixModelDetail,
 } from "../domusOnixContent";
 import {
+  DOMUS_INSIGNIA_MEDIA, DOMUS_INSIGNIA_AMENITIES, DOMUS_INSIGNIA_AMENITY_HIGHLIGHTS,
+  DOMUS_INSIGNIA_EQUIPMENT, domusInsigniaModelArt, domusInsigniaModelDetail,
+} from "../domusInsigniaContent";
+import {
   ALBORADA_FURNISHED_RATE, ALBORADA_FURNISHED_IMAGE, ALBORADA_FURNISHED_ITEMS,
   ALBORADA_SPECIAL_SERVICES, supportsAlboradaFurnished, quoteAlboradaFurnished, formatAlboradaUsd,
 } from "../alboradaServices";
@@ -183,19 +187,27 @@ const PROJECT_META: Record<string, {
   },
   "domus-insignia": {
     sharePath: "/domus-insignia",
-    hero: "/domus/domus_insignia/fachada_perspectiva.jpg",
-    delivery: "Febrero 2026 / Febrero 2027",
+    hero: DOMUS_INSIGNIA_MEDIA.hero,
+    delivery: DOMUS_PROJECTS_CONFIG["domus-insignia"].delivery,
     stage: "Preventa",
-    listLabel: null,
+    listLabel: "12 de noviembre de 2026",
     brochure: "https://drive.google.com/file/d/1-iHC0tJkWY7guIcr-PwgXGwi3KC-jloa/view",
-    lugarImage: "/domus/domus_insignia/brochure_p04.jpg",
+    lugarImage: DOMUS_INSIGNIA_MEDIA.location,
     nearby: ["Cafetería Ottimo", "Pizzería Vulcanica", "Casa Çuina", "Supermercado Fidalga", "Mall Ventura", "Universidad Utepsa", "Colegio Alemán", "Hotel Los Tajibos"],
-    amenities: [
-      { name: "Bienvenido a tu próxima dirección", category: "Lobby", description: "Un ambiente para llegar a casa y recibir a quienes forman parte de tu vida.", image: "/domus/domus_insignia/lobby_insignia.jpg" },
-      { name: "Desconecta de la rutina", category: "Piscina", description: "Disfruta un momento junto al agua y suma una pausa a tu día sin salir del edificio.", image: "/domus/domus_insignia/social_piscina.jpg" },
-      { name: "Tus reuniones, con su propio espacio", category: "Cowork y reuniones", description: "Separa el trabajo del descanso con un ambiente para reunirte y concentrarte dentro del proyecto.", image: "/domus/domus_insignia/social_cine.jpg" },
-      { name: "Un lugar para avanzar con tus ideas", category: "Cowork", description: "Encuentra un espacio compartido para trabajar, conversar y desarrollar tus proyectos.", image: "/domus/domus_insignia/social_cowork.jpg" },
-    ],
+    floorPlate: {
+      src: DOMUS_INSIGNIA_MEDIA.distribution,
+      title: "Encuentra tu modelo en las plantas de Insignia",
+      caption: "Plantas referenciales del brochure. Ubica el código del modelo y confirma la orientación y distribución de la unidad elegida.",
+    },
+    amenities: DOMUS_INSIGNIA_AMENITIES,
+    amenityHighlights: DOMUS_INSIGNIA_AMENITY_HIGHLIGHTS,
+    equipment: DOMUS_INSIGNIA_EQUIPMENT,
+    developerImage: {
+      src: DOMUS_INSIGNIA_MEDIA.portfolio,
+      title: "La experiencia de Alborada Group",
+      caption: "Portafolio de proyectos presentado en el brochure de Domus Insignia.",
+      label: "Descubrir los proyectos de Alborada Group", width: 2172, height: 1044,
+    },
   },
   "domus-luxury": {
     sharePath: "/domus-lux",
@@ -279,6 +291,7 @@ function publicLine(text: string): string {
 
 function artFor(projectId: string, modelo: string, rooms: number): ModelArt {
   if (projectId === "domus-onix") return domusOnixModelArt(modelo, rooms);
+  if (projectId === "domus-insignia") return domusInsigniaModelArt(modelo, rooms);
   if (projectId === "domus-black") return domusBlackModelArt(modelo, rooms);
   if (projectId === "domus-gold") return domusGoldModelArt(modelo, rooms);
   return {};
@@ -437,7 +450,7 @@ function ModelFrame({
 
 export default function DomusLanding({ property, onClose }: Props) {
   const projectId = useMemo(() => projectIdFromProperty(property), [property]);
-  const formatUsd = projectId === "domus-onix" ? formatAlboradaUsd : formatDomusUsd;
+  const formatUsd = projectId === "domus-onix" || projectId === "domus-insignia" ? formatAlboradaUsd : formatDomusUsd;
   const project: DomusProjectConfig = DOMUS_PROJECTS_CONFIG[projectId] || DOMUS_PROJECTS_CONFIG["domus-black"];
   const meta = PROJECT_META[projectId] || PROJECT_META["domus-black"];
   const copy = DOMUS_COMMERCIAL_COPY[projectId] || DOMUS_COMMERCIAL_COPY["domus-black"];
@@ -504,10 +517,10 @@ export default function DomusLanding({ property, onClose }: Props) {
           name: `Modelo ${id}`,
           rooms: activeRooms,
           areaM2: low,
-          areaLabel: projectId === "domus-onix" && high > low ? `${formatM2(low)} a ${formatM2(high)} m²` : undefined,
-          detail: projectId === "domus-black" ? domusBlackModelDetail(id, activeRooms) : projectId === "domus-gold" ? domusGoldModelDetail(id, activeRooms) : projectId === "domus-onix" ? domusOnixModelDetail(id, activeRooms) : high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
+          areaLabel: (projectId === "domus-onix" || projectId === "domus-insignia") && high > low ? `${formatM2(low)} a ${formatM2(high)} m²` : undefined,
+          detail: projectId === "domus-black" ? domusBlackModelDetail(id, activeRooms) : projectId === "domus-gold" ? domusGoldModelDetail(id, activeRooms) : projectId === "domus-onix" ? domusOnixModelDetail(id, activeRooms) : projectId === "domus-insignia" ? domusInsigniaModelDetail(id, activeRooms) : high > low ? `${formatM2(low)} a ${formatM2(high)} m² en la lista` : ROOM_LABEL[activeRooms] || "",
           art: artFor(projectId, id, activeRooms),
-          planShowsFloor: projectId === "domus-black" || projectId === "domus-gold" || projectId === "domus-onix",
+          planShowsFloor: ["domus-black", "domus-gold", "domus-onix", "domus-insignia"].includes(projectId),
         } satisfies DomusModel;
       });
   }, [units, activeRooms, projectId]);
@@ -655,7 +668,7 @@ export default function DomusLanding({ property, onClose }: Props) {
     setZoom({
       view,
       title: currentModel.name,
-      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}${["domus-black", "domus-gold", "domus-onix"].includes(projectId) ? " · Imagen referencial de la familia del modelo. La orientación y superficie dependen de la unidad." : ""}${activeUnit?.slabAreaM2 ? ` Incluye ${formatM2(activeUnit.slabAreaM2)} m² de losa exterior que no se representan en el render.` : ""}`,
+      caption: `${formatM2(activeUnit?.areaM2 || currentModel.areaM2)} m² · ${ROOM_LABEL[currentModel.rooms] || ""}${["domus-black", "domus-gold", "domus-onix", "domus-insignia"].includes(projectId) ? " · Imagen referencial de la familia del modelo. La orientación y superficie dependen de la unidad." : ""}${activeUnit?.slabAreaM2 ? ` Incluye ${formatM2(activeUnit.slabAreaM2)} m² de losa exterior que no se representan en el render.` : ""}`,
       art: currentModel.art,
     });
   };
@@ -699,7 +712,7 @@ export default function DomusLanding({ property, onClose }: Props) {
       : display;
     const addonLine = addon === "none" || projectId !== "domus-insignia"
       ? ""
-      : `\n• Parqueo: USD ${formatUsd(addonUsd)}`;
+      : `\n• Parqueo: USD ${formatUsd(addonUsd)} (disponibilidad por confirmar)`;
     const furnishedLine = furnishedQuote
       ? `\n• Furnished Alborada: ${formatM2(furnishedQuote.areaM2)} m² × USD ${ALBORADA_FURNISHED_RATE}/m² = USD ${formatAlboradaUsd(furnishedQuote.amount)}. Forma de pago y colección por confirmar con Alborada.`
       : "";
@@ -813,7 +826,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{meta.listLabel ? `Lista del ${meta.listLabel}` : "Lista publicada"}</p>
-                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">{units.length ? `${takenCount} de ${units.length} unidades ${projectId === "domus-onix" ? "no disponibles" : "vendidas o reservadas"}` : "Lista del proyecto"}</p>
+                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">{units.length ? `${takenCount} de ${units.length} unidades ${projectId === "domus-onix" || projectId === "domus-insignia" ? "no disponibles" : "vendidas o reservadas"}` : "Lista del proyecto"}</p>
               </div>
               {units.length > 0 && <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Quedan {freeCount}</span>}
             </div>
@@ -1029,7 +1042,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             )}
             {projectId === "domus-insignia" && (
               <p className="rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
-                Parqueo interior techado, fuera del metro cuadrado: parqueos 1 a 3 a USD 9.000 contado (USD 9.500 en plan) y parqueo 4 a USD 9.500 contado (USD 10.000 en plan).
+                Suma un parqueo interior techado, sujeto a confirmar disponibilidad: opciones 1–3 y 5–7 a USD 9.000 al contado; opción 4 a USD 9.500. También hay otras opciones publicadas a USD 11.000. El parqueo se suma por separado al precio del departamento.
               </p>
             )}
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
@@ -1110,7 +1123,7 @@ export default function DomusLanding({ property, onClose }: Props) {
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                   {([
                     ["none", "Sin parqueo", "Solo el departamento"],
-                    ["p9000", "Parqueos 1 a 3", plan === "contado" ? "USD 9.000" : "USD 9.500"],
+                    ["p9000", "Parqueos 1–3 y 5–7", plan === "contado" ? "USD 9.000" : "USD 9.500"],
                     ["p9500", "Parqueo 4", plan === "contado" ? "USD 9.500" : "USD 10.000"],
                   ] as const).map(([id, label, hint]) => (
                     <button key={id} type="button" onClick={() => setAddon(id)} className={`rounded-xl border p-3 text-left ${addon === id ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
@@ -1119,6 +1132,7 @@ export default function DomusLanding({ property, onClose }: Props) {
                     </button>
                   ))}
                 </div>
+                <p className="text-xs leading-relaxed text-stone-500">Disponibilidad de parqueos por confirmar. La lista también publica los parqueos 8, 9 y 11 a USD 11.000 al contado. <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQcBNsO5La-GCWYesZy68Lkxyn31_Hf_HUgKl-IlnQ8G_NSkNlP_KUSMd4hVgDG02URzCCmx6BIk0Sq/pubhtml?gid=849054095&single=true" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#816127]">Consultar otras opciones</a></p>
               </div>
             )}
 
@@ -1147,7 +1161,7 @@ export default function DomusLanding({ property, onClose }: Props) {
 
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso {projectId === "domus-insignia" || hasFurnished ? "4" : "3"} · Plan de pago</p>
-              <div className={`grid grid-cols-1 gap-2 ${plans.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+              <div className={`grid grid-cols-1 gap-2 ${projectId === "domus-insignia" && plans.length === 1 ? "" : plans.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
                 {plans.map((item) => (
                   <button key={item} type="button" onClick={() => setPlan(item)} className={`rounded-xl border p-3 text-left ${plan === item ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
                     <p className="text-sm font-bold">{planTitle(item)}</p>

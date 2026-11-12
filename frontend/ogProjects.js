@@ -64,9 +64,9 @@ export const PROJECTS = {
   "domus-insignia": domus(
     "domus-insignia",
     "DOMUS Insignia",
-    "Equipetrol / Los Tajibos",
-    39060,
-    "/domus/domus_insignia/brochure_p08.jpg"
+    "Equipetrol / Plaza Italia",
+    66304.1,
+    "/domus/domus_insignia/fachada-oficial.jpg"
   ),
   "domus-luxury": domus(
     "domus-luxury",
@@ -116,10 +116,11 @@ export const PROJECTS = {
 };
 
 function domus(id, name, zone, priceFrom, imagePath) {
+  const startingPrice = id === "domus-insignia" ? priceFrom.toLocaleString("es-BO", { maximumFractionDigits: 2 }) : usd(priceFrom);
   return {
     id,
     title: `${name} · Preventa en ${zone}`,
-    description: `Departamentos en preventa en ${name} (${zone}) desde USD ${usd(priceFrom)}.`,
+    description: `Departamentos en preventa en ${name} (${zone}) desde USD ${startingPrice}.`,
     image: `${SITE}${imagePath}`,
     imageAlt: `${name} en ${zone}`,
     canonicalPath: `/domus/${id}`,

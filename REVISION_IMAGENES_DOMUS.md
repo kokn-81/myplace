@@ -12,8 +12,8 @@ También se corrigieron etiquetas que describían otra cosa: la sala de billar d
 
 ## Prioridades
 
-1. **Black, Gold y Onix — resuelto en código:** se asociaron las imágenes oficiales con cada familia de modelos y se completaron ubicación, equipamiento, áreas sociales y portafolio.
-2. **Insignia, Luxury, Tower e Infinity:** incorporar planos por modelo; actualmente el visor muestra una indicación de consulta en lugar del departamento.
+1. **Black, Gold, Onix e Insignia — resuelto en código:** se asociaron las imágenes oficiales con cada familia de modelos y se completaron ubicación, equipamiento, áreas sociales y portafolio.
+2. **Luxury, Tower e Infinity:** incorporar planos por modelo; actualmente el visor muestra una indicación de consulta en lugar del departamento.
 3. **Onix — actualizado el 12 de noviembre:** vistas completas, 17 modelos cubiertos y disponibilidad conectada a la pestaña exacta aportada por el usuario.
 4. Incorporar ubicación y equipamiento, y mejorar las fachadas de menor resolución.
 
@@ -80,18 +80,23 @@ La ubicación usa [el pin confirmado por el usuario](https://maps.app.goo.gl/Uzm
 
 ### [DOMUS Insignia](https://nia-web.com/domus-insignia)
 
-**Lo incorrecto o mejorable**
+**Actualización del 12 de noviembre de 2026:** se revisaron las 35 páginas del [brochure aportado por el usuario](https://drive.google.com/file/d/1-iHC0tJkWY7guIcr-PwgXGwi3KC-jloa/view). Los 17 modelos identificados en el catálogo oficial se relacionan con 11 familias A–K, con departamento completo, planta con códigos y ficha visual. Se retiraron los antiguos modelos sin correspondencia con las filas oficiales, incluidos G1/G2 y la asociación incorrecta de I a dos dormitorios. I corresponde a un dormitorio.
 
-- `social_cine.jpg` muestra una mesa y puestos de trabajo: es un ambiente de cowork/reuniones, no una sala de cine. Ya se corrigió su descripción. Para mostrar el cine se necesita su imagen real.
-- La fachada utilizada es una composición horizontal de brochure con franja lateral y logotipo. Conviene una fachada vertical sin la diagramación.
-- Algunas imágenes de lobby y piscina conservan títulos o márgenes del brochure; es preferible extraer el render para aprovechar todo el marco.
+Se incorporaron una fachada vertical limpia para landing/tarjeta/imagen compartida, nueve renders sociales, la ubicación de la página 4, las dos plantas de las páginas 22–23, el equipamiento y la domótica de las páginas 9–10 y el portafolio de la página 2. El portafolio muestra los proyectos completos y omite el párrafo antiguo de promesas de plusvalía. Los textos comerciales se reescribieron y se conservaron las nueve secciones, el carrusel y el visor. El brochure identifica **sala de TV**, no un cine; cowork y reuniones tienen ahora sus propias imágenes correctas.
 
-**Qué falta**
+**Disponibilidad vigente:** el enlace publicado abre la pestaña `GLOBAL` (`419071271`), que mezcla varios edificios. El bloque de Insignia contiene solo seis unidades disponibles: **102, 104, 105, 210, 402 y 706**, desde **USD 66.304,10**. La integración limita la lectura a ese bloque; no importa unidades de Luxury o Tower. Se corrigió también el umbral antiguo que descartaba una respuesta de menos de diez unidades. Una sección válida sin unidades disponibles desactiva el stock anterior, sin reponer disponibilidad antigua.
 
-- Planos e imágenes para las **21 combinaciones de modelo y dormitorios**.
-- Render de cine y material visual de equipamiento y acabados.
+El catálogo detallado de la pestaña histórica `1272616038` aporta **66 unidades únicas y 17 modelos**. Se conserva como referencia de distribuciones; el bloque GLOBAL vigente determina la disponibilidad y todos los precios activos. Los importes históricos de las demás unidades se retiran de la cotización. La cabecera dice 68, pero no se inventaron las dos unidades que no están identificadas. Los 76 registros del inventario anterior no coincidían con las filas oficiales.
 
-**Qué está bien:** la ubicación ya tiene una imagen de mapa conectada. El [brochure oficial](https://drive.google.com/file/d/1-iHC0tJkWY7guIcr-PwgXGwi3KC-jloa/view) incluye tipologías y referencias al cine, de modo que se debe buscar primero allí la pieza correcta.
+**Pago y parqueos:** GLOBAL publica los importes al contado con centavos y deja a cero las columnas del 40% y 60%. El cotizador muestra contado; el texto permite consultar financiación con inicial del 40%, sin inventar un precio para ese plan. Se conservan las dos opciones de parqueo del cotizador con precios publicados: 1–3 y 5–7 a USD 9.000 al contado, y 4 a USD 9.500. Se informa de las opciones 8, 9 y 11 a USD 11.000 y se enlaza la pestaña PARQUEOS (`849054095`). No se ofrece el parqueo 10, marcado vendido, ni se interpreta un estado vacío como stock confirmado. La disponibilidad del parqueo se confirma con Alborada. Furnished sigue limitado a Gold y Black.
+
+**Ubicación y entrega:** la celda UBICACIÓN del bloque Insignia enlaza a [este pin](https://goo.gl/maps/Br2fewKCiKuXeqZ39), que resuelve a −17,768904, −63,197911. Se corrigieron las coordenadas y Calle 7 Este por **Calle 7 Oeste**, zona Plaza Italia. La entrega vigente del bloque es **febrero de 2027**, en lugar de la combinación anterior de 2026/2027. Se omiten el avance porcentual y la seña que estas fuentes no publican.
+
+**Equipamiento y metrajes:** el horno y los roperos están sujetos a la condición de más de 50 m² del brochure; el tipo de cocina también depende de la superficie. Los totales se toman de las filas del catálogo y de GLOBAL, no de rótulos inconsistentes del brochure: B presenta 39,28 m² como total, mientras B1/B2 tienen 45,30/47,34 m²; E1/E2, H1/H2 y J1/J2 tienen variantes de superficie. Las fichas visuales reúnen imágenes oficiales sin copiar esos metrajes impresos. La superficie y orientación se confirman por unidad.
+
+**Material que aún ayudaría:** [la carpeta de renders](https://drive.google.com/drive/folders/13Epge1qYQYpzR9ufCpu2setNTEmJBGHo) solo mostró la subcarpeta «Planos de plantas», sin archivos accesibles dentro. Se utilizaron las imágenes del brochure. Serían útiles los originales de mayor resolución y los planos individuales de cada variante; no quedan modelos sin imagen en la ficha preparada.
+
+**Validación de Insignia:** 39 imágenes nuevas verificadas; 118 pruebas aprobadas, revisión de tipos y compilación de producción correctas sobre una copia aislada de los cambios preparados. Se comprobaron 18 escenarios de cotización al contado con y sin los dos adicionales ofrecidos, las unidades no disponibles y el bloqueo de los planes sin precio. Las nueve secciones se conservan y el HTML generado, la configuración, los textos y los inventarios de los otros seis DOMUS permanecen iguales. Se probaron también respuestas con menos de diez unidades y con una sección válida vacía. Las funciones compartidas de cotización no cambiaron. No se realizó una prueba interactiva de navegador.
 
 ### [DOMUS Luxury](https://nia-web.com/domus-lux)
 
@@ -138,8 +143,8 @@ La ubicación usa [el pin confirmado por el usuario](https://maps.app.goo.gl/Uzm
 ## Pendientes comunes y material útil
 
 - **Ubicación:** Black, Gold, Onix e Insignia tienen imagen de ubicación conectada. Luxury, Tower e Infinity tienen el mapa entre sus archivos locales.
-- **Equipamiento:** Black, Gold y Onix tienen tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Los otros cuatro muestran texto y enlace al brochure.
-- **Constructora — actualizado:** Black, Gold y Onix utilizan el portafolio de Alborada de la página 2 de sus respectivos brochures. Los otros cuatro DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Las imágenes se muestran completas y se pueden ampliar.
+- **Equipamiento:** Black, Gold, Onix e Insignia tienen tarjetas separadas para departamento y condominio, con las láminas oficiales y sus prestaciones. Los otros tres muestran texto y enlace al brochure.
+- **Constructora — actualizado:** Black, Gold, Onix e Insignia utilizan el portafolio de Alborada de la página 2 de sus respectivos brochures. Los otros tres DOMUS conservan el afiche original aportado por el usuario con Alborada Group, RE/MAX Black y las fechas de entrega. Las imágenes se muestran completas y se pueden ampliar.
 - Para integrar piezas nuevas: identificar edificio, ambiente o código de modelo; enviar el render completo, sin precios impresos. Preferir fachada vertical de al menos 1.600 px de alto, escenas sociales de al menos 1.600 px de ancho y planos legibles con el departamento entero. Conservar el PDF original para extraer sin perder calidad.
 
 ## Datos que necesitan confirmación
@@ -147,7 +152,7 @@ La ubicación usa [el pin confirmado por el usuario](https://maps.app.goo.gl/Uzm
 Estos datos no se cambiaron durante la revisión de textos:
 
 - **Infinity:** la fecha mostrada es febrero de 2026, ya pasada. Confirmar si está entregado y cuál es el estado comercial actual.
-- **Insignia:** la entrega figura como «Febrero 2026 / Febrero 2027». Confirmar qué fecha corresponde a cada unidad o etapa. El brochure menciona Calle 7 Oeste en su mapa, mientras la configuración del sitio dice Calle 7 Este: verificar dirección y pin.
+- **Insignia — resuelto:** GLOBAL publica febrero de 2027 y su enlace de ubicación coincide con Calle 7 Oeste. Falta identificar las dos unidades que explican la diferencia entre la cabecera de 68 y las 66 filas únicas del catálogo detallado.
 - **Luxury:** la entrega publicada es noviembre de 2026. Confirmar su estado actual. El brochure indica **Calle Río Madera, a 20 m del Mall Las Brisas**, mientras la dirección configurada menciona **Av. Radial 27 entre 3er y 4to Anillo**: precisar el acceso y comprobar el pin antes de incorporar el mapa.
 
 ## Alcance de la verificación

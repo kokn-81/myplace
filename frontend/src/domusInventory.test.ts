@@ -4,13 +4,102 @@ import { existsSync, readFileSync } from "node:fs";
 import { domusBlackModelArt } from "./domusBlackContent";
 import { domusGoldModelArt } from "./domusGoldContent";
 import { domusOnixModelArt } from "./domusOnixContent";
+import { domusInsigniaModelArt } from "./domusInsigniaContent";
 import { quoteAlboradaFurnished, supportsAlboradaFurnished, formatAlboradaUsd } from "./alboradaServices";
 import {
   DOMUS_PROJECTS_CONFIG,
   DOMUS_BASELINE_UNITS,
   formatDomusUsd,
   parseDomusLiveCsv,
+  domusInsigniaCsvSection,
+  mergeDomusInsigniaAvailability,
+  fetchDomusLiveUnits,
 } from "./domusInventory";
+
+const insigniaCsv = readFileSync(new URL("./fixtures/domus-insignia-global-2026-11-12.csv", import.meta.url), "utf8");
+const insigniaCatalogCsv = readFileSync(new URL("./fixtures/domus-insignia-catalog-2026-11-12.csv", import.meta.url), "utf8");
+
+test("Insignia covers its 17 catalog models with 11 official visual families", () => {
+  const previews = new Set<string>();
+  const models = new Set<string>();
+  for (const unit of DOMUS_BASELINE_UNITS["domus-insignia"]) {
+    const art = domusInsigniaModelArt(unit.modelo, unit.rooms);
+    for (const kind of ["preview", "plan", "full"] as const) {
+      assert.ok(art[kind], `${unit.modelo} needs ${kind}`);
+      assert.ok(existsSync(new URL(`../public${art[kind]}`, import.meta.url)), `${unit.modelo}: missing ${kind}`);
+    }
+    previews.add(art.preview!);
+    models.add(`${unit.modelo}:${unit.rooms}`);
+  }
+  assert.equal(previews.size, 11);
+  assert.equal(models.size, 17);
+  assert.match(domusInsigniaModelArt("I", 1).preview!, /familia-i\.jpg$/);
+  for (const [model, rooms] of [["I", 2], ["G1", 0], ["G2", 0], ["D2", 1], ["Unknown", 1]] as const) assert.deepEqual(domusInsigniaModelArt(model, rooms), {});
+});
+
+test("Insignia scopes GLOBAL to its six units and excludes Luxury and Tower", () => {
+  const units = parseDomusLiveCsv(insigniaCsv, "domus-insignia");
+  assert.deepEqual(units.map(unit => unit.unitNumber), ["102", "104", "105", "210", "402", "706"]);
+  assert.ok(units.every(unit => unit.projectId === "domus-insignia"));
+  assert.equal(domusInsigniaCsvSection("DOMUS LUXURY\nPiso,NRO D,MODELO,M2 TOTAL\nPiso 1,101,G,35"), null);
+  assert.deepEqual(parseDomusLiveCsv(insigniaCsv.replace(/DOMUS INSIGNIA/g, "DOMUS OTHER"), "domus-insignia"), []);
+});
+
+test("Insignia preserves cents and never substitutes historic plan prices for blank current columns", () => {
+  const units = parseDomusLiveCsv(insigniaCsv, "domus-insignia");
+  assert.equal(units.find(unit => unit.unitNumber === "210")!.cashTotal, 66304.1);
+  assert.equal(units.find(unit => unit.unitNumber === "105")!.cashTotal, 124303.2);
+  assert.equal(units.find(unit => unit.unitNumber === "102")!.cashTotal, 74080.6);
+  assert.ok(units.every(unit => unit.initial40Total === 0 && unit.initial60Total === undefined));
+  assert.ok(units.every(unit => unit.cuotaInicial40 === undefined && unit.cuotaInicial60 === undefined));
+});
+
+test("Insignia retains only real catalog rows and current availability wins on every price", () => {
+  const catalog = parseDomusLiveCsv(insigniaCatalogCsv, "domus-insignia");
+  assert.equal(catalog.length, 66);
+  const units = mergeDomusInsigniaAvailability(catalog, parseDomusLiveCsv(insigniaCsv, "domus-insignia"));
+  assert.equal(units.length, 66);
+  assert.equal(new Set(units.map(unit => unit.unitNumber)).size, 66);
+  assert.equal(units.filter(unit => unit.status === "disponible").length, 6);
+  assert.ok(units.filter(unit => unit.status !== "disponible").every(unit => unit.cashTotal === 0 && unit.initial40Total === 0 && !unit.initial60Total));
+  assert.deepEqual(JSON.parse(JSON.stringify(units)), DOMUS_BASELINE_UNITS["domus-insignia"]);
+  assert.equal(mergeDomusInsigniaAvailability(units, []).filter(unit => unit.status === "disponible").length, 0);
+});
+
+test("Insignia accepts a valid live list below ten units and does not fall back to stale availability", async () => {
+  const previousFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (input) => {
+      assert.equal(String(input), DOMUS_PROJECTS_CONFIG["domus-insignia"].sheetCsvUrl);
+      return new Response(insigniaCsv);
+    };
+    const units = await fetchDomusLiveUnits("domus-insignia");
+    assert.equal(units.filter(unit => unit.status === "disponible").length, 6);
+    assert.equal(units.length, 66);
+  } finally { globalThis.fetch = previousFetch; }
+});
+
+test("Insignia treats a valid empty project section as sold out instead of importing the next building", async () => {
+  const empty = insigniaCsv.split(/\r?\n/).filter(line => !/^Piso [1247],\d|^,\d/.test(line)).join("\n");
+  assert.ok(domusInsigniaCsvSection(empty));
+  const previousFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async () => new Response(empty);
+    const units = await fetchDomusLiveUnits("domus-insignia");
+    assert.equal(units.length, 66);
+    assert.equal(units.filter(unit => unit.status === "disponible").length, 0);
+  } finally { globalThis.fetch = previousFetch; }
+});
+
+test("Insignia uses the map linked in the current sheet and the current February 2027 delivery", () => {
+  const config = DOMUS_PROJECTS_CONFIG["domus-insignia"];
+  assert.equal(config.lat, -17.768904);
+  assert.equal(config.lng, -63.197911);
+  assert.equal(config.mapsUrl, "https://goo.gl/maps/Br2fewKCiKuXeqZ39");
+  assert.match(config.address, /7 Oeste/);
+  assert.equal(config.delivery, "Febrero 2027");
+  assert.equal(new URL(config.sheetCsvUrl).searchParams.get("gid"), "419071271");
+});
 
 const onixCsv = readFileSync(new URL("./fixtures/domus-onix-2026-11-12.csv", import.meta.url), "utf8");
 
@@ -211,7 +300,7 @@ test("domus inventory baseline contains parsed units for active projects", () =>
   assert.equal(black.length, 141, "Domus Black must have 141 units");
   assert.equal(gold.length, 170, "Domus Gold must have 170 units");
   assert.equal(onix.length, 156, "Domus Onix must have 156 units");
-  assert.equal(insignia.length, 76, "Domus Insignia must have 76 units");
+  assert.equal(insignia.length, 66, "Domus Insignia keeps the 66 uniquely identified catalog rows");
   assert.equal(luxury.length, 83, "Domus Luxury must have 83 units");
 
   // Check unit properties

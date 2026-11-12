@@ -4,6 +4,7 @@
  */
 import { DOMUS_COMMERCIAL_COPY } from "./domusCommercialCopy";
 import { DOMUS_ONIX_AMENITIES } from "./domusOnixContent";
+import { DOMUS_INSIGNIA_AMENITIES } from "./domusInsigniaContent";
 
 export interface DomusUnit {
   projectId: "domus-black" | "domus-gold" | "domus-onix" | "domus-insignia" | "domus-luxury" | "domus-tower" | "domus-infinity";
@@ -359,88 +360,51 @@ export const DOMUS_PROJECTS_CONFIG: Record<string, DomusProjectConfig> = {
     name: "DOMUS INSIGNIA",
     tagline: DOMUS_COMMERCIAL_COPY["domus-insignia"].hero,
     developer: "Alborada Group Bolivia SRL",
-    zone: "Equipetrol / Los Tajibos",
-    address: "Plaza Italia, Calle 7 Este (UV-33), Equipetrol",
+    zone: "Equipetrol / Plaza Italia",
+    address: "Calle 7 Oeste, zona Plaza Italia, Equipetrol",
     city: "Santa Cruz de la Sierra",
-    lat: -17.7685,
-    lng: -63.1940,
-    delivery: "Entrega Febrero 2026 / Febrero 2027",
-    floorsCount: 14,
-    totalUnitsCount: 76,
-    availableUnitsCount: 16,
-    priceFromUsd: 39060,
-    priceToUsd: 166688,
-    m2From: 32.57,
-    m2To: 83.42,
-    pricePerM2Cash: 1440,
-    sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQcBNsO5La-GCWYesZy68Lkxyn31_Hf_HUgKl-IlnQ8G_NSkNlP_KUSMd4hVgDG02URzCCmx6BIk0Sq/pub?gid=1272616038&single=true&output=csv",
-    heroImage: "/domus/domus_insignia/brochure_p08.jpg",
+    lat: -17.768904,
+    lng: -63.197911,
+    mapsUrl: "https://goo.gl/maps/Br2fewKCiKuXeqZ39",
+    delivery: "Febrero 2027",
+    totalUnitsCount: 66,
+    availableUnitsCount: 6,
+    priceFromUsd: 66304.1,
+    priceToUsd: 124303.2,
+    m2From: 31,
+    m2To: 110.39,
+    pricePerM2Cash: 1510,
+    sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQcBNsO5La-GCWYesZy68Lkxyn31_Hf_HUgKl-IlnQ8G_NSkNlP_KUSMd4hVgDG02URzCCmx6BIk0Sq/pub?gid=419071271&single=true&output=csv",
+    heroImage: "/domus/domus_insignia/fachada-oficial.jpg",
     galleryImages: [
-      "/domus/domus_insignia/brochure_p08.jpg",
-      "/domus/domus_insignia/brochure_p06.jpg",
-      "/domus/domus_insignia/brochure_p07.jpg",
-      "/domus/domus_insignia/brochure_p03.jpg",
-      "/domus/domus_insignia/brochure_p04.jpg",
-      "/domus/domus_insignia/brochure_p05.jpg",
+      "/domus/domus_insignia/fachada-oficial.jpg",
+      "/domus/domus_insignia/amenidades/piscina.jpg",
+      "/domus/domus_insignia/amenidades/gimnasio.jpg",
+      "/domus/domus_insignia/amenidades/lobby.jpg",
+      "/domus/domus_insignia/ubicacion-oficial.jpg",
     ],
-    amenities: [
-      {
-        name: "Fachada Escultórica sobre Plaza Italia",
-        category: "Arquitectura",
-        description: "Diseño contemporáneo con madera natural, celosías verticales y balcones corridos con vistas a Los Tajibos.",
-        image: "/domus/domus_insignia/brochure_p08.jpg",
-      },
-      {
-        name: "Lobby Hotelero de Doble Altura",
-        category: "Acceso & Seguridad",
-        description: "Recepción amoblada con detalles en mármol y madera, control biométrico y seguridad 24/7.",
-        image: "/domus/domus_insignia/brochure_p06.jpg",
-      },
-      {
-        name: "Piscina Infinity en Terraza Social",
-        category: "Rooftop",
-        description: "Piscina con cascada e iluminación LED sumergida con vista sobre Plaza Italia y Los Tajibos.",
-        image: "/domus/domus_insignia/brochure_p07.jpg",
-      },
-      {
-        name: "Churrasqueras Panorámicas & Lounge",
-        category: "Social",
-        description: "Parrillas y comedor al aire libre bajo pérgola bioclimática.",
-      },
-    ],
+    amenities: DOMUS_INSIGNIA_AMENITIES,
     typologies: [
       {
-        id: "mono",
-        name: "Monoambiente Plaza",
-        rooms: 0,
-        areaRange: "32,57 – 36,00 m²",
-        cashFrom: 46900,
-        cuota40From: 48529,
-        description: "Monoambiente perfectamente distribuido con cocina americana y balcón privado.",
-        highlights: ["Plaza Italia a 50 metros", "Mobiliario de cocina incluido", "Excelente plusvalía"],
-        planImage: "/domus/domus_insignia/brochure_p04.jpg",
+        id: "mono", name: "Monoambientes para vivir a tu ritmo", rooms: 0,
+        areaRange: "31,00 - 32,57 m?", cashFrom: 0, cuota40From: 0,
+        description: "Espacios integrados de las familias D y G. Sin unidades disponibles en la lista consultada.",
+        highlights: ["Cocina integrada", "Ba?o independiente", "Familias D y G"],
+        planImage: "/domus/domus_insignia/planos/planta-a-g.jpg",
       },
       {
-        id: "1dorm",
-        name: "1 Dormitorio Ejecutivo",
-        rooms: 1,
-        areaRange: "43,14 – 49,06 m²",
-        cashFrom: 62121,
-        cuota40From: 65141,
-        description: "Amplio living-comedor con balcón, dormitorio en suite con vestidor y baño completo.",
-        highlights: ["Dormitorio privado", "Balcón amplio", "Financiamiento hasta 2026/2027"],
-        planImage: "/domus/domus_insignia/brochure_p05.jpg",
+        id: "1dorm", name: "Un dormitorio, m?s privacidad en casa", rooms: 1,
+        areaRange: "37,65 - 61,46 m?", cashFrom: 66304.1, cuota40From: 0,
+        description: "Un dormitorio separado y distintas distribuciones para encontrar tu espacio en Plaza Italia.",
+        highlights: ["Dormitorio independiente", "Equipamiento seg?n superficie", "Consulta el modelo y piso"],
+        planImage: "/domus/domus_insignia/planos/planta-h-k.jpg",
       },
       {
-        id: "2dorm",
-        name: "2 Dormitorios Insignia",
-        rooms: 2,
-        areaRange: "72,00 – 83,42 m²",
-        cashFrom: 103680,
-        cuota40From: 108720,
-        description: "2 dormitorios (1 suite), 2 baños, living espacioso y balcón panorámico corrido.",
-        highlights: ["Suite máster con vestidor", "2 baños", "Vistas despejadas"],
-        planImage: "/domus/domus_insignia/brochure_p06.jpg",
+        id: "2dorm", name: "Dos dormitorios para tu pr?xima etapa", rooms: 2,
+        areaRange: "82,32 - 110,39 m?", cashFrom: 124303.2, cuota40From: 0,
+        description: "Dos dormitorios y espacios para compartir. La superficie y la orientaci?n se confirman para cada unidad.",
+        highlights: ["Dos dormitorios", "Balc?n", "Familia C"],
+        planImage: "/domus/domus_insignia/planos/planta-a-g.jpg",
       },
     ],
   },
@@ -9044,221 +9008,16 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "projectId": "domus-insignia",
     "floor": 1,
     "floorLabel": "Piso 1",
-    "unitNumber": "102 (2027)",
-    "modelo": "A",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 49.06,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 70646,
-    "initial40PerM2": 1510,
-    "initial40Total": 74081,
-    "initial60PerM2": 1475,
-    "initial60Total": 72364,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43418,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 1,
-    "floorLabel": "Piso 1",
-    "unitNumber": "104 (2027)",
-    "modelo": "B2",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 47.34,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 68170,
-    "initial40PerM2": 1510,
-    "initial40Total": 71483,
-    "initial60PerM2": 1475,
-    "initial60Total": 69827,
-    "cuotaInicial40": 28593,
-    "cuotaInicial60": 41896,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 1,
-    "floorLabel": "Piso 1",
-    "unitNumber": "105 (2027)",
-    "modelo": "C",
-    "rooms": 2,
-    "roomsLabel": "2 Dormitorios",
-    "areaM2": 82.32,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 118541,
-    "initial40PerM2": 1510,
-    "initial40Total": 124303,
-    "initial60PerM2": 1475,
-    "initial60Total": 121422,
-    "cuotaInicial40": 49721,
-    "cuotaInicial60": 72853,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 2,
-    "floorLabel": "Piso 2",
-    "unitNumber": "210 (2027)",
-    "modelo": "E2",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 43.91,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 63230,
-    "initial40PerM2": 1510,
-    "initial40Total": 66304,
-    "initial60PerM2": 1475,
-    "initial60Total": 64767,
-    "cuotaInicial40": 26522,
-    "cuotaInicial60": 38860,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 4,
-    "floorLabel": "Piso 4",
-    "unitNumber": "402 (2027)",
-    "modelo": "A",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 49.06,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 70646,
-    "initial40PerM2": 1510,
-    "initial40Total": 74081,
-    "initial60PerM2": 1475,
-    "initial60Total": 72364,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43418,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 7,
-    "floorLabel": "Piso 7",
-    "unitNumber": "706 (2027)",
-    "modelo": "K",
-    "rooms": 1,
-    "roomsLabel": "1 Dormitorio",
-    "areaM2": 51.34,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 73930,
-    "initial40PerM2": 1510,
-    "initial40Total": 77523,
-    "initial60PerM2": 1475,
-    "initial60Total": 75727,
-    "cuotaInicial40": 31009,
-    "cuotaInicial60": 45436,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 2,
-    "floorLabel": "Piso 2",
-    "unitNumber": "214 (2027)",
-    "modelo": "G2",
-    "rooms": 0,
-    "roomsLabel": "Monoambiente",
-    "areaM2": 38.1,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 54864,
-    "initial40PerM2": 1510,
-    "initial40Total": 55245,
-    "initial60PerM2": 1475,
-    "initial60Total": 56198,
-    "cuotaInicial40": 22098,
-    "cuotaInicial60": 33719,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 3,
-    "floorLabel": "Piso 3",
-    "unitNumber": "308 (2027)",
-    "modelo": "G1",
-    "rooms": 0,
-    "roomsLabel": "Monoambiente",
-    "areaM2": 38.9,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 56016,
-    "initial40PerM2": 1510,
-    "initial40Total": 56405,
-    "initial60PerM2": 1475,
-    "initial60Total": 57378,
-    "cuotaInicial40": 22562,
-    "cuotaInicial60": 34427,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 7,
-    "floorLabel": "Piso 7",
-    "unitNumber": "703 (2027)",
-    "modelo": "I",
-    "rooms": 0,
-    "roomsLabel": "Monoambiente",
-    "areaM2": 36.13,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 52027,
-    "initial40PerM2": 1510,
-    "initial40Total": 54195,
-    "initial60PerM2": 1475,
-    "initial60Total": 53292,
-    "cuotaInicial40": 21678,
-    "cuotaInicial60": 31975,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 5,
-    "floorLabel": "Piso 5",
-    "unitNumber": "504 (2027)",
-    "modelo": "E",
-    "rooms": 0,
-    "roomsLabel": "Monoambiente",
-    "areaM2": 30.54,
-    "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 43978,
-    "initial40PerM2": 1510,
-    "initial40Total": 61080,
-    "initial60PerM2": 1475,
-    "initial60Total": 45047,
-    "cuotaInicial40": 24432,
-    "cuotaInicial60": 27028,
-    "deliveryYear": "Febrero 2027"
-  },
-  {
-    "projectId": "domus-insignia",
-    "floor": 1,
-    "floorLabel": "Piso 1",
     "unitNumber": "101",
     "modelo": "G",
     "rooms": 0,
     "roomsLabel": "Monoambiente",
     "areaM2": 32.57,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 46901,
-    "initial40PerM2": 1490,
-    "initial40Total": 48529,
-    "initial60PerM2": 1465,
-    "initial60Total": 47715,
-    "cuotaInicial40": 19412,
-    "cuotaInicial60": 28629,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9270,15 +9029,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 49.06,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 70646,
-    "initial40PerM2": 1490,
-    "initial40Total": 74081,
-    "initial60PerM2": 1465,
-    "initial60Total": 71873,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43124,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 74080.6,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9290,15 +9044,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 45.3,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 66365,
-    "initial40PerM2": 1490,
-    "initial40Total": 68403,
-    "initial60PerM2": 1465,
-    "initial60Total": 66365,
-    "cuotaInicial40": 27361,
-    "cuotaInicial60": 39819,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9310,15 +9059,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 47.34,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 68170,
-    "initial40PerM2": 1490,
-    "initial40Total": 71483,
-    "initial60PerM2": 1465,
-    "initial60Total": 69353,
-    "cuotaInicial40": 28593,
-    "cuotaInicial60": 41612,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 71483.4,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9330,15 +9074,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "2 Dormitorios",
     "areaM2": 82.32,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 118541,
-    "initial40PerM2": 1490,
-    "initial40Total": 124303,
-    "initial60PerM2": 1465,
-    "initial60Total": 120599,
-    "cuotaInicial40": 49721,
-    "cuotaInicial60": 72359,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 124303.2,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9350,15 +9089,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 31,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 44640,
-    "initial40PerM2": 1490,
-    "initial40Total": 46190,
-    "initial60PerM2": 1465,
-    "initial60Total": 45415,
-    "cuotaInicial40": 18476,
-    "cuotaInicial60": 27249,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9370,15 +9104,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.28,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 62323,
-    "initial40PerM2": 1490,
-    "initial40Total": 64487,
-    "initial60PerM2": 1465,
-    "initial60Total": 63405,
-    "cuotaInicial40": 25795,
-    "cuotaInicial60": 38043,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9390,15 +9119,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.65,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54216,
-    "initial40PerM2": 1490,
-    "initial40Total": 56099,
-    "initial60PerM2": 1465,
-    "initial60Total": 55157,
-    "cuotaInicial40": 22440,
-    "cuotaInicial60": 33094,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9410,15 +9134,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.74,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54346,
-    "initial40PerM2": 1490,
-    "initial40Total": 56233,
-    "initial60PerM2": 1465,
-    "initial60Total": 55289,
-    "cuotaInicial40": 22493,
-    "cuotaInicial60": 33173,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9430,15 +9149,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.91,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 63230,
-    "initial40PerM2": 1490,
-    "initial40Total": 65426,
-    "initial60PerM2": 1465,
-    "initial60Total": 64328,
-    "cuotaInicial40": 26170,
-    "cuotaInicial60": 38597,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9450,15 +9164,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.08,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 46195,
-    "initial40PerM2": 1490,
-    "initial40Total": 47799,
-    "initial60PerM2": 1465,
-    "initial60Total": 46997,
-    "cuotaInicial40": 19120,
-    "cuotaInicial60": 28198,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9470,15 +9179,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.57,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 41038,
-    "initial40PerM2": 1490,
-    "initial40Total": 42341,
-    "initial60PerM2": 1465,
-    "initial60Total": 47715,
-    "cuotaInicial40": 16936,
-    "cuotaInicial60": 28629,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9490,15 +9194,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 49.06,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 71873,
-    "initial40PerM2": 1490,
-    "initial40Total": 74081,
-    "initial60PerM2": 1465,
-    "initial60Total": 71873,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43124,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9510,15 +9209,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 45.3,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 66365,
-    "initial40PerM2": 1490,
-    "initial40Total": 68403,
-    "initial60PerM2": 1465,
-    "initial60Total": 66365,
-    "cuotaInicial40": 27361,
-    "cuotaInicial60": 39819,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9530,15 +9224,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 47.34,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 68170,
-    "initial40PerM2": 1490,
-    "initial40Total": 71483,
-    "initial60PerM2": 1465,
-    "initial60Total": 69353,
-    "cuotaInicial40": 28593,
-    "cuotaInicial60": 41612,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9550,15 +9239,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "2 Dormitorios",
     "areaM2": 82.32,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 120599,
-    "initial40PerM2": 1490,
-    "initial40Total": 124303,
-    "initial60PerM2": 1465,
-    "initial60Total": 120599,
-    "cuotaInicial40": 49721,
-    "cuotaInicial60": 72359,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9570,15 +9254,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 31,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 39060,
-    "initial40PerM2": 1490,
-    "initial40Total": 40300,
-    "initial60PerM2": 1465,
-    "initial60Total": 45415,
-    "cuotaInicial40": 16120,
-    "cuotaInicial60": 27249,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9590,15 +9269,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.28,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 62323,
-    "initial40PerM2": 1490,
-    "initial40Total": 64487,
-    "initial60PerM2": 1465,
-    "initial60Total": 63405,
-    "cuotaInicial40": 25795,
-    "cuotaInicial60": 38043,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9610,15 +9284,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.65,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54216,
-    "initial40PerM2": 1490,
-    "initial40Total": 56099,
-    "initial60PerM2": 1465,
-    "initial60Total": 55157,
-    "cuotaInicial40": 22440,
-    "cuotaInicial60": 33094,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9630,15 +9299,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.74,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54346,
-    "initial40PerM2": 1490,
-    "initial40Total": 56233,
-    "initial60PerM2": 1465,
-    "initial60Total": 55289,
-    "cuotaInicial40": 22493,
-    "cuotaInicial60": 33173,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9650,15 +9314,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.91,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 63230,
-    "initial40PerM2": 1490,
-    "initial40Total": 66304,
-    "initial60PerM2": 1465,
-    "initial60Total": 64328,
-    "cuotaInicial40": 26522,
-    "cuotaInicial60": 38597,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 66304.1,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9670,15 +9329,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.08,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 40421,
-    "initial40PerM2": 1490,
-    "initial40Total": 41704,
-    "initial60PerM2": 1465,
-    "initial60Total": 46997,
-    "cuotaInicial40": 16682,
-    "cuotaInicial60": 28198,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9690,15 +9344,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.57,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 41038,
-    "initial40PerM2": 1490,
-    "initial40Total": 42341,
-    "initial60PerM2": 1465,
-    "initial60Total": 47715,
-    "cuotaInicial40": 16936,
-    "cuotaInicial60": 28629,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9710,15 +9359,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 49.06,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 71873,
-    "initial40PerM2": 1490,
-    "initial40Total": 74081,
-    "initial60PerM2": 1465,
-    "initial60Total": 71873,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43124,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9730,15 +9374,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 45.3,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 65232,
-    "initial40PerM2": 1490,
-    "initial40Total": 68403,
-    "initial60PerM2": 1465,
-    "initial60Total": 66365,
-    "cuotaInicial40": 27361,
-    "cuotaInicial60": 39819,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9750,15 +9389,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 47.34,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 69353,
-    "initial40PerM2": 1490,
-    "initial40Total": 71483,
-    "initial60PerM2": 1465,
-    "initial60Total": 69353,
-    "cuotaInicial40": 28593,
-    "cuotaInicial60": 41612,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9770,15 +9404,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "2 Dormitorios",
     "areaM2": 82.32,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 120599,
-    "initial40PerM2": 1490,
-    "initial40Total": 124303,
-    "initial60PerM2": 1465,
-    "initial60Total": 120599,
-    "cuotaInicial40": 49721,
-    "cuotaInicial60": 72359,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9790,15 +9419,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 31,
     "status": "reservado",
-    "cashPerM2": 1440,
-    "cashTotal": 44640,
-    "initial40PerM2": 1490,
-    "initial40Total": 46810,
-    "initial60PerM2": 1465,
-    "initial60Total": 45415,
-    "cuotaInicial40": 18724,
-    "cuotaInicial60": 27249,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9810,15 +9434,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.28,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 62323,
-    "initial40PerM2": 1490,
-    "initial40Total": 64487,
-    "initial60PerM2": 1465,
-    "initial60Total": 63405,
-    "cuotaInicial40": 25795,
-    "cuotaInicial60": 38043,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9830,15 +9449,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.65,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54216,
-    "initial40PerM2": 1490,
-    "initial40Total": 56099,
-    "initial60PerM2": 1465,
-    "initial60Total": 55157,
-    "cuotaInicial40": 22440,
-    "cuotaInicial60": 33094,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9850,15 +9464,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.74,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54346,
-    "initial40PerM2": 1490,
-    "initial40Total": 56233,
-    "initial60PerM2": 1465,
-    "initial60Total": 55289,
-    "cuotaInicial40": 22493,
-    "cuotaInicial60": 33173,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9870,15 +9479,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.91,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 63230,
-    "initial40PerM2": 1490,
-    "initial40Total": 65426,
-    "initial60PerM2": 1465,
-    "initial60Total": 64328,
-    "cuotaInicial40": 26170,
-    "cuotaInicial60": 38597,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9890,15 +9494,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.08,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 40421,
-    "initial40PerM2": 1490,
-    "initial40Total": 41704,
-    "initial60PerM2": 1465,
-    "initial60Total": 46997,
-    "cuotaInicial40": 16682,
-    "cuotaInicial60": 28198,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9910,15 +9509,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.57,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 46901,
-    "initial40PerM2": 1490,
-    "initial40Total": 48529,
-    "initial60PerM2": 1465,
-    "initial60Total": 47715,
-    "cuotaInicial40": 19412,
-    "cuotaInicial60": 28629,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9930,15 +9524,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 49.06,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 70646,
-    "initial40PerM2": 1490,
-    "initial40Total": 74081,
-    "initial60PerM2": 1465,
-    "initial60Total": 71873,
-    "cuotaInicial40": 29632,
-    "cuotaInicial60": 43124,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 74080.6,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9950,15 +9539,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 45.3,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 66365,
-    "initial40PerM2": 1490,
-    "initial40Total": 68403,
-    "initial60PerM2": 1465,
-    "initial60Total": 66365,
-    "cuotaInicial40": 27361,
-    "cuotaInicial60": 39819,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9970,15 +9554,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 47.34,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 69353,
-    "initial40PerM2": 1490,
-    "initial40Total": 71483,
-    "initial60PerM2": 1465,
-    "initial60Total": 69353,
-    "cuotaInicial40": 28593,
-    "cuotaInicial60": 41612,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -9990,15 +9569,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "2 Dormitorios",
     "areaM2": 110.39,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 161721,
-    "initial40PerM2": 1490,
-    "initial40Total": 166689,
-    "initial60PerM2": 1465,
-    "initial60Total": 161721,
-    "cuotaInicial40": 66676,
-    "cuotaInicial60": 97033,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10010,15 +9584,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.28,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 62323,
-    "initial40PerM2": 1490,
-    "initial40Total": 64487,
-    "initial60PerM2": 1465,
-    "initial60Total": 63405,
-    "cuotaInicial40": 25795,
-    "cuotaInicial60": 38043,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10030,15 +9599,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.65,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54216,
-    "initial40PerM2": 1490,
-    "initial40Total": 56099,
-    "initial60PerM2": 1465,
-    "initial60Total": 55157,
-    "cuotaInicial40": 22440,
-    "cuotaInicial60": 33094,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10050,15 +9614,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.74,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 54346,
-    "initial40PerM2": 1490,
-    "initial40Total": 56233,
-    "initial60PerM2": 1465,
-    "initial60Total": 55289,
-    "cuotaInicial40": 22493,
-    "cuotaInicial60": 33173,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10070,15 +9629,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.91,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 63230,
-    "initial40PerM2": 1490,
-    "initial40Total": 65426,
-    "initial60PerM2": 1465,
-    "initial60Total": 64328,
-    "cuotaInicial40": 26170,
-    "cuotaInicial60": 38597,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10090,15 +9644,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.08,
     "status": "reservado",
-    "cashPerM2": 1440,
-    "cashTotal": 46195,
-    "initial40PerM2": 1490,
-    "initial40Total": 48441,
-    "initial60PerM2": 1465,
-    "initial60Total": 46997,
-    "cuotaInicial40": 19376,
-    "cuotaInicial60": 28198,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10110,15 +9659,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.57,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 47715,
-    "initial40PerM2": 1490,
-    "initial40Total": 49181,
-    "initial60PerM2": 1465,
-    "initial60Total": 47715,
-    "cuotaInicial40": 19672,
-    "cuotaInicial60": 28629,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10130,15 +9674,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 49.06,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 73099,
-    "initial40PerM2": 1490,
-    "initial40Total": 75552,
-    "initial60PerM2": 1465,
-    "initial60Total": 71873,
-    "cuotaInicial40": 30221,
-    "cuotaInicial60": 43124,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10150,15 +9689,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 45.3,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 67497,
-    "initial40PerM2": 1490,
-    "initial40Total": 69762,
-    "initial60PerM2": 1465,
-    "initial60Total": 66365,
-    "cuotaInicial40": 27905,
-    "cuotaInicial60": 39819,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10170,15 +9704,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 47.34,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 70537,
-    "initial40PerM2": 1490,
-    "initial40Total": 72904,
-    "initial60PerM2": 1465,
-    "initial60Total": 69353,
-    "cuotaInicial40": 29162,
-    "cuotaInicial60": 41612,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10190,15 +9719,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "2 Dormitorios",
     "areaM2": 82.32,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 122657,
-    "initial40PerM2": 1490,
-    "initial40Total": 126773,
-    "initial60PerM2": 1465,
-    "initial60Total": 120599,
-    "cuotaInicial40": 50709,
-    "cuotaInicial60": 72359,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10210,15 +9734,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 31,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 45415,
-    "initial40PerM2": 1490,
-    "initial40Total": 46810,
-    "initial60PerM2": 1465,
-    "initial60Total": 45415,
-    "cuotaInicial40": 18724,
-    "cuotaInicial60": 27249,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10230,15 +9749,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.28,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 63405,
-    "initial40PerM2": 1490,
-    "initial40Total": 65353,
-    "initial60PerM2": 1465,
-    "initial60Total": 63405,
-    "cuotaInicial40": 26141,
-    "cuotaInicial60": 38043,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10250,15 +9764,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.65,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 55157,
-    "initial40PerM2": 1490,
-    "initial40Total": 56852,
-    "initial60PerM2": 1465,
-    "initial60Total": 55157,
-    "cuotaInicial40": 22741,
-    "cuotaInicial60": 33094,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10270,15 +9779,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 37.74,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 55289,
-    "initial40PerM2": 1490,
-    "initial40Total": 56987,
-    "initial60PerM2": 1465,
-    "initial60Total": 55289,
-    "cuotaInicial40": 22795,
-    "cuotaInicial60": 33173,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10290,15 +9794,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.91,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 64328,
-    "initial40PerM2": 1490,
-    "initial40Total": 66304,
-    "initial60PerM2": 1465,
-    "initial60Total": 64328,
-    "cuotaInicial40": 26522,
-    "cuotaInicial60": 38597,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10310,15 +9809,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "Monoambiente",
     "areaM2": 32.08,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 41223,
-    "initial40PerM2": 1490,
-    "initial40Total": 42506,
-    "initial60PerM2": 1465,
-    "initial60Total": 46997,
-    "cuotaInicial40": 17002,
-    "cuotaInicial60": 28198,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10330,15 +9824,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 42,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 61530,
-    "initial40PerM2": 1490,
-    "initial40Total": 63420,
-    "initial60PerM2": 1465,
-    "initial60Total": 61530,
-    "cuotaInicial40": 25368,
-    "cuotaInicial60": 36918,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10350,15 +9839,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 54.47,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 81160,
-    "initial40PerM2": 1490,
-    "initial40Total": 83884,
-    "initial60PerM2": 1465,
-    "initial60Total": 79799,
-    "cuotaInicial40": 33554,
-    "cuotaInicial60": 47879,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10370,15 +9854,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 61.46,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 91575,
-    "initial40PerM2": 1490,
-    "initial40Total": 94648,
-    "initial60PerM2": 1465,
-    "initial60Total": 90039,
-    "cuotaInicial40": 37859,
-    "cuotaInicial60": 54023,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10390,15 +9869,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 56.95,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 84856,
-    "initial40PerM2": 1490,
-    "initial40Total": 87703,
-    "initial60PerM2": 1465,
-    "initial60Total": 83432,
-    "cuotaInicial40": 35081,
-    "cuotaInicial60": 50059,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10410,15 +9884,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.4,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 62496,
-    "initial40PerM2": 1490,
-    "initial40Total": 65534,
-    "initial60PerM2": 1465,
-    "initial60Total": 63581,
-    "cuotaInicial40": 26214,
-    "cuotaInicial60": 38149,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10430,15 +9899,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 51.34,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 75213,
-    "initial40PerM2": 1490,
-    "initial40Total": 77523,
-    "initial60PerM2": 1465,
-    "initial60Total": 75213,
-    "cuotaInicial40": 31009,
-    "cuotaInicial60": 45128,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10450,15 +9914,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 42,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 61530,
-    "initial40PerM2": 1490,
-    "initial40Total": 63420,
-    "initial60PerM2": 1465,
-    "initial60Total": 61530,
-    "cuotaInicial40": 25368,
-    "cuotaInicial60": 36918,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10470,15 +9929,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 54.47,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 81160,
-    "initial40PerM2": 1490,
-    "initial40Total": 83884,
-    "initial60PerM2": 1465,
-    "initial60Total": 79799,
-    "cuotaInicial40": 33554,
-    "cuotaInicial60": 47879,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10490,15 +9944,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 61.46,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 91575,
-    "initial40PerM2": 1490,
-    "initial40Total": 94648,
-    "initial60PerM2": 1465,
-    "initial60Total": 90039,
-    "cuotaInicial40": 37859,
-    "cuotaInicial60": 54023,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10510,15 +9959,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 56.95,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 82008,
-    "initial40PerM2": 1490,
-    "initial40Total": 87703,
-    "initial60PerM2": 1465,
-    "initial60Total": 83432,
-    "cuotaInicial40": 35081,
-    "cuotaInicial60": 50059,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10530,15 +9974,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 43.4,
     "status": "vendido",
-    "cashPerM2": 1440,
-    "cashTotal": 63581,
-    "initial40PerM2": 1490,
-    "initial40Total": 65534,
-    "initial60PerM2": 1465,
-    "initial60Total": 63581,
-    "cuotaInicial40": 26214,
-    "cuotaInicial60": 38149,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 0,
+    "cashTotal": 0,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   },
   {
     "projectId": "domus-insignia",
@@ -10550,15 +9989,10 @@ export const DOMUS_BASELINE_UNITS: Record<string, DomusUnit[]> = {
     "roomsLabel": "1 Dormitorio",
     "areaM2": 51.34,
     "status": "disponible",
-    "cashPerM2": 1440,
-    "cashTotal": 73930,
-    "initial40PerM2": 1490,
-    "initial40Total": 77523,
-    "initial60PerM2": 1465,
-    "initial60Total": 75213,
-    "cuotaInicial40": 31009,
-    "cuotaInicial60": 45128,
-    "deliveryYear": "Febrero 2026"
+    "cashPerM2": 1510,
+    "cashTotal": 77523.4,
+    "initial40PerM2": 0,
+    "initial40Total": 0
   }
 ],
   "domus-luxury": [
@@ -12281,13 +11715,15 @@ function domusStatus(raw: string): "disponible" | "vendido" | "reservado" {
 
 export function parseDomusLiveCsv(csvText: string, projectId: string): DomusUnit[] {
   if (!csvText || typeof csvText !== "string") return [];
-  const lines = csvText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const scopedCsv = projectId === "domus-insignia" ? domusInsigniaCsvSection(csvText) : csvText;
+  if (scopedCsv == null) return [];
+  const lines = scopedCsv.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const units: DomusUnit[] = [];
   let currentFloor = 1;
   let currentFloorLabel = "Piso 1";
-  // Onix publishes half-dollar totals. Keep its cents in both totals and
-  // percentage deposits, while preserving the other projects' existing math.
-  const roundAmount = (value: number) => projectId === "domus-onix" ? Math.round(value * 100) / 100 : Math.round(value);
+  // Preserve the published cents of Onix and Insignia without changing
+  // the rounding used by the other projects.
+  const roundAmount = (value: number) => projectId === "domus-onix" || projectId === "domus-insignia" ? Math.round(value * 100) / 100 : Math.round(value);
 
   let headerIdx = -1;
   for (let i = 0; i < Math.min(30, lines.length); i++) {
@@ -12403,6 +11839,36 @@ export function parseDomusLiveCsv(csvText: string, projectId: string): DomusUnit
   return units;
 }
 
+/** GLOBAL contains several buildings. Never pass their rows off as Insignia. */
+export function domusInsigniaCsvSection(csv: string): string | null {
+  const lines = csv.split(/\r?\n/);
+  const start = lines.findIndex((line) => /\bDOMUS\s+INSIGNIA\b/i.test(line));
+  if (start < 0) return null;
+  const next = lines.findIndex((line, index) => index > start && /\bDOMUS\s+(?!INSIGNIA\b)[A-Z]+/i.test(line));
+  const section = lines.slice(start, next < 0 ? undefined : next).join("\n");
+  return /MODELO/i.test(section) && /M2 TOTAL|SUP\. TOTAL/i.test(section) ? section : null;
+}
+
+/** The current GLOBAL list overrides every historical price and availability. */
+export function mergeDomusInsigniaAvailability(catalog: DomusUnit[], current: DomusUnit[]): DomusUnit[] {
+  const currentByNumber = new Map(current.filter(unit => unit.projectId === "domus-insignia").map(unit => [unit.unitNumber, unit]));
+  const result = catalog.filter(unit => unit.projectId === "domus-insignia").map((unit) => {
+    const available = currentByNumber.get(unit.unitNumber);
+    if (available) {
+      currentByNumber.delete(unit.unitNumber);
+      return available;
+    }
+    return {
+      ...unit, status: unit.status === "reservado" ? "reservado" as const : "vendido" as const,
+      cashTotal: 0, cashPerM2: 0, initial40Total: 0, initial40PerM2: 0,
+      initial60Total: undefined, initial60PerM2: undefined,
+      cuotaInicial40: undefined, cuotaInicial60: undefined,
+      planTotal: undefined, planPerM2: undefined,
+    };
+  });
+  return [...result, ...currentByNumber.values()].sort((a, b) => a.floor - b.floor || a.unitNumber.localeCompare(b.unitNumber, "es", { numeric: true }));
+}
+
 async function loadDomusSnapshot(projectId: string): Promise<DomusUnit[] | null> {
   try {
     const jsonRes = await fetch("/domus-inventory.json", { cache: "no-cache" });
@@ -12425,6 +11891,9 @@ export async function fetchDomusLiveUnits(projectId: string): Promise<DomusUnit[
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const csv = await res.text();
       const liveUnits = parseDomusLiveCsv(csv, projectId);
+      if (projectId === "domus-insignia" && domusInsigniaCsvSection(csv) != null) {
+        return mergeDomusInsigniaAvailability(baseline, liveUnits);
+      }
       if (liveUnits.length >= 10) return liveUnits;
     } catch (err) {
       console.warn(`[DomusLive] Fallback to baseline for ${projectId}:`, err);
