@@ -17,7 +17,7 @@ test("la lista de Vertical Güemes conserva precios, estados y el mínimo libre"
   assert.equal(VERTICAL_MODELS.length, 7);
   assert.equal(VERTICAL_UNITS.filter((unit) => unit.estado === "LIBRE").length, 23);
   assert.equal(VERTICAL_UNITS.filter((unit) => unit.estado === "NO_DISPONIBLE").length, 36);
-  assert.equal(VERTICAL_GUEMES_CONFIG.delivery, "2028");
+  assert.equal(VERTICAL_GUEMES_CONFIG.delivery, "Julio 2028");
   assert.equal(VERTICAL_GUEMES_CONFIG.builder, "Constructora Mediterráneo");
   assert.equal(VERTICAL_GUEMES_CONFIG.lat, -17.7699027);
   assert.equal(VERTICAL_GUEMES_CONFIG.lng, -63.1910632);

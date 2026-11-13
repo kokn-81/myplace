@@ -110,7 +110,7 @@ export const PROJECTS = {
     id: "vertical-guemes",
     title: "Vertical Güemes · Preventa en Equipetrol",
     description:
-      "Departamentos de 1, 2 y 3 dormitorios en calle Manuel Güemes, Equipetrol, desde USD 72.369,50. Entrega en 2028.",
+      "Tu próximo espacio en Equipetrol: departamentos de 1, 2 y 3 dormitorios con balcón o terraza en Vertical Güemes, desde USD 72.369,50. Entrega en julio de 2028.",
     image: `${SITE}/vertical_guemes/fachada.jpg`,
     imageAlt: "Fachada de Vertical Güemes en Equipetrol",
     imageWidth: 1800,

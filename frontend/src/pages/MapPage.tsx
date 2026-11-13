@@ -932,7 +932,7 @@ export const SYNTHETIC_VERTICAL_GUEMES_PROPERTY: Property = {
   lng: -63.1910632,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "59 departamentos de 1, 2 y 3 dormitorios en calle Manuel Güemes, Equipetrol. 20 niveles. Entrega en 2028. Lista de precios del 5/11/2026.",
+  description: "Tu próximo espacio en Equipetrol: departamentos de 1, 2 y 3 dormitorios con balcón o terraza en calle Manuel Güemes. Piscina panorámica, gimnasio y co-work. 59 departamentos en 20 niveles. Entrega en julio de 2028. Lista de precios del 5/11/2026.",
   amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
   images: [
     "/vertical_guemes/fachada.jpg",
@@ -953,7 +953,7 @@ export const SYNTHETIC_VERTICAL_GUEMES_PROPERTY: Property = {
   ocupacion: "Disponible",
   superficieM2: 49.91,
   amoblado: false,
-  fechaEntrega: "2028",
+  fechaEntrega: "Julio 2028",
   avanceObra: 0,
   faseObra: "Preventa",
   totalUnidades: 59,

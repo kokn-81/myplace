@@ -43,36 +43,38 @@ interface Props {
   onClose?: () => void;
 }
 
+const DELIVERY_TEXT = VERTICAL_GUEMES_CONFIG.delivery.toLowerCase().replace(" ", " de ");
+
 const AMENITY_SLIDES = [
   {
     src: "/vertical_guemes/social/piscina.jpg?v=orientation-2",
     category: "Nivel 20",
     title: "Piscina panorámica",
-    description: "Piscina panorámica en la terraza social del nivel 20.",
+    description: "Desconecta en la piscina del nivel 20 y disfruta de un momento para ti con la ciudad de fondo.",
   },
   {
     src: "/vertical_guemes/social/churrasquera.jpg?v=orientation-2",
     category: "Nivel 20",
     title: "Churrasquera en la terraza",
-    description: "Dos parrillas en la terraza del nivel 20, junto a la piscina.",
+    description: "Reúne a los tuyos junto a la piscina: dos parrillas y una terraza en el nivel 20 para compartir.",
   },
   {
     src: "/vertical_guemes/social/gimnasio.jpg?v=orientation-2",
     category: "Nivel 3",
-    title: "Gimnasio equipado",
-    description: "Gimnasio equipado en el nivel 3.",
+    title: "Tu gimnasio, a unos pasos",
+    description: "Haz del entrenamiento parte de tu día, con un gimnasio equipado en el nivel 3 de tu edificio.",
   },
   {
     src: "/vertical_guemes/social/cowork.jpg?v=orientation-2",
     category: "Nivel 3",
-    title: "Co-work",
-    description: "Espacio de co-work en el nivel 3.",
+    title: "Co-work para enfocarte",
+    description: "Dale su propio lugar a tus ideas: un espacio de trabajo en el nivel 3, sin salir de casa.",
   },
   {
     src: "/vertical_guemes/social/lobby.jpg?v=orientation-2",
     category: "Nivel 1",
-    title: "Lobby de doble altura",
-    description: "Lobby de doble altura en el nivel 1.",
+    title: "Una bienvenida de doble altura",
+    description: "Llega a casa y recibe a tus visitas en un lobby que expresa el carácter de Vertical Güemes desde el primer paso.",
   },
 ];
 
@@ -80,7 +82,7 @@ const EQUIPAMIENTO = [
   {
     id: "depto",
     room: "Departamento",
-    title: "Hormigón visto y luz natural",
+    title: "Luz natural y diseño con carácter",
     image: "/vertical_guemes/equipamiento/departamento.jpg",
     items: [
       "Losa casetonada de hormigón, con opción de cielo falso",
@@ -93,7 +95,7 @@ const EQUIPAMIENTO = [
   {
     id: "cocina",
     room: "Cocina",
-    title: "Cocina incluida",
+    title: "Una cocina para tu día a día",
     image: "/vertical_guemes/equipamiento/cocina.jpg",
     items: [
       "Mesones en cocina",
@@ -191,7 +193,7 @@ function ModelFrame({
         <img src={plan} alt="" className="h-14 w-16 shrink-0 bg-white object-contain" />
         <span className="min-w-0">
           <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">En el piso</span>
-          <span className="block text-xs leading-snug text-stone-600">Toca el departamento para verlo entero, o abre la planta.</span>
+          <span className="block text-xs leading-snug text-stone-600">Explora el departamento completo y descubre dónde está en el piso.</span>
         </span>
       </button>
     </div>
@@ -327,7 +329,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/vertical-guemes`;
     const shareTitle = "Vertical Güemes · Preventa en Equipetrol";
-    const shareText = `Departamentos de 1, 2 y 3 dormitorios en calle Manuel Güemes, Equipetrol, desde USD ${formatVerticalUsd(fromAny)}. Entrega en ${VERTICAL_GUEMES_CONFIG.delivery}.`;
+    const shareText = `Tu próximo espacio en Equipetrol: Vertical Güemes, departamentos de 1, 2 y 3 dormitorios con balcón o terraza en calle Manuel Güemes, desde USD ${formatVerticalUsd(fromAny)}. Entrega en ${DELIVERY_TEXT}.`;
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -372,7 +374,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
     const money = quote
       ? `\n• Inversión total: USD ${formatVerticalUsd(quote.total)}\n• Cuota inicial: USD ${formatVerticalUsd(quote.initial)}\n• Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatVerticalUsd(quote.balance)}`}`
       : "";
-    const text = `Hola, vengo de N.I.A y quiero consultar Vertical Güemes (calle Manuel Güemes, Equipetrol):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n\n¿Me confirman la disponibilidad de la lista del ${VERTICAL_GUEMES_CONFIG.priceListLabel}?`;
+    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Vertical Güemes (calle Manuel Güemes, Equipetrol):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n• Entrega: ${VERTICAL_GUEMES_CONFIG.delivery}\n\n¿Me confirman la disponibilidad actual de esta unidad y los pasos para comprar? Vi la lista del ${VERTICAL_GUEMES_CONFIG.priceListLabel}.`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -409,7 +411,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
             <span className="text-4xl font-light tracking-wide md:text-5xl">Vertical</span>
             <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">Güemes</span>
           </h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Una arquitectura que perdura en el tiempo. 20 niveles y 59 departamentos en calle Manuel Güemes.</p>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Tu espacio en Equipetrol, con balcón o terraza y una piscina para disfrutar la ciudad desde lo alto.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -463,14 +465,14 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Arquitectura con carácter
+                Tu próxima dirección en Equipetrol
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Vertical Güemes.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">Sobria, sólida y atemporal.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Un lugar con tu propio carácter.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                El hormigón visto marca la estructura y la fachada. Son 20 niveles y 59 departamentos de 1, 2 y 3 dormitorios, todos con balcón o terraza, en calle Manuel Güemes, Equipetrol. Las áreas sociales están en los niveles 3 y 20. Entrega en {VERTICAL_GUEMES_CONFIG.delivery}.
+                Abre la puerta a una nueva etapa en Equipetrol: tu propio balcón o terraza, espacios con luz natural y una arquitectura de hormigón visto que se distingue. Elige entre 1, 2 y 3 dormitorios en un proyecto de 59 departamentos y 20 niveles, con piscina, gimnasio y co-work para disfrutar más de cada día. Entrega en {DELIVERY_TEXT}.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -482,7 +484,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <button type="button" onClick={() => scrollToSection("disponibilidad")} className="flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-md">
-                Ver disponibilidad y cotizar
+                Encontrar mi departamento
               </button>
               <a href={VERTICAL_GUEMES_CONFIG.brochurePdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-stone-800">
                 <Download size={15} className="text-[#9a7b45]" />
@@ -502,23 +504,23 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Calle Manuel Güemes, en Equipetrol.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Vive cerca de lo que mueve tu día.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Vertical Güemes está en calle Manuel Güemes, Santa Cruz de la Sierra. El entorno reúne hotelería, salud, colegios, bancos y comercio: Los Tajibos, el Marriott, el Ventura Mall y el colegio La Salle, entre otros puntos del mapa.
+              Haz de Equipetrol el punto de partida de tu rutina. En calle Manuel Güemes, Santa Cruz de la Sierra, tienes un entorno consolidado con restaurantes, comercios, salud y educación. Los Tajibos, el Marriott, Ventura Mall y el colegio La Salle son algunos de sus referentes: una ubicación para conectar tu hogar con lo que necesitas.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src="/vertical_guemes/ubicacion.jpg" alt="Mapa de Vertical Güemes en calle Manuel Güemes, Equipetrol" className="block h-auto w-full" />
             </div>
             <a href={VERTICAL_GUEMES_CONFIG.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Explorar mi próxima ubicación <ArrowRight size={14} />
+              Conocer mi próximo entorno <ArrowRight size={14} />
             </a>
           </section>
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">La casa sigue en los niveles 3 y 20.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Más planes para disfrutar sin salir de casa.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              En el nivel 20 están la piscina panorámica, dos parrillas y la terraza social. En el nivel 3, el gimnasio equipado, el co-work, la lavandería con máquinas industriales y un salón cerrado con churrasquera tipo isla. El lobby de doble altura ocupa el nivel 1.
+              Sube al nivel 20 para desconectar en la piscina panorámica o reunir a los tuyos en la terraza social con dos parrillas. En el nivel 3, combina tu rutina con gimnasio equipado, co-work, lavandería con máquinas industriales y un salón cerrado con churrasquera tipo isla. Y al llegar, un lobby de doble altura te recibe en el nivel 1.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="relative">
@@ -543,7 +545,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
             <div className="shrink-0">
               <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Layers size={13} /> Tipologías</span>
-              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">De un dormitorio a la terraza del nivel 3.</h3>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Un espacio que se adapta a tu vida.</h3>
             </div>
             <div className="grid shrink-0 grid-cols-3 gap-2">
               {ROOM_FILTERS.map((filter) => (
@@ -575,9 +577,9 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><CheckCircle2 size={13} /> Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Lo que el departamento incluye.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Comodidad que se nota cada día.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Cocina con mesones y muebles, piso de porcelanato de gran formato, vidriado DVH, perfilería española, losa casetonada de hormigón, climatización inverter y domótica. El mobiliario de las imágenes es referencial: no se entrega.
+              Dale forma a tu hogar sobre una base que ya incluye cocina con mesones y muebles, porcelanato de gran formato, vidriado DVH y perfilería española. La losa casetonada de hormigón aporta identidad a los ambientes, mientras la climatización inverter y la domótica acompañan tu comodidad. El mobiliario de las imágenes es referencial y no está incluido.
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {EQUIPAMIENTO.map((group) => (
@@ -599,9 +601,9 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Building2 size={13} /> Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Mediterráneo construye. Sommet diseña.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu próximo hogar, con experiencia detrás.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              Constructora Mediterráneo lleva más de 35 años en Santa Cruz. En esta línea están Vertical Isuto (2018), Vertical 60 (2023), Vertical Terra (2026) y Vertical Güemes ({VERTICAL_GUEMES_CONFIG.delivery}). El estudio Sommet, fundado en 2008 por Sebastián Fernández de Córdova y Erika Peinado, firma la arquitectura.
+              Elige con el respaldo de una trayectoria que puedes conocer. Constructora Mediterráneo aporta más de 35 años de experiencia en Santa Cruz, con proyectos como Vertical Isuto, Vertical 60 y Vertical Terra. El estudio Sommet, fundado en 2008 por Sebastián Fernández de Córdova y Erika Peinado, firma una arquitectura sobria, con espacios fluidos y una conexión entre interior y exterior pensada para vivirla.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex min-h-36 flex-col justify-center rounded-xl border border-stone-200 bg-white p-5">
@@ -618,30 +620,30 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Contado, aporte 75% o aporte 50%.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Da el primer paso hacia tu próximo hogar.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word]">
-              La lista del {VERTICAL_GUEMES_CONFIG.priceListLabel} publica tres precios por departamento. El contado es la tarifa más baja por metro. El aporte del 75% y el del 50% parten de una tarifa mayor. El parqueo se cotiza aparte. Entrega en {VERTICAL_GUEMES_CONFIG.delivery}.
+              Elige cómo iniciar tu compra: accede al menor precio por m² con pago al contado o empieza con un aporte del 75% o del 50%. Cada modalidad tiene su propio precio. Compara la inversión, la inicial y el saldo de tu unidad para planificar tu llegada en {DELIVERY_TEXT}. Precios según la lista del {VERTICAL_GUEMES_CONFIG.priceListLabel}; parqueo por separado.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
-              <h4 className="mt-3 font-serif text-2xl">100% del departamento</h4>
+              <h4 className="mt-3 font-serif text-2xl">Aprovecha el precio al contado.</h4>
               <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">Desde USD {formatVerticalUsd(minRate("contado"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">Es la tarifa más baja por metro entre las unidades libres. El número exacto de cada unidad está en disponibilidad.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Paga el 100% del departamento y accede al menor precio por m² de las tres modalidades publicadas. Elige tu unidad y conoce su valor exacto antes de dar el siguiente paso.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Aporte 75%</span>
-              <h4 className="mt-3 font-serif text-2xl leading-snug">75% inicial y el saldo del departamento</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Aporta el 75% y deja un saldo menor.</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatVerticalUsd(minRate("aporte75"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">El 75% se calcula sobre el precio de aporte del departamento. El 25% queda como saldo.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Adelanta una mayor parte de tu inversión y deja el 25% del departamento como saldo. El aporte se calcula sobre el precio de esta modalidad; consulta con un asesor el calendario de pago.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Aporte 50%</span>
-              <h4 className="mt-3 font-serif text-2xl leading-snug">50% inicial y el saldo del departamento</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Empieza con el 50% de tu departamento.</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatVerticalUsd(minRate("aporte50"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">El 50% se calcula sobre el precio de aporte del departamento. La otra mitad queda como saldo.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Inicia la compra con la mitad del valor del departamento y conserva mayor liquidez al comenzar. El 50% restante queda como saldo. Confirma con un asesor las condiciones y fechas de pago de esta modalidad.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
-              <p>Parqueo desde USD {formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingUsd)}. Parqueo con baulera desde USD {formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingStorageUsd)}. Cada puesto tiene su precio en la lista; la cotización usa el menor que figura disponible.</p>
+              <p>Suma la comodidad de tu propio parqueo o añade una baulera para guardar lo que no usas a diario. Parqueo desde USD {formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingUsd)}; parqueo con baulera desde USD {formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingStorageUsd)}. El precio depende del puesto: la cotización usa el menor que figura disponible en la lista.</p>
             </div>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -652,8 +654,8 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
             <div className="shrink-0">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Haz tuya una de las {freeCount} unidades libres.</h3>
-              <p className="mt-1 text-xs text-stone-500">Lista del {VERTICAL_GUEMES_CONFIG.priceListLabel}. Verde: disponible · Gris: no disponible.</p>
+              <h3 className="font-serif text-2xl font-light leading-tight text-[#1C1917]">Elige tu unidad y conoce tu inversión.</h3>
+              <p className="mt-1 text-xs text-stone-500">{freeCount} unidades disponibles según la lista del {VERTICAL_GUEMES_CONFIG.priceListLabel}. Verde: disponible · Gris: no disponible.</p>
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -786,12 +788,12 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección empieza aquí.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima etapa tiene dirección en Equipetrol.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Si esta unidad te interesa, escribe y confirmamos la lista del {VERTICAL_GUEMES_CONFIG.priceListLabel}.
+              Elige el departamento que acompaña tu forma de vivir y planifica tu llegada para {DELIVERY_TEXT}. Conversemos sobre la unidad que te interesa y confirmemos su disponibilidad y condiciones de compra.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
+              Quiero conocer Vertical Güemes <ArrowRight size={14} />
             </button>
           </section>
         </div>
