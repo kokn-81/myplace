@@ -45,31 +45,31 @@ interface Props {
 
 const AMENITY_SLIDES = [
   {
-    src: "/vertical_guemes/social/piscina.jpg",
+    src: "/vertical_guemes/social/piscina.jpg?v=orientation-2",
     category: "Nivel 20",
     title: "Piscina panorámica",
     description: "Piscina panorámica en la terraza social del nivel 20.",
   },
   {
-    src: "/vertical_guemes/social/churrasquera.jpg",
+    src: "/vertical_guemes/social/churrasquera.jpg?v=orientation-2",
     category: "Nivel 20",
     title: "Churrasquera en la terraza",
     description: "Dos parrillas en la terraza del nivel 20, junto a la piscina.",
   },
   {
-    src: "/vertical_guemes/social/gimnasio.jpg",
+    src: "/vertical_guemes/social/gimnasio.jpg?v=orientation-2",
     category: "Nivel 3",
     title: "Gimnasio equipado",
     description: "Gimnasio equipado en el nivel 3.",
   },
   {
-    src: "/vertical_guemes/social/cowork.jpg",
+    src: "/vertical_guemes/social/cowork.jpg?v=orientation-2",
     category: "Nivel 3",
     title: "Co-work",
     description: "Espacio de co-work en el nivel 3.",
   },
   {
-    src: "/vertical_guemes/social/lobby.jpg",
+    src: "/vertical_guemes/social/lobby.jpg?v=orientation-2",
     category: "Nivel 1",
     title: "Lobby de doble altura",
     description: "Lobby de doble altura en el nivel 1.",
