@@ -75,6 +75,12 @@ export default function App() {
           <Route path="/betonbrut" element={<MapPage />} />
           <Route path="/vertical-guemes" element={<MapPage />} />
           <Route path="/verticalguemes" element={<MapPage />} />
+          <Route path="/luxe-tower" element={<MapPage />} />
+          <Route path="/luxetower" element={<MapPage />} />
+          <Route path="/alpha-luxe" element={<MapPage />} />
+          <Route path="/alpha-by-luxe" element={<MapPage />} />
+          <Route path="/luxe-alpha" element={<MapPage />} />
+          <Route path="/alphabyluxe" element={<MapPage />} />
           <Route path="/eurodesign" element={<MapPage />} />
           <Route path="/euro-design" element={<MapPage />} />
           <Route path="/domus" element={<MapPage />} />

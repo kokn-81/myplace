@@ -118,6 +118,30 @@ export const PROJECTS = {
     canonicalPath: "/vertical-guemes",
     appUrl: "/?proyecto=vertical-guemes",
   },
+  "luxe-tower": {
+    id: "luxe-tower",
+    title: "Luxe Tower · Preventa en el 2.º anillo",
+    description:
+      "140 departamentos de 1 y 2 dormitorios en calle Enrique Finot, 2.º anillo. Entrega en noviembre de 2026.",
+    image: `${SITE}/luxe_tower/fachada.jpg`,
+    imageAlt: "Fachada de Luxe Tower en calle Enrique Finot",
+    imageWidth: 725,
+    imageHeight: 1280,
+    canonicalPath: "/luxe-tower",
+    appUrl: "/?proyecto=luxe-tower",
+  },
+  "alpha-luxe": {
+    id: "alpha-luxe",
+    title: "Alpha by Luxe Design · Av. Beni",
+    description:
+      "102 departamentos de 1 y 2 dormitorios en Avenida Beni, a pasos del 2.º anillo, desde USD 47.436,90. Entrega en febrero de 2028.",
+    image: `${SITE}/alpha_luxe/fachada.jpg`,
+    imageAlt: "Fachada de Alpha by Luxe Design",
+    imageWidth: 1030,
+    imageHeight: 1500,
+    canonicalPath: "/alpha-luxe",
+    appUrl: "/?proyecto=alpha-luxe",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -160,6 +184,12 @@ const PATH_ALIASES = {
   betonbrut2: "beton-brut-ii",
   "vertical-guemes": "vertical-guemes",
   verticalguemes: "vertical-guemes",
+  "luxe-tower": "luxe-tower",
+  luxetower: "luxe-tower",
+  "alpha-luxe": "alpha-luxe",
+  "alpha-by-luxe": "alpha-luxe",
+  alphabyluxe: "alpha-luxe",
+  "luxe-alpha": "alpha-luxe",
 };
 
 function fromQuery(value) {
@@ -172,7 +202,10 @@ function fromQuery(value) {
   if (PROJECTS[q]) return PROJECTS[q];
   if (q.includes("domus")) return PROJECTS["domus-black"];
   const plain = q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const hasToken = (token) => new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(plain);
   if (plain.includes("vertical") && plain.includes("guemes")) return PROJECTS["vertical-guemes"];
+  if (hasToken("alpha") && hasToken("luxe")) return PROJECTS["alpha-luxe"];
+  if (plain.includes("luxe") && plain.includes("tower")) return PROJECTS["luxe-tower"];
   if (q.includes("beton")) return PROJECTS["beton-brut-ii"];
   return null;
 }

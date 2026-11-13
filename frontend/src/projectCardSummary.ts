@@ -7,6 +7,8 @@ import { BLESS_DREI_BASELINE_UNITS, BLESS_DREI_CONFIG } from "./blessDreiInvento
 import { TRIVENTO_CONFIG, TRIVENTO_MODELS } from "./triventoInventory";
 import { BETON_BRUT_CONFIG } from "./betonBrutInventory";
 import { VERTICAL_GUEMES_CONFIG } from "./verticalGuemesInventory";
+import { LUXE_TOWER_CONFIG } from "./luxeTowerInventory";
+import { ALPHA_LUXE_CONFIG } from "./alphaLuxeInventory";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -104,6 +106,22 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     bedrooms: [1, 2, 3],
     sourceUrl: VERTICAL_GUEMES_CONFIG.brochurePdfUrl,
   },
+  "luxe-tower": {
+    name: LUXE_TOWER_CONFIG.name,
+    builder: LUXE_TOWER_CONFIG.builder,
+    address: `${LUXE_TOWER_CONFIG.address}, 2.º anillo`,
+    delivery: LUXE_TOWER_CONFIG.delivery,
+    bedrooms: [1, 2],
+    sourceUrl: LUXE_TOWER_CONFIG.brochurePdfUrl,
+  },
+  "alpha-luxe": {
+    name: ALPHA_LUXE_CONFIG.name,
+    builder: ALPHA_LUXE_CONFIG.builder,
+    address: ALPHA_LUXE_CONFIG.address,
+    delivery: ALPHA_LUXE_CONFIG.delivery,
+    bedrooms: [1, 2],
+    sourceUrl: ALPHA_LUXE_CONFIG.brochurePdfUrl,
+  },
   ...Object.fromEntries(Object.values(DOMUS_PROJECTS_CONFIG).map((project) => [project.id, {
     name: project.name,
     builder: project.developer,
@@ -131,6 +149,10 @@ const PROJECT_ALIASES: Record<string, string> = {
   betonbrut: "beton-brut-ii",
   betonbrut2: "beton-brut-ii",
   verticalguemes: "vertical-guemes",
+  luxetower: "luxe-tower",
+  "alpha-by-luxe": "alpha-luxe",
+  alphabyluxe: "alpha-luxe",
+  "luxe-alpha": "alpha-luxe",
   domus: "domus-black",
   "domus-lux": "domus-luxury",
 };

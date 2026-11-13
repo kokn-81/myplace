@@ -1,5 +1,5 @@
-import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
-export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -962,6 +962,92 @@ export const SYNTHETIC_VERTICAL_GUEMES_PROPERTY: Property = {
   planesPago: "Contado, aporte 75% o aporte 50%. Parqueo desde USD 13.580. La lista no publica seña.",
 };
 
+export const SYNTHETIC_LUXE_TOWER_PROPERTY: Property = {
+  id: "luxe-tower",
+  title: "LUXE TOWER · 2.º anillo",
+  price: 0,
+  rooms: 2,
+  bathrooms: 2,
+  area: "Calle Enrique Finot",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7712594,
+  lng: -63.1929074,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "140 departamentos de 1 y 2 dormitorios en calle Enrique Finot, 2.º anillo. 18 pisos. Entrega en noviembre de 2026. Precio a consulta.",
+  amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
+  images: [
+    "/luxe_tower/fachada.jpg",
+    "/luxe_tower/social/piscina.jpg",
+    "/luxe_tower/social/acceso.jpg",
+    "/luxe_tower/social/gimnasio.jpg",
+    "/luxe_tower/fachada-lateral.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "LUXE TOWER",
+  ocupacion: "Disponible",
+  superficieM2: 63,
+  amoblado: false,
+  fechaEntrega: "Noviembre 2026",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  totalUnidades: 140,
+  unidadesDisponibles: 78,
+  reservaUsd: 0,
+  planesPago: "Precio a consulta. Parqueos y bauleras se consultan aparte.",
+};
+
+export const SYNTHETIC_ALPHA_LUXE_PROPERTY: Property = {
+  id: "alpha-luxe",
+  title: "ALPHA BY LUXE DESIGN · Av. Beni",
+  price: 47436.9,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Avenida Beni, a pasos del 2.º anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Norte",
+  lat: -17.7692349,
+  lng: -63.1782311,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "102 departamentos de 1 y 2 dormitorios en Avenida Beni, a pasos del 2.º anillo. La lista del 27/10/2026 publica 62. Entrega en febrero de 2028.",
+  amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
+  images: [
+    "/alpha_luxe/fachada.jpg",
+    "/alpha_luxe/social/piscina.jpg",
+    "/alpha_luxe/fachada-acceso.jpg",
+    "/alpha_luxe/social/gimnasio.jpg",
+    "/alpha_luxe/social/churrasquera.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "ALPHA BY LUXE DESIGN",
+  ocupacion: "Disponible",
+  superficieM2: 34.3,
+  amoblado: false,
+  fechaEntrega: "Febrero 2028",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  totalUnidades: 102,
+  unidadesDisponibles: 62,
+  reservaUsd: 0,
+  planesPago: "Aporte 40%, aporte 50% o contado. Parqueo USD 12.000; parqueo con baulera USD 16.000; baulera USD 4.000. Lista del 27/10/2026.",
+};
+
 
 
 
@@ -984,6 +1070,8 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "bless-drei": { lat: -17.7607568, lng: -63.1960473 },
   "trivento-iv": { lat: -17.7612374, lng: -63.1969378 },
   "vertical-guemes": { lat: -17.7699027, lng: -63.1910632 },
+  "luxe-tower": { lat: -17.7712594, lng: -63.1929074 },
+  "alpha-luxe": { lat: -17.7692349, lng: -63.1782311 },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -1039,6 +1127,16 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
     priorityItems.push(withOfficialPin(verticalGuemes, "vertical-guemes"));
   }
 
+  const luxeTower = (list && list.find((p) => String(p.id) === "luxe-tower" || isLuxeTowerProperty(p))) || SYNTHETIC_LUXE_TOWER_PROPERTY;
+  if (luxeTower && !priorityItems.some((p) => String(p.id) === String(luxeTower.id))) {
+    priorityItems.push(withOfficialPin(luxeTower, "luxe-tower"));
+  }
+
+  const alphaLuxe = (list && list.find((p) => String(p.id) === "alpha-luxe" || isAlphaLuxeProperty(p))) || SYNTHETIC_ALPHA_LUXE_PROPERTY;
+  if (alphaLuxe && !priorityItems.some((p) => String(p.id) === String(alphaLuxe.id))) {
+    priorityItems.push(withOfficialPin(alphaLuxe, "alpha-luxe"));
+  }
+
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
     const existing = (list && list.find((p) => String(p.id) === String(domusProp.id))) || domusProp;
@@ -1085,7 +1183,9 @@ export const isPromotedProperty = (p: Property | null | undefined): boolean => {
     isBlessDreiProperty(p) ||
     isTriventoProperty(p) ||
     isBetonBrutProperty(p) ||
-    isVerticalGuemesProperty(p)
+    isVerticalGuemesProperty(p) ||
+    isAlphaLuxeProperty(p) ||
+    isLuxeTowerProperty(p)
   )
     return true;
   return (
@@ -1451,6 +1551,8 @@ export default function MapPage() {
     const isTriventoPath = pathname.startsWith("/trivento");
     const isBetonPath = pathname.startsWith("/beton-brut") || pathname.startsWith("/betonbrut");
     const isVerticalPath = pathname.startsWith("/vertical-guemes") || pathname.startsWith("/verticalguemes");
+    const isAlphaPath = pathname.startsWith("/alpha-luxe") || pathname.startsWith("/alpha-by-luxe") || pathname.startsWith("/luxe-alpha") || pathname.startsWith("/alphabyluxe");
+    const isLuxePath = pathname.startsWith("/luxe-tower") || pathname.startsWith("/luxetower");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1479,6 +1581,10 @@ export default function MapPage() {
         ? "beton-brut-ii"
         : isVerticalPath
         ? "vertical-guemes"
+        : isAlphaPath
+        ? "alpha-luxe"
+        : isLuxePath
+        ? "luxe-tower"
         : isDomusPath
         ? domusSlug || "domus-black"
         : isZenPath
@@ -1493,6 +1599,12 @@ export default function MapPage() {
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isVerticalGuemesSlug(proyecto)) {
       selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isAlphaLuxeSlug(proyecto)) {
+      selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isLuxeTowerSlug(proyecto)) {
+      selectProperty(SYNTHETIC_LUXE_TOWER_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty) {
       const target = properties.find((p) => isTargetProject(p, proyecto));
@@ -1543,6 +1655,10 @@ export default function MapPage() {
       document.title = "Béton Brut II · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isVerticalGuemesProperty(selectedProperty)) {
       document.title = "Vertical Güemes · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isAlphaLuxeProperty(selectedProperty)) {
+      document.title = "Alpha by Luxe Design · Av. Beni | N.I.A";
+    } else if (selectedProperty && isLuxeTowerProperty(selectedProperty)) {
+      document.title = "Luxe Tower · Preventa en el 2.º anillo | N.I.A";
     } else if (selectedProperty && isDomusProperty(selectedProperty)) {
       document.title = `${selectedProperty.title} · Colección DOMUS | N.I.A`;
     } else {
@@ -1571,7 +1687,9 @@ export default function MapPage() {
               isBlessDreiProperty(current) ||
               isTriventoProperty(current) ||
               isBetonBrutProperty(current) ||
-              isVerticalGuemesProperty(current)
+              isVerticalGuemesProperty(current) ||
+              isAlphaLuxeProperty(current) ||
+              isLuxeTowerProperty(current)
             ) {
               setCurrentIndex(0);
             }
@@ -1586,6 +1704,10 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
         } else if (isVerticalGuemesSlug(proyecto)) {
           selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
+        } else if (isAlphaLuxeSlug(proyecto)) {
+          selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
+        } else if (isLuxeTowerSlug(proyecto)) {
+          selectProperty(SYNTHETIC_LUXE_TOWER_PROPERTY, { skipHistoryPush: true });
         } else if (target) {
           selectProperty(target, { skipHistoryPush: true });
         } else if (proyecto.toLowerCase().includes("eurodesign") || proyecto === "1816") {
@@ -1624,7 +1746,9 @@ export default function MapPage() {
         isBlessDreiProperty(target) ||
         isTriventoProperty(target) ||
         isBetonBrutProperty(target) ||
-        isVerticalGuemesProperty(target)
+        isVerticalGuemesProperty(target) ||
+        isAlphaLuxeProperty(target) ||
+        isLuxeTowerProperty(target)
       ) {
         setCurrentIndex(0);
       }
@@ -3453,7 +3577,9 @@ export default function MapPage() {
           isBlessDreiProperty(selectedProperty) ||
           isTriventoProperty(selectedProperty) ||
           isBetonBrutProperty(selectedProperty) ||
-          isVerticalGuemesProperty(selectedProperty)) ? (
+          isVerticalGuemesProperty(selectedProperty) ||
+          isAlphaLuxeProperty(selectedProperty) ||
+          isLuxeTowerProperty(selectedProperty)) ? (
             <ProjectLandingPage property={selectedProperty} onClose={closePropertyDetail} />
           ) : (
           <motion.div

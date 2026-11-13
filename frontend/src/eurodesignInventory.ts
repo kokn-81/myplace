@@ -419,7 +419,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "1 dorm / 48.5m2",
     "rooms": 1,
     "areaM2": 48.5,
-    "status": "disponible",
+    "status": "vendido",
     "cashPerM2": 1480,
     "cashTotal": 71780,
     "cuotas": {
@@ -959,7 +959,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "2 dorm / 84.3m2",
     "rooms": 2,
     "areaM2": 84.3,
-    "status": "disponible",
+    "status": "vendido",
     "cashPerM2": 1480,
     "cashTotal": 124764,
     "cuotas": {
@@ -977,7 +977,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "1 dorm / 57m2",
     "rooms": 1,
     "areaM2": 57,
-    "status": "disponible",
+    "status": "reservado",
     "cashPerM2": 1480,
     "cashTotal": 84360,
     "cuotas": {
@@ -1121,7 +1121,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "1 dorm / 57m2",
     "rooms": 1,
     "areaM2": 57,
-    "status": "disponible",
+    "status": "reservado",
     "cashPerM2": 1480,
     "cashTotal": 84360,
     "cuotas": {
@@ -1265,7 +1265,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "1 dorm / 57m2",
     "rooms": 1,
     "areaM2": 57,
-    "status": "disponible",
+    "status": "reservado",
     "cashPerM2": 1480,
     "cashTotal": 84360,
     "cuotas": {
@@ -1769,7 +1769,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "1 dorm / 57m2",
     "rooms": 1,
     "areaM2": 57,
-    "status": "reservado",
+    "status": "vendido",
     "cashPerM2": 1480,
     "cashTotal": 84360,
     "cuotas": {
@@ -1787,7 +1787,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "2 dorm / 84.6m2",
     "rooms": 2,
     "areaM2": 84.6,
-    "status": "disponible",
+    "status": "reservado",
     "cashPerM2": 1480,
     "cashTotal": 125208,
     "cuotas": {
@@ -2093,7 +2093,7 @@ export const EURODESIGN_UNITS: EurodesignUnit[] = [
     "tipoLabel": "129m2",
     "rooms": 0,
     "areaM2": 129,
-    "status": "disponible",
+    "status": "vendido",
     "cashPerM2": 2300,
     "cashTotal": 296700,
     "cuotas": {

@@ -117,6 +117,30 @@
       "destination": "/api/project-og?project=vertical-guemes"
     },
     {
+      "source": "/luxe-tower",
+      "destination": "/api/project-og?project=luxe-tower"
+    },
+    {
+      "source": "/luxetower",
+      "destination": "/api/project-og?project=luxe-tower"
+    },
+    {
+      "source": "/alpha-luxe",
+      "destination": "/api/project-og?project=alpha-luxe"
+    },
+    {
+      "source": "/alpha-by-luxe",
+      "destination": "/api/project-og?project=alpha-luxe"
+    },
+    {
+      "source": "/luxe-alpha",
+      "destination": "/api/project-og?project=alpha-luxe"
+    },
+    {
+      "source": "/alphabyluxe",
+      "destination": "/api/project-og?project=alpha-luxe"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

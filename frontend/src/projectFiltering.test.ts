@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug } from "./projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug, isLuxeTowerProperty, isLuxeTowerSlug, isAlphaLuxeProperty, isAlphaLuxeSlug } from "./projectIdentity";
 import { isCatalogPropertyVisible } from "./catalogVisibility";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
@@ -139,6 +139,36 @@ test("Vertical Güemes no se confunde con la calle Güemes ni con otro vertical"
   assert.equal(isVerticalGuemesSlug("vertical-guemes"), true);
   assert.equal(isVerticalGuemesSlug("Vertical Güemes"), true);
   assert.equal(projectsStillFourteen(catalogSnapshot), 14);
+});
+
+test("Luxe Tower no se confunde con Bless Tower ni con Domus Tower", () => {
+  const bless = { id: "bless-tower", title: "Bless Tower", type: "Proyecto (preventa)" } as Property;
+  const domus = { id: "domus-tower", title: "DOMUS Tower", type: "Proyecto (preventa)" } as Property;
+  const luxe = { id: "luxe-tower", title: "LUXE TOWER · 2.º anillo", type: "Proyecto (preventa)" } as Property;
+  const resale = { id: "77", title: "Departamento Luxe Tower", type: "Departamento" } as Property;
+  assert.equal(isLuxeTowerProperty(bless), false);
+  assert.equal(isLuxeTowerProperty(domus), false);
+  assert.equal(isLuxeTowerProperty(resale), false);
+  assert.equal(isLuxeTowerProperty(luxe), true);
+  assert.equal(isLuxeTowerSlug("tower"), false);
+  assert.equal(isLuxeTowerSlug("luxe"), false);
+  assert.equal(isLuxeTowerSlug("luxe-tower"), true);
+  assert.equal(isLuxeTowerSlug("Luxe Tower"), true);
+  const alpha = { id: "alpha-luxe", title: "Alpha by Luxe Design", type: "Proyecto (preventa)" } as Property;
+  const luxury = { id: "domus-luxury", title: "DOMUS Luxury", type: "Proyecto (preventa)" } as Property;
+  assert.equal(isLuxeTowerProperty(alpha), false);
+  assert.equal(isAlphaLuxeProperty(luxe), false);
+  assert.equal(isAlphaLuxeProperty(luxury), false);
+  assert.equal(isAlphaLuxeProperty(alpha), true);
+  assert.equal(isAlphaLuxeSlug("alpha"), false);
+  assert.equal(isAlphaLuxeSlug("luxe"), false);
+  assert.equal(isAlphaLuxeSlug("luxury"), false);
+  assert.equal(isAlphaLuxeSlug("alpha-luxe"), true);
+  assert.equal(isAlphaLuxeSlug("Alpha by Luxe Design"), true);
+  assert.equal(isAlphaLuxeSlug("luxe-alpha"), true);
+  assert.equal(isTargetProject(alpha, "alpha-luxe"), true);
+  assert.equal(isTargetProject(luxe, "alpha-luxe"), false);
+  assert.equal(isTargetProject(alpha, "luxe-tower"), false);
 });
 
 function projectsStillFourteen(snapshot: unknown) {

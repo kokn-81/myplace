@@ -132,6 +132,50 @@ export const isVerticalGuemesSlug = (value: string): boolean => {
   return q === "vertical-guemes" || q === "verticalguemes" || mentionsVerticalGuemes(q);
 };
 
+const hasToken = (value: string, token: string) =>
+  new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(normalizeVertical(value));
+
+const mentionsAlphaLuxe = (value: string) => hasToken(value, "alpha") && hasToken(value, "luxe");
+
+const ALPHA_LUXE_IDS = new Set(["alpha-luxe", "alpha-by-luxe", "alphabyluxe", "luxe-alpha"]);
+
+export const isAlphaLuxeProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (ALPHA_LUXE_IDS.has(sId)) return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = String(p.title || (p as any).titulo || "");
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "");
+  return mentionsAlphaLuxe(sTitle) || mentionsAlphaLuxe(sCmp);
+};
+
+export const isAlphaLuxeSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return ALPHA_LUXE_IDS.has(q) || mentionsAlphaLuxe(q);
+};
+
+const mentionsLuxeTower = (value: string) => {
+  const q = normalizeVertical(value);
+  return q.includes("luxe") && q.includes("tower");
+};
+
+export const isLuxeTowerProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id));
+  if (sId === "luxe-tower" || sId === "luxetower") return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = normalizeVertical(String(p.title || (p as any).titulo || ""));
+  const sCmp = normalizeVertical(String(p.complejoNombre || (p as any).complejo_nombre || ""));
+  return mentionsLuxeTower(sTitle) || mentionsLuxeTower(sCmp);
+};
+
+export const isLuxeTowerSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return q === "luxe-tower" || q === "luxetower" || mentionsLuxeTower(q);
+};
+
 export const isDomusProperty = (p: Property | null | undefined): boolean => {
   if (!p) return false;
   const sId = String(p.id).toLowerCase();
@@ -179,6 +223,12 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isVerticalGuemesSlug(q)) {
     return isVerticalGuemesProperty(p);
   }
+  if (isAlphaLuxeSlug(q)) {
+    return isAlphaLuxeProperty(p);
+  }
+  if (isLuxeTowerSlug(q)) {
+    return isLuxeTowerProperty(p);
+  }
   if (
     q.includes("domus") ||
     q.startsWith("domus-") ||
@@ -208,6 +258,8 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isBlessDreiProperty(p) ||
     isTriventoProperty(p) ||
     isBetonBrutProperty(p) ||
-    isVerticalGuemesProperty(p)
+    isVerticalGuemesProperty(p) ||
+    isAlphaLuxeProperty(p) ||
+    isLuxeTowerProperty(p)
   );
 };
