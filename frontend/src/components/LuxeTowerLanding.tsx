@@ -49,14 +49,14 @@ const SECTIONS = [
 ];
 
 const AMENITY_SLIDES = [
-  { src: "/luxe_tower/social/piscina.jpg", category: "Piso 18", title: "Piscina", description: "Piscina para adultos y piscina para niños, con vista panorámica." },
-  { src: "/luxe_tower/social/jacuzzi.jpg", category: "Piso 18", title: "Jacuzzi panorámico", description: "Jacuzzi panorámico, sauna seco, sauna a vapor y sala de masajes." },
-  { src: "/luxe_tower/social/gimnasio.jpg", category: "Piso 18", title: "Gimnasio", description: "Gimnasio en el piso de amenidades." },
-  { src: "/luxe_tower/social/churrasquera.jpg", category: "Piso 18", title: "Churrasqueras", description: "Una churrasquera semiabierta y dos cerradas." },
-  { src: "/luxe_tower/social/cocina.jpg", category: "Piso 18", title: "Cocina gourmet", description: "Cocina gourmet, también llamada cocina del chef." },
-  { src: "/luxe_tower/social/cowork.jpg", category: "Piso 18", title: "Cowork y sala de juegos", description: "Cowork y sala de juegos en el piso 18." },
-  { src: "/luxe_tower/social/rooftop.jpg", category: "Piso 18", title: "Roof top", description: "Roof top, jardín zen y solárium." },
-  { src: "/luxe_tower/social/acceso.jpg", category: "Ingreso", title: "Acceso", description: "Acceso sobre calle Enrique Finot, con lobby de doble altura." },
+  { src: "/luxe_tower/social/piscina.jpg", category: "Piso 18", title: "Piscinas para disfrutar en familia", description: "Piscina para adultos y otra para niños, con la ciudad de fondo para tus momentos de descanso." },
+  { src: "/luxe_tower/social/jacuzzi.jpg", category: "Piso 18", title: "Jacuzzi y spa para desconectar", description: "Cambia de ritmo con jacuzzi panorámico, sauna seco, sauna a vapor y sala de masajes." },
+  { src: "/luxe_tower/social/gimnasio.jpg", category: "Piso 18", title: "Tu entrenamiento, más cerca", description: "Hazle espacio al ejercicio en el gimnasio del piso 18, sin salir de tu edificio." },
+  { src: "/luxe_tower/social/churrasquera.jpg", category: "Piso 18", title: "Tres espacios para tus encuentros", description: "Elige una churrasquera semiabierta o una de las dos cerradas y reúne a los tuyos." },
+  { src: "/luxe_tower/social/cocina.jpg", category: "Piso 18", title: "Cocina gourmet para compartir", description: "Disfruta de preparar y compartir tus mejores platos en la cocina gourmet del piso 18." },
+  { src: "/luxe_tower/social/cowork.jpg", category: "Piso 18", title: "Trabajo y diversión, en su lugar", description: "Dale espacio a tus ideas en el cowork y cambia de ritmo en la sala de juegos." },
+  { src: "/luxe_tower/social/rooftop.jpg", category: "Piso 18", title: "Rooftop para cambiar de ritmo", description: "Encuentra tu pausa entre el rooftop, el jardín zen y el solárium del piso 18." },
+  { src: "/luxe_tower/social/acceso.jpg", category: "Ingreso", title: "Una llegada a la altura de tu hogar", description: "Entra desde calle Enrique Finot y recibe a tus visitas en un lobby de doble altura." },
 ];
 
 const ROOM_FILTERS: { id: LuxeRooms; label: string }[] = [
@@ -228,7 +228,7 @@ export default function LuxeTowerLanding({ onClose }: Props) {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/luxe-tower`;
     const shareTitle = "Luxe Tower · Preventa en el 2.º anillo";
-    const shareText = `140 departamentos de 1 y 2 dormitorios en calle Enrique Finot, 2.º anillo. Entrega en noviembre de 2026.`;
+    const shareText = `Más espacio para vivir en Luxe Tower: departamentos de 1 y 2 dormitorios con balcón o terraza, piscina y spa en lo alto. Calle Enrique Finot, 2.º anillo. Entrega prevista en noviembre de 2026.`;
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -260,7 +260,7 @@ export default function LuxeTowerLanding({ onClose }: Props) {
     const unitLine = activeUnit
       ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatLuxeM2(activeUnit.superficieM2)} m², ${selectedModel.where})`
       : "Luxe Tower";
-    const text = `Hola, vengo de N.I.A y quiero consultar Luxe Tower (calle Enrique Finot, 2.º anillo):\n\n• ${unitLine}\n\n¿Me confirman el precio y la disponibilidad?`;
+    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Luxe Tower (calle Enrique Finot, 2.º anillo):\n\n• ${unitLine}\n\n¿Me envían una cotización de esta unidad y me confirman su disponibilidad y condiciones de compra?`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -304,7 +304,7 @@ export default function LuxeTowerLanding({ onClose }: Props) {
             <span className="text-4xl font-light tracking-wide md:text-5xl">Luxe</span>
             <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">Tower</span>
           </h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">140 departamentos con balcón, en calle Enrique Finot. Entrega en noviembre de 2026.</p>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Tu espacio en Enrique Finot, con balcón o terraza y amenidades para disfrutar la ciudad desde lo alto.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -346,14 +346,14 @@ export default function LuxeTowerLanding({ onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Calle Enrique Finot
+                Tu próxima dirección en Enrique Finot
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Luxe Tower.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">Vive la rutina de lo extraordinario.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Más espacio para vivir. Más motivos para disfrutar.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Edificio de 18 pisos en calle Enrique Finot, 2.º anillo, junto al Colegio Alemán. Son 140 departamentos de 1 y 2 dormitorios, del piso 4 al 17, todos con balcón. Las áreas sociales están en los pisos 18 y 19. Entrega en noviembre de 2026.
+                Vive con más espacio para tu rutina y más opciones para disfrutarla. En calle Enrique Finot, junto al Colegio Alemán y cerca del 2.º anillo, elige un departamento de 1 o 2 dormitorios con balcón o terraza. Un proyecto de 140 departamentos, con piscina, spa y áreas sociales en los pisos 18 y 19. Entrega prevista en noviembre de 2026.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -385,18 +385,18 @@ export default function LuxeTowerLanding({ onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Calle Enrique Finot, en el 2.º anillo.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Una dirección para estar cerca de tus planes.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
-              Luxe Tower está sobre calle Enrique Finot, entre el Colegio Alemán y calle Güemes, en el eje de Av. San Martín. Cerca están el hotel Los Tajibos, el Ambassador, el hotel Yotaú y el 2.º anillo.
+              Entre el Colegio Alemán y calle Güemes, Luxe Tower te sitúa en el entorno de Av. San Martín, cerca del 2.º anillo. Hoteles como Los Tajibos, el Ambassador y Yotaú, junto a restaurantes y servicios, hacen de esta dirección un punto de partida para tus actividades y encuentros.
             </p>
             <img src="/luxe_tower/ubicacion.jpg" alt="Mapa de ubicación de Luxe Tower en el 2.º anillo" className="w-full rounded-2xl object-cover" />
           </section>
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El piso 18 mira a la ciudad.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu pausa favorita, en lo alto de la ciudad.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] md:text-base">
-              En el piso 18 hay piscina para adultos, piscina para niños, jacuzzi panorámico, sauna seco y a vapor, sala de masajes, gimnasio, sala de juegos, cowork, tres churrasqueras, cocina gourmet, roof top, jardín zen y solárium. El piso 19 suma otro solárium.
+              Convierte el piso 18 en tu punto de encuentro: piscinas para adultos y niños, tres churrasqueras y cocina gourmet para compartir. Desconecta en el jacuzzi panorámico, el sauna seco o a vapor y la sala de masajes; combina tu rutina con gimnasio, cowork y sala de juegos. El rooftop, el jardín zen y el solárium completan la experiencia, con otro solárium en el piso 19.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
@@ -416,8 +416,8 @@ export default function LuxeTowerLanding({ onClose }: Props) {
 
           <section id="tipologias" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Diez plantas, de 1 y 2 dormitorios.</h3>
-            <p className="text-sm leading-relaxed text-stone-600">El piso 4 de cada modelo sale con terraza. Del 5 al 17 el metraje cambia según la planta. Los muebles del render son referenciales.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Más espacio para la vida que quieres.</h3>
+            <p className="text-sm leading-relaxed text-stone-600">Elige entre diez distribuciones de 1 y 2 dormitorios. Si prefieres más vida al aire libre, explora las terrazas del piso 4. Del 5 al 17, el metraje varía según la planta. El mobiliario de las imágenes es referencial.</p>
             <div className="flex gap-2">
               {ROOM_FILTERS.map((filter) => (
                 <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${rooms === filter.id ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-700"}`}>
@@ -440,21 +440,21 @@ export default function LuxeTowerLanding({ onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Cocina equipada y acceso controlado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Confort y tecnología que se viven a diario.</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <img src="/luxe_tower/equipamiento/departamento.jpg" alt="Interior referencial de un departamento de Luxe Tower" className="aspect-[4/3] w-full rounded-2xl object-cover" />
               <img src="/luxe_tower/social/lobby.jpg" alt="Lobby de doble altura de Luxe Tower" className="aspect-[4/3] w-full rounded-2xl object-cover" />
             </div>
             <ul className="grid grid-cols-1 gap-2 text-sm text-stone-700 sm:grid-cols-2">
               {[
-                "Cocina equipada, vestidores, lavandería y baño de visita",
-                "Lobby de doble altura",
+                "Cocina equipada y espacios para organizarte: vestidores, lavandería y baño de visita",
+                "Lobby de doble altura para recibir a tus visitas",
                 "Tres ascensores: uno para 17 personas y dos para 13",
-                "Tres pisos de parqueos y bauleras, con acceso automatizado",
+                "Parqueos y bauleras en tres niveles, con acceso automatizado",
                 "Iluminación con sensores en circulación y estacionamientos",
                 "Circuito de cámaras en todo el condominio",
-                "Ingreso con videollamada, reconocimiento facial o tarjeta",
-                "Chapa digital en cada departamento, control IR Smart y sensor de humo",
+                "Controla el ingreso con videollamada, reconocimiento facial o tarjeta",
+                "Chapa digital, control IR Smart y sensor de humo en cada departamento",
               ].map((item) => (
                 <li key={item} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#9a7b45]" />{item}</li>
               ))}
@@ -463,20 +463,20 @@ export default function LuxeTowerLanding({ onClose }: Props) {
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Luxe Design SRL.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Luxe Design, detrás de tu próxima dirección.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              Luxe Design SRL firma el proyecto. En su línea de entregas, Luxe Tower corresponde a noviembre de 2026.
+              Con proyectos entregados en 2024 y 2025, Luxe Design SRL reúne en Luxe Tower su propuesta de confort, tecnología y espacios sociales. Conoce los acabados, explora las plantas y elige la distribución que mejor acompaña tu forma de vivir.
             </p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El precio se confirma con la unidad.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Recibe una propuesta para tu próxima compra.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              El valor de cada departamento se confirma al elegir la unidad. Parqueos y bauleras se consultan aparte.
+              Elige el departamento que va contigo y solicita su cotización. Un asesor te ayudará a confirmar el precio, revisar las condiciones de compra y cotizar parqueos y bauleras por separado.
             </p>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
-              Elegir mi departamento <ArrowRight size={14} />
+              Elegir mi unidad para cotizar <ArrowRight size={14} />
             </button>
           </section>
 
@@ -484,7 +484,7 @@ export default function LuxeTowerLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div>
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Haz tuya una de las {freeCount} unidades libres.</h3>
+                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Elige el espacio para tu próxima etapa.</h3>
                 <p className="text-xs text-stone-500">Según el brochure. Verde: disponible. Gris: agotado.</p>
               </div>
               <div className="flex gap-2">
@@ -540,12 +540,12 @@ export default function LuxeTowerLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección empieza aquí.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Imagina tu vida en Luxe Tower.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Cuéntanos qué planta estás mirando. Te confirmamos si sigue libre y el valor de esa unidad en Luxe Tower.
+              Encuentra la planta que mejor se adapta a ti y da el siguiente paso. Conversemos sobre su precio, disponibilidad y condiciones de compra para preparar tu próxima llegada a Enrique Finot.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
+              Quiero conocer Luxe Tower <ArrowRight size={14} />
             </button>
           </section>
         </div>

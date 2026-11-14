@@ -975,7 +975,7 @@ export const SYNTHETIC_LUXE_TOWER_PROPERTY: Property = {
   lng: -63.1929074,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "140 departamentos de 1 y 2 dormitorios en calle Enrique Finot, 2.º anillo. 18 pisos. Entrega en noviembre de 2026. Precio a consulta.",
+  description: "Más espacio para vivir en Enrique Finot: 140 departamentos de 1 y 2 dormitorios con balcón o terraza, piscina, spa y áreas sociales en los pisos 18 y 19. Entrega prevista en noviembre de 2026. Precio a consulta.",
   amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
   images: [
     "/luxe_tower/fachada.jpg",
@@ -1018,7 +1018,7 @@ export const SYNTHETIC_ALPHA_LUXE_PROPERTY: Property = {
   lng: -63.1782311,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "102 departamentos de 1 y 2 dormitorios en Avenida Beni, a pasos del 2.º anillo. La lista del 27/10/2026 publica 62. Entrega en febrero de 2028.",
+  description: "Tu espacio propio sobre Avenida Beni: 102 departamentos de 1 y 2 dormitorios, con piscina, gimnasio y cowork cerca del 2.º anillo. La lista del 27/10/2026 publica 62. Entrega prevista en febrero de 2028.",
   amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
   images: [
     "/alpha_luxe/fachada.jpg",

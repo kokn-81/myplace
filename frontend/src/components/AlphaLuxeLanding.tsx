@@ -55,13 +55,13 @@ const SECTIONS = [
 ];
 
 const AMENITY_SLIDES = [
-  { src: "/alpha_luxe/social/piscina.jpg", category: "Amenidad", title: "Piscina", description: "Piscina del edificio." },
-  { src: "/alpha_luxe/social/gimnasio.jpg", category: "Amenidad", title: "Gimnasio", description: "Gimnasio." },
-  { src: "/alpha_luxe/social/calistenia.jpg", category: "Amenidad", title: "Área de calistenia", description: "Área de calistenia." },
-  { src: "/alpha_luxe/social/juegos.jpg", category: "Amenidad", title: "Sala de juegos", description: "Sala de juegos." },
-  { src: "/alpha_luxe/social/churrasquera.jpg", category: "Amenidad", title: "Churrasqueras", description: "Tres churrasqueras." },
-  { src: "/alpha_luxe/social/cowork.jpg", category: "Amenidad", title: "CoWork", description: "Espacio de cowork." },
-  { src: "/alpha_luxe/fachada-acceso.jpg", category: "Ingreso", title: "Acceso", description: "Acceso con control de ingreso y lobby." },
+  { src: "/alpha_luxe/social/piscina.jpg", category: "Amenidad", title: "Piscina para desconectar", description: "Deja atrás la rutina y disfruta de una pausa en la piscina de tu edificio." },
+  { src: "/alpha_luxe/social/gimnasio.jpg", category: "Amenidad", title: "Tu gimnasio de cada día", description: "Dale un lugar al entrenamiento en tu rutina, sin tener que salir de Alpha." },
+  { src: "/alpha_luxe/social/calistenia.jpg", category: "Amenidad", title: "Calistenia a tu ritmo", description: "Muévete, entrena y encuentra tu propio ritmo en el área de calistenia." },
+  { src: "/alpha_luxe/social/juegos.jpg", category: "Amenidad", title: "Sala de juegos para compartir", description: "Cambia de plan y suma momentos de diversión con los tuyos." },
+  { src: "/alpha_luxe/social/churrasquera.jpg", category: "Amenidad", title: "Tres churrasqueras, más encuentros", description: "Ponle fecha a la próxima reunión: tienes tres espacios para compartir una buena comida." },
+  { src: "/alpha_luxe/social/cowork.jpg", category: "Amenidad", title: "Cowork para enfocarte", description: "Dale su propio espacio a tus ideas y a tu trabajo dentro del edificio." },
+  { src: "/alpha_luxe/fachada-acceso.jpg", category: "Ingreso", title: "Una bienvenida con estilo", description: "Un lobby para recibir a tus visitas y acceso con control de ingreso al volver a casa." },
 ];
 
 const ROOM_FILTERS: { id: AlphaRooms; label: string }[] = [
@@ -263,7 +263,7 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/alpha-luxe`;
     const shareTitle = "Alpha by Luxe Design · Av. Beni";
-    const shareText = `Alpha by Luxe Design, en Avenida Beni. Departamentos de 1 y 2 dormitorios. Entrega en febrero de 2028.`;
+    const shareText = `Tu espacio propio sobre Avenida Beni: Alpha by Luxe Design, departamentos de 1 y 2 dormitorios con piscina, gimnasio y cowork. Entrega prevista en febrero de 2028.`;
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -304,7 +304,7 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
         `Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatAlphaUsd(quote.balance)}`}`,
       ]
       : ["Alpha by Luxe Design"];
-    const text = `Hola, vengo de N.I.A y quiero consultar Alpha by Luxe Design (Avenida Beni):\n\n${lines.map((line) => `• ${line}`).join("\n")}`;
+    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Alpha by Luxe Design (Avenida Beni):\n\n${lines.map((line) => `• ${line}`).join("\n")}\n\n¿Me confirman la disponibilidad de esta unidad y las condiciones del plan que elegí?`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -348,7 +348,7 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
             <span className="text-4xl font-light tracking-wide md:text-5xl">Alpha</span>
             <span className="text-2xl font-light text-[#e8d5a8] md:text-3xl">by Luxe Design</span>
           </h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Avenida Beni, a pasos del 2.º anillo. Entrega en febrero de 2028.</p>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Tu hogar sobre Av. Beni, con piscina, cowork y espacios para disfrutar cada día.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -393,20 +393,20 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">
                 <Sparkles size={13} />
-                Avenida Beni
+                Av. Beni · Norte de Santa Cruz
               </span>
               <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-5xl">
                 Vive en Alpha.
-                <span className="mt-1 block font-normal italic text-[#9a7b45]">El lujo llegó al norte.</span>
+                <span className="mt-1 block font-normal italic text-[#9a7b45]">Tu espacio propio. Más vida alrededor.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Edificio de 21 pisos más planta baja, en el norte de Santa Cruz. Son 102 departamentos de 1 y 2 dormitorios. La lista del {ALPHA_LUXE_CONFIG.priceListLabel} publica 62, en los pisos 4 al 18. En planta baja hay oficinas comerciales. Tres pisos de parqueos. Entrega en febrero de 2028.
+                Haz de Alpha tu próximo hogar en el norte de Santa Cruz. Elige entre 1 y 2 dormitorios, con piscina para desconectar, cowork para tus ideas y espacios para mantenerte activo sin salir del edificio. Un proyecto de 102 departamentos, 21 pisos más planta baja y tres niveles de parqueos, con entrega prevista en febrero de 2028.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Disponibilidad</p>
-                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">102 departamentos. La lista publica 62.</p>
+                <p className="mt-0.5 font-serif text-lg font-bold text-stone-900">102 departamentos · 62 en la lista</p>
               </div>
               <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Lista {ALPHA_LUXE_CONFIG.priceListLabel}</span>
             </div>
@@ -432,18 +432,18 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><MapPin size={13} /> Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Avenida Beni, a pasos del 2.º anillo.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Conecta tu hogar con lo que necesitas.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
-              Alpha está sobre Avenida Beni, a pasos del 2.º anillo, entre Av. Cristo Redentor y Av. Cristóbal de Mendoza. En el entorno están el Colegio La Salle, la Universidad NUR, Hipermaxi y la Universidad Domingo Savio.
+              Vive sobre Avenida Beni, cerca del 2.º anillo y con conexión a Av. Cristo Redentor y Av. Cristóbal de Mendoza. Tener en el entorno al Colegio La Salle, la Universidad NUR, Hipermaxi y la Universidad Domingo Savio te permite combinar estudio, compras y vida diaria desde una misma dirección.
             </p>
             <img src="/alpha_luxe/ubicacion.jpg" alt="Mapa de Alpha sobre Avenida Beni" className="w-full rounded-2xl object-cover" />
           </section>
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Piscina, gimnasio y tres churrasqueras.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Haz espacio para tus mejores momentos.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] md:text-base">
-              El edificio incluye piscina, gimnasio, área de calistenia, sala de juegos, tres churrasqueras y cowork.
+              Entrena en el gimnasio o el área de calistenia, concéntrate en el cowork y cambia de ritmo en la piscina. La sala de juegos y las tres churrasqueras te dan más motivos para reunir a los tuyos, con todo dentro de tu edificio.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
@@ -463,8 +463,8 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
 
           <section id="tipologias" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Nueve plantas, de 1 y 2 dormitorios.</h3>
-            <p className="text-sm leading-relaxed text-stone-600">Los tipos 1 al 6 salen con balcón. El horno está en los departamentos de dos dormitorios. Los muebles del render son referenciales.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917]">El espacio que va con tu momento.</h3>
+            <p className="text-sm leading-relaxed text-stone-600">Vive a tu medida con nueve distribuciones de 1 y 2 dormitorios. Los tipos 1 al 6 incluyen balcón; los de 2 dormitorios incluyen horno. El mobiliario de las imágenes es referencial.</p>
             <div className="flex gap-2">
               {ROOM_FILTERS.map((filter) => (
                 <button key={filter.id} type="button" onClick={() => chooseRooms(filter.id)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${rooms === filter.id ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-700"}`}>
@@ -488,23 +488,23 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Cocina lista y acceso controlado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Detalles que hacen más cómodo llegar a casa.</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <img src="/alpha_luxe/equipamiento/living.jpg" alt="Living referencial de un departamento de Alpha" className="aspect-[4/3] w-full rounded-2xl object-cover" />
               <img src="/alpha_luxe/equipamiento/cocina.jpg" alt="Cocina referencial de un departamento de Alpha" className="aspect-[4/3] w-full rounded-2xl object-cover" />
             </div>
             <ul className="grid grid-cols-1 gap-2 text-sm text-stone-700 sm:grid-cols-2">
               {[
-                "Muebles fijos en cocina y baños",
-                "Placa extractora, microondas, horno y cocina encimera",
-                "Aire acondicionado frío y calor en living comedor y dormitorios",
-                "Termotanque eléctrico y pisos de 61×122 cm",
+                "Cocina y baños con muebles fijos para organizar tu día",
+                "Cocina encimera, extractor y microondas; horno en 2 dormitorios",
+                "Climatización frío/calor en living comedor y dormitorios",
+                "Termotanque eléctrico y pisos de gran formato de 61×122 cm",
                 "Box de baño de vidrio templado y espejo retroiluminado",
-                "Chapas digitales e intercomunicador con videollamada",
-                "Dos ascensores para 13 personas",
-                "CCTV, control de ingreso y acceso automático a estacionamientos",
+                "Tu ingreso con chapa digital e intercomunicador con videollamada",
+                "Dos ascensores con capacidad para 13 personas cada uno",
+                "Acceso controlado, CCTV y estacionamientos con ingreso automático",
                 "Iluminación con sensores en circulación y estacionamientos",
-                "Lobby con mobiliario",
+                "Lobby amoblado para recibir a tus visitas",
               ].map((item) => (
                 <li key={item} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#9a7b45]" />{item}</li>
               ))}
@@ -513,38 +513,38 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Luxe Design.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El sello de Luxe Design en tu próximo hogar.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              Luxe Design firma Alpha. Entrega en febrero de 2028.
+              Alpha lleva a Avenida Beni la propuesta residencial de Luxe Design: departamentos equipados, espacios para trabajar y disfrutar, y tecnología para el acceso cotidiano. Conoce el proyecto, revisa sus acabados y planifica tu próxima etapa con entrega prevista en febrero de 2028.
             </p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Aporte del 40%, del 50% o el total al contado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Elige cómo empezar tu próxima etapa.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
-              Cada modalidad publica su propio precio por m². El contado es el menor. El departamento que elijas muestra el monto en dólares. Lista del {ALPHA_LUXE_CONFIG.priceListLabel}.
+              Aprovecha el precio al contado o inicia la compra con un aporte del 50% o del 40%. Compara el precio de cada modalidad y conoce la inicial y el saldo de tu unidad antes de decidir. Valores según la lista del {ALPHA_LUXE_CONFIG.priceListLabel}.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
-              <h4 className="mt-3 font-serif text-2xl">Paga el departamento completo.</h4>
+              <h4 className="mt-3 font-serif text-2xl">Compra al contado y aprovecha el menor precio.</h4>
               <p className="mt-2 font-serif text-3xl text-[#E8D5A8]">Desde USD {formatAlphaUsd(minRate("contado"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">El 100% del departamento, al menor precio por m² de las tres columnas. Al elegir la unidad ves el monto.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Paga el 100% del departamento y accede al menor precio por m² de las tres modalidades publicadas. Elige la unidad que te interesa para conocer su valor exacto.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Aporte 50%</span>
-              <h4 className="mt-3 font-serif text-2xl leading-snug">Adelanta la mitad.</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Empieza con la mitad, planifica el resto.</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatAlphaUsd(minRate("aporte50"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">La inicial es el 50% del precio de esta modalidad. El otro 50% queda como saldo del departamento.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Inicia la compra con el 50% del valor del departamento en esta modalidad y deja la otra mitad como saldo. Consulta con un asesor las condiciones y fechas de pago para planificar tu compra.</p>
             </article>
             <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-700">Aporte 40%</span>
-              <h4 className="mt-3 font-serif text-2xl leading-snug">Empieza con el 40%.</h4>
+              <h4 className="mt-3 font-serif text-2xl leading-snug">Da el primer paso con un aporte del 40%.</h4>
               <p className="mt-2 font-serif text-3xl text-stone-900">Desde USD {formatAlphaUsd(minRate("aporte40"))}/m²</p>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">La inicial es el 40% del precio de esta modalidad. El 60% restante queda como saldo del departamento.</p>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">Elige el aporte inicial más bajo de las tres modalidades: 40% del precio del departamento y 60% como saldo. Confirma con un asesor las condiciones y el calendario de pago antes de avanzar.</p>
             </article>
             <div className="space-y-2 rounded-xl border border-stone-200 bg-white p-4 text-sm text-stone-700">
-              <p>Parqueo USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.parkingUsd)}. Parqueo con baulera USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.parkingStorageUsd)}. Baulera USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.storageUsd)}. El adicional se suma a la cuota inicial.</p>
+              <p>Completa tu compra con el espacio que necesitas: parqueo USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.parkingUsd)}, parqueo con baulera USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.parkingStorageUsd)} o baulera USD {formatAlphaUsd(ALPHA_LUXE_CONFIG.storageUsd)}. El adicional que elijas se suma a la cuota inicial.</p>
             </div>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -555,7 +555,7 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Elige tu unidad y mira la inversión.</h3>
+                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Encuentra tu unidad y arma tu plan.</h3>
                 <p className="text-xs text-stone-500">Lista del {ALPHA_LUXE_CONFIG.priceListLabel}. Verde: disponible.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -672,12 +672,12 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección está sobre Av. Beni.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Dale dirección a tu próxima etapa.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Elige el departamento y el plan. Te confirmamos la unidad {activeUnit ? activeUnit.codigo : "que estás mirando"} en Alpha.
+              Elige tu espacio en Avenida Beni y conversemos sobre la unidad {activeUnit ? activeUnit.codigo : "que te interesa"}. Te ayudamos a comparar las modalidades de pago y a confirmar la disponibilidad antes de avanzar.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
+              Quiero conocer Alpha <ArrowRight size={14} />
             </button>
           </section>
         </div>

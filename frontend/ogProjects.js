@@ -122,7 +122,7 @@ export const PROJECTS = {
     id: "luxe-tower",
     title: "Luxe Tower · Preventa en el 2.º anillo",
     description:
-      "140 departamentos de 1 y 2 dormitorios en calle Enrique Finot, 2.º anillo. Entrega en noviembre de 2026.",
+      "Más espacio para vivir en Luxe Tower: 1 y 2 dormitorios con balcón o terraza, piscina y spa en lo alto. Calle Enrique Finot, 2.º anillo. Entrega prevista en noviembre de 2026.",
     image: `${SITE}/luxe_tower/fachada.jpg`,
     imageAlt: "Fachada de Luxe Tower en calle Enrique Finot",
     imageWidth: 725,
@@ -134,7 +134,7 @@ export const PROJECTS = {
     id: "alpha-luxe",
     title: "Alpha by Luxe Design · Av. Beni",
     description:
-      "102 departamentos de 1 y 2 dormitorios en Avenida Beni, a pasos del 2.º anillo, desde USD 47.436,90. Entrega en febrero de 2028.",
+      "Tu espacio propio sobre Avenida Beni: Alpha by Luxe Design, 1 y 2 dormitorios con piscina, gimnasio y cowork, desde USD 47.436,90. Entrega prevista en febrero de 2028.",
     image: `${SITE}/alpha_luxe/fachada.jpg`,
     imageAlt: "Fachada de Alpha by Luxe Design",
     imageWidth: 1030,
