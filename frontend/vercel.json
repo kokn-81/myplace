@@ -141,6 +141,22 @@
       "destination": "/api/project-og?project=alpha-luxe"
     },
     {
+      "source": "/sky-level",
+      "destination": "/api/project-og?project=sky-level"
+    },
+    {
+      "source": "/skylevel",
+      "destination": "/api/project-og?project=sky-level"
+    },
+    {
+      "source": "/sky-equinox",
+      "destination": "/api/project-og?project=sky-equinox"
+    },
+    {
+      "source": "/skyequinox",
+      "destination": "/api/project-og?project=sky-equinox"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

@@ -1,5 +1,5 @@
-import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
-export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -1048,6 +1048,88 @@ export const SYNTHETIC_ALPHA_LUXE_PROPERTY: Property = {
   planesPago: "Aporte 40%, aporte 50% o contado. Parqueo USD 12.000; parqueo con baulera USD 16.000; baulera USD 4.000. Lista del 27/10/2026.",
 };
 
+export const SYNTHETIC_SKY_LEVEL_PROPERTY: Property = {
+  id: "sky-level",
+  title: "SKY LEVEL · Equipetrol",
+  price: 78000,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Equipetrol, entre el 2.º y el 3.er anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7682141,
+  lng: -63.1963337,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Torre de 18 pisos. Entrega en marzo de 2027.",
+  amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
+  images: [
+    "/sky_level/fachada.jpg",
+    "/sky_level/social/piscina.jpg",
+    "/sky_level/lobby.jpg",
+    "/sky_level/social/gimnasio.jpg",
+    "/sky_level/social/churrasquera.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "SKY LEVEL",
+  ocupacion: "Disponible",
+  superficieM2: 52,
+  amoblado: false,
+  fechaEntrega: "Marzo 2027",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  reservaUsd: 0,
+  planesPago: "Contado o inicial del 20%. Parqueo y baulera USD 15.000, juntos. Sin seña publicada.",
+};
+
+export const SYNTHETIC_SKY_EQUINOX_PROPERTY: Property = {
+  id: "sky-equinox",
+  title: "SKY EQUINOX · Sirari",
+  price: 52800,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Sirari, Calle Los Jazmines, 4.º anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Sirari",
+  lat: -17.7658745,
+  lng: -63.2049568,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Studio y departamentos de 1 dormitorio en Sirari, sobre el 4.º anillo, desde USD 52.800. Torre de 22 pisos. Entrega en junio de 2027.",
+  amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
+  images: [
+    "/sky_equinox/fachada.jpg",
+    "/sky_equinox/social/wellness.jpg",
+    "/sky_equinox/lobby.jpg",
+    "/sky_equinox/social/churrasquera.jpg",
+    "/sky_equinox/social/eventos.jpg",
+  ],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "SKY EQUINOX",
+  ocupacion: "Disponible",
+  superficieM2: 35.2,
+  amoblado: false,
+  fechaEntrega: "Junio 2027",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  reservaUsd: 0,
+  planesPago: "Contado o inicial del 20%. Parqueo y baulera incluidos. Sin seña publicada.",
+};
+
 
 
 
@@ -1072,6 +1154,8 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "vertical-guemes": { lat: -17.7699027, lng: -63.1910632 },
   "luxe-tower": { lat: -17.7712594, lng: -63.1929074 },
   "alpha-luxe": { lat: -17.7692349, lng: -63.1782311 },
+  "sky-level": { lat: -17.7682141, lng: -63.1963337 },
+  "sky-equinox": { lat: -17.7658745, lng: -63.2049568 },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -1135,6 +1219,16 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   const alphaLuxe = (list && list.find((p) => String(p.id) === "alpha-luxe" || isAlphaLuxeProperty(p))) || SYNTHETIC_ALPHA_LUXE_PROPERTY;
   if (alphaLuxe && !priorityItems.some((p) => String(p.id) === String(alphaLuxe.id))) {
     priorityItems.push(withOfficialPin(alphaLuxe, "alpha-luxe"));
+  }
+
+  const skyLevel = (list && list.find((p) => String(p.id) === "sky-level" || isSkyLevelProperty(p))) || SYNTHETIC_SKY_LEVEL_PROPERTY;
+  if (skyLevel && !priorityItems.some((p) => String(p.id) === String(skyLevel.id))) {
+    priorityItems.push(withOfficialPin(skyLevel, "sky-level"));
+  }
+
+  const skyEquinox = (list && list.find((p) => String(p.id) === "sky-equinox" || isSkyEquinoxProperty(p))) || SYNTHETIC_SKY_EQUINOX_PROPERTY;
+  if (skyEquinox && !priorityItems.some((p) => String(p.id) === String(skyEquinox.id))) {
+    priorityItems.push(withOfficialPin(skyEquinox, "sky-equinox"));
   }
 
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
@@ -1553,6 +1647,8 @@ export default function MapPage() {
     const isVerticalPath = pathname.startsWith("/vertical-guemes") || pathname.startsWith("/verticalguemes");
     const isAlphaPath = pathname.startsWith("/alpha-luxe") || pathname.startsWith("/alpha-by-luxe") || pathname.startsWith("/luxe-alpha") || pathname.startsWith("/alphabyluxe");
     const isLuxePath = pathname.startsWith("/luxe-tower") || pathname.startsWith("/luxetower");
+    const isSkyLevelPath = pathname.startsWith("/sky-level") || pathname.startsWith("/skylevel");
+    const isSkyEquinoxPath = pathname.startsWith("/sky-equinox") || pathname.startsWith("/skyequinox");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1581,6 +1677,10 @@ export default function MapPage() {
         ? "beton-brut-ii"
         : isVerticalPath
         ? "vertical-guemes"
+        : isSkyLevelPath
+        ? "sky-level"
+        : isSkyEquinoxPath
+        ? "sky-equinox"
         : isAlphaPath
         ? "alpha-luxe"
         : isLuxePath
@@ -1599,6 +1699,12 @@ export default function MapPage() {
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isVerticalGuemesSlug(proyecto)) {
       selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isSkyLevelSlug(proyecto)) {
+      selectProperty(SYNTHETIC_SKY_LEVEL_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isSkyEquinoxSlug(proyecto)) {
+      selectProperty(SYNTHETIC_SKY_EQUINOX_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isAlphaLuxeSlug(proyecto)) {
       selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
@@ -1655,6 +1761,10 @@ export default function MapPage() {
       document.title = "Béton Brut II · Preventa en Equipetrol | N.I.A";
     } else if (selectedProperty && isVerticalGuemesProperty(selectedProperty)) {
       document.title = "Vertical Güemes · Preventa en Equipetrol | N.I.A";
+    } else if (selectedProperty && isSkyLevelProperty(selectedProperty)) {
+      document.title = "Sky Level · Equipetrol | N.I.A";
+    } else if (selectedProperty && isSkyEquinoxProperty(selectedProperty)) {
+      document.title = "Sky Equinox · Sirari | N.I.A";
     } else if (selectedProperty && isAlphaLuxeProperty(selectedProperty)) {
       document.title = "Alpha by Luxe Design · Av. Beni | N.I.A";
     } else if (selectedProperty && isLuxeTowerProperty(selectedProperty)) {
@@ -1688,6 +1798,8 @@ export default function MapPage() {
               isTriventoProperty(current) ||
               isBetonBrutProperty(current) ||
               isVerticalGuemesProperty(current) ||
+              isSkyLevelProperty(current) ||
+              isSkyEquinoxProperty(current) ||
               isAlphaLuxeProperty(current) ||
               isLuxeTowerProperty(current)
             ) {
@@ -1704,6 +1816,10 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_BETON_BRUT_PROPERTY, { skipHistoryPush: true });
         } else if (isVerticalGuemesSlug(proyecto)) {
           selectProperty(SYNTHETIC_VERTICAL_GUEMES_PROPERTY, { skipHistoryPush: true });
+        } else if (isSkyLevelSlug(proyecto)) {
+          selectProperty(SYNTHETIC_SKY_LEVEL_PROPERTY, { skipHistoryPush: true });
+        } else if (isSkyEquinoxSlug(proyecto)) {
+          selectProperty(SYNTHETIC_SKY_EQUINOX_PROPERTY, { skipHistoryPush: true });
         } else if (isAlphaLuxeSlug(proyecto)) {
           selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
         } else if (isLuxeTowerSlug(proyecto)) {
@@ -1748,7 +1864,9 @@ export default function MapPage() {
         isBetonBrutProperty(target) ||
         isVerticalGuemesProperty(target) ||
         isAlphaLuxeProperty(target) ||
-        isLuxeTowerProperty(target)
+        isLuxeTowerProperty(target) ||
+        isSkyLevelProperty(target) ||
+        isSkyEquinoxProperty(target)
       ) {
         setCurrentIndex(0);
       }

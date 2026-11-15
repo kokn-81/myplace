@@ -135,6 +135,43 @@ export const isVerticalGuemesSlug = (value: string): boolean => {
 const hasToken = (value: string, token: string) =>
   new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(normalizeVertical(value));
 
+const mentionsSkyLevel = (value: string) => hasToken(value, "sky") && hasToken(value, "level");
+const mentionsSkyEquinox = (value: string) => hasToken(value, "sky") && hasToken(value, "equinox");
+const SKY_LEVEL_IDS = new Set(["sky-level", "skylevel"]);
+const SKY_EQUINOX_IDS = new Set(["sky-equinox", "skyequinox"]);
+
+export const isSkyLevelProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (SKY_LEVEL_IDS.has(sId)) return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = String(p.title || (p as any).titulo || "");
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "");
+  return mentionsSkyLevel(sTitle) || mentionsSkyLevel(sCmp);
+};
+
+export const isSkyLevelSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return SKY_LEVEL_IDS.has(q) || mentionsSkyLevel(q);
+};
+
+export const isSkyEquinoxProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (SKY_EQUINOX_IDS.has(sId)) return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = String(p.title || (p as any).titulo || "");
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "");
+  return mentionsSkyEquinox(sTitle) || mentionsSkyEquinox(sCmp);
+};
+
+export const isSkyEquinoxSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return SKY_EQUINOX_IDS.has(q) || mentionsSkyEquinox(q);
+};
+
 const mentionsAlphaLuxe = (value: string) => hasToken(value, "alpha") && hasToken(value, "luxe");
 
 const ALPHA_LUXE_IDS = new Set(["alpha-luxe", "alpha-by-luxe", "alphabyluxe", "luxe-alpha"]);
@@ -223,6 +260,12 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isVerticalGuemesSlug(q)) {
     return isVerticalGuemesProperty(p);
   }
+  if (isSkyLevelSlug(q)) {
+    return isSkyLevelProperty(p);
+  }
+  if (isSkyEquinoxSlug(q)) {
+    return isSkyEquinoxProperty(p);
+  }
   if (isAlphaLuxeSlug(q)) {
     return isAlphaLuxeProperty(p);
   }
@@ -259,6 +302,8 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isTriventoProperty(p) ||
     isBetonBrutProperty(p) ||
     isVerticalGuemesProperty(p) ||
+    isSkyLevelProperty(p) ||
+    isSkyEquinoxProperty(p) ||
     isAlphaLuxeProperty(p) ||
     isLuxeTowerProperty(p)
   );

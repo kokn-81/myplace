@@ -142,6 +142,30 @@ export const PROJECTS = {
     canonicalPath: "/alpha-luxe",
     appUrl: "/?proyecto=alpha-luxe",
   },
+  "sky-level": {
+    id: "sky-level",
+    title: "Sky Level · Equipetrol",
+    description:
+      "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Entrega en marzo de 2027.",
+    image: `${SITE}/sky_level/fachada.jpg`,
+    imageAlt: "Fachada de Sky Level en Equipetrol",
+    imageWidth: 1440,
+    imageHeight: 1800,
+    canonicalPath: "/sky-level",
+    appUrl: "/?proyecto=sky-level",
+  },
+  "sky-equinox": {
+    id: "sky-equinox",
+    title: "Sky Equinox · Sirari",
+    description:
+      "Studio y departamentos de 1 dormitorio en Sirari, sobre el 4.º anillo, desde USD 52.800. Entrega en junio de 2027.",
+    image: `${SITE}/sky_equinox/fachada.jpg`,
+    imageAlt: "Fachada de Sky Equinox en Sirari",
+    imageWidth: 1800,
+    imageHeight: 3184,
+    canonicalPath: "/sky-equinox",
+    appUrl: "/?proyecto=sky-equinox",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -190,6 +214,10 @@ const PATH_ALIASES = {
   "alpha-by-luxe": "alpha-luxe",
   alphabyluxe: "alpha-luxe",
   "luxe-alpha": "alpha-luxe",
+  "sky-level": "sky-level",
+  skylevel: "sky-level",
+  "sky-equinox": "sky-equinox",
+  skyequinox: "sky-equinox",
 };
 
 function fromQuery(value) {
@@ -204,6 +232,8 @@ function fromQuery(value) {
   const plain = q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const hasToken = (token) => new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(plain);
   if (plain.includes("vertical") && plain.includes("guemes")) return PROJECTS["vertical-guemes"];
+  if (hasToken("sky") && hasToken("level")) return PROJECTS["sky-level"];
+  if (hasToken("sky") && hasToken("equinox")) return PROJECTS["sky-equinox"];
   if (hasToken("alpha") && hasToken("luxe")) return PROJECTS["alpha-luxe"];
   if (plain.includes("luxe") && plain.includes("tower")) return PROJECTS["luxe-tower"];
   if (q.includes("beton")) return PROJECTS["beton-brut-ii"];

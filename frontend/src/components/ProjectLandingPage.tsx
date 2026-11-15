@@ -12,10 +12,12 @@ import BetonBrutLanding from "./BetonBrutLanding";
 import VerticalGuemesLanding from "./VerticalGuemesLanding";
 import LuxeTowerLanding from "./LuxeTowerLanding";
 import AlphaLuxeLanding from "./AlphaLuxeLanding";
+import SkyLevelLanding from "./SkyLevelLanding";
+import SkyEquinoxLanding from "./SkyEquinoxLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
-import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty } from "../projectIdentity";
+import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty } from "../projectIdentity";
 
 interface Props {
   property: Property;
@@ -37,6 +39,14 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isVerticalGuemesProperty(property)) {
     return <VerticalGuemesLanding property={property} onClose={onClose} />;
+  }
+
+  if (isSkyLevelProperty(property)) {
+    return <SkyLevelLanding property={property} onClose={onClose} />;
+  }
+
+  if (isSkyEquinoxProperty(property)) {
+    return <SkyEquinoxLanding property={property} onClose={onClose} />;
   }
 
   if (isAlphaLuxeProperty(property)) {

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug, isLuxeTowerProperty, isLuxeTowerSlug, isAlphaLuxeProperty, isAlphaLuxeSlug } from "./projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug, isLuxeTowerProperty, isLuxeTowerSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug } from "./projectIdentity";
 import { isCatalogPropertyVisible } from "./catalogVisibility";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
@@ -169,6 +169,32 @@ test("Luxe Tower no se confunde con Bless Tower ni con Domus Tower", () => {
   assert.equal(isTargetProject(alpha, "alpha-luxe"), true);
   assert.equal(isTargetProject(luxe, "alpha-luxe"), false);
   assert.equal(isTargetProject(alpha, "luxe-tower"), false);
+});
+
+test("Sky Level y Sky Equinox no se roban entre sí ni con luxury", () => {
+  const level = { id: "sky-level", title: "Sky Level", type: "Proyecto (preventa)" } as Property;
+  const equinox = { id: "sky-equinox", title: "Sky Equinox", type: "Proyecto (preventa)" } as Property;
+  const luxury = { id: "domus-luxury", title: "DOMUS Luxury", type: "Proyecto (preventa)" } as Property;
+  const skyBar = { id: "88", title: "Departamento con sky bar", type: "Departamento" } as Property;
+  assert.equal(isSkyLevelSlug("sky"), false);
+  assert.equal(isSkyLevelSlug("level"), false);
+  assert.equal(isSkyLevelSlug("sky luxury"), false);
+  assert.equal(isSkyLevelSlug("sky-level"), true);
+  assert.equal(isSkyLevelSlug("Sky Level"), true);
+  assert.equal(isSkyEquinoxSlug("equinox"), false);
+  assert.equal(isSkyEquinoxSlug("sky"), false);
+  assert.equal(isSkyEquinoxSlug("sky-equinox"), true);
+  assert.equal(isSkyEquinoxSlug("Sky Equinox"), true);
+  assert.equal(isSkyLevelProperty(equinox), false);
+  assert.equal(isSkyEquinoxProperty(level), false);
+  assert.equal(isSkyLevelProperty(luxury), false);
+  assert.equal(isSkyLevelProperty(skyBar), false);
+  assert.equal(isLuxeTowerProperty(level), false);
+  assert.equal(isAlphaLuxeProperty(equinox), false);
+  assert.equal(isTargetProject(level, "sky-level"), true);
+  assert.equal(isTargetProject(equinox, "sky-level"), false);
+  assert.equal(isTargetProject(level, "sky-equinox"), false);
+  assert.equal(isTargetProject(equinox, "sky-equinox"), true);
 });
 
 function projectsStillFourteen(snapshot: unknown) {

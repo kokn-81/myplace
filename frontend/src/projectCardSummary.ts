@@ -9,6 +9,8 @@ import { BETON_BRUT_CONFIG } from "./betonBrutInventory";
 import { VERTICAL_GUEMES_CONFIG } from "./verticalGuemesInventory";
 import { LUXE_TOWER_CONFIG } from "./luxeTowerInventory";
 import { ALPHA_LUXE_CONFIG } from "./alphaLuxeInventory";
+import { SKY_LEVEL_CONFIG } from "./skyLevelInventory";
+import { SKY_EQUINOX_CONFIG } from "./skyEquinoxInventory";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -122,6 +124,22 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     bedrooms: [1, 2],
     sourceUrl: ALPHA_LUXE_CONFIG.brochurePdfUrl,
   },
+  "sky-level": {
+    name: SKY_LEVEL_CONFIG.name,
+    builder: SKY_LEVEL_CONFIG.builder,
+    address: `${SKY_LEVEL_CONFIG.address}, ${SKY_LEVEL_CONFIG.near}`,
+    delivery: SKY_LEVEL_CONFIG.delivery,
+    bedrooms: [1, 2],
+    sourceUrl: SKY_LEVEL_CONFIG.brochurePdfUrl,
+  },
+  "sky-equinox": {
+    name: SKY_EQUINOX_CONFIG.name,
+    builder: SKY_EQUINOX_CONFIG.builder,
+    address: SKY_EQUINOX_CONFIG.address,
+    delivery: SKY_EQUINOX_CONFIG.delivery,
+    bedrooms: [0, 1],
+    sourceUrl: SKY_EQUINOX_CONFIG.brochurePdfUrl,
+  },
   ...Object.fromEntries(Object.values(DOMUS_PROJECTS_CONFIG).map((project) => [project.id, {
     name: project.name,
     builder: project.developer,
@@ -153,6 +171,8 @@ const PROJECT_ALIASES: Record<string, string> = {
   "alpha-by-luxe": "alpha-luxe",
   alphabyluxe: "alpha-luxe",
   "luxe-alpha": "alpha-luxe",
+  skylevel: "sky-level",
+  skyequinox: "sky-equinox",
   domus: "domus-black",
   "domus-lux": "domus-luxury",
 };
