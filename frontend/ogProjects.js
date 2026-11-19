@@ -166,6 +166,30 @@ export const PROJECTS = {
     canonicalPath: "/sky-equinox",
     appUrl: "/?proyecto=sky-equinox",
   },
+  giardino: {
+    id: "giardino",
+    title: "Giardino · Av. San Martín",
+    description:
+      "Departamentos de 1, 2 y 3 habitaciones en Av. San Martín y el 3.er anillo, desde USD 132.990. Reserva del 15%.",
+    image: `${SITE}/giardino/fachada.jpg`,
+    imageAlt: "Fachada de Giardino",
+    imageWidth: 680,
+    imageHeight: 1188,
+    canonicalPath: "/giardino",
+    appUrl: "/?proyecto=giardino",
+  },
+  mare: {
+    id: "mare",
+    title: "Mare · 3.er anillo",
+    description:
+      "Departamentos de 1, 2 y 3 habitaciones en el 3.er anillo externo, esquina Calle Los Nogales, al lado de Chaplin Show, desde USD 101.210.",
+    image: `${SITE}/mare/fachada.jpg`,
+    imageAlt: "Fachada de Mare",
+    imageWidth: 492,
+    imageHeight: 828,
+    canonicalPath: "/mare",
+    appUrl: "/?proyecto=mare",
+  },
   "domus-infinity": domus(
     "domus-infinity",
     "DOMUS Infinity",
@@ -218,12 +242,18 @@ const PATH_ALIASES = {
   skylevel: "sky-level",
   "sky-equinox": "sky-equinox",
   skyequinox: "sky-equinox",
+  giardino: "giardino",
+  mare: "mare",
 };
 
 function fromQuery(value) {
   const q = String(value || "").trim().toLowerCase();
   if (!q) return null;
   if (PATH_ALIASES[q]) return PROJECTS[PATH_ALIASES[q]];
+  const early = q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const earlyToken = (token) => new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(early);
+  if (earlyToken("giardino")) return PROJECTS.giardino;
+  if (earlyToken("mare")) return PROJECTS.mare;
   if (q.includes("garden") || q === "zen") return PROJECTS.gardenzen;
   if (q.includes("ona")) return PROJECTS.ona;
   if (q.includes("euro")) return PROJECTS.eurodesign;
@@ -234,6 +264,8 @@ function fromQuery(value) {
   if (plain.includes("vertical") && plain.includes("guemes")) return PROJECTS["vertical-guemes"];
   if (hasToken("sky") && hasToken("level")) return PROJECTS["sky-level"];
   if (hasToken("sky") && hasToken("equinox")) return PROJECTS["sky-equinox"];
+  if (hasToken("giardino")) return PROJECTS.giardino;
+  if (hasToken("mare")) return PROJECTS.mare;
   if (hasToken("alpha") && hasToken("luxe")) return PROJECTS["alpha-luxe"];
   if (plain.includes("luxe") && plain.includes("tower")) return PROJECTS["luxe-tower"];
   if (q.includes("beton")) return PROJECTS["beton-brut-ii"];

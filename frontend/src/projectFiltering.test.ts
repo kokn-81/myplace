@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug, isLuxeTowerProperty, isLuxeTowerSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug } from "./projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isDomusProperty, isGardenZenProperty, isTriventoProperty, isProjectOrPreventa, isTargetProject, isVerticalGuemesProperty, isVerticalGuemesSlug, isLuxeTowerProperty, isLuxeTowerSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isMareProperty, isMareSlug } from "./projectIdentity";
 import { isCatalogPropertyVisible } from "./catalogVisibility";
 import catalogSnapshot from "../public/catalog-snapshot.json";
 import { Property } from "./types";
@@ -195,6 +195,27 @@ test("Sky Level y Sky Equinox no se roban entre sí ni con luxury", () => {
   assert.equal(isTargetProject(equinox, "sky-level"), false);
   assert.equal(isTargetProject(level, "sky-equinox"), false);
   assert.equal(isTargetProject(equinox, "sky-equinox"), true);
+});
+
+test("Giardino y Mare no se confunden con Garden Zen, Mariscal ni con el catálogo", () => {
+  const garden = { id: "garden-zen", title: "Garden Zen", type: "Proyecto (preventa)" } as Property;
+  const giardino = { id: "giardino", title: "Giardino", type: "Proyecto (preventa)" } as Property;
+  const mare = { id: "mare", title: "Mare", type: "Proyecto (preventa)" } as Property;
+  const mariscal = { id: "70", title: "Oficina Mariscal", type: "Oficina" } as Property;
+  assert.equal(isGiardinoSlug("garden"), false);
+  assert.equal(isGiardinoSlug("garden-zen"), false);
+  assert.equal(isGiardinoProperty(garden), false);
+  assert.equal(isGiardinoSlug("giardino"), true);
+  assert.equal(isGiardinoProperty(giardino), true);
+  assert.equal(isMareSlug("mariscal"), false);
+  assert.equal(isMareSlug("marea"), false);
+  assert.equal(isMareProperty(mariscal), false);
+  assert.equal(isMareSlug("mare"), true);
+  assert.equal(isMareProperty(mare), true);
+  assert.equal(isTargetProject(giardino, "mare"), false);
+  assert.equal(isTargetProject(mare, "giardino"), false);
+  assert.equal(isTargetProject(garden, "giardino"), false);
+  assert.equal(projectsStillFourteen(catalogSnapshot), 14);
 });
 
 function projectsStillFourteen(snapshot: unknown) {

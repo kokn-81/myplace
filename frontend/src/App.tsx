@@ -85,6 +85,8 @@ export default function App() {
           <Route path="/skylevel" element={<MapPage />} />
           <Route path="/sky-equinox" element={<MapPage />} />
           <Route path="/skyequinox" element={<MapPage />} />
+          <Route path="/giardino" element={<MapPage />} />
+          <Route path="/mare" element={<MapPage />} />
           <Route path="/eurodesign" element={<MapPage />} />
           <Route path="/euro-design" element={<MapPage />} />
           <Route path="/domus" element={<MapPage />} />

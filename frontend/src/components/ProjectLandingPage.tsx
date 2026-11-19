@@ -14,10 +14,12 @@ import LuxeTowerLanding from "./LuxeTowerLanding";
 import AlphaLuxeLanding from "./AlphaLuxeLanding";
 import SkyLevelLanding from "./SkyLevelLanding";
 import SkyEquinoxLanding from "./SkyEquinoxLanding";
+import GiardinoLanding from "./GiardinoLanding";
+import MareLanding from "./MareLanding";
 import { recordLeadEvent } from "../leadTracking";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
-import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty } from "../projectIdentity";
+import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty, isGiardinoProperty, isMareProperty } from "../projectIdentity";
 
 interface Props {
   property: Property;
@@ -47,6 +49,14 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isSkyEquinoxProperty(property)) {
     return <SkyEquinoxLanding property={property} onClose={onClose} />;
+  }
+
+  if (isGiardinoProperty(property)) {
+    return <GiardinoLanding property={property} onClose={onClose} />;
+  }
+
+  if (isMareProperty(property)) {
+    return <MareLanding property={property} onClose={onClose} />;
   }
 
   if (isAlphaLuxeProperty(property)) {

@@ -31,7 +31,7 @@ export function sortCatalogResults(properties: Property[], sort: CatalogSort, be
 }
 export function propertyPath(property: Pick<Property, "id">) {
   const id = String(property.id);
-  const paths: Record<string, string> = { "5": "/ona", ona: "/ona", "1816": "/eurodesign", eurodesign: "/eurodesign", "garden-zen": "/gardenzen", "bless-tower": "/bless-tower", "bless-drei": "/bless-drei", "trivento-iv": "/trivento", "beton-brut-ii": "/beton-brut-ii", "vertical-guemes": "/vertical-guemes", "luxe-tower": "/luxe-tower", "alpha-luxe": "/alpha-luxe", "alpha-by-luxe": "/alpha-luxe", alphabyluxe: "/alpha-luxe", "luxe-alpha": "/alpha-luxe", "sky-level": "/sky-level", skylevel: "/sky-level", "sky-equinox": "/sky-equinox", skyequinox: "/sky-equinox" };
+  const paths: Record<string, string> = { "5": "/ona", ona: "/ona", "1816": "/eurodesign", eurodesign: "/eurodesign", "garden-zen": "/gardenzen", "bless-tower": "/bless-tower", "bless-drei": "/bless-drei", "trivento-iv": "/trivento", "beton-brut-ii": "/beton-brut-ii", "vertical-guemes": "/vertical-guemes", "luxe-tower": "/luxe-tower", "alpha-luxe": "/alpha-luxe", "alpha-by-luxe": "/alpha-luxe", alphabyluxe: "/alpha-luxe", "luxe-alpha": "/alpha-luxe", "sky-level": "/sky-level", skylevel: "/sky-level", "sky-equinox": "/sky-equinox", skyequinox: "/sky-equinox", giardino: "/giardino", mare: "/mare" };
   return paths[id] || (id.startsWith("domus-") ? `/domus/${id}` : `/departamento/${encodeURIComponent(id)}`);
 }
 export function propertyIdFromLocation(url: URL): string | null {

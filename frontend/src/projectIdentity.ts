@@ -172,6 +172,44 @@ export const isSkyEquinoxSlug = (value: string): boolean => {
   return SKY_EQUINOX_IDS.has(q) || mentionsSkyEquinox(q);
 };
 
+const mentionsGiardino = (value: string) => hasToken(value, "giardino");
+const GIARDINO_IDS = new Set(["giardino"]);
+
+export const isGiardinoProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (GIARDINO_IDS.has(sId)) return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = String(p.title || (p as any).titulo || "");
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "");
+  return mentionsGiardino(sTitle) || mentionsGiardino(sCmp);
+};
+
+export const isGiardinoSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return GIARDINO_IDS.has(q) || mentionsGiardino(q);
+};
+
+const mentionsMare = (value: string) => hasToken(value, "mare");
+const MARE_IDS = new Set(["mare"]);
+
+export const isMareProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const sId = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (MARE_IDS.has(sId)) return true;
+  const type = p.type || (p as any).tipo_inmueble;
+  if (!isProjectType(type)) return false;
+  const sTitle = String(p.title || (p as any).titulo || "");
+  const sCmp = String(p.complejoNombre || (p as any).complejo_nombre || "");
+  return mentionsMare(sTitle) || mentionsMare(sCmp);
+};
+
+export const isMareSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return MARE_IDS.has(q) || mentionsMare(q);
+};
+
 const mentionsAlphaLuxe = (value: string) => hasToken(value, "alpha") && hasToken(value, "luxe");
 
 const ALPHA_LUXE_IDS = new Set(["alpha-luxe", "alpha-by-luxe", "alphabyluxe", "luxe-alpha"]);
@@ -266,6 +304,12 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isSkyEquinoxSlug(q)) {
     return isSkyEquinoxProperty(p);
   }
+  if (isGiardinoSlug(q)) {
+    return isGiardinoProperty(p);
+  }
+  if (isMareSlug(q)) {
+    return isMareProperty(p);
+  }
   if (isAlphaLuxeSlug(q)) {
     return isAlphaLuxeProperty(p);
   }
@@ -304,6 +348,8 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isVerticalGuemesProperty(p) ||
     isSkyLevelProperty(p) ||
     isSkyEquinoxProperty(p) ||
+    isGiardinoProperty(p) ||
+    isMareProperty(p) ||
     isAlphaLuxeProperty(p) ||
     isLuxeTowerProperty(p)
   );

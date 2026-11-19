@@ -11,6 +11,8 @@ import { LUXE_TOWER_CONFIG } from "./luxeTowerInventory";
 import { ALPHA_LUXE_CONFIG } from "./alphaLuxeInventory";
 import { SKY_LEVEL_CONFIG } from "./skyLevelInventory";
 import { SKY_EQUINOX_CONFIG } from "./skyEquinoxInventory";
+import { GIARDINO_CONFIG } from "./giardinoInventory";
+import { MARE_CONFIG } from "./mareInventory";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -139,6 +141,22 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     delivery: SKY_EQUINOX_CONFIG.delivery,
     bedrooms: [0, 1],
     sourceUrl: SKY_EQUINOX_CONFIG.brochurePdfUrl,
+  },
+  giardino: {
+    name: GIARDINO_CONFIG.name,
+    builder: GIARDINO_CONFIG.collaborator,
+    address: GIARDINO_CONFIG.address,
+    delivery: null,
+    bedrooms: [1, 2, 3],
+    sourceUrl: GIARDINO_CONFIG.brochurePdfUrl,
+  },
+  mare: {
+    name: MARE_CONFIG.name,
+    builder: MARE_CONFIG.builder,
+    address: `${MARE_CONFIG.address}. ${MARE_CONFIG.near}`,
+    delivery: null,
+    bedrooms: [1, 2, 3],
+    sourceUrl: MARE_CONFIG.brochurePdfUrl,
   },
   ...Object.fromEntries(Object.values(DOMUS_PROJECTS_CONFIG).map((project) => [project.id, {
     name: project.name,

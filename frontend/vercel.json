@@ -157,6 +157,14 @@
       "destination": "/api/project-og?project=sky-equinox"
     },
     {
+      "source": "/giardino",
+      "destination": "/api/project-og?project=giardino"
+    },
+    {
+      "source": "/mare",
+      "destination": "/api/project-og?project=mare"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

@@ -1,5 +1,5 @@
-import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
-export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -1130,6 +1130,76 @@ export const SYNTHETIC_SKY_EQUINOX_PROPERTY: Property = {
   planesPago: "Contado o inicial del 20%. Parqueo y baulera incluidos. Sin seña publicada.",
 };
 
+export const SYNTHETIC_GIARDINO_PROPERTY: Property = {
+  id: "giardino",
+  title: "GIARDINO · Av. San Martín",
+  price: 132990,
+  rooms: 1,
+  bathrooms: 1,
+  area: "Av. San Martín y 3.er anillo",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7635749,
+  lng: -63.1974606,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Departamentos de 1, 2 y 3 habitaciones en Av. San Martín y el 3.er anillo, desde USD 132.990. Sectores Residenza y Vita. Reserva del 15%.",
+  amenities: ["terraza"],
+  images: ["/giardino/fachada.jpg", "/giardino/jardin.jpg", "/giardino/hall.jpg", "/giardino/interiores/3hab.jpg"],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "GIARDINO",
+  ocupacion: "Disponible",
+  superficieM2: 59.72,
+  amoblado: false,
+  fechaEntrega: "",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  reservaUsd: 0,
+  planesPago: "Reserva 15% del precio publicado. Sin seña fija en dólares.",
+};
+
+export const SYNTHETIC_MARE_PROPERTY: Property = {
+  id: "mare",
+  title: "MARE · 3.er anillo",
+  price: 101210,
+  rooms: 1,
+  bathrooms: 1,
+  area: "3.er anillo externo, esquina Calle Los Nogales",
+  city: "Santa Cruz de la Sierra",
+  zone: "Equipetrol",
+  lat: -17.7656331,
+  lng: -63.2003751,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Departamentos de 1, 2 y 3 habitaciones en el 3.er anillo externo, esquina Calle Los Nogales, al lado de Chaplin Show, desde USD 101.210.",
+  amenities: ["piscina", "churrasquera", "gimnasio", "spa", "coworking"],
+  images: ["/mare/fachada.jpg", "/mare/social/marea.jpg", "/mare/social/spa.jpg", "/mare/social/churrasquera.jpg"],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "MARE",
+  ocupacion: "Disponible",
+  superficieM2: 51.67,
+  amoblado: false,
+  fechaEntrega: "",
+  avanceObra: 0,
+  faseObra: "Preventa",
+  reservaUsd: 0,
+  planesPago: "Precio publicado al contado. El dúplex incluye parqueo XL y baulera.",
+};
+
 
 
 
@@ -1156,6 +1226,8 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "alpha-luxe": { lat: -17.7692349, lng: -63.1782311 },
   "sky-level": { lat: -17.7682141, lng: -63.1963337 },
   "sky-equinox": { lat: -17.7658745, lng: -63.2049568 },
+  giardino: { lat: -17.7635749, lng: -63.1974606 },
+  mare: { lat: -17.7656331, lng: -63.2003751 },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -1229,6 +1301,16 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   const skyEquinox = (list && list.find((p) => String(p.id) === "sky-equinox" || isSkyEquinoxProperty(p))) || SYNTHETIC_SKY_EQUINOX_PROPERTY;
   if (skyEquinox && !priorityItems.some((p) => String(p.id) === String(skyEquinox.id))) {
     priorityItems.push(withOfficialPin(skyEquinox, "sky-equinox"));
+  }
+
+  const giardino = (list && list.find((p) => String(p.id) === "giardino" || isGiardinoProperty(p))) || SYNTHETIC_GIARDINO_PROPERTY;
+  if (giardino && !priorityItems.some((p) => String(p.id) === String(giardino.id))) {
+    priorityItems.push(withOfficialPin(giardino, "giardino"));
+  }
+
+  const mare = (list && list.find((p) => String(p.id) === "mare" || isMareProperty(p))) || SYNTHETIC_MARE_PROPERTY;
+  if (mare && !priorityItems.some((p) => String(p.id) === String(mare.id))) {
+    priorityItems.push(withOfficialPin(mare, "mare"));
   }
 
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
@@ -1649,6 +1731,8 @@ export default function MapPage() {
     const isLuxePath = pathname.startsWith("/luxe-tower") || pathname.startsWith("/luxetower");
     const isSkyLevelPath = pathname.startsWith("/sky-level") || pathname.startsWith("/skylevel");
     const isSkyEquinoxPath = pathname.startsWith("/sky-equinox") || pathname.startsWith("/skyequinox");
+    const isGiardinoPath = pathname.startsWith("/giardino");
+    const isMarePath = pathname.startsWith("/mare");
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1681,6 +1765,10 @@ export default function MapPage() {
         ? "sky-level"
         : isSkyEquinoxPath
         ? "sky-equinox"
+        : isGiardinoPath
+        ? "giardino"
+        : isMarePath
+        ? "mare"
         : isAlphaPath
         ? "alpha-luxe"
         : isLuxePath
@@ -1705,6 +1793,12 @@ export default function MapPage() {
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isSkyEquinoxSlug(proyecto)) {
       selectProperty(SYNTHETIC_SKY_EQUINOX_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isGiardinoSlug(proyecto)) {
+      selectProperty(SYNTHETIC_GIARDINO_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isMareSlug(proyecto)) {
+      selectProperty(SYNTHETIC_MARE_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isAlphaLuxeSlug(proyecto)) {
       selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
@@ -1765,6 +1859,10 @@ export default function MapPage() {
       document.title = "Sky Level · Equipetrol | N.I.A";
     } else if (selectedProperty && isSkyEquinoxProperty(selectedProperty)) {
       document.title = "Sky Equinox · Sirari | N.I.A";
+    } else if (selectedProperty && isGiardinoProperty(selectedProperty)) {
+      document.title = "Giardino · Av. San Martín | N.I.A";
+    } else if (selectedProperty && isMareProperty(selectedProperty)) {
+      document.title = "Mare · 3.er anillo | N.I.A";
     } else if (selectedProperty && isAlphaLuxeProperty(selectedProperty)) {
       document.title = "Alpha by Luxe Design · Av. Beni | N.I.A";
     } else if (selectedProperty && isLuxeTowerProperty(selectedProperty)) {
@@ -1800,6 +1898,8 @@ export default function MapPage() {
               isVerticalGuemesProperty(current) ||
               isSkyLevelProperty(current) ||
               isSkyEquinoxProperty(current) ||
+              isGiardinoProperty(current) ||
+              isMareProperty(current) ||
               isAlphaLuxeProperty(current) ||
               isLuxeTowerProperty(current)
             ) {
@@ -1820,6 +1920,10 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_SKY_LEVEL_PROPERTY, { skipHistoryPush: true });
         } else if (isSkyEquinoxSlug(proyecto)) {
           selectProperty(SYNTHETIC_SKY_EQUINOX_PROPERTY, { skipHistoryPush: true });
+        } else if (isGiardinoSlug(proyecto)) {
+          selectProperty(SYNTHETIC_GIARDINO_PROPERTY, { skipHistoryPush: true });
+        } else if (isMareSlug(proyecto)) {
+          selectProperty(SYNTHETIC_MARE_PROPERTY, { skipHistoryPush: true });
         } else if (isAlphaLuxeSlug(proyecto)) {
           selectProperty(SYNTHETIC_ALPHA_LUXE_PROPERTY, { skipHistoryPush: true });
         } else if (isLuxeTowerSlug(proyecto)) {
@@ -1866,7 +1970,9 @@ export default function MapPage() {
         isAlphaLuxeProperty(target) ||
         isLuxeTowerProperty(target) ||
         isSkyLevelProperty(target) ||
-        isSkyEquinoxProperty(target)
+        isSkyEquinoxProperty(target) ||
+        isGiardinoProperty(target) ||
+        isMareProperty(target)
       ) {
         setCurrentIndex(0);
       }

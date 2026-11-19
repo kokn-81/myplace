@@ -12,6 +12,8 @@ import { LUXE_UNITS } from "./luxeTowerInventory";
 import { ALPHA_UNITS } from "./alphaLuxeInventory";
 import { SKY_LEVEL_UNITS } from "./skyLevelInventory";
 import { SKY_EQUINOX_UNITS } from "./skyEquinoxInventory";
+import { GIARDINO_UNITS } from "./giardinoInventory";
+import { MARE_UNITS } from "./mareInventory";
 
 export function createInventoryResource<T>(baseline: T[], load: () => Promise<T[]>) {
   let snapshot = baseline;
@@ -58,6 +60,8 @@ export function getProjectAvailableUnits(id: string): CatalogUnit[] | null {
   if (id === "alpha-luxe" || id === "alpha-by-luxe" || id === "alphabyluxe" || id === "luxe-alpha") return ALPHA_UNITS.map(u => ({ rooms: Number(u.rooms), price: u.cash }));
   if (id === "sky-level" || id === "skylevel") return SKY_LEVEL_UNITS.filter(u => u.estado === "LIBRE" && u.rooms !== "local").map(u => ({ rooms: Number(u.rooms), price: u.cash }));
   if (id === "sky-equinox" || id === "skyequinox") return SKY_EQUINOX_UNITS.map(u => ({ rooms: Number(u.rooms), price: u.cash }));
+  if (id === "giardino") return GIARDINO_UNITS.map(u => ({ rooms: Number(u.rooms), price: u.cash }));
+  if (id === "mare") return MARE_UNITS.map(u => ({ rooms: Number(u.rooms), price: u.cash }));
   if (domusInventories[id]) return domusInventories[id].get().filter(u => u.status === "disponible").map(u => ({ rooms: u.rooms, price: u.cashTotal }));
   return null;
 }
