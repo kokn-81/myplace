@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   ALPHA_LUXE_CONFIG,
   ALPHA_MODELS,
@@ -152,7 +153,7 @@ function coverAreaLabel(rooms: AlphaRooms) {
   return range.low === range.high ? `${formatAlphaM2(range.low)} m²` : `${formatAlphaM2(range.low)} a ${formatAlphaM2(range.high)} m²`;
 }
 
-export default function AlphaLuxeLanding({ onClose }: Props) {
+export default function AlphaLuxeLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const modelTouch = useRef<number | null>(null);
@@ -282,9 +283,7 @@ export default function AlphaLuxeLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Alpha by Luxe Design" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "alpha-luxe",

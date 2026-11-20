@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   ONA_ADDRESS,
   ONA_BROCHURE_URL,
@@ -551,6 +552,7 @@ export default function OnaLanding({ property, onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
+    trackMetaLead(property);
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
     const planLabel = paymentPlan === "contado"
       ? "Contado 100%"
@@ -580,16 +582,6 @@ export default function OnaLanding({ property, onClose }: Props) {
         ? { unidad: unitCode(activeUnit), piso: activeUnit.floor, tipo: activeUnit.tipo, plan: paymentPlan, adicional: addon }
         : { plan: paymentPlan },
     }).catch(() => {});
-
-    if (typeof window !== "undefined") {
-      const browser = window as unknown as { trackOnaLead?: () => void; fbq?: (...args: unknown[]) => void };
-      try {
-        if (typeof browser.trackOnaLead === "function") browser.trackOnaLead();
-        else if (typeof browser.fbq === "function") browser.fbq("track", "Lead", { content_name: "Ona Residences" });
-      } catch {
-        // El aviso de WhatsApp sigue aunque el pixel falle.
-      }
-    }
 
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };

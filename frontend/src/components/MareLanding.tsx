@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Building2, Check, ChevronLeft, ChevronRight, Download, MapPin, Menu, MessageCircle, Share2, Sparkles, X } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   MARE_CONFIG,
   MARE_MODELS,
@@ -112,7 +113,7 @@ function coverAreaLabel(rooms: MareRooms) {
   return range.low === range.high ? `${formatMareM2(range.low)} m²` : `${formatMareM2(range.low)} a ${formatMareM2(range.high)} m²`;
 }
 
-export default function MareLanding({ onClose }: Props) {
+export default function MareLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const modelTouch = useRef<number | null>(null);
@@ -232,9 +233,7 @@ export default function MareLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Mare" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "mare",

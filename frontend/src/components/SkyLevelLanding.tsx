@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   SKY_LEVEL_CONFIG,
   SKY_LEVEL_MODELS,
@@ -149,7 +150,7 @@ function coverAreaLabel(rooms: SkyLevelRooms) {
   return range.low === range.high ? `${formatSkyLevelM2(range.low)} m²` : `${formatSkyLevelM2(range.low)} a ${formatSkyLevelM2(range.high)} m²`;
 }
 
-export default function SkyLevelLanding({ onClose }: Props) {
+export default function SkyLevelLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const modelTouch = useRef<number | null>(null);
@@ -273,9 +274,7 @@ export default function SkyLevelLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Sky Level" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "sky-level",

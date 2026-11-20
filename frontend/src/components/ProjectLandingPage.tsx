@@ -17,6 +17,7 @@ import SkyEquinoxLanding from "./SkyEquinoxLanding";
 import GiardinoLanding from "./GiardinoLanding";
 import MareLanding from "./MareLanding";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
 import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty, isGiardinoProperty, isMareProperty } from "../projectIdentity";
@@ -156,6 +157,7 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
     }
   };
   const contact = () => {
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: property.id,

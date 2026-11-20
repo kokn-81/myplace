@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import { eurodesignInventory, useInventory } from "../projectInventory";
 import {
   EURODESIGN_ADDRESS,
@@ -493,10 +494,8 @@ export default function EurodesignLanding({ property, onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
+    trackMetaLead(property);
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Tower Eurodesign" });
-    }
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: String(property.id || "eurodesign"),

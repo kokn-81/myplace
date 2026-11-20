@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   VERTICAL_GUEMES_CONFIG,
   VERTICAL_MODELS,
@@ -208,7 +209,7 @@ function coverAreaLabel(rooms: VerticalRooms) {
   return low === high ? `${formatVerticalM2(low)} m²` : `${formatVerticalM2(low)} a ${formatVerticalM2(high)} m²`;
 }
 
-export default function VerticalGuemesLanding({ onClose }: Props) {
+export default function VerticalGuemesLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
@@ -348,9 +349,7 @@ export default function VerticalGuemesLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Vertical Güemes" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "vertical-guemes",

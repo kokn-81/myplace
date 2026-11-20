@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { blessDreiInventory, useInventory } from "../projectInventory";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   BLESS_DREI_CONFIG,
   BlessDreiUnit,
@@ -462,10 +463,8 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
+    trackMetaLead(property);
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Bless Drei" });
-    }
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: String(property.id || "bless-drei"),

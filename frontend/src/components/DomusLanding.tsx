@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import { useInventory, domusInventories } from "../projectInventory";
 import {
   DOMUS_PROJECTS_CONFIG,
@@ -696,9 +697,7 @@ export default function DomusLanding({ property, onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: display });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: projectId,

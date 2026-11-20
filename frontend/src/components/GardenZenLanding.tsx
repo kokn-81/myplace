@@ -23,6 +23,7 @@ import {
   Zap,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   GARDEN_ZEN_BASELINE_UNITS,
   GARDEN_ZEN_CONFIG,
@@ -510,6 +511,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
+    trackMetaLead(property);
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
     const planLabel = paymentPlan === "contado"
       ? "Contado 100%"

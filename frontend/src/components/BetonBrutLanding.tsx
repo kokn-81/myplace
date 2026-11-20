@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   BETON_BRUT_CONFIG,
   BETON_MODELS,
@@ -259,7 +260,7 @@ function coverAreaLabel(rooms: BetonRooms) {
   return low === high ? `${low} m²` : `${low} a ${high} m²`;
 }
 
-export default function BetonBrutLanding({ onClose }: Props) {
+export default function BetonBrutLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
@@ -399,9 +400,7 @@ export default function BetonBrutLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Béton Brut II" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "beton-brut-ii",

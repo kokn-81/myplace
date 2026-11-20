@@ -19,6 +19,7 @@ import { auth, authPersistenceReady } from "../firebase";
 import { API_BASE, AppRole, cacheAuthProfile, clearCachedAuthProfile, fetchAuthProfile, getCachedAuthProfile, getLastCachedAuthProfile } from "../roleAccess";
 import { detectSearchIntent, SearchIntent } from "../searchIntent";
 import { openContactWhatsapp, recordLeadEvent, shareLeadUrl } from "../leadTracking";
+import { createMetaViewTracker, trackMetaLead } from "../metaPixel";
 import { resolveNiaUserId } from "../visitorId";
 import { CONTACT_WHATSAPP_NUMBER, PLAZO_OPTIONS } from "../whatsappMessage";
 import {
@@ -1638,6 +1639,8 @@ export default function MapPage() {
   }), [properties, inventoryRevision]);
   const deliveryYears = useMemo(() => Array.from(new Set(catalogProperties.flatMap(p => p.fechaEntrega?.match(/20\d{2}/g) || []))).sort(), [catalogProperties]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const metaViewTrackerRef = useRef<ReturnType<typeof createMetaViewTracker> | null>(null);
+  if (!metaViewTrackerRef.current) metaViewTrackerRef.current = createMetaViewTracker();
   const [lastViewedProperty, setLastViewedProperty] = useState<Property | null>(null);
   const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
   const hoverFocusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1872,6 +1875,10 @@ export default function MapPage() {
     } else {
       document.title = "N.I.A — Encuentra tu próximo hogar";
     }
+  }, [selectedProperty]);
+
+  useEffect(() => {
+    metaViewTrackerRef.current?.(selectedProperty);
   }, [selectedProperty]);
 
   // Sincronización con navegación Atrás / Adelante del navegador
@@ -3317,11 +3324,7 @@ export default function MapPage() {
     });
     setIsRecordingLead(false);
     if (event) {
-      if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
-        if (String(contactDraft.propertyRef) === "5" || isOnaProperty(selectedProperty)) {
-          (window as any).fbq("track", "Lead", { content_name: "Ona Residences" });
-        }
-      }
+      trackMetaLead({ id: contactDraft.propertyRef, title: contactDraft.title });
       openContactWhatsapp(event, contactDraft);
     }
     setContactDraft(null);

@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   LUXE_MODELS,
   LUXE_TOWER_CONFIG,
@@ -126,7 +127,7 @@ function coverAreaLabel(rooms: LuxeRooms) {
   return range.low === range.high ? `${formatLuxeM2(range.low)} m²` : `${formatLuxeM2(range.low)} a ${formatLuxeM2(range.high)} m²`;
 }
 
-export default function LuxeTowerLanding({ onClose }: Props) {
+export default function LuxeTowerLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const modelTouch = useRef<number | null>(null);
@@ -247,9 +248,7 @@ export default function LuxeTowerLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Luxe Tower" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "luxe-tower",

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Building2, Check, ChevronLeft, ChevronRight, Download, MapPin, Menu, MessageCircle, Share2, Sparkles, X } from "lucide-react";
 import { recordLeadEvent } from "../leadTracking";
+import { trackMetaLead } from "../metaPixel";
 import {
   GIARDINO_CONFIG,
   GIARDINO_MODELS,
@@ -111,7 +112,7 @@ function coverAreaLabel(rooms: GiardinoRooms) {
   return range.low === range.high ? `${formatGiardinoM2(range.low)} m²` : `${formatGiardinoM2(range.low)} a ${formatGiardinoM2(range.high)} m²`;
 }
 
-export default function GiardinoLanding({ onClose }: Props) {
+export default function GiardinoLanding({ property, onClose }: Props) {
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const introNavRef = useRef<HTMLDivElement>(null);
   const modelTouch = useRef<number | null>(null);
@@ -232,9 +233,7 @@ export default function GiardinoLanding({ onClose }: Props) {
   };
 
   const contactWhatsApp = () => {
-    if (typeof window !== "undefined" && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === "function") {
-      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", { content_name: "Giardino" });
-    }
+    trackMetaLead(property);
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: "giardino",
