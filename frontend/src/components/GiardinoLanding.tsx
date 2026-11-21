@@ -45,9 +45,9 @@ const ROOM_FILTERS: { id: GiardinoRooms; label: string }[] = [
 ];
 
 const SLIDES = [
-  { src: "/giardino/jardin.jpg", title: "Jardín de ingreso", description: "El acceso del edificio se abre a un jardín." },
-  { src: "/giardino/hall.jpg", title: "Hall", description: "Hall con el nombre del proyecto." },
-  { src: "/giardino/interiores/3hab.jpg", title: "Tres habitaciones", description: "Departamento de 3 habitaciones, sector Residenza." },
+  { src: "/giardino/jardin.jpg", title: "Jardín de ingreso", description: "Vegetación y un espacio abierto te reciben al llegar a casa." },
+  { src: "/giardino/hall.jpg", title: "Hall de bienvenida", description: "El primer encuentro con el lugar que puedes llamar hogar." },
+  { src: "/giardino/interiores/3hab.jpg", title: "Espacio para compartir", description: "Tres habitaciones en Residenza para acompañar la vida en familia." },
 ];
 
 type ZoomState = { view: "depto" | "planta" | "ficha"; title: string; caption: string; src: string };
@@ -98,7 +98,7 @@ function ModelFrame({
       <button type="button" onClick={() => onOpen("planta")} className="flex h-[4.75rem] shrink-0 items-center gap-3 border-t border-stone-100 bg-[#f7f5f0] px-3 pr-16 text-left">
         <img src={model.preview} alt="" className="h-14 w-16 shrink-0 bg-[#1c1917] object-contain" />
         <span className="min-w-0">
-          <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">Axonometría</span>
+          <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#9a7b45]">Tu departamento en detalle</span>
           <span className="block text-xs leading-snug text-stone-600">Toca para ver el departamento entero.</span>
         </span>
       </button>
@@ -213,8 +213,8 @@ export default function GiardinoLanding({ property, onClose }: Props) {
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/giardino`;
-    const shareTitle = "Giardino · Av. San Martín";
-    const shareText = "Giardino, sobre Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones en los sectores Residenza y Vita.";
+    const shareTitle = "Giardino · Terrazas en Equipetrol";
+    const shareText = "Tu terraza propia en Av. San Martín y el 3.er anillo. Elige un departamento de 1, 2 o 3 habitaciones en Giardino y consulta por la reserva del 15%.";
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -283,8 +283,8 @@ export default function GiardinoLanding({ property, onClose }: Props) {
               Av. San Martín
             </span>
           </div>
-          <h1 className="mt-3 font-serif text-4xl font-light leading-none tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)] md:text-5xl">Vive en Giardino.</h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Departamentos de 1, 2 y 3 habitaciones, con terraza, entre Av. San Martín y el 3.er anillo.</p>
+          <h1 className="mt-3 font-serif text-4xl font-light leading-none tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)] md:text-5xl">Giardino.</h1>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Departamentos de 1, 2 y 3 habitaciones con terraza propia, en Av. San Martín y el 3.er anillo.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -326,9 +326,9 @@ export default function GiardinoLanding({ property, onClose }: Props) {
           <section id="intro" className="scroll-mt-6 space-y-6">
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Sparkles size={13} /> Av. San Martín</span>
-              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-4xl">Vive en Giardino.</h2>
+              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-4xl">Vive en Giardino. Tu terraza en Equipetrol.</h2>
               <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-                Dos sectores en la misma torre. Residenza reúne los departamentos de 2 y 3 habitaciones. Vita, los de 1 habitación. Cada tipo publica su terraza, que cambia de piso a piso, y una vista hacia San Martín, Los Tajibos, el 3.er anillo o el Urubó.
+                Una terraza propia cambia la forma de disfrutar tu hogar. En Giardino puedes elegir 1 habitación en Vita o 2 y 3 habitaciones en Residenza, sobre Av. San Martín y el 3.er anillo. Compara distribuciones, vistas y tamaños de terraza hasta encontrar el espacio que va contigo.
               </p>
             </div>
             <div ref={introNavRef} className="flex gap-2 overflow-x-auto pb-1">
@@ -340,9 +340,9 @@ export default function GiardinoLanding({ property, onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Entre San Martín y el 3.er anillo.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Haz de San Martín tu punto de partida.</h3>
             <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-              Las plantas miran hacia el Hotel Los Tajibos, Av. San Martín, el 3.er anillo externo, UTEPSA y el Urubó, según el tipo. El punto del mapa es el del enlace oficial.
+              Vive en Av. San Martín y el 3.er anillo, en Equipetrol. Elige la orientación que más te guste: hacia San Martín y el Urubó, el Hotel Los Tajibos o el entorno del 3.er anillo y UTEPSA, según el modelo. Explora la ubicación y descubre cómo encaja con tu día a día.
             </p>
             <img src="/giardino/jardin.jpg" alt="Jardín de ingreso de Giardino" className="aspect-[16/10] w-full rounded-2xl object-cover" />
             <a href={GIARDINO_CONFIG.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-[#816127]">
@@ -352,7 +352,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">El edificio</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Terrazas en cada departamento.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Una bienvenida entre jardines.</h3>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
               <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
               <div className="flex items-center justify-between gap-3 px-4 py-3">
@@ -370,7 +370,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
 
           <section id="tipologias" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Ocho tipos, del piso 6 al 30.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Ocho formas de encontrar tu espacio.</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {GIARDINO_MODELS.map((model) => {
                 const from = Math.min(...unitsForModel(model.id).map((unit) => unit.cashCents)) / 100;
@@ -387,29 +387,29 @@ export default function GiardinoLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">La terraza forma parte del metraje.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Más espacio para vivir, dentro y fuera.</h3>
             <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-              Cada piso publica superficie interna, terraza y total. La interna se mantiene en el tipo. La terraza cambia. El precio de la lista es el del departamento, con reserva del 15%.
+              Disfruta el interior de tu departamento y una terraza para tus momentos al aire libre. La superficie interna se mantiene para cada modelo; el tamaño de la terraza cambia según el piso. Revisa ambos metrajes y el total de la unidad para elegir cuánto espacio quieres para ti.
             </p>
             <img src="/giardino/interiores/2hab.jpg" alt="Departamento de 2 habitaciones" className="aspect-[16/10] w-full rounded-2xl object-cover" />
           </section>
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">RE/MAX Fortaleza.</h3>
-            <p className="text-sm leading-relaxed text-stone-600 md:text-base">La comercialización publicada del proyecto es RE/MAX Fortaleza.</p>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu próximo paso, con RE/MAX Fortaleza.</h3>
+            <p className="text-sm leading-relaxed text-stone-600 md:text-base">RE/MAX Fortaleza acompaña la comercialización de Giardino. Consulta por el modelo que te interesa y aclara sus condiciones de reserva antes de dar el siguiente paso.</p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Reserva del 15%. El saldo es el 85%.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu Giardino empieza con una reserva del 15%.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
-              La lista publica un precio por piso y una reserva del 15% de ese precio. El 85% restante queda como saldo. El monto en dólares aparece cuando eliges el piso.
+              Elige tu departamento y conoce cuánto necesitas para reservarlo. La reserva corresponde al 15% del precio de la unidad y el saldo es el 85%. Al seleccionar el piso verás los montos en dólares; consulta con el asesor cómo y cuándo se paga ese saldo.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Reserva 15%</span>
-              <h4 className="mt-3 font-serif text-2xl">Reservas con el 15% del precio.</h4>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">El saldo es el 85% del mismo precio. No hay otra modalidad en la lista.</p>
+              <h4 className="mt-3 font-serif text-2xl">Da el primer paso con el 15%.</h4>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">La reserva se calcula sobre el precio de la unidad elegida. Coordina con el asesor las condiciones del 85% restante.</p>
             </article>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -420,7 +420,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Elige el tipo y el piso.</h3>
+                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Encuentra tu combinación de espacio y vista.</h3>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
                 <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
@@ -485,8 +485,8 @@ export default function GiardinoLanding({ property, onClose }: Props) {
             <div className="mt-6 space-y-2">
               <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 3 · Parqueo</p>
               <div className="rounded-xl border border-stone-200 bg-white p-3">
-                <p className="text-sm font-bold">Sin precio de parqueo en la lista</p>
-                <p className="text-[11px] text-stone-500">El precio de cada piso es el del departamento. No se suma un parqueo.</p>
+                <p className="text-sm font-bold">Consulta las opciones de parqueo</p>
+                <p className="text-[11px] text-stone-500">La cotización corresponde solo al departamento. Consulta disponibilidad y precio del parqueo con el asesor.</p>
               </div>
             </div>
 
@@ -529,9 +529,9 @@ export default function GiardinoLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu terraza puede mirar a San Martín.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Elige la terraza donde empieza tu próxima etapa.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Elige el tipo y el piso. Te confirmamos {selectedModel ? `${selectedModel.name}, piso ${selectedUnit?.piso ?? ""}`.trim() : "el departamento que estás mirando"}.
+              Consulta por {selectedModel ? `${selectedModel.name}, piso ${selectedUnit?.piso ?? ""}`.trim() : "el departamento que estás mirando"}. Te ayudamos a revisar disponibilidad y condiciones de reserva para dar el siguiente paso.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Hablar con un asesor <ArrowRight size={14} />

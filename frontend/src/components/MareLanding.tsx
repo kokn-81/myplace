@@ -44,11 +44,11 @@ const ROOM_FILTERS: { id: MareRooms; label: string }[] = [
 ];
 
 const AMENITIES = [
-  { src: "/mare/social/marea.jpg", title: "Playa Mare", description: "Playa Mare, en las áreas Marea." },
-  { src: "/mare/social/churrasquera.jpg", title: "Churrasqueras", description: "Churrasquera y barra." },
-  { src: "/mare/social/spa.jpg", title: "Spa santuario", description: "Área de spa santuario, en La Perla." },
-  { src: "/mare/social/terrazzo.jpg", title: "Terrazzo", description: "Terrazzo con vista a Santa Cruz." },
-  { src: "/mare/social/perla.jpg", title: "La Perla", description: "Piscina de altura, cine, karaoke y spa, con acceso exclusivo." },
+  { src: "/mare/social/marea.jpg", title: "Playa Mare", description: "Tu pausa junto al agua, en las áreas sociales Marea." },
+  { src: "/mare/social/churrasquera.jpg", title: "Churrasqueras", description: "Reúne a los tuyos alrededor de la parrilla y la barra." },
+  { src: "/mare/social/spa.jpg", title: "Spa santuario", description: "Un espacio para bajar el ritmo en La Perla, de acceso exclusivo." },
+  { src: "/mare/social/terrazzo.jpg", title: "Terrazzo", description: "Haz una pausa y disfruta Santa Cruz desde las alturas." },
+  { src: "/mare/social/perla.jpg", title: "La Perla", description: "Piscina en altura, cine, karaoke y spa en un sector de acceso exclusivo." },
 ];
 
 type ZoomState = { title: string; caption: string; src: string };
@@ -213,8 +213,8 @@ export default function MareLanding({ property, onClose }: Props) {
   const handleShare = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/mare`;
-    const shareTitle = "Mare · 3.er anillo";
-    const shareText = "Mare, en el 3.er anillo externo, esquina Calle Los Nogales, al lado de Chaplin Show.";
+    const shareTitle = "Mare · Vive y disfruta en Equipetrol";
+    const shareText = "Departamentos de 1, 2 y 3 habitaciones en Equipetrol, con espacios para relajarte, entrenar y compartir. Descubre Mare, en el 3.er anillo externo y Los Nogales.";
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -275,8 +275,8 @@ export default function MareLanding({ property, onClose }: Props) {
               Los Nogales
             </span>
           </div>
-          <h1 className="mt-3 font-serif text-4xl font-light leading-none tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)] md:text-5xl">Vive en Mare.</h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">3.er anillo externo, esquina Calle Los Nogales, al lado de Chaplin Show.</p>
+          <h1 className="mt-3 font-serif text-4xl font-light leading-none tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)] md:text-5xl">Mare.</h1>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Departamentos de 1, 2 y 3 habitaciones con espacios para relajarte, entrenar y compartir, en Equipetrol.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
@@ -318,9 +318,9 @@ export default function MareLanding({ property, onClose }: Props) {
           <section id="intro" className="scroll-mt-6 space-y-6">
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#9a7b45]"><Sparkles size={13} /> 3.er anillo externo</span>
-              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-4xl">Vive en Mare.</h2>
+              <h2 className="font-serif text-3xl font-light leading-tight text-[#1C1917] md:text-4xl">Vive en Mare. Haz espacio para disfrutar.</h2>
               <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-                Tres líneas en el mismo proyecto. Residenza son los departamentos más grandes, de 2 y 3 habitaciones, pensados para familias. Sole reúne los de 1 habitación y los monoambientes. Altezza es la línea de doble altura. La lista de hoy publica departamentos de 1, 2 y 3 habitaciones.
+                Un departamento para ti y espacios para todo lo que disfrutas. Mare reúne Residenza, con 2 y 3 habitaciones para la vida en familia; Sole, con opciones de 1 habitación; y Altezza, con propuestas de doble altura. Explora los modelos disponibles y encuentra tu forma de vivir en Equipetrol.
               </p>
             </div>
             <div ref={introNavRef} className="flex gap-2 overflow-x-auto pb-1">
@@ -332,9 +332,9 @@ export default function MareLanding({ property, onClose }: Props) {
 
           <section id="lugar" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Ubicación</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Esquina Los Nogales, al lado de Chaplin Show.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu hogar, conectado con Equipetrol.</h3>
             <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-              3.er anillo externo, esquina Calle Los Nogales. Al lado de Chaplin Show. El mapa del proyecto marca hoteles, UTEPSA, el 4.º anillo y Av. San Martín como referencias del entorno.
+              Sobre el 3.er anillo externo, esquina Calle Los Nogales y al lado de Chaplin Show. Con Av. San Martín, UTEPSA y hoteles como referencias del entorno, Mare te sitúa en Equipetrol. Abre el mapa y descubre cómo se conecta con tus recorridos habituales.
             </p>
             <img src="/mare/social/estar.jpg" alt="Estar de un departamento Mare" className="aspect-[16/10] w-full rounded-2xl object-cover" />
             <a href={MARE_CONFIG.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-[#816127]">
@@ -344,9 +344,9 @@ export default function MareLanding({ property, onClose }: Props) {
 
           <section id="amenidades" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Áreas sociales</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Marea abajo. La Perla, arriba.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Del entrenamiento al descanso, sin salir de Mare.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              Marea reúne playa Mare, paseo forestal, cocina de verano, churrasquera y barra, gimnasio y yoga, centro empresarial, terraza y lounge, halls y patio de juegos. La Perla, con acceso exclusivo, suma piscina de altura y jacuzzi, dos salas de cine, karaoke, sport bar, cocina del chef, spa santuario, hall de juegos y terrazzo.
+              Entrena en el gimnasio o practica yoga, trabaja en el centro empresarial y comparte en la cocina de verano, las churrasqueras o la terraza y lounge de Marea. También tienes Playa Mare, paseo forestal y juegos infantiles. La Perla, de acceso exclusivo, reúne piscina en altura y jacuzzi, dos salas de cine, karaoke, sport bar, cocina del chef, spa santuario, sala de juegos y Terrazzo.
             </p>
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
               <img src={amenity.src} alt={amenity.title} className="aspect-[16/10] w-full object-cover" />
@@ -365,7 +365,7 @@ export default function MareLanding({ property, onClose }: Props) {
 
           <section id="tipologias" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Tipologías</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Seis tipos con piso publicado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917]">Un espacio para cada forma de vivir.</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {MARE_MODELS.map((model) => {
                 const listed = unitsForModel(model.id);
@@ -383,31 +383,31 @@ export default function MareLanding({ property, onClose }: Props) {
 
           <section id="equipamiento" className="mt-20 scroll-mt-6 space-y-5 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Equipamiento</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">El dúplex trae parqueo, baulera y muebles fijos.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Dúplex con extras que ya están incluidos.</h3>
             <p className="text-sm leading-relaxed text-stone-600 [text-align:justify] md:text-base">
-              El tipo 20, en los pisos 25 y 26, incluye parqueo XL y baulera Mz-108, rack de TV en sala y dormitorio, espaldar, escritorio y vestidor amoblado. En el tipo 16, el piso 12 incluye el vestidor. Esos ítems no se suman al precio.
+              Aprovecha el dúplex tipo 20, en los pisos 25 y 26, con parqueo XL, baulera Mz-108 y muebles fijos incluidos: rack de TV en sala y dormitorio, espaldar, escritorio y vestidor amoblado. Si prefieres 1 habitación, el tipo 16 del piso 12 incluye vestidor. El precio de cada una de estas unidades ya contempla esos ítems.
             </p>
             <img src="/mare/social/dormitorio.jpg" alt="Dormitorio de Mare" className="aspect-[16/9] w-full rounded-2xl object-cover" />
           </section>
 
           <section id="constructora" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Mariscal Construcciones.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Diseño de autor, experiencia de Mariscal.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              Mariscal Construcciones es la empresa dueña y constructora. La fundó el Ing. Walter Mariscal hace más de 20 años. Lifestyle Group S.C. es la rama de desarrollo conceptual, comercial y ventas. El diseño arquitectónico es de los arquitectos Henry Gonzales y Cristian Miranda, AZERO STUDIO. Los interiores, del arquitecto Roberto Franco, Franco Arquitectura.
+              Detrás de Mare está Mariscal Construcciones, fundada por el Ing. Walter Mariscal hace más de 20 años. El proyecto combina la arquitectura de Henry Gonzales y Cristian Miranda, de AZERO STUDIO, con interiores de Roberto Franco, de Franco Arquitectura. Lifestyle Group S.C. acompaña el desarrollo conceptual y comercial. Conoce quiénes dan forma a tu próximo hogar.
             </p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Formas de pago</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Un precio publicado. Al contado.</h3>
+            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Conoce tu inversión antes de decidir.</h3>
             <p className="text-sm leading-relaxed text-[#57534E] [text-align:justify] md:text-base">
-              Cada departamento de la lista tiene un solo precio. Ese monto es el total. No queda saldo.
+              Compara modelos y pisos con el precio al contado de cada unidad. En el cotizador puedes ver el total y revisar lo que incluye el departamento que elijas.
             </p>
             <article className="rounded-2xl bg-stone-900 p-5 text-white shadow-lg">
               <span className="rounded-full bg-[#C19A6B] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-950">Contado</span>
-              <h4 className="mt-3 font-serif text-2xl">El precio de la lista es el total.</h4>
-              <p className="mt-3 text-sm leading-relaxed text-stone-300">100% del departamento. Sin saldo pendiente.</p>
+              <h4 className="mt-3 font-serif text-2xl">Una compra al contado, con el total a la vista.</h4>
+              <p className="mt-3 text-sm leading-relaxed text-stone-300">Pago del 100% del precio del departamento, sin saldo pendiente. En el dúplex tipo 20, el parqueo XL y la baulera ya están incluidos.</p>
             </article>
             <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-2 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">
               Elegir mi departamento <ArrowRight size={14} />
@@ -418,7 +418,7 @@ export default function MareLanding({ property, onClose }: Props) {
             <div className="flex h-[calc(100svh-7.25rem)] flex-col gap-3">
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
-                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Elige el tipo y el piso libre.</h3>
+                <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Elige el departamento que va contigo.</h3>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
                 <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
@@ -475,7 +475,7 @@ export default function MareLanding({ property, onClose }: Props) {
               <div className={`rounded-xl border p-3 ${selectedUnit?.parkingIncluded ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white"}`}>
                 <p className="text-sm font-bold">{selectedUnit?.parkingIncluded ? "Parqueo XL y baulera incluidos" : "Sin parqueo en el precio de este tipo"}</p>
                 <p className={`text-[11px] ${selectedUnit?.parkingIncluded ? "text-stone-300" : "text-stone-500"}`}>
-                  {selectedUnit?.parkingIncluded ? "Mz-108. No se suma al precio publicado." : "Solo el dúplex tipo 20 publica parqueo y baulera."}
+                  {selectedUnit?.parkingIncluded ? "Baulera Mz-108 y parqueo XL dentro del precio de tu dúplex." : "Consulta opciones y precios con el asesor. El dúplex tipo 20 ya incluye parqueo XL y baulera."}
                 </p>
               </div>
             </div>
@@ -519,9 +519,9 @@ export default function MareLanding({ property, onClose }: Props) {
           </section>
 
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
-            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima dirección está en el 3.er anillo.</h3>
+            <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próximo hogar puede ser Mare.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Elige el tipo y el piso. Te confirmamos {selectedModel ? `${selectedModel.name}, piso ${selectedUnit?.piso || ""}`.trim() : "el departamento que estás mirando"}.
+              Consulta por {selectedModel ? `${selectedModel.name}, piso ${selectedUnit?.piso || ""}`.trim() : "el departamento que estás mirando"}. Te ayudamos a revisar disponibilidad, inclusiones y los pasos para avanzar con tu compra.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
               Hablar con un asesor <ArrowRight size={14} />

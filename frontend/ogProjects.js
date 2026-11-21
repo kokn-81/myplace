@@ -168,9 +168,9 @@ export const PROJECTS = {
   },
   giardino: {
     id: "giardino",
-    title: "Giardino · Av. San Martín",
+    title: "Giardino · Terrazas en Equipetrol",
     description:
-      "Departamentos de 1, 2 y 3 habitaciones en Av. San Martín y el 3.er anillo, desde USD 132.990. Reserva del 15%.",
+      "Tu terraza propia en Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones desde USD 132.990. Reserva del 15%.",
     image: `${SITE}/giardino/fachada.jpg`,
     imageAlt: "Fachada de Giardino",
     imageWidth: 680,
@@ -180,9 +180,9 @@ export const PROJECTS = {
   },
   mare: {
     id: "mare",
-    title: "Mare · 3.er anillo",
+    title: "Mare · Vive y disfruta en Equipetrol",
     description:
-      "Departamentos de 1, 2 y 3 habitaciones en el 3.er anillo externo, esquina Calle Los Nogales, al lado de Chaplin Show, desde USD 101.210.",
+      "Vive en Equipetrol con espacios para relajarte, entrenar y compartir. Departamentos de 1, 2 y 3 habitaciones desde USD 101.210, en el 3.er anillo externo y Los Nogales.",
     image: `${SITE}/mare/fachada.jpg`,
     imageAlt: "Fachada de Mare",
     imageWidth: 492,
