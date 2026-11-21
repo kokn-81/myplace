@@ -76,7 +76,7 @@ No se agregan otros controles flotantes. No se mueve un botón de esta lista a o
 | Ver distribución de pisos | texto `#816127` a la derecha de “Paso 2 · Piso” | abre el visor en modo solo, con el esquema del edificio |
 | Adicional | tres tarjetas | ninguna / parqueo / moto, solo si el material publica precio |
 | Plan de pago | dos tarjetas en el paso 4 | contado o plan en cuotas. La elegida es negra |
-| Quiero la unidad {código} | botón claro de ancho completo, dentro de la cotización negra | WhatsApp con la unidad, el adicional, el plan y los tres montos |
+| Quiero la unidad {código} | botón claro de ancho completo, dentro de la cotización negra | WhatsApp en tres líneas: unidad, plan y una pregunta |
 | Hablar con un asesor | enlace `#816127` en `#cierre` | el mismo WhatsApp |
 | Cerrar vista | círculo blanco del visor | cierra el visor |
 | Departamento / Planta / Ficha | tres pastillas del visor | cambian la imagen. No aparecen cuando el visor muestra solo el esquema del edificio |
@@ -243,7 +243,7 @@ Se oculta cuando `activeSection === "cierre"`.
 
 1. Precios, metrajes, estados y adicionales salen del material oficial. Una unidad vendida sin precio publicado no muestra un número.
 2. Parqueo y moto van fuera del precio por metro.
-3. El mensaje de WhatsApp lleva unidad, piso, modelo, metros, adicional, plan y los tres montos de la cotización. Se registra el lead al tocar.
+3. El mensaje de WhatsApp tiene tres líneas: la unidad, el plan y una pregunta. No repite los tres montos. Si hay un adicional elegido, va en la línea del plan, sin el monto. Se registra el lead al tocar.
 4. Compartir usa `https://{origen}/{slug}`, no una URL de otro proyecto.
 5. La portada del mapa y la imagen OG usan la misma fachada completa.
 

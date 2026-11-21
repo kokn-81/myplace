@@ -412,15 +412,11 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
         : { plan: paymentPlan },
     }).catch(() => {});
 
-    const planLabel = paymentPlan === "contado" ? "Contado 100% (USD 1.700/m²)" : "Plan 30-60 (USD 1.800/m²)";
-    const addonLabel = addon === "auto" ? "Parqueo vehicular USD 13.000" : addon === "moto" ? "Parqueo de moto USD 3.000" : "Sin parqueo";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatBetonM2(activeUnit.superficieM2)} m², ${activeUnit.ubicacion})`
-      : "Béton Brut II";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatBetonUsd(quote.total)}\n• A la firma: USD ${formatBetonUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatBetonUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero reservar en Béton Brut II (Equipetrol, calle 8):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n\n¿Me confirman la disponibilidad de la lista del ${BETON_BRUT_CONFIG.priceListLabel} y los pasos para reservar?`;
+    const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Plan 30-60";
+    const extra = addon === "auto" ? ", con parqueo" : addon === "moto" ? ", con parqueo de moto" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatBetonM2(activeUnit.superficieM2)} m², ${activeUnit.ubicacion}) en Béton Brut II.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Béton Brut II.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

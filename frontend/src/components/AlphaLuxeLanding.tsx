@@ -291,19 +291,10 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
       zona: ALPHA_LUXE_CONFIG.zone,
       extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, plan: paymentPlan, adicional: addon } : {},
     }).catch(() => {});
-    const addonLabel = ADDON_OPTIONS.find((item) => item.id === addon);
-    const lines = activeUnit && quote
-      ? [
-        `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatAlphaM2(activeUnit.superficieM2)} m²)`,
-        `Plan: ${PLAN_NAME[paymentPlan]}`,
-        `Departamento: USD ${formatAlphaUsd(quote.department)}`,
-        `Adicional: ${addonLabel?.label || "Sin adicional"}${quote.parking ? ` USD ${formatAlphaUsd(quote.parking)}` : ""}`,
-        `Total: USD ${formatAlphaUsd(quote.total)}`,
-        `Inicial: USD ${formatAlphaUsd(quote.initial)}`,
-        `Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatAlphaUsd(quote.balance)}`}`,
-      ]
-      : ["Alpha by Luxe Design"];
-    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Alpha by Luxe Design (Avenida Beni):\n\n${lines.map((line) => `• ${line}`).join("\n")}\n\n¿Me confirman la disponibilidad de esta unidad y las condiciones del plan que elegí?`;
+    const extra = addon === "parking" ? ", con parqueo" : addon === "parkingStorage" ? ", con parqueo y baulera" : addon === "storage" ? ", con baulera" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatAlphaM2(activeUnit.superficieM2)} m²) en Alpha by Luxe Design.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Alpha by Luxe Design.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

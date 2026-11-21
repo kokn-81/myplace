@@ -282,19 +282,10 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
       zona: SKY_LEVEL_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, plan: paymentPlan, adicional: addon } : {},
     }).catch(() => {});
-    const addonLabel = ADDON_OPTIONS.find((item) => item.id === addon);
-    const lines = selectedUnit && quote && selectedModel
-      ? [
-        `${selectedModel.name}, ${formatSkyLevelM2(selectedUnit.superficieM2)} m², ${selectedModel.where}`,
-        `Plan: ${PLAN_NAME[paymentPlan]}`,
-        `Inmueble: USD ${formatSkyLevelUsd(quote.department)}`,
-        `Adicional: ${addonLabel?.label || "Sin adicional"}${quote.parking ? ` USD ${formatSkyLevelUsd(quote.parking)}` : ""}`,
-        `Total: USD ${formatSkyLevelUsd(quote.total)}`,
-        `Inicial: USD ${formatSkyLevelUsd(quote.initial)}`,
-        `Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatSkyLevelUsd(quote.balance)}`}`,
-      ]
-      : ["Sky Level"];
-    const text = `Hola, vengo de N.I.A y quiero consultar Sky Level (Equipetrol):\n\n${lines.map((line) => `• ${line}`).join("\n")}`;
+    const extra = addon === "parkingStorage" ? ", con parqueo y baulera" : "";
+    const text = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, ${formatSkyLevelM2(selectedUnit.superficieM2)} m², ${selectedModel.where} en Sky Level.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Sky Level.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

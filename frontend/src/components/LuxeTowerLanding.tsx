@@ -256,10 +256,9 @@ export default function LuxeTowerLanding({ property, onClose }: Props) {
       zona: LUXE_TOWER_CONFIG.zone,
       extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, modelo: activeUnit.modelId } : {},
     }).catch(() => {});
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatLuxeM2(activeUnit.superficieM2)} m², ${selectedModel.where})`
-      : "Luxe Tower";
-    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Luxe Tower (calle Enrique Finot, 2.º anillo):\n\n• ${unitLine}\n\n¿Me envían una cotización de esta unidad y me confirman su disponibilidad y condiciones de compra?`;
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatLuxeM2(activeUnit.superficieM2)} m², ${selectedModel.where}) en Luxe Tower.\nPido la cotización de esta unidad.\n¿Sigue disponible?`
+      : "Hola, vengo de N.I.A. Quiero consultar Luxe Tower.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

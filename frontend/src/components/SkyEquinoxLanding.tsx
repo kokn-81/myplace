@@ -278,18 +278,9 @@ export default function SkyEquinoxLanding({ property, onClose }: Props) {
       zona: SKY_EQUINOX_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, banda: selectedUnit.band, plan: paymentPlan } : {},
     }).catch(() => {});
-    const lines = selectedUnit && quote && selectedModel
-      ? [
-        `${selectedModel.name}, ${selectedUnit.band}, ${formatSkyEquinoxM2(selectedUnit.superficieM2)} m²`,
-        `Plan: ${PLAN_NAME[paymentPlan]}`,
-        `Departamento: USD ${formatSkyEquinoxUsd(quote.department)}`,
-        "Parqueo y baulera incluidos",
-        `Total: USD ${formatSkyEquinoxUsd(quote.total)}`,
-        `Inicial: USD ${formatSkyEquinoxUsd(quote.initial)}`,
-        `Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatSkyEquinoxUsd(quote.balance)}`}`,
-      ]
-      : ["Sky Equinox"];
-    const text = `Hola, vengo de N.I.A y quiero consultar Sky Equinox (Sirari):\n\n${lines.map((line) => `• ${line}`).join("\n")}`;
+    const text = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, ${selectedUnit.band}, ${formatSkyEquinoxM2(selectedUnit.superficieM2)} m² en Sky Equinox.\nPlan: ${PLAN_NAME[paymentPlan]}. Parqueo y baulera incluidos.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Sky Equinox.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

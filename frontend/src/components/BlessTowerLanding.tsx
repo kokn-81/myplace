@@ -476,14 +476,10 @@ export default function BlessTowerLanding({ property, onClose }: Props) {
       extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, modelo: activeUnit.modelo, plan: paymentPlan, adicional: addon } : { plan: paymentPlan },
     }).catch(() => {});
     const planLabel = paymentPlan === "contado" ? "Contado 100%" : paymentPlan === "plan40" ? "40% en obra y 60% contra entrega" : "30% a la firma y 70% contra entrega";
-    const addonLabel = addon === "simple" ? "Parqueo USD 12.000" : addon === "combo" ? "Parqueo + baulera USD 15.000" : "Sin adicional";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.superficieM2.toLocaleString("es-BO")} m²)`
-      : "Bless Tower";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatBlessUsd(quote.total)}\n• A la firma: USD ${formatBlessUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatBlessUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero reservar en Bless Tower:\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n\nCuento con los USD ${formatBlessUsd(BLESS_TOWER_CONFIG.reservaUsd)} de reserva. ¿Me confirman la disponibilidad y los pasos?`;
+    const extra = addon === "simple" ? ", con parqueo" : addon === "combo" ? ", con parqueo y baulera" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.superficieM2.toLocaleString("es-BO")} m²) en Bless Tower.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Bless Tower.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

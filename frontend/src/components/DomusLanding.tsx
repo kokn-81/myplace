@@ -706,19 +706,13 @@ export default function DomusLanding({ property, onClose }: Props) {
       presupuesto: totalWithFurnished != null ? String(totalWithFurnished) : undefined,
       extraFilters: activeUnit ? { unidad: activeUnit.unitNumber, piso: activeUnit.floor, modelo: activeUnit.modelo, plan, adicional: addon, ...(hasFurnished ? { furnished: !!furnishedQuote, furnishedUsd: furnishedQuote?.amount || 0 } : {}) } : { plan },
     }).catch(() => {});
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, modelo ${activeUnit.modelo} (${formatM2(activeUnit.areaM2)} m²${activeUnit.slabAreaM2 ? `, incluye ${formatM2(activeUnit.slabAreaM2)} m² de losa exterior` : ""})`
-      : display;
-    const addonLine = addon === "none" || projectId !== "domus-insignia"
-      ? ""
-      : `\n• Parqueo: USD ${formatUsd(addonUsd)} (disponibilidad por confirmar)`;
-    const furnishedLine = furnishedQuote
-      ? `\n• Furnished Alborada: ${formatM2(furnishedQuote.areaM2)} m² × USD ${ALBORADA_FURNISHED_RATE}/m² = USD ${formatAlboradaUsd(furnishedQuote.amount)}. Forma de pago y colección por confirmar con Alborada.`
-      : "";
-    const money = quote
-      ? `\n• Inversión total${furnishedQuote ? " con furnished" : ""}: USD ${furnishedQuote ? formatAlboradaUsd(totalWithFurnished!) : formatUsd(quote.total)}\n• A la firma${furnishedQuote ? " (solo departamento)" : ""}: USD ${formatUsd(quote.initial)}\n• Saldo contra entrega${furnishedQuote ? " del departamento" : ""}: ${quote.balance == null ? (plan === "hastaEntrega" ? "el total se cancela hasta la entrega" : "sin saldo pendiente") : `USD ${formatUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y me interesa comprar en ${display} (${project.address}):\n\n• ${unitLine}\n• Modalidad: ${planTitle(plan)}${addonLine}${furnishedLine}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
+    const extras = [
+      projectId === "domus-insignia" && addon !== "none" ? "con parqueo" : "",
+      furnishedQuote ? "con furnished" : "",
+    ].filter(Boolean);
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, modelo ${activeUnit.modelo} (${formatM2(activeUnit.areaM2)} m²${activeUnit.slabAreaM2 ? `, losa ${formatM2(activeUnit.slabAreaM2)} m²` : ""}) en ${display}.\nPlan: ${planTitle(plan)}${extras.length ? `, ${extras.join(", ")}` : ""}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : `Hola, vengo de N.I.A. Quiero consultar ${display}.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?`;
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

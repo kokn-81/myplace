@@ -518,18 +518,10 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       : paymentPlan === "plan70"
         ? "Inicial 70% y saldo 30% contra entrega"
         : "Inicial 30% y saldo 70% contra entrega";
-    const addonLabel = addon === "techado"
-      ? `Parqueo techado USD ${formatGardenZenUsd(PARKING_TECHADO || 0)}`
-      : addon === "moto"
-        ? `Parqueo de moto USD ${formatGardenZenUsd(PARKING_MOTO || 0)}`
-        : "Sin parqueo";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatM2(activeUnit.areaM2)} m²)`
-      : "Garden Zen";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatGardenZenUsd(quote.total)}\n• Cuota inicial: USD ${formatGardenZenUsd(quote.initial)}\n• Saldo contra entrega: ${paymentPlan === "contado" ? "sin saldo pendiente" : `USD ${formatGardenZenUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero la unidad en Garden Zen (${GARDEN_ZEN_CONFIG.address}):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n• Reserva: USD ${formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)}\n\n¿Sigue disponible y cuáles son los pasos para reservar?`;
+    const extra = addon === "techado" ? ", con parqueo techado" : addon === "moto" ? ", con parqueo de moto" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatM2(activeUnit.areaM2)} m²) en Garden Zen.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Garden Zen.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
 
     recordLeadEvent({
       action: "contact_tap",

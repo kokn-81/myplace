@@ -393,13 +393,9 @@ export default function TriventoLanding({ property, onClose }: Props) {
     }).catch(() => {});
 
     const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Crédito 50% inicial y 50% contra entrega";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, Modelo ${Number(activeUnit.modelo)} (${activeUnit.tipologia}, ${activeUnit.posicion}, ${formatTriventoM2(activeUnit.m2Total)} m²)`
-      : "Trivento IV";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatTriventoUsd(quote.total)}\n• A la firma: USD ${formatTriventoUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatTriventoUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y me interesa comprar en Trivento IV (Equipetrol):\n\n• ${unitLine}\n• Modalidad: ${planLabel}${money}\n\n¿Me confirman la disponibilidad y las condiciones para reservar?`;
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, Modelo ${Number(activeUnit.modelo)} (${activeUnit.tipologia}, ${activeUnit.posicion}, ${formatTriventoM2(activeUnit.m2Total)} m²) en Trivento IV.\nPlan: ${planLabel}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Trivento IV.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

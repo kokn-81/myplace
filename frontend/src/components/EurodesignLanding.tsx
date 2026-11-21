@@ -507,15 +507,11 @@ export default function EurodesignLanding({ property, onClose }: Props) {
         : { plan: paymentPlan },
     }).catch(() => {});
 
-    const planLabel = paymentPlan === "contado" ? `Contado 100% (USD ${formatEurodesignUsd(activeUnit?.cashPerM2 || 1480)}/m²)` : `Inicial 40% + 20% en obra + 40% contra entrega (USD ${formatEurodesignUsd(activeUnit?.cuotas.perM2 || 1580)}/m²)`;
-    const addonLabel = addon === "parking" ? `Parqueo USD ${formatEurodesignUsd(EURODESIGN_PARKING_USD)}` : addon === "baulera" ? `Baulera USD ${formatEurodesignUsd(EURODESIGN_BAULERA_USD)}` : "Sin adicional";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.unitNumber}, ${activeUnit.floorLabel}, ${selectedSlide?.name || activeUnit.tipoLabel} (${activeUnit.areaM2.toLocaleString("es-BO")} m²)`
-      : "Tower Eurodesign";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatEurodesignUsd(quote.total)}\n• A la firma: USD ${formatEurodesignUsd(quote.initial)}\n• Saldo contra entrega: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatEurodesignUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero reservar en Tower Eurodesign (${EURODESIGN_ADDRESS}):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n\nCuento con los USD ${formatEurodesignUsd(EURODESIGN_CONFIG.reservaUsd)} de reserva. ¿Me confirman la disponibilidad y los pasos?`;
+    const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Inicial 40% + 20% en obra + 40% contra entrega";
+    const extra = addon === "parking" ? ", con parqueo" : addon === "baulera" ? ", con baulera" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.unitNumber}, ${activeUnit.floorLabel}, ${selectedSlide?.name || activeUnit.tipoLabel} (${activeUnit.areaM2.toLocaleString("es-BO")} m²) en Tower Eurodesign.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Tower Eurodesign.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

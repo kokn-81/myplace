@@ -559,18 +559,10 @@ export default function OnaLanding({ property, onClose }: Props) {
       : paymentPlan === "plan60"
         ? "Inicial 60% y saldo 40% contra entrega"
         : "Inicial 40% y saldo 60% contra entrega";
-    const addonLabel = addon === "simple"
-      ? `Parqueo simple USD ${formatOnaUsd(PARKING_SIMPLE_USD)} con baulera`
-      : addon === "doble"
-        ? `Parqueo doble USD ${formatOnaUsd(PARKING_DOBLE_USD)} con baulera`
-        : "Sin parqueo";
-    const unitLine = activeUnit
-      ? `Unidad ${unitCode(activeUnit)}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatOnaM2(activeUnit.totalM2)} m², ${activeUnit.view})`
-      : "ONA Residences";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatOnaUsd(quote.total)}\n• Cuota inicial: USD ${formatOnaUsd(quote.initial)}\n• Saldo contra entrega: ${paymentPlan === "contado" ? "sin saldo pendiente" : `USD ${formatOnaUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero la unidad en ONA Residences (${ONA_ADDRESS}, ${ONA_ZONE}):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n• Reserva: USD ${formatOnaUsd(ONA_RESERVE_USD)}\n\n¿Sigue disponible y cuáles son los pasos para reservar?`;
+    const extra = addon === "simple" ? ", con parqueo simple y baulera" : addon === "doble" ? ", con parqueo doble y baulera" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${unitCode(activeUnit)}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatOnaM2(activeUnit.totalM2)} m², ${activeUnit.view}) en ONA Residences.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar ONA Residences.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
 
     recordLeadEvent({
       action: "contact_tap",

@@ -362,18 +362,10 @@ export default function VerticalGuemesLanding({ property, onClose }: Props) {
     }).catch(() => {});
 
     const planLabel = paymentPlan === "contado" ? "Contado 100%" : paymentPlan === "aporte75" ? "Aporte 75%" : "Aporte 50%";
-    const addonLabel = addon === "parking"
-      ? `Parqueo USD ${formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingUsd)}`
-      : addon === "parkingStorage"
-        ? `Parqueo y baulera USD ${formatVerticalUsd(VERTICAL_GUEMES_CONFIG.parkingStorageUsd)}`
-        : "Sin adicional";
-    const unitLine = activeUnit
-      ? `Unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatVerticalM2(activeUnit.superficieM2)} m², ${selectedModel.where})`
-      : "Vertical Güemes";
-    const money = quote
-      ? `\n• Inversión total: USD ${formatVerticalUsd(quote.total)}\n• Cuota inicial: USD ${formatVerticalUsd(quote.initial)}\n• Saldo: ${quote.balance == null ? "sin saldo pendiente" : `USD ${formatVerticalUsd(quote.balance)}`}`
-      : "";
-    const text = `Hola, vengo de N.I.A y quiero conocer las opciones de compra en Vertical Güemes (calle Manuel Güemes, Equipetrol):\n\n• ${unitLine}\n• ${addonLabel}\n• Modalidad: ${planLabel}${money}\n• Entrega: ${VERTICAL_GUEMES_CONFIG.delivery}\n\n¿Me confirman la disponibilidad actual de esta unidad y los pasos para comprar? Vi la lista del ${VERTICAL_GUEMES_CONFIG.priceListLabel}.`;
+    const extra = addon === "parking" ? ", con parqueo" : addon === "parkingStorage" ? ", con parqueo y baulera" : "";
+    const text = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatVerticalM2(activeUnit.superficieM2)} m², ${selectedModel.where}) en Vertical Güemes.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Vertical Güemes.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

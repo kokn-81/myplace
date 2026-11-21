@@ -241,17 +241,9 @@ export default function GiardinoLanding({ property, onClose }: Props) {
       zona: GIARDINO_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, piso: selectedUnit.piso } : {},
     }).catch(() => {});
-    const lines = selectedUnit && quote && selectedModel
-      ? [
-        `${selectedModel.name}, piso ${selectedUnit.piso}, sector ${selectedModel.sector}`,
-        `${formatGiardinoM2(selectedUnit.totalM2)} m² totales · terraza ${formatGiardinoM2(selectedUnit.terraceM2)} m²`,
-        `Vista hacia ${selectedModel.view}`,
-        `Precio: USD ${formatGiardinoUsd(quote.department)}`,
-        `Reserva 15%: USD ${formatGiardinoUsd(quote.reserve)}`,
-        `Saldo: USD ${formatGiardinoUsd(quote.balance)}`,
-      ]
-      : ["Giardino"];
-    const text = `Hola, vengo de N.I.A y quiero consultar Giardino:\n\n${lines.map((line) => `• ${line}`).join("\n")}`;
+    const text = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, piso ${selectedUnit.piso}, sector ${selectedModel.sector} (${formatGiardinoM2(selectedUnit.totalM2)} m²) en Giardino.\nPlan: reserva del 15%.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Giardino.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 

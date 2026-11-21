@@ -241,16 +241,10 @@ export default function MareLanding({ property, onClose }: Props) {
       zona: MARE_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, piso: selectedUnit.piso } : {},
     }).catch(() => {});
-    const lines = selectedUnit && quote && selectedModel
-      ? [
-        `${selectedModel.name}, piso ${selectedUnit.piso}, ${formatMareM2(selectedUnit.superficieM2)} m²`,
-        selectedUnit.note || "Precio publicado",
-        `Total: USD ${formatMareUsd(quote.total)}`,
-        "Al contado",
-        "Saldo: sin saldo pendiente",
-      ]
-      : ["Mare"];
-    const text = `Hola, vengo de N.I.A y quiero consultar Mare:\n\n${lines.map((line) => `• ${line}`).join("\n")}`;
+    const note = selectedUnit?.note ? `. ${selectedUnit.note}` : "";
+    const text = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, piso ${selectedUnit.piso}, ${formatMareM2(selectedUnit.superficieM2)} m² en Mare.\nPlan: al contado${note}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Mare.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
