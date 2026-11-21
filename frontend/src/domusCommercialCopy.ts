@@ -17,7 +17,6 @@ interface DomusCommercialCopy {
   availabilityTitle: string;
   closingTitle: string;
   closingBody: string;
-  closingCta: string;
 }
 
 // Commercial copy follows the project's brochure. Prices, availability,
@@ -42,7 +41,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Encuentra tu espacio en Domus Black.",
     closingTitle: "Haz de Black tu próxima dirección.",
     closingBody: "Elige el modelo que va contigo y cuéntanos cómo quieres comprar. Te ayudamos a comparar pisos, conocer las áreas que corresponden a tu unidad y confirmar una cotización para dar el siguiente paso en Domus Black.",
-    closingCta: "Quiero encontrar mi Black",
   },
   "domus-gold": {
     hero: "Tu hogar inteligente en Equipetrol, con piscina, spa y espacios para disfrutar más de cada día.",
@@ -63,7 +61,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Encuentra el Gold que va contigo.",
     closingTitle: "Tu próxima etapa puede empezar en Gold.",
     closingBody: "Elige la distribución que te gusta y conversemos sobre pisos, formas de pago y amoblamiento. Te ayudamos a confirmar la disponibilidad y el alcance de tu unidad para que des el siguiente paso con una cotización clara.",
-    closingCta: "Quiero encontrar mi Gold",
   },
   "domus-onix": {
     hero: "Tu hogar inteligente entre Equipetrol y Sirari, con piscina panorámica, spa y más planes para disfrutar en casa.",
@@ -84,7 +81,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Encuentra el Onix que va contigo.",
     closingTitle: "Haz de Onix tu próximo punto de partida.",
     closingBody: "Cuéntanos qué espacio buscas y cómo prefieres comprar. Te ayudamos a comparar modelos, revisar pisos y confirmar el equipamiento y las áreas de tu unidad para que avances con una cotización clara.",
-    closingCta: "Quiero encontrar mi Onix",
   },
   "domus-insignia": {
     hero: "Tu hogar inteligente en Plaza Italia, con piscina, cowork y espacios para disfrutar más de cada día.",
@@ -105,7 +101,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Tu próximo hogar puede estar en Plaza Italia.",
     closingTitle: "Haz de Insignia tu próxima dirección.",
     closingBody: "Elige el modelo que te gusta y conversemos sobre la unidad, el equipamiento y la forma de compra que prefieres. Te ayudamos a confirmar la disponibilidad y los pasos para reservar tu lugar en Domus Insignia.",
-    closingCta: "Quiero encontrar mi Insignia",
   },
   "domus-luxury": {
     hero: "Disfruta el entorno de Las Brisas con domótica, piscina, gimnasio y cine para ampliar tus planes en casa.",
@@ -126,7 +121,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Encuentra el Luxury que va contigo.",
     closingTitle: "Haz de Las Brisas tu próxima rutina.",
     closingBody: "Dinos qué espacio estás buscando. Te ayudamos a revisar modelos, pisos y formas de pago para que recibas una cotización y confirmes las condiciones de tu próxima compra en Domus Luxury.",
-    closingCta: "Quiero explorar Domus Luxury",
   },
   "domus-tower": {
     hero: "Vive Equipetrol Norte con áreas sociales en el piso 6 y espacios pensados para trabajar, entrenar y desconectar.",
@@ -147,7 +141,6 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Tu próximo departamento en Domus Tower.",
     closingTitle: "Da el siguiente paso en Equipetrol Norte.",
     closingBody: "Cuéntanos qué modelo te interesa y cómo prefieres comprar. Confirmamos contigo la disponibilidad, la entrega y las condiciones de Domus Tower para que avances con una cotización de tu unidad.",
-    closingCta: "Quiero descubrir Domus Tower",
   },
   "domus-infinity": {
     hero: "Tu hogar en Los Tajibos, con domótica y espacios para compartir, entrenar y disfrutar el tiempo en casa.",
@@ -168,6 +161,5 @@ export const DOMUS_COMMERCIAL_COPY = {
     availabilityTitle: "Encuentra tu lugar en Domus Infinity.",
     closingTitle: "Tu próxima etapa tiene lugar en Los Tajibos.",
     closingBody: "Elige el modelo que te gusta y conversemos sobre disponibilidad, entrega y forma de pago. Te acompañamos a comparar opciones y recibir una cotización de Domus Infinity antes de reservar.",
-    closingCta: "Quiero conocer Domus Infinity",
   },
 } satisfies Record<string, DomusCommercialCopy>;

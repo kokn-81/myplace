@@ -544,7 +544,7 @@ export default function LuxeTowerLanding({ property, onClose }: Props) {
               Encuentra la planta que mejor se adapta a ti y da el siguiente paso. Conversemos sobre su precio, disponibilidad y condiciones de compra para preparar tu próxima llegada a Enrique Finot.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Quiero conocer Luxe Tower <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>

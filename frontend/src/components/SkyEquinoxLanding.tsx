@@ -636,7 +636,7 @@ export default function SkyEquinoxLanding({ property, onClose }: Props) {
                 </div>
                 <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
-                  Quiero {selectedModel.name}
+                  Quiero la unidad {selectedModel.name}
                 </button>
               </div>
             )}

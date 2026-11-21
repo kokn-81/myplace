@@ -783,7 +783,7 @@ export default function TriventoLanding({ property, onClose }: Props) {
               Elige tu modelo favorito y recibe una cotización con el piso y la forma de pago que prefieras. Según la lista del {INVENTORY_LABEL}, hay {libres.length} unidades disponibles, desde USD {formatTriventoUsd(minTicket)} al contado, con entrega programada para {TRIVENTO_CONFIG.delivery}. Conversemos sobre tu próxima compra.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Quiero conocer mis opciones <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>

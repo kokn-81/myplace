@@ -1224,7 +1224,7 @@ export default function DomusLanding({ property, onClose }: Props) {
             <h3 className="font-serif text-3xl font-light text-[#1C1917]">{copy.closingTitle}</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">{copy.closingBody}</p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              {copy.closingCta} <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>

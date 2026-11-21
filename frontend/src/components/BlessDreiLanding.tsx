@@ -827,7 +827,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Cuéntanos cómo imaginas tu nuevo espacio. Te ayudamos a comparar modelos, confirmar la lista y reservar con USD {formatBlessUsd(BLESS_DREI_CONFIG.reservaUsd)}. Entrega en {BLESS_DREI_CONFIG.delivery}.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Quiero conocer mis opciones <ArrowRight size={14} /></button>
+            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Hablar con un asesor <ArrowRight size={14} /></button>
           </section>
         </div>
       </div>

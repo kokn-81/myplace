@@ -676,7 +676,7 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
               Elige tu espacio en Avenida Beni y conversemos sobre la unidad {activeUnit ? activeUnit.codigo : "que te interesa"}. Te ayudamos a comparar las modalidades de pago y a confirmar la disponibilidad antes de avanzar.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Quiero conocer Alpha <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>

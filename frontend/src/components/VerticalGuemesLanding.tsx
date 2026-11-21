@@ -792,7 +792,7 @@ export default function VerticalGuemesLanding({ property, onClose }: Props) {
               Elige el departamento que acompaña tu forma de vivir y planifica tu llegada para {DELIVERY_TEXT}. Conversemos sobre la unidad que te interesa y confirmemos su disponibilidad y condiciones de compra.
             </p>
             <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Quiero conocer Vertical Güemes <ArrowRight size={14} />
+              Hablar con un asesor <ArrowRight size={14} />
             </button>
           </section>
         </div>
