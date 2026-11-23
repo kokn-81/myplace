@@ -144,7 +144,7 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
   },
   giardino: {
     name: GIARDINO_CONFIG.name,
-    builder: GIARDINO_CONFIG.collaborator,
+    builder: null,
     address: GIARDINO_CONFIG.address,
     delivery: null,
     bedrooms: [1, 2, 3],

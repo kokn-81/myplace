@@ -3,7 +3,6 @@ export type GiardinoRooms = "1" | "2" | "3";
 export const GIARDINO_CONFIG = {
   id: "giardino",
   name: "Giardino",
-  collaborator: "RE/MAX Fortaleza",
   address: "Av. San Martín y 3.er anillo",
   zone: "Equipetrol",
   city: "Santa Cruz de la Sierra",

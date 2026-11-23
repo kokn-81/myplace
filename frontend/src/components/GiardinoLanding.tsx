@@ -32,7 +32,6 @@ const SECTIONS = [
   { id: "amenidades", label: "El edificio" },
   { id: "tipologias", label: "Tipologías" },
   { id: "equipamiento", label: "Equipamiento" },
-  { id: "constructora", label: "Colaboradores" },
   { id: "pago", label: "Formas de pago" },
   { id: "disponibilidad", label: "Disponibilidad" },
   { id: "cierre", label: "Cierre" },
@@ -293,13 +292,6 @@ export default function GiardinoLanding({ property, onClose }: Props) {
                 <p className="mt-0.5 text-sm font-medium leading-tight">Residenza y Vita</p>
               </div>
             </div>
-            <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
-              <Building2 size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Colaborador</p>
-                <p className="mt-0.5 text-[11px] font-medium leading-tight sm:text-sm">RE/MAX Fortaleza</p>
-              </div>
-            </div>
           </div>
           <div className="mt-2 max-w-lg rounded-2xl border border-[#e8d5a8]/30 bg-black/55 px-3.5 py-3 backdrop-blur-md">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#e8d5a8]">Departamentos</p>
@@ -332,7 +324,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
               </p>
             </div>
             <div ref={introNavRef} className="flex gap-2 overflow-x-auto pb-1">
-              {SECTIONS.slice(1, 8).map((section) => (
+              {SECTIONS.slice(1, -1).map((section) => (
                 <button key={section.id} type="button" onClick={() => scrollToSection(section.id)} className="shrink-0 rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700">{section.label}</button>
               ))}
             </div>
@@ -392,12 +384,6 @@ export default function GiardinoLanding({ property, onClose }: Props) {
               Disfruta el interior de tu departamento y una terraza para tus momentos al aire libre. La superficie interna se mantiene para cada modelo; el tamaño de la terraza cambia según el piso. Revisa ambos metrajes y el total de la unidad para elegir cuánto espacio quieres para ti.
             </p>
             <img src="/giardino/interiores/2hab.jpg" alt="Departamento de 2 habitaciones" className="aspect-[16/10] w-full rounded-2xl object-cover" />
-          </section>
-
-          <section id="constructora" className="mt-20 scroll-mt-6 space-y-4 border-t border-stone-200/80 pt-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
-            <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Tu próximo paso, con RE/MAX Fortaleza.</h3>
-            <p className="text-sm leading-relaxed text-stone-600 md:text-base">RE/MAX Fortaleza acompaña la comercialización de Giardino. Consulta por el modelo que te interesa y aclara sus condiciones de reserva antes de dar el siguiente paso.</p>
           </section>
 
           <section id="pago" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200/80 pt-10">
