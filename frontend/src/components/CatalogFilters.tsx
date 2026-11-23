@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowDownUp, ChevronLeft, SlidersHorizontal, X } from "lucide-react";
+import { ArrowDownUp, ChevronLeft, Search, SlidersHorizontal, X } from "lucide-react";
 import type { LocalSearchCriteria } from "../localSearch";
 import { SHOW_READY_APARTMENTS } from "../catalogVisibility";
 
@@ -21,6 +21,8 @@ interface Props {
   leadingControl?: ReactNode;
   trailingControl?: ReactNode;
   onReset?: () => void;
+  projectQuery: string;
+  onProjectQuery: (value: string) => void;
 }
 
 const QUESTIONS: Record<CatalogGuideStep, string> = {
@@ -90,6 +92,25 @@ export default function CatalogFilters(props: Props) {
   const smallButton = "nia-guide-chip inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--border-soft)] bg-[var(--surface-panel)]/95 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--text-main)] shadow-sm backdrop-blur lg:px-2.5 lg:py-1 lg:text-xs";
 
   return <section className="nia-catalog-guide w-full min-w-0" aria-label="Búsqueda guiada">
+    <div className="nia-project-search">
+      <Search size={16} aria-hidden="true" />
+      <input
+        type="search"
+        enterKeyHint="search"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
+        placeholder="Buscar un proyecto"
+        aria-label="Buscar un proyecto"
+        value={props.projectQuery}
+        onChange={(event) => props.onProjectQuery(event.target.value)}
+      />
+      {props.projectQuery && (
+        <button type="button" className="nia-project-search-clear" aria-label="Borrar búsqueda" onClick={() => props.onProjectQuery("")}>
+          <X size={14} />
+        </button>
+      )}
+    </div>
     <div className="nia-guide-bar mb-2 grid items-center gap-3">
       {props.leadingControl || <div aria-hidden="true" />}
       <div className="flex min-w-0 items-center justify-center gap-1.5">

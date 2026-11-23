@@ -2,6 +2,33 @@ import { Property } from "./types";
 import { normalizeGeoText } from "./geographicLocations";
 import { getProjectAvailableUnits } from "./projectInventory";
 
+/** Coincide con el nombre del proyecto. Menos de 2 letras no filtra. */
+export const projectNameMatches = (
+  property: { title?: string | null; complejoNombre?: string | null },
+  rawQuery: string,
+): boolean => {
+  const compactQuery = normalizeGeoText(rawQuery).replace(/[^a-z0-9]+/g, "");
+  if (compactQuery.length < 2) return true;
+  const name = normalizeGeoText(`${property.title || ""} ${property.complejoNombre || ""}`);
+  const compactName = name.replace(/[^a-z0-9]+/g, "");
+  if (compactName.includes(compactQuery)) return true;
+  const tokens = normalizeGeoText(rawQuery).split(/[^a-z0-9]+/).filter((token) => token.length >= 2);
+  return tokens.length > 0 && tokens.every((token) => name.includes(token));
+};
+
+/** 0 si el nombre empieza por la búsqueda, 1 si la contiene, 2 si solo coinciden las palabras. */
+export const projectNameRank = (
+  property: { title?: string | null; complejoNombre?: string | null },
+  rawQuery: string,
+): number => {
+  const compactQuery = normalizeGeoText(rawQuery).replace(/[^a-z0-9]+/g, "");
+  const title = normalizeGeoText(property.title || "").replace(/[^a-z0-9]+/g, "");
+  const complejo = normalizeGeoText(property.complejoNombre || "").replace(/[^a-z0-9]+/g, "");
+  if (title.startsWith(compactQuery) || complejo.startsWith(compactQuery)) return 0;
+  if (title.includes(compactQuery) || complejo.includes(compactQuery)) return 1;
+  return 2;
+};
+
 export const normalizeOfferOperation = (operation?: string) => {
   const value = String(operation || "").toLowerCase();
   if (value.includes("anticret") || value.includes("anticr") || value === "anticretico") return "anticretico";

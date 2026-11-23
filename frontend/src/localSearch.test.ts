@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractSearchCriteria, localSearchCatalog } from "./localSearch";
+import { extractSearchCriteria, localSearchCatalog, projectNameMatches, projectNameRank } from "./localSearch";
 import { Property } from "./types";
 
 const mockCatalog: Property[] = [
@@ -217,4 +217,34 @@ test("localSearchCatalog soporta busqueda por referencia REF 3 y nombres de edif
   // Busqueda combinada "departamento en riviera"
   const resDepRiviera = localSearchCatalog("departamento en riviera", extendedCatalog);
   assert.deepEqual(resDepRiviera.ids, ["4"]);
+});
+
+test("projectNameMatches encuentra un proyecto por un trozo del nombre", () => {
+  const projects = [
+    { title: "SKY LEVEL · Equipetrol", complejoNombre: "Sky Level" },
+    { title: "SKY EQUINOX · Sirari", complejoNombre: "Sky Equinox" },
+    { title: "ALPHA BY LUXE DESIGN · Av. Beni", complejoNombre: "Alpha by Luxe Design" },
+    { title: "LUXE TOWER · 2.º anillo", complejoNombre: "Luxe Tower" },
+    { title: "GIARDINO · Av. San Martín", complejoNombre: "Giardino" },
+    { title: "BÉTON BRUT II · Equipetrol", complejoNombre: "Béton Brut II" },
+    { title: "DOMUS GOLD · Equipetrol", complejoNombre: "Domus Gold" },
+    { title: "DOMUS BLACK · Equipetrol Norte", complejoNombre: "Domus Black" },
+    { title: "ONA Residences · Av. Los Cusis", complejoNombre: "ONA Residences" },
+    { title: "VERTICAL GÜEMES · Equipetrol", complejoNombre: "Vertical Güemes" },
+  ];
+  const names = (query: string) => projects.filter((project) => projectNameMatches(project, query)).map((project) => project.complejoNombre);
+
+  assert.deepEqual(names(""), projects.map((project) => project.complejoNombre));
+  assert.deepEqual(names("s"), projects.map((project) => project.complejoNombre));
+  assert.deepEqual(names("sky"), ["Sky Level", "Sky Equinox"]);
+  assert.deepEqual(names("luxe"), ["Alpha by Luxe Design", "Luxe Tower"]);
+  assert.deepEqual(names("giard"), ["Giardino"]);
+  assert.deepEqual(names("beton"), ["Béton Brut II"]);
+  assert.deepEqual(names("domus gold"), ["Domus Gold"]);
+  assert.deepEqual(names("bless"), []);
+  assert.deepEqual(names("ona"), ["ONA Residences"]);
+  assert.deepEqual(names("guemes"), ["Vertical Güemes"]);
+
+  const luxe = projects.filter((project) => projectNameMatches(project, "luxe")).sort((a, b) => projectNameRank(a, "luxe") - projectNameRank(b, "luxe"));
+  assert.deepEqual(luxe.map((project) => project.complejoNombre), ["Luxe Tower", "Alpha by Luxe Design"]);
 });

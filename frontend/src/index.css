@@ -144,6 +144,69 @@
     text-shadow: 0 1px 6px var(--surface-page), 0 0 14px var(--surface-page);
   }
 
+  .nia-project-search {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    height: 44px;
+    margin-bottom: 0.5rem;
+    padding: 0 0.7rem 0 0.85rem;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    background: var(--surface-panel);
+    color: var(--text-main);
+    box-shadow: var(--shadow-warm);
+  }
+
+  .nia-project-search svg {
+    flex: none;
+    color: var(--text-muted);
+  }
+
+  .nia-project-search input {
+    min-width: 0;
+    flex: 1;
+    height: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .nia-project-search input::placeholder {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .nia-project-search input::-webkit-search-cancel-button,
+  .nia-project-search input::-webkit-search-decoration {
+    display: none;
+  }
+
+  .nia-project-search-clear {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .nia-project-search-clear:hover {
+    color: var(--text-main);
+  }
+
+  .nia-project-search:focus-within {
+    border-color: var(--accent-main);
+  }
+
   .nia-catalog-options {
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
@@ -179,6 +242,22 @@
     .nia-map-icon-button svg {
       width: 18px;
       height: 18px;
+    }
+
+    .nia-project-search {
+      height: 40px;
+      margin-bottom: 0.35rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 18px rgba(58, 33, 25, 0.12);
+    }
+
+    .nia-project-search input {
+      font-size: 14px;
+    }
+
+    .nia-project-search svg {
+      width: 16px;
+      height: 16px;
     }
 
     .nia-catalog-guide .nia-guide-pill svg {

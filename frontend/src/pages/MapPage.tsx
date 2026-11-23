@@ -35,7 +35,7 @@ import {
   normalizeGuidedBudget,
   previousGuidedStage,
 } from "../guidedSearch";
-import { localSearchCatalog, matchesBedrooms, matchesPropertyType } from "../localSearch";
+import { localSearchCatalog, matchesBedrooms, matchesPropertyType, projectNameMatches, projectNameRank } from "../localSearch";
 import {
   MapFocusTarget,
   MapLocationChoice,
@@ -2126,6 +2126,7 @@ export default function MapPage() {
   const canOpenAdvisor = userRole === "admin" || userRole === "advisor";
   // --- ESTADOS DE FILTRADO ---
   const [geminiQuery, setGeminiQuery] = useState("");
+  const [projectQuery, setProjectQuery] = useState("");
   const [isAsking, setIsAsking] = useState(false);
   const [aiFilteredIds, setAiFilteredIds] = useState<string[] | null>(null);
   const [aiFilterHistory, setAiFilterHistory] = useState<string[]>([]);
@@ -2245,7 +2246,8 @@ export default function MapPage() {
   const isGuidedActive = guidedStage !== "operation";
   const isGuidedSearchOpen = isGuidedActive;
   const hasFinishedAiSearch = aiFilteredIds !== null && !isGuidedActive && guidedOperation !== "Proyectos" && guidedOperation !== "Departamentos";
-  const hasActiveResults = hasFinishedAiSearch || guidedOperation === "Proyectos" || guidedOperation === "Departamentos";
+  const projectSearchActive = normalizeGeoText(projectQuery).replace(/[^a-z0-9]+/g, "").length >= 2;
+  const hasActiveResults = hasFinishedAiSearch || guidedOperation === "Proyectos" || guidedOperation === "Departamentos" || projectSearchActive;
   const showGuidedChoices = isGuidedActive || (!hasFinishedAiSearch && !aiClarification) || guidedOperation === "Proyectos" || guidedOperation === "Departamentos";
   const compactSearchLabel = guidedOperation === "Proyectos"
     ? "Proyectos en Preventa"
@@ -2276,6 +2278,7 @@ export default function MapPage() {
     setSelectedAmenities([]);
     setShowSuggested(false);
     setGeminiQuery("");
+    setProjectQuery("");
     setAiFilteredIds(null);
     setActiveSearchIntent(null);
     setCurrentIndex(0);
@@ -2547,6 +2550,7 @@ export default function MapPage() {
     setCustomLocationText("");
     setIsCustomLocationOpen(false);
     setGeminiQuery("");
+    setProjectQuery("");
     setCurrentIndex(0);
     setLastSearchLogId(null);
     setGuidedStage("operation");
@@ -2991,8 +2995,12 @@ export default function MapPage() {
   };
 
   const exactProperties = useMemo(() => {
-    return localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(p => propertyMatchesOperation(p, guidedOperation));
-  }, [catalogProperties, searchCriteria, guidedOperation]);
+    const matched = localSearchCatalog("", catalogProperties, searchCriteria).matchedProperties.filter(p => propertyMatchesOperation(p, guidedOperation));
+    if (!projectSearchActive) return matched;
+    return matched
+      .filter((property) => projectNameMatches(property, projectQuery))
+      .sort((a, b) => projectNameRank(a, projectQuery) - projectNameRank(b, projectQuery));
+  }, [catalogProperties, searchCriteria, guidedOperation, projectQuery, projectSearchActive]);
 
   const suggestedProperties = useMemo(() => {
     if (!guidedOperation && !guidedCity && !guidedBudget) return [];
@@ -3360,6 +3368,8 @@ export default function MapPage() {
         </AnimatePresence>
       </div>
     }
+    projectQuery={projectQuery}
+    onProjectQuery={(value) => { setProjectQuery(value); setCurrentIndex(0); setSelectedBuildingGroup(null); }}
     step={filterStep} onStep={setFilterStep}
     criteria={searchCriteria} sort={sortOrder} onSort={value => { setSortOrder(value); setCurrentIndex(0); }}
     years={deliveryYears} count={filteredProperties.length} category={guidedOperation}
@@ -3560,12 +3570,14 @@ export default function MapPage() {
             <Sparkles size={18} />
           </div>
           <h4 className="text-sm font-bold text-[var(--text-main)] mb-1">
-            Sin opciones exactas para estos filtros
+            {projectSearchActive ? "Ningún proyecto coincide" : "Sin opciones exactas para estos filtros"}
           </h4>
           <p className="text-xs text-[var(--text-muted)] mb-3">
-            No encontramos inmuebles que cumplan con todos tus criterios actuales.
+            {projectSearchActive
+              ? `No hay un proyecto con “${projectQuery.trim()}”.`
+              : "No encontramos inmuebles que cumplan con todos tus criterios actuales."}
           </p>
-          {suggestedProperties.length > 0 ? (
+          {suggestedProperties.length > 0 && !projectSearchActive ? (
             <button
               type="button"
               onClick={() => {
@@ -3582,7 +3594,7 @@ export default function MapPage() {
               onClick={resetGuidedSearch}
               className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-control)] px-4 py-2 text-xs font-bold text-[var(--text-main)] transition-colors hover:border-[var(--accent-main)]"
             >
-              Explorar todo el catálogo
+              {projectSearchActive ? "Ver todos los proyectos" : "Explorar todo el catálogo"}
             </button>
           )}
         </div>
