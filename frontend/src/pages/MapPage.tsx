@@ -1,5 +1,6 @@
-import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
-export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isWestgateTowerProperty, isWestgateTowerSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isWestgateTowerProperty, isWestgateTowerSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
+import { WESTGATE_CONFIG, westgateMinCash } from "../westgateTower";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -1062,7 +1063,7 @@ export const SYNTHETIC_SKY_LEVEL_PROPERTY: Property = {
   lng: -63.1963337,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Torre de 18 pisos. Entrega en marzo de 2027.",
+  description: "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Torre de 18 pisos. Entrega en junio de 2027.",
   amenities: ["piscina", "churrasquera", "coworking", "gimnasio", "seguridad"],
   images: [
     "/sky_level/fachada.jpg",
@@ -1083,7 +1084,7 @@ export const SYNTHETIC_SKY_LEVEL_PROPERTY: Property = {
   ocupacion: "Disponible",
   superficieM2: 52,
   amoblado: false,
-  fechaEntrega: "Marzo 2027",
+  fechaEntrega: "Junio 2027",
   avanceObra: 0,
   faseObra: "Preventa",
   reservaUsd: 0,
@@ -1166,6 +1167,40 @@ export const SYNTHETIC_GIARDINO_PROPERTY: Property = {
   planesPago: "Reserva 15% del precio publicado. Sin seña fija en dólares.",
 };
 
+export const SYNTHETIC_WESTGATE_PROPERTY: Property = {
+  id: WESTGATE_CONFIG.id,
+  title: "WESTGATE TOWER · Fexpocruz",
+  price: westgateMinCash()!,
+  rooms: 1,
+  bathrooms: 1,
+  area: WESTGATE_CONFIG.address,
+  city: WESTGATE_CONFIG.city,
+  zone: WESTGATE_CONFIG.zone,
+  lat: WESTGATE_CONFIG.lat,
+  lng: WESTGATE_CONFIG.lng,
+  operation: "Venta",
+  type: "Proyecto (preventa)",
+  description: "Tu próximo espacio sobre Av. Roca y Coronado, frente a Fexpocruz. Departamentos de 1 y 2 dormitorios desde USD 68.040 al contado. Piscina, jacuzzi, saunas, cowork y churrasqueras. Entrega prevista en septiembre de 2028.",
+  amenities: ["piscina", "jacuzzi", "sauna", "cowork", "churrasqueras", "salón de usos múltiples", "sala de juegos", "balcón"],
+  images: ["/westgate-tower/fachada.jpg", "/westgate-tower/social/piscina.jpg", "/westgate-tower/social/wellness.jpg", "/westgate-tower/lobby.jpg"],
+  currency: "$ (USD)",
+  exchangeRate: "Oficial / flexible BCB, según propuesta",
+  agentId: "5",
+  agentName: "Alejandro Coca",
+  agentWhatsapp: "59157015854",
+  offers: [],
+  detailsLoaded: true,
+  complejoId: null,
+  complejoNombre: "WESTGATE TOWER",
+  ocupacion: "Disponible",
+  superficieM2: 56.7,
+  amoblado: false,
+  fechaEntrega: WESTGATE_CONFIG.delivery,
+  faseObra: "Preventa",
+  brochureUrl: WESTGATE_CONFIG.brochurePdfUrl,
+  planesPago: "Contado, inicial del 50% o inicial del 30%. Precios según unidad y plan; calendario del saldo por coordinar.",
+};
+
 export const SYNTHETIC_MARE_PROPERTY: Property = {
   id: "mare",
   title: "MARE · 3.er anillo",
@@ -1229,6 +1264,7 @@ const OFFICIAL_MAP_PINS: Record<string, { lat: number; lng: number }> = {
   "sky-equinox": { lat: -17.7658745, lng: -63.2049568 },
   giardino: { lat: -17.7635749, lng: -63.1974606 },
   mare: { lat: -17.7656331, lng: -63.2003751 },
+  "westgate-tower": { lat: WESTGATE_CONFIG.lat, lng: WESTGATE_CONFIG.lng },
 };
 
 const withOfficialPin = (property: Property, pinId: string): Property => {
@@ -1313,6 +1349,8 @@ const prioritizeRecommended = (list: Property[]): Property[] => {
   if (mare && !priorityItems.some((p) => String(p.id) === String(mare.id))) {
     priorityItems.push(withOfficialPin(mare, "mare"));
   }
+
+  priorityItems.push(withOfficialPin(SYNTHETIC_WESTGATE_PROPERTY, "westgate-tower"));
 
   // Opciones 7 a 13: Proyectos de la marca DOMUS (7 desarrollos)
   for (const domusProp of SYNTHETIC_DOMUS_PROPERTIES) {
@@ -1736,6 +1774,7 @@ export default function MapPage() {
     const isSkyEquinoxPath = pathname.startsWith("/sky-equinox") || pathname.startsWith("/skyequinox");
     const isGiardinoPath = pathname.startsWith("/giardino");
     const isMarePath = pathname.startsWith("/mare");
+    const isWestgatePath = pathname.startsWith("/westgate-tower") || pathname === "/westgate" || pathname === "/westgatetower";
     const pathParts = pathname.split("/").filter(Boolean);
     const head = pathParts[0] || "";
     const isDomusPath = head === "domus" || head.startsWith("domus-");
@@ -1770,6 +1809,8 @@ export default function MapPage() {
         ? "sky-equinox"
         : isGiardinoPath
         ? "giardino"
+        : isWestgatePath
+        ? "westgate-tower"
         : isMarePath
         ? "mare"
         : isAlphaPath
@@ -1799,6 +1840,9 @@ export default function MapPage() {
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isGiardinoSlug(proyecto)) {
       selectProperty(SYNTHETIC_GIARDINO_PROPERTY, { skipHistoryPush: true });
+      hasSearchInteractionRef.current = true;
+    } else if (proyecto && !selectedProperty && isWestgateTowerSlug(proyecto)) {
+      selectProperty(SYNTHETIC_WESTGATE_PROPERTY, { skipHistoryPush: true });
       hasSearchInteractionRef.current = true;
     } else if (proyecto && !selectedProperty && isMareSlug(proyecto)) {
       selectProperty(SYNTHETIC_MARE_PROPERTY, { skipHistoryPush: true });
@@ -1864,6 +1908,8 @@ export default function MapPage() {
       document.title = "Sky Equinox · Sirari | N.I.A";
     } else if (selectedProperty && isGiardinoProperty(selectedProperty)) {
       document.title = "Giardino · Av. San Martín | N.I.A";
+    } else if (selectedProperty && isWestgateTowerProperty(selectedProperty)) {
+      document.title = "Westgate Tower · Fexpocruz | N.I.A";
     } else if (selectedProperty && isMareProperty(selectedProperty)) {
       document.title = "Mare · 3.er anillo | N.I.A";
     } else if (selectedProperty && isAlphaLuxeProperty(selectedProperty)) {
@@ -1906,6 +1952,7 @@ export default function MapPage() {
               isSkyLevelProperty(current) ||
               isSkyEquinoxProperty(current) ||
               isGiardinoProperty(current) ||
+              isWestgateTowerProperty(current) ||
               isMareProperty(current) ||
               isAlphaLuxeProperty(current) ||
               isLuxeTowerProperty(current)
@@ -1929,6 +1976,8 @@ export default function MapPage() {
           selectProperty(SYNTHETIC_SKY_EQUINOX_PROPERTY, { skipHistoryPush: true });
         } else if (isGiardinoSlug(proyecto)) {
           selectProperty(SYNTHETIC_GIARDINO_PROPERTY, { skipHistoryPush: true });
+        } else if (isWestgateTowerSlug(proyecto)) {
+          selectProperty(SYNTHETIC_WESTGATE_PROPERTY, { skipHistoryPush: true });
         } else if (isMareSlug(proyecto)) {
           selectProperty(SYNTHETIC_MARE_PROPERTY, { skipHistoryPush: true });
         } else if (isAlphaLuxeSlug(proyecto)) {
@@ -1979,6 +2028,7 @@ export default function MapPage() {
         isSkyLevelProperty(target) ||
         isSkyEquinoxProperty(target) ||
         isGiardinoProperty(target) ||
+        isWestgateTowerProperty(target) ||
         isMareProperty(target)
       ) {
         setCurrentIndex(0);

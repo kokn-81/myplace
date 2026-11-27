@@ -146,7 +146,7 @@ export const PROJECTS = {
     id: "sky-level",
     title: "Sky Level · Equipetrol",
     description:
-      "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Entrega en marzo de 2027.",
+      "Departamentos de 1 y 2 dormitorios en Equipetrol, entre el 2.º y el 3.er anillo, desde USD 78.000. Entrega en junio de 2027.",
     image: `${SITE}/sky_level/fachada.jpg`,
     imageAlt: "Fachada de Sky Level en Equipetrol",
     imageWidth: 1440,
@@ -177,6 +177,17 @@ export const PROJECTS = {
     imageHeight: 1188,
     canonicalPath: "/giardino",
     appUrl: "/?proyecto=giardino",
+  },
+  "westgate-tower": {
+    id: "westgate-tower",
+    title: "Westgate Tower · Frente a Fexpocruz",
+    description: "Departamentos de 1 y 2 dormitorios frente a Fexpocruz, sobre Av. Roca y Coronado, desde USD 68.040 al contado. Entrega prevista: septiembre de 2028.",
+    image: `${SITE}/westgate-tower/fachada.jpg`,
+    imageAlt: "Fachada de Westgate Tower en Av. Roca y Coronado",
+    imageWidth: 1213,
+    imageHeight: 1800,
+    canonicalPath: "/westgate-tower",
+    appUrl: "/?proyecto=westgate-tower",
   },
   mare: {
     id: "mare",
@@ -244,6 +255,9 @@ const PATH_ALIASES = {
   skyequinox: "sky-equinox",
   giardino: "giardino",
   mare: "mare",
+  "westgate-tower": "westgate-tower",
+  westgate: "westgate-tower",
+  westgatetower: "westgate-tower",
 };
 
 function fromQuery(value) {
@@ -252,6 +266,7 @@ function fromQuery(value) {
   if (PATH_ALIASES[q]) return PROJECTS[PATH_ALIASES[q]];
   const early = q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const earlyToken = (token) => new RegExp(`(?:^|[^a-z])${token}(?:[^a-z]|$)`).test(early);
+  if (earlyToken("westgate") || early === "westgatetower") return PROJECTS["westgate-tower"];
   if (earlyToken("giardino")) return PROJECTS.giardino;
   if (earlyToken("mare")) return PROJECTS.mare;
   if (q.includes("garden") || q === "zen") return PROJECTS.gardenzen;

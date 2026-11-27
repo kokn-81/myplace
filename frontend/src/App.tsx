@@ -87,6 +87,9 @@ export default function App() {
           <Route path="/skyequinox" element={<MapPage />} />
           <Route path="/giardino" element={<MapPage />} />
           <Route path="/mare" element={<MapPage />} />
+          <Route path="/westgate-tower" element={<MapPage />} />
+          <Route path="/westgate" element={<MapPage />} />
+          <Route path="/westgatetower" element={<MapPage />} />
           <Route path="/eurodesign" element={<MapPage />} />
           <Route path="/euro-design" element={<MapPage />} />
           <Route path="/domus" element={<MapPage />} />

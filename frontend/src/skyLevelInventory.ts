@@ -12,7 +12,7 @@ export const SKY_LEVEL_CONFIG = {
   near: "a 150 m de la Av. San Martín",
   zone: "Equipetrol",
   city: "Santa Cruz de la Sierra",
-  delivery: "Marzo 2027",
+  delivery: "Junio 2027",
   levels: 18,
   lat: -17.7682141,
   lng: -63.1963337,

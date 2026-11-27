@@ -165,6 +165,18 @@
       "destination": "/api/project-og?project=mare"
     },
     {
+      "source": "/westgate-tower",
+      "destination": "/api/project-og?project=westgate-tower"
+    },
+    {
+      "source": "/westgate",
+      "destination": "/api/project-og?project=westgate-tower"
+    },
+    {
+      "source": "/westgatetower",
+      "destination": "/api/project-og?project=westgate-tower"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

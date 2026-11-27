@@ -16,11 +16,12 @@ import SkyLevelLanding from "./SkyLevelLanding";
 import SkyEquinoxLanding from "./SkyEquinoxLanding";
 import GiardinoLanding from "./GiardinoLanding";
 import MareLanding from "./MareLanding";
+import WestgateTowerLanding from "./WestgateTowerLanding";
 import { recordLeadEvent } from "../leadTracking";
 import { trackMetaLead } from "../metaPixel";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
-import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty, isGiardinoProperty, isMareProperty } from "../projectIdentity";
+import { isOnaProperty, isVerticalGuemesProperty, isLuxeTowerProperty, isAlphaLuxeProperty, isSkyLevelProperty, isSkyEquinoxProperty, isGiardinoProperty, isMareProperty, isWestgateTowerProperty } from "../projectIdentity";
 
 interface Props {
   property: Property;
@@ -54,6 +55,10 @@ export default function ProjectLandingPage({ property, onClose }: Props) {
 
   if (isGiardinoProperty(property)) {
     return <GiardinoLanding property={property} onClose={onClose} />;
+  }
+
+  if (isWestgateTowerProperty(property)) {
+    return <WestgateTowerLanding property={property} onClose={onClose} />;
   }
 
   if (isMareProperty(property)) {

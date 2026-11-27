@@ -255,7 +255,7 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://nia-web.com";
     const shareUrl = `${origin}/sky-level`;
     const shareTitle = "Sky Level · Equipetrol";
-    const shareText = "Sky Level, en Equipetrol, entre el 2.º y el 3.er anillo. Departamentos de 1 y 2 dormitorios. Entrega en marzo de 2027.";
+    const shareText = "Sky Level, en Equipetrol, entre el 2.º y el 3.er anillo. Departamentos de 1 y 2 dormitorios. Entrega en junio de 2027.";
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
@@ -326,13 +326,13 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
             </span>
           </div>
           <h1 className="mt-3 font-serif text-4xl font-light leading-none tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)] md:text-5xl">Sky Level</h1>
-          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Equipetrol, entre el 2.º y el 3.er anillo. Entrega en marzo de 2027.</p>
+          <p className="mt-2 max-w-md text-sm leading-snug text-white/90">Equipetrol, entre el 2.º y el 3.er anillo. Entrega en junio de 2027.</p>
           <div className="mt-3 flex max-w-lg gap-2">
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
               <Calendar size={15} className="mt-0.5 shrink-0 text-[#e8d5a8]" />
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-[#e8d5a8]">Entrega de obra</p>
-                <p className="mt-0.5 text-sm font-medium leading-tight">Marzo 2027</p>
+                <p className="mt-0.5 text-sm font-medium leading-tight">{SKY_LEVEL_CONFIG.delivery}</p>
               </div>
             </div>
             <div className="flex min-w-0 flex-1 items-start gap-2 rounded-2xl border border-white/15 bg-black/40 px-3 py-2.5 backdrop-blur-md">
@@ -378,7 +378,7 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
                 <span className="mt-1 block font-normal italic text-[#9a7b45]">Exclusividad, confort y bienestar.</span>
               </h2>
               <p className="pt-2 text-sm leading-relaxed text-[#57534E] [text-align:justify] [text-justify:inter-word] md:text-base">
-                Torre de 18 pisos en Equipetrol, entre el 2.º y el 3.er anillo, sobre {SKY_LEVEL_CONFIG.streets}, {SKY_LEVEL_CONFIG.near}. Departamentos de 1 y 2 dormitorios en la planta tipo, del piso 4 al 17, y locales en planta baja. Las áreas sociales están en el piso 18. Entrega en marzo de 2027.
+                Torre de 18 pisos en Equipetrol, entre el 2.º y el 3.er anillo, sobre {SKY_LEVEL_CONFIG.streets}, {SKY_LEVEL_CONFIG.near}. Departamentos de 1 y 2 dormitorios en la planta tipo, del piso 4 al 17, y locales en planta baja. Las áreas sociales están en el piso 18. Entrega en junio de 2027.
               </p>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-[#E7E5E4] bg-white p-4 shadow-sm">
@@ -495,7 +495,7 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
             <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Colaboradores</span>
             <h3 className="font-serif text-2xl font-light text-[#1C1917] md:text-3xl">Sky Properties.</h3>
             <p className="text-sm leading-relaxed text-stone-600 md:text-base">
-              Sky Properties lleva 24 años, con 37 proyectos concluidos y 2.518 unidades entregadas. Entrega de Sky Level en marzo de 2027.
+              Sky Properties lleva 24 años, con 37 proyectos concluidos y 2.518 unidades entregadas. Entrega de Sky Level en junio de 2027.
             </p>
           </section>
 

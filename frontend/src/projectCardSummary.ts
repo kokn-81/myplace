@@ -13,6 +13,7 @@ import { SKY_LEVEL_CONFIG } from "./skyLevelInventory";
 import { SKY_EQUINOX_CONFIG } from "./skyEquinoxInventory";
 import { GIARDINO_CONFIG } from "./giardinoInventory";
 import { MARE_CONFIG } from "./mareInventory";
+import { WESTGATE_CONFIG } from "./westgateTower";
 import type { Property } from "./types";
 
 export interface ProjectCardSummary {
@@ -150,6 +151,14 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     bedrooms: [1, 2, 3],
     sourceUrl: GIARDINO_CONFIG.brochurePdfUrl,
   },
+  "westgate-tower": {
+    name: WESTGATE_CONFIG.name,
+    builder: null,
+    address: WESTGATE_CONFIG.address,
+    delivery: WESTGATE_CONFIG.delivery,
+    bedrooms: [1, 2],
+    sourceUrl: WESTGATE_CONFIG.priceListUrl,
+  },
   mare: {
     name: MARE_CONFIG.name,
     builder: MARE_CONFIG.builder,
@@ -189,6 +198,8 @@ const PROJECT_ALIASES: Record<string, string> = {
   "alpha-by-luxe": "alpha-luxe",
   alphabyluxe: "alpha-luxe",
   "luxe-alpha": "alpha-luxe",
+  westgate: "westgate-tower",
+  westgatetower: "westgate-tower",
   skylevel: "sky-level",
   skyequinox: "sky-equinox",
   domus: "domus-black",

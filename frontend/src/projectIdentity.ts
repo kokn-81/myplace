@@ -210,6 +210,22 @@ export const isMareSlug = (value: string): boolean => {
   return MARE_IDS.has(q) || mentionsMare(q);
 };
 
+const mentionsWestgateTower = (value: string) => hasToken(value, "westgate") && hasToken(value, "tower");
+const WESTGATE_IDS = new Set(["westgate-tower", "westgatetower", "westgate"]);
+
+export const isWestgateTowerProperty = (p: Property | null | undefined): boolean => {
+  if (!p) return false;
+  const id = normalizeVertical(String(p.id)).replace(/[\s_]+/g, "-");
+  if (WESTGATE_IDS.has(id)) return true;
+  if (!isProjectType(p.type || (p as any).tipo_inmueble)) return false;
+  return mentionsWestgateTower(String(p.title || (p as any).titulo || "")) || mentionsWestgateTower(String(p.complejoNombre || (p as any).complejo_nombre || ""));
+};
+
+export const isWestgateTowerSlug = (value: string): boolean => {
+  const q = normalizeVertical(value.trim()).replace(/[\s_]+/g, "-");
+  return WESTGATE_IDS.has(q) || mentionsWestgateTower(q);
+};
+
 const mentionsAlphaLuxe = (value: string) => hasToken(value, "alpha") && hasToken(value, "luxe");
 
 const ALPHA_LUXE_IDS = new Set(["alpha-luxe", "alpha-by-luxe", "alphabyluxe", "luxe-alpha"]);
@@ -307,6 +323,7 @@ export const isTargetOna = (p: Property, query: string): boolean => {
   if (isGiardinoSlug(q)) {
     return isGiardinoProperty(p);
   }
+  if (isWestgateTowerSlug(q)) return isWestgateTowerProperty(p);
   if (isMareSlug(q)) {
     return isMareProperty(p);
   }
@@ -349,6 +366,7 @@ export const isProjectOrPreventa = (p: Property | null | undefined): boolean => 
     isSkyLevelProperty(p) ||
     isSkyEquinoxProperty(p) ||
     isGiardinoProperty(p) ||
+    isWestgateTowerProperty(p) ||
     isMareProperty(p) ||
     isAlphaLuxeProperty(p) ||
     isLuxeTowerProperty(p)
