@@ -170,7 +170,7 @@ export const PROJECTS = {
     id: "giardino",
     title: "Giardino · Terrazas en Equipetrol",
     description:
-      "Tu terraza propia en Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones desde USD 132.990. Reserva del 15%.",
+      "Tu terraza propia en Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones desde USD 134.948. Reserva del 15%.",
     image: `${SITE}/giardino/fachada.jpg`,
     imageAlt: "Fachada de Giardino",
     imageWidth: 680,

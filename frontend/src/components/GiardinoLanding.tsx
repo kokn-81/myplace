@@ -6,7 +6,6 @@ import { trackMetaLead } from "../metaPixel";
 import {
   GIARDINO_CONFIG,
   GIARDINO_MODELS,
-  GIARDINO_RESERVED_FLOORS,
   GIARDINO_UNITS,
   type GiardinoModel,
   type GiardinoRooms,
@@ -123,7 +122,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
   const [rooms, setRooms] = useState<GiardinoRooms>("1");
   const [modelIndex, setModelIndex] = useState(1);
   const [selectedModelId, setSelectedModelId] = useState("06");
-  const [selectedCodigo, setSelectedCodigo] = useState("06-8");
+  const [selectedCodigo, setSelectedCodigo] = useState("06-6");
   const [zoom, setZoom] = useState<ZoomState | null>(null);
 
   const slides = GIARDINO_MODELS.filter((model) => model.rooms === rooms);
@@ -135,8 +134,6 @@ export default function GiardinoLanding({ property, onClose }: Props) {
   const quote = selectedUnit ? quoteGiardinoUnit(selectedUnit) : null;
   const fromAny = minCash();
   const amenity = SLIDES[slideIndex];
-  const reserved = new Set(GIARDINO_RESERVED_FLOORS[selectedModelId] || []);
-  const floorNumbers = Array.from({ length: 25 }, (_, index) => 30 - index);
 
   useEffect(() => {
     const root = rightPanelRef.current;
@@ -407,6 +404,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
               <div className="shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#9a7b45]">Disponibilidad</span>
                 <h3 className="mt-1 font-serif text-2xl font-light text-[#1C1917]">Encuentra tu combinación de espacio y vista.</h3>
+                <p className="mt-1 text-xs text-stone-500">Disponibilidad según lista del {GIARDINO_CONFIG.availabilityDate}.</p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-2">
                 <p className="shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 1 · Tipología</p>
@@ -446,18 +444,9 @@ export default function GiardinoLanding({ property, onClose }: Props) {
             <div className="mt-8 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Paso 2 · Piso</p>
               <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-stone-200 bg-white p-2 sm:grid-cols-3">
-                {floorNumbers.map((piso) => {
-                  const unit = floors.find((item) => item.piso === piso);
-                  if (!unit && !reserved.has(piso)) return null;
+                {floors.map((unit) => {
+                  const piso = unit.piso;
                   const selected = unit?.codigo === selectedCodigo;
-                  if (!unit) {
-                    return (
-                      <div key={piso} className="rounded-lg border border-stone-200 bg-stone-100 px-2 py-2 text-xs text-stone-500">
-                        <span className="block font-semibold">Piso {piso}</span>
-                        <span className="block text-[10px]">En reserva</span>
-                      </div>
-                    );
-                  }
                   return (
                     <button key={unit.codigo} type="button" onClick={() => setSelectedCodigo(unit.codigo)} className={`rounded-lg px-2 py-2 text-xs font-semibold ${selected ? "bg-stone-900 text-white" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       <span className="block">Piso {piso}</span>
@@ -466,6 +455,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
                   );
                 })}
               </div>
+              <a href={GIARDINO_CONFIG.availabilityPdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-[#816127]">Ver lista de disponibilidad<ArrowRight size={12} /></a>
             </div>
 
             <div className="mt-6 space-y-2">

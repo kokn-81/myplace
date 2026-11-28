@@ -1,6 +1,7 @@
 import { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isWestgateTowerProperty, isWestgateTowerSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 export { isOnaProperty, isEurodesignProperty, isGardenZenProperty, isBlessTowerProperty, isBlessDreiProperty, isTriventoProperty, isTriventoSlug, isBetonBrutProperty, isBetonBrutSlug, isVerticalGuemesProperty, isVerticalGuemesSlug, isAlphaLuxeProperty, isAlphaLuxeSlug, isLuxeTowerProperty, isLuxeTowerSlug, isSkyLevelProperty, isSkyLevelSlug, isSkyEquinoxProperty, isSkyEquinoxSlug, isGiardinoProperty, isGiardinoSlug, isWestgateTowerProperty, isWestgateTowerSlug, isMareProperty, isMareSlug, isDomusProperty, isTargetOna, isTargetProject, isProjectOrPreventa } from "../projectIdentity";
 import { WESTGATE_CONFIG, westgateMinCash } from "../westgateTower";
+import { GIARDINO_UNITS, formatGiardinoUsd } from "../giardinoInventory";
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Property, PropertyOffer, formatPropertyTypeLabel, isProjectType } from "../types";
 import { calculateDeliveryCountdown } from "../projectCountdown";
@@ -1132,10 +1133,12 @@ export const SYNTHETIC_SKY_EQUINOX_PROPERTY: Property = {
   planesPago: "Contado o inicial del 20%. Parqueo y baulera incluidos. Sin seña publicada.",
 };
 
+const giardinoStartingUnit = GIARDINO_UNITS.reduce((best, unit) => unit.cashCents < best.cashCents ? unit : best);
+
 export const SYNTHETIC_GIARDINO_PROPERTY: Property = {
   id: "giardino",
   title: "GIARDINO · Av. San Martín",
-  price: 132990,
+  price: giardinoStartingUnit.cash,
   rooms: 1,
   bathrooms: 1,
   area: "Av. San Martín y 3.er anillo",
@@ -1145,7 +1148,7 @@ export const SYNTHETIC_GIARDINO_PROPERTY: Property = {
   lng: -63.1974606,
   operation: "Venta",
   type: "Proyecto (preventa)",
-  description: "Tu terraza propia en Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones en Giardino desde USD 132.990. Reserva del 15%.",
+  description: `Tu terraza propia en Av. San Martín y el 3.er anillo. Departamentos de 1, 2 y 3 habitaciones en Giardino desde USD ${formatGiardinoUsd(giardinoStartingUnit.cash)}. Reserva del 15%.`,
   amenities: ["terraza"],
   images: ["/giardino/fachada.jpg", "/giardino/jardin.jpg", "/giardino/hall.jpg", "/giardino/interiores/3hab.jpg"],
   currency: "$ (USD)",
@@ -1158,7 +1161,7 @@ export const SYNTHETIC_GIARDINO_PROPERTY: Property = {
   complejoId: null,
   complejoNombre: "GIARDINO",
   ocupacion: "Disponible",
-  superficieM2: 59.72,
+  superficieM2: giardinoStartingUnit.totalM2,
   amoblado: false,
   fechaEntrega: "",
   avanceObra: 0,

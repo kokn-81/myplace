@@ -149,7 +149,7 @@ const PROJECT_CARD_SUMMARIES: Record<string, ProjectCardSummary> = {
     address: GIARDINO_CONFIG.address,
     delivery: null,
     bedrooms: [1, 2, 3],
-    sourceUrl: GIARDINO_CONFIG.brochurePdfUrl,
+    sourceUrl: GIARDINO_CONFIG.availabilityPdfUrl,
   },
   "westgate-tower": {
     name: WESTGATE_CONFIG.name,
