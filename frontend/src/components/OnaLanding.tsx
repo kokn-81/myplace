@@ -39,6 +39,7 @@ import {
 } from "../onaInventory";
 import type { Property } from "../types";
 import { CONTACT_WHATSAPP_NUMBER } from "../whatsappMessage";
+import { buildOnaContactMessage, type OnaContactIntent } from "../onaContactMessage";
 
 interface Props {
   property: Property;
@@ -551,8 +552,7 @@ export default function OnaLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
-    trackMetaLead(property);
+  const contactWhatsApp = (intent: OnaContactIntent = "inquiry") => {
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
     const planLabel = paymentPlan === "contado"
       ? "Contado 100%"
@@ -560,19 +560,20 @@ export default function OnaLanding({ property, onClose }: Props) {
         ? "Inicial 60% y saldo 40% contra entrega"
         : "Inicial 40% y saldo 60% contra entrega";
     const extra = addon === "simple" ? ", con parqueo simple y baulera" : addon === "doble" ? ", con parqueo doble y baulera" : "";
-    const text = activeUnit
-      ? `Hola, vengo de N.I.A. Quiero la unidad ${unitCode(activeUnit)}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatOnaM2(activeUnit.totalM2)} m², ${activeUnit.view}) en ONA Residences.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar ONA Residences.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const contactUnit = activeUnit?.status === "disponible" ? activeUnit : null;
+    const text = buildOnaContactMessage({ intent, unit: contactUnit, modelName: selectedModel.name, planLabel, extra });
+    if (!text) { scrollToSection("disponibilidad"); return; }
+    trackMetaLead(property);
 
     recordLeadEvent({
       action: "contact_tap",
       propertyRef: property.id,
       operacion: "Preventa",
       zona: property.zone || ONA_ZONE,
-      presupuesto: quote ? `USD ${formatOnaUsd(quote.total)}` : undefined,
-      extraFilters: activeUnit
-        ? { unidad: unitCode(activeUnit), piso: activeUnit.floor, tipo: activeUnit.tipo, plan: paymentPlan, adicional: addon }
-        : { plan: paymentPlan },
+      presupuesto: intent !== "advice" && quote ? `USD ${formatOnaUsd(quote.total)}` : undefined,
+      extraFilters: intent === "advice" ? { intencion: "asesoria" } : contactUnit
+        ? { intencion: intent === "reserve" ? "reserva" : "consulta_unidad", unidad: unitCode(contactUnit), piso: contactUnit.floor, tipo: contactUnit.tipo, plan: paymentPlan, adicional: addon }
+        : { intencion: "consulta_unidad", plan: paymentPlan },
     }).catch(() => {});
 
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
@@ -1009,7 +1010,7 @@ export default function OnaLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <p className="text-[11px] leading-relaxed text-stone-400">La reserva de USD {formatOnaUsd(ONA_RESERVE_USD)} se descuenta de la cuota inicial.</p>
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {unitCode(activeUnit)}
                 </button>
@@ -1020,11 +1021,18 @@ export default function OnaLanding({ property, onClose }: Props) {
           <section id="cierre" className="mt-20 scroll-mt-6 space-y-6 border-t border-stone-200 pt-12 pb-16 text-center">
             <h3 className="font-serif text-3xl font-light text-[#1C1917]">Tu próxima etapa puede empezar en ONA.</h3>
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
-              Cuéntanos qué espacio buscas. Te ayudamos a comparar modelos, confirmar el precio de tu unidad y elegir tu plan de pago. Cuando encuentres el tuyo, consulta las condiciones de la reserva de USD {formatOnaUsd(ONA_RESERVE_USD)}.
+              Si ya encontraste tu departamento, confirma su disponibilidad y coordina la reserva de USD {formatOnaUsd(ONA_RESERVE_USD)}. Si aún estás comparando, agenda una asesoría para revisar modelos y formas de pago con nosotros.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <div className="mx-auto grid max-w-xl gap-3 sm:grid-cols-2">
+              <button type="button" disabled={!quote} onClick={() => contactWhatsApp("reserve")} className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white disabled:cursor-not-allowed disabled:opacity-50">
+                <span>Reservar unidad elegida</span>
+                {quote && activeUnit && <span className="text-[10px] font-normal normal-case tracking-normal text-[#e8d5a8]">Unidad {unitCode(activeUnit)} · Piso {activeUnit.floor}</span>}
+              </button>
+              <button type="button" onClick={() => contactWhatsApp("advice")} className="inline-flex min-h-16 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#1C1917]">
+                <img src="/whatsapp.svg" alt="" aria-hidden="true" className="h-5 w-5 shrink-0" />Agendar asesoría por WhatsApp
+              </button>
+            </div>
+            {!quote && <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Elige una unidad disponible para reservar<ArrowRight size={14} /></button>}
           </section>
         </div>
       </div>
@@ -1049,8 +1057,8 @@ export default function OnaLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
-          {/* Prueba en ONA: este acceso baja al cierre; el contacto se registra en el enlace final. */}
-          {activeSection !== "cierre" && <button type="button" onClick={() => scrollToSection("cierre")} aria-label="Ir a Hablar con un asesor" aria-controls="cierre" title="Hablar con un asesor" className="absolute right-14 top-0 flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl transition-colors hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9a7b45]">
+          {/* Prueba en ONA: este acceso baja al cierre; el contacto se registra en sus botones. */}
+          {activeSection !== "cierre" && <button type="button" onClick={() => scrollToSection("cierre")} aria-label="Ver opciones de reserva y asesoría" aria-controls="cierre" title="Reserva y asesoría" className="absolute right-14 top-0 flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl transition-colors hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9a7b45]">
             <img src="/whatsapp.svg" alt="" aria-hidden="true" className="h-6 w-6 brightness-0 invert" />
           </button>}
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
