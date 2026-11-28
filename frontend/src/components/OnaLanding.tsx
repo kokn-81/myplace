@@ -1049,6 +1049,10 @@ export default function OnaLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {/* Prueba en ONA: este acceso baja al cierre; el contacto se registra en el enlace final. */}
+          {activeSection !== "cierre" && <button type="button" onClick={() => scrollToSection("cierre")} aria-label="Ir a Hablar con un asesor" aria-controls="cierre" title="Hablar con un asesor" className="absolute right-14 top-0 flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl transition-colors hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9a7b45]">
+            <img src="/whatsapp.svg" alt="" aria-hidden="true" className="h-6 w-6 brightness-0 invert" />
+          </button>}
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

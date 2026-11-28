@@ -2050,6 +2050,7 @@ export default function MapPage() {
 
   // Al pasar el mouse en computadora: vuela suavemente al inmueble y resalta su pin
   const handleCardMouseEnter = useCallback((property: Property) => {
+    if (window.innerWidth < 1024 || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     setHoveredPropertyId(property.id);
     if (hoverFocusTimeoutRef.current) {
       clearTimeout(hoverFocusTimeoutRef.current);
@@ -3292,7 +3293,7 @@ export default function MapPage() {
       setMapFocus({
         longitude: pts[0].lng,
         latitude: pts[0].lat,
-        zoom: 15.6,
+        zoom: isMobileCarousel ? 14.6 : 15.6,
         key: Date.now(),
         label: pts[0].title,
         source: "user",
@@ -3324,7 +3325,7 @@ export default function MapPage() {
       label: p1.area || p1.title,
       source: "user",
     });
-  }, [currentIndex, selectedBuildingGroup, visibleProperties.length > 0 ? visibleProperties[0].id : null]);
+  }, [currentIndex, selectedBuildingGroup, isMobileCarousel, visibleProperties.length > 0 ? visibleProperties[0].id : null]);
 
   const handleCarouselTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     carouselSwipeStartX.current = event.touches[0]?.clientX ?? null;

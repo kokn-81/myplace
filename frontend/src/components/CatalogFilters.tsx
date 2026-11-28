@@ -2,9 +2,11 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowDownUp, ChevronLeft, Search, SlidersHorizontal, X } from "lucide-react";
 import type { LocalSearchCriteria } from "../localSearch";
 import { SHOW_READY_APARTMENTS } from "../catalogVisibility";
+import { skipCatalogQuestion, type CatalogGuideStep } from "../catalogGuide";
+
+export type { CatalogGuideStep } from "../catalogGuide";
 
 export type CatalogSort = "recommended" | "price-asc" | "price-desc" | "delivery";
-export type CatalogGuideStep = "category" | "bedrooms" | "zone" | "budget" | "delivery" | "results" | "sort";
 interface Props {
   criteria: LocalSearchCriteria;
   onChange: (criteria: LocalSearchCriteria) => void;
@@ -49,6 +51,7 @@ export default function CatalogFilters(props: Props) {
   const set = (key: keyof LocalSearchCriteria, value: unknown) => onChange({ ...criteria, [key]: value || undefined });
   const currency = criteria.budgetCurrency || "USD";
   const afterBudget: CatalogGuideStep = props.category === "Departamentos" || props.years.length === 0 ? "results" : "delivery";
+  const skippedQuestion = skipCatalogQuestion(step, criteria, afterBudget === "delivery");
 
   useEffect(() => {
     if (previousStep.current === step) return;
@@ -118,6 +121,10 @@ export default function CatalogFilters(props: Props) {
         <p ref={headingRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="nia-guide-question min-w-0 text-center text-xs font-semibold leading-snug text-[var(--text-main)] outline-none lg:text-sm">
           {step === "results" ? `${props.count} ${props.count === 1 ? "resultado" : "resultados"}` : QUESTIONS[step]}
         </p>
+        {skippedQuestion && <button type="button" className={`${smallButton} min-h-11 lg:min-h-9`} aria-label={`Saltar pregunta: ${QUESTIONS[step]}`} onClick={() => {
+          onChange(skippedQuestion.criteria);
+          onStep(skippedQuestion.nextStep);
+        }}>Saltar</button>}
       </div>
       {props.trailingControl || <div aria-hidden="true" />}
     </div>
