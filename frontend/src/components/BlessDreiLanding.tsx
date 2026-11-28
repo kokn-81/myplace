@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -462,22 +464,27 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
-    trackMetaLead(property);
+  const canReserve = activeUnit?.estado === "LIBRE";
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
-    recordLeadEvent({
+
+    const planLabel = paymentPlan === "contado" ? "Contado 100%" : paymentPlan === "plan40" ? "40% en obra y 60% contra entrega" : "30% a la firma y 70% contra entrega";
+    const extra = addon === "parking" ? ", con parqueo" : "";
+    const inquiryText = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.superficieM2.toLocaleString("es-BO")} m²) en Bless Drei.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Bless Drei.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const text = buildProjectContactMessage({ intent, projectName: "Bless Drei", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
+    trackMetaLead(property);
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: String(property.id || "bless-drei"),
       operacion: "Preventa",
       zona: property.zone || BLESS_DREI_CONFIG.zone,
       presupuesto: quote ? String(quote.total) : undefined,
       extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, modelo: activeUnit.modelo, plan: paymentPlan, adicional: addon } : { plan: paymentPlan },
-    }).catch(() => {});
-    const planLabel = paymentPlan === "contado" ? "Contado 100%" : paymentPlan === "plan40" ? "40% en obra y 60% contra entrega" : "30% a la firma y 70% contra entrega";
-    const extra = addon === "parking" ? ", con parqueo" : "";
-    const text = activeUnit
-      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.pisoNumero}, Modelo ${activeUnit.modelo} (${activeUnit.tipologia}, ${activeUnit.superficieM2.toLocaleString("es-BO")} m²) en Bless Drei.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar Bless Drei.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    })).catch(() => {});
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -811,7 +818,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
                 {extra > 0 && paymentPlan !== "contado" && (
                   <p className="text-[11px] leading-relaxed text-stone-400">El parqueo queda fuera de ese porcentaje y se suma a la inversión total.</p>
                 )}
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} /> Quiero la unidad {activeUnit.codigo}
                 </button>
               </div>
@@ -823,7 +830,7 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Cuéntanos cómo imaginas tu nuevo espacio. Te ayudamos a comparar modelos, confirmar la lista y reservar con USD {formatBlessUsd(BLESS_DREI_CONFIG.reservaUsd)}. Entrega en {BLESS_DREI_CONFIG.delivery}.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Hablar con un asesor <ArrowRight size={14} /></button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={activeUnit ? `Unidad ${activeUnit.codigo} · Piso ${activeUnit.pisoNumero}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -845,6 +852,8 @@ export default function BlessDreiLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

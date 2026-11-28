@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Building2, Check, ChevronLeft, ChevronRight, Download, MapPin, Menu, MessageCircle, Share2, Sparkles, X } from "lucide-react";
@@ -228,18 +230,22 @@ export default function GiardinoLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
+  const canReserve = Boolean(selectedUnit);
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
+    const inquiryText = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, piso ${selectedUnit.piso}, sector ${selectedModel.sector} (${formatGiardinoM2(selectedUnit.totalM2)} m²) en Giardino.\nPlan: reserva del 15%.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Giardino.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const text = buildProjectContactMessage({ intent, projectName: "Giardino", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
     trackMetaLead(property);
-    recordLeadEvent({
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: "giardino",
       operacion: "Preventa",
       zona: GIARDINO_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, piso: selectedUnit.piso } : {},
-    }).catch(() => {});
-    const text = selectedUnit && selectedModel
-      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, piso ${selectedUnit.piso}, sector ${selectedModel.sector} (${formatGiardinoM2(selectedUnit.totalM2)} m²) en Giardino.\nPlan: reserva del 15%.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar Giardino.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    })).catch(() => {});
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -496,7 +502,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
                     <p className="mt-1 text-[10px] text-stone-400">85% del precio publicado</p>
                   </div>
                 </div>
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {selectedModel.name}
                 </button>
@@ -509,9 +515,7 @@ export default function GiardinoLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Consulta por {selectedModel ? `${selectedModel.name}, piso ${selectedUnit?.piso ?? ""}`.trim() : "el departamento que estás mirando"}. Te ayudamos a revisar disponibilidad y condiciones de reserva para dar el siguiente paso.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={selectedUnit ? `${selectedModel.name} · Piso ${selectedUnit.piso}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -536,6 +540,8 @@ export default function GiardinoLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

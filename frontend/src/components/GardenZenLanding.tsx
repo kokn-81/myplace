@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useInventory, gardenZenInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -510,8 +512,9 @@ export default function GardenZenLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
-    trackMetaLead(property);
+  const canReserve = activeUnit?.status === "disponible";
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
     const phone = (property.agentWhatsapp || CONTACT_WHATSAPP_NUMBER).replace(/\D/g, "") || CONTACT_WHATSAPP_NUMBER;
     const planLabel = paymentPlan === "contado"
       ? "Contado 100%"
@@ -519,11 +522,14 @@ export default function GardenZenLanding({ property, onClose }: Props) {
         ? "Inicial 70% y saldo 30% contra entrega"
         : "Inicial 30% y saldo 70% contra entrega";
     const extra = addon === "techado" ? ", con parqueo techado" : addon === "moto" ? ", con parqueo de moto" : "";
-    const text = activeUnit
+    const inquiryText = activeUnit
       ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.unitNumber}, piso ${activeUnit.floor}, ${selectedModel.name} (${formatM2(activeUnit.areaM2)} m²) en Garden Zen.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
       : "Hola, vengo de N.I.A. Quiero consultar Garden Zen.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
 
-    recordLeadEvent({
+    const text = buildProjectContactMessage({ intent, projectName: "Garden Zen", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
+    trackMetaLead(property);
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: property.id,
       operacion: "Preventa",
@@ -532,8 +538,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
       extraFilters: activeUnit
         ? { unidad: activeUnit.unitNumber, piso: activeUnit.floor, modelo: activeUnit.modelo, plan: paymentPlan, adicional: addon }
         : { plan: paymentPlan },
-    }).catch(() => {});
-
+    })).catch(() => {});
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -973,7 +978,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
                   </div>
                 </div>
                 <p className="text-[11px] leading-relaxed text-stone-400">La reserva de USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} se descuenta de la cuota inicial.</p>
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {activeUnit.unitNumber}
                 </button>
@@ -986,9 +991,7 @@ export default function GardenZenLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Cuéntanos qué modelo te gustó. Te ayudamos a comparar pisos, confirmar el equipamiento y elegir la forma de pago. Consulta cómo reservar tu unidad con USD {formatGardenZenUsd(GARDEN_ZEN_CONFIG.reservaUsd)} y da el siguiente paso.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#5c2414]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={activeUnit ? `Unidad ${activeUnit.unitNumber} · Piso ${activeUnit.floor}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} tone="chocolate" />
           </section>
         </div>
       </div>
@@ -1013,6 +1016,8 @@ export default function GardenZenLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e6cdb8]" /> : <Menu size={18} className="text-[#e6cdb8]" />}
           </button>

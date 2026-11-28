@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -282,19 +284,23 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
+  const canReserve = activeUnit?.estado === "LIBRE";
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
+    const extra = addon === "parking" ? ", con parqueo" : addon === "parkingStorage" ? ", con parqueo y baulera" : addon === "storage" ? ", con baulera" : "";
+    const inquiryText = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatAlphaM2(activeUnit.superficieM2)} m²) en Alpha by Luxe Design.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Alpha by Luxe Design.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const text = buildProjectContactMessage({ intent, projectName: "Alpha by Luxe Design", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
     trackMetaLead(property);
-    recordLeadEvent({
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: "alpha-luxe",
       operacion: "Preventa",
       zona: ALPHA_LUXE_CONFIG.zone,
       extraFilters: activeUnit ? { unidad: activeUnit.codigo, piso: activeUnit.piso, plan: paymentPlan, adicional: addon } : {},
-    }).catch(() => {});
-    const extra = addon === "parking" ? ", con parqueo" : addon === "parkingStorage" ? ", con parqueo y baulera" : addon === "storage" ? ", con baulera" : "";
-    const text = activeUnit
-      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatAlphaM2(activeUnit.superficieM2)} m²) en Alpha by Luxe Design.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar Alpha by Luxe Design.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    })).catch(() => {});
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -653,7 +659,7 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
                     )}
                   </div>
                 </div>
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {activeUnit.codigo}
                 </button>
@@ -666,9 +672,7 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Elige tu espacio en Avenida Beni y conversemos sobre la unidad {activeUnit ? activeUnit.codigo : "que te interesa"}. Te ayudamos a comparar las modalidades de pago y a confirmar la disponibilidad antes de avanzar.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={activeUnit ? `Unidad ${activeUnit.codigo} · Piso ${activeUnit.piso}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -693,6 +697,8 @@ export default function AlphaLuxeLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

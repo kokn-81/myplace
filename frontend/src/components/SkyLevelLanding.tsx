@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -273,19 +275,23 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
+  const canReserve = Boolean(selectedUnit) && currentModel?.estado === "LIBRE" && currentModel.id === selectedModel.id;
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
+    const extra = addon === "parkingStorage" ? ", con parqueo y baulera" : "";
+    const inquiryText = selectedUnit && selectedModel
+      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, ${formatSkyLevelM2(selectedUnit.superficieM2)} m², ${selectedModel.where} en Sky Level.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Sky Level.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const text = buildProjectContactMessage({ intent, projectName: "Sky Level", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
     trackMetaLead(property);
-    recordLeadEvent({
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: "sky-level",
       operacion: "Preventa",
       zona: SKY_LEVEL_CONFIG.zone,
       extraFilters: selectedUnit ? { unidad: selectedUnit.codigo, plan: paymentPlan, adicional: addon } : {},
-    }).catch(() => {});
-    const extra = addon === "parkingStorage" ? ", con parqueo y baulera" : "";
-    const text = selectedUnit && selectedModel
-      ? `Hola, vengo de N.I.A. Quiero ${selectedModel.name}, ${formatSkyLevelM2(selectedUnit.superficieM2)} m², ${selectedModel.where} en Sky Level.\nPlan: ${PLAN_NAME[paymentPlan]}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar Sky Level.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    })).catch(() => {});
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -639,7 +645,7 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
                     )}
                   </div>
                 </div>
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {selectedModel.name}
                 </button>
@@ -655,9 +661,7 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Elige la tipología y el plan. Te confirmamos {selectedModel ? selectedModel.name : "la unidad que estás mirando"} en Sky Level.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={selectedUnit ? `${selectedModel.name} · ${selectedModel.where}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -682,6 +686,8 @@ export default function SkyLevelLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

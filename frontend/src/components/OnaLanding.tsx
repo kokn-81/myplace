@@ -1,3 +1,4 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
 import { useInventory, onaInventory } from "../projectInventory";
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -1023,16 +1024,7 @@ export default function OnaLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Si ya encontraste tu departamento, confirma su disponibilidad y coordina la reserva de USD {formatOnaUsd(ONA_RESERVE_USD)}. Si aún estás comparando, agenda una asesoría para revisar modelos y formas de pago con nosotros.
             </p>
-            <div className="mx-auto grid max-w-xl gap-3 sm:grid-cols-2">
-              <button type="button" disabled={!quote} onClick={() => contactWhatsApp("reserve")} className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl bg-[#1C1917] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white disabled:cursor-not-allowed disabled:opacity-50">
-                <span>Reservar unidad elegida</span>
-                {quote && activeUnit && <span className="text-[10px] font-normal normal-case tracking-normal text-[#e8d5a8]">Unidad {unitCode(activeUnit)} · Piso {activeUnit.floor}</span>}
-              </button>
-              <button type="button" onClick={() => contactWhatsApp("advice")} className="inline-flex min-h-16 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#1C1917]">
-                <img src="/whatsapp.svg" alt="" aria-hidden="true" className="h-5 w-5 shrink-0" />Agendar asesoría por WhatsApp
-              </button>
-            </div>
-            {!quote && <button type="button" onClick={() => scrollToSection("disponibilidad")} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">Elige una unidad disponible para reservar<ArrowRight size={14} /></button>}
+            <ProjectContactActions canReserve={Boolean(quote)} selectionLabel={activeUnit ? `Unidad ${unitCode(activeUnit)} · Piso ${activeUnit.floor}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -1057,10 +1049,7 @@ export default function OnaLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
-          {/* Prueba en ONA: este acceso baja al cierre; el contacto se registra en sus botones. */}
-          {activeSection !== "cierre" && <button type="button" onClick={() => scrollToSection("cierre")} aria-label="Ver opciones de reserva y asesoría" aria-controls="cierre" title="Reserva y asesoría" className="absolute right-14 top-0 flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl transition-colors hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9a7b45]">
-            <img src="/whatsapp.svg" alt="" aria-hidden="true" className="h-6 w-6 brightness-0 invert" />
-          </button>}
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

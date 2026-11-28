@@ -1,3 +1,5 @@
+import { ProjectContactActions, ProjectContactShortcut } from "./ProjectContactActions";
+import { buildProjectContactMessage, projectContactLeadInput, type ProjectContactIntent } from "../projectContact";
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -399,9 +401,19 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
     }
   };
 
-  const contactWhatsApp = () => {
+  const canReserve = activeUnit?.estado === "LIBRE";
+
+  const contactWhatsApp = (intent: ProjectContactIntent = "inquiry") => {
+
+    const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Plan 30-60";
+    const extra = addon === "auto" ? ", con parqueo" : addon === "moto" ? ", con parqueo de moto" : "";
+    const inquiryText = activeUnit
+      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatBetonM2(activeUnit.superficieM2)} m², ${activeUnit.ubicacion}) en Béton Brut II.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
+      : "Hola, vengo de N.I.A. Quiero consultar Béton Brut II.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    const text = buildProjectContactMessage({ intent, projectName: "Béton Brut II", inquiryText, canReserve });
+    if (!text) { scrollToSection("disponibilidad"); return; }
     trackMetaLead(property);
-    recordLeadEvent({
+    recordLeadEvent(projectContactLeadInput(intent, {
       action: "contact_tap",
       propertyRef: "beton-brut-ii",
       operacion: "Preventa",
@@ -410,13 +422,7 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
       extraFilters: activeUnit
         ? { unidad: activeUnit.codigo, piso: activeUnit.piso, modelo: activeUnit.modelId, plan: paymentPlan, adicional: addon }
         : { plan: paymentPlan },
-    }).catch(() => {});
-
-    const planLabel = paymentPlan === "contado" ? "Contado 100%" : "Plan 30-60";
-    const extra = addon === "auto" ? ", con parqueo" : addon === "moto" ? ", con parqueo de moto" : "";
-    const text = activeUnit
-      ? `Hola, vengo de N.I.A. Quiero la unidad ${activeUnit.codigo}, piso ${activeUnit.piso}, ${selectedModel.name} (${formatBetonM2(activeUnit.superficieM2)} m², ${activeUnit.ubicacion}) en Béton Brut II.\nPlan: ${planLabel}${extra}.\n¿Sigue disponible y cuáles son los pasos para reservar?`
-      : "Hola, vengo de N.I.A. Quiero consultar Béton Brut II.\nAún no elegí una unidad.\n¿Me ayudan a ver qué hay disponible?";
+    })).catch(() => {});
     window.open(`https://wa.me/${CONTACT_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -813,7 +819,7 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
                     El tramo de cuotas es USD {formatBetonUsd(quote.installments)}, hasta completar el 60% del departamento, en un plazo de hasta 24 meses. El parqueo, si lo sumas, queda fuera de ese porcentaje.
                   </p>
                 )}
-                <button type="button" onClick={contactWhatsApp} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
+                <button type="button" onClick={() => contactWhatsApp()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-100 px-5 py-3 text-xs font-bold uppercase tracking-wider text-stone-900">
                   <MessageCircle size={16} />
                   Quiero la unidad {activeUnit.codigo}
                 </button>
@@ -826,9 +832,7 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
             <p className="mx-auto max-w-xl text-sm leading-relaxed text-stone-600">
               Cuéntanos qué estás buscando. Te ayudamos a comparar modelos, confirmar la disponibilidad y conocer los pasos para reservar en Béton Brut II.
             </p>
-            <button type="button" onClick={contactWhatsApp} className="inline-flex items-center gap-1 text-sm font-semibold text-[#816127]">
-              Hablar con un asesor <ArrowRight size={14} />
-            </button>
+            <ProjectContactActions canReserve={canReserve} selectionLabel={activeUnit ? `Unidad ${activeUnit.codigo} · Piso ${activeUnit.piso}` : undefined} onReserve={() => contactWhatsApp("reserve")} onAdvice={() => contactWhatsApp("advice")} onChooseUnit={() => scrollToSection("disponibilidad")} />
           </section>
         </div>
       </div>
@@ -853,6 +857,8 @@ export default function BetonBrutLanding({ property, onClose }: Props) {
 
       {showFloatingNav && (
         <div className="fixed bottom-20 right-4 z-[125] flex flex-col items-end sm:right-6 md:right-8">
+          {activeSection !== "cierre" && <ProjectContactShortcut onClick={() => scrollToSection("cierre")} />}
+
           <button type="button" onClick={() => setShowSectionMenu((open) => !open)} className="relative z-[128] flex h-11 w-11 items-center justify-center rounded-full border border-stone-800/80 bg-stone-900/95 text-white shadow-2xl" aria-label="Secciones">
             {showSectionMenu ? <X size={18} className="text-[#e8d5a8]" /> : <Menu size={18} className="text-[#e8d5a8]" />}
           </button>

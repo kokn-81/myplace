@@ -1,8 +1,9 @@
 # N.I.A · Estructura de landing
 
-**Versión:** 2.1
+**Versión:** 2.2 · 28 de noviembre de 2026
 
 **Referencia que se copia:** `frontend/src/components/BetonBrutLanding.tsx` (Béton Brut II).  
+**Contacto y cierre:** `ProjectContactActions.tsx` y `projectContact.ts`. El comportamiento aprobado en ONA se aplica a todos los proyectos, incluidos los siete DOMUS.
 **Este archivo manda.** Si una versión anterior de esta guía, o una landing vieja, pide otra cosa, se ignora.
 
 **Qué copia la IA de estructura.** El cascarón, el orden, los botones, los marcos y el flujo.  
@@ -33,6 +34,8 @@ Los datos del proyecto (nombre, dirección, fecha de entrega, precios, unidades,
 | `disponibilidad` | Disponibilidad |
 | `cierre` | Cierre |
 
+**Excepción vigente:** Giardino conserva la omisión de Colaboradores solicitada por el usuario. Esta actualización de contacto no vuelve a incorporar esa sección.
+
 7. Toda sección después de `#intro` abre con `mt-20 border-t border-stone-200/80`. `#intro` no lleva borde superior. El `pt` es `pt-10`, salvo `#tipologias` y `#disponibilidad`, que usan `pt-6` porque su bloque cabe sobre la barra.
 8. Cada sección, menos el visor, tiene ceja, título y cuerpo en este orden. La ceja es `text-xs font-semibold uppercase tracking-wider text-[#9a7b45]`. El título de sección es `font-serif text-2xl font-light text-[#1C1917] md:text-3xl`, salvo el `h2` de `#intro` y los títulos de `#tipologias` y `#disponibilidad`, que van en `text-2xl` sin subir a `md:text-3xl`.
 9. **No hay Insights.** No hay botón, modal ni modo asesor.
@@ -48,6 +51,7 @@ Los datos del proyecto (nombre, dirección, fecha de entrega, precios, unidades,
 | Barra inferior | `z-[110]` | `fixed inset-x-0 bottom-0 md:left-[44%]` | se oculta solo cuando la sección activa es `cierre` |
 | Compartir y cerrar | `z-[120]` | `fixed right-4 top-4 md:right-7 md:top-7` | siempre. Cerrar solo si la landing se abrió encima del mapa |
 | Menú de secciones | botón `z-[125]` / `z-[128]`, lista `z-[115]` | `fixed bottom-20 right-4 sm:right-6 md:right-8` | el botón aparece cuando la navegación de `#intro` ya pasó (`bottom < 80`). Al volver arriba, el botón y la lista se esconden |
+| Acceso a reserva y asesoría | dentro del mismo grupo `z-[125]` | `absolute right-14 top-0`, a la izquierda del menú circular | aparece con el menú de secciones y se oculta en `#cierre`; el visor sigue por encima |
 | Visor | `z-[140]` | `fixed inset-0` | al tocar un departamento, su planta, la ficha o la distribución de pisos |
 
 Nada de la barra tapa el departamento. `#tipologias` y el paso 1 de `#disponibilidad` miden `h-[calc(100svh-7.25rem)]` para terminar arriba de la barra.
@@ -56,7 +60,7 @@ Nada de la barra tapa el departamento. `#tipologias` y el paso 1 de `#disponibil
 
 ## 2. Botones que existen
 
-No se agregan otros controles flotantes. No se mueve un botón de esta lista a otra esquina.
+Solo se usan los controles flotantes de esta lista. El acceso a reserva y asesoría está aprobado para todos los proyectos. No se mueve un botón de esta lista a otra esquina.
 
 | Botón | Lugar | Acción |
 | :--- | :--- | :--- |
@@ -68,6 +72,7 @@ No se agregan otros controles flotantes. No se mueve un botón de esta lista a o
 | Elegir unidad | botón negro de la barra | scroll a `#disponibilidad` |
 | Elegir mi departamento | botón negro al final de `#pago` | scroll a `#disponibilidad` |
 | Menú circular | negro, ícono `#e8d5a8`, `h-11 w-11`, `bottom-20` | abre las nueve secciones. La activa usa `bg-[#9a7b45]/15` y texto `#816127` |
+| Acceso circular con icono de WhatsApp | negro, icono blanco, `h-11 w-11`, a la izquierda del menú circular | baja con scroll suave a `#cierre` y cierra el menú abierto. No abre WhatsApp ni registra un lead |
 | Flechas del modelo | círculos blancos sobre la foto del departamento | modelo anterior / siguiente. También deslizar: más de 40 px |
 | Foto del departamento | toda el área de la imagen | abre el visor en Departamento |
 | Franja “En el piso” | pie de la tarjeta del modelo, `h-[4.75rem]`, `pr-16` para no chocar con el menú | abre el visor en Planta |
@@ -77,7 +82,8 @@ No se agregan otros controles flotantes. No se mueve un botón de esta lista a o
 | Adicional | tres tarjetas | ninguna / parqueo / moto, solo si el material publica precio |
 | Plan de pago | dos tarjetas en el paso 4 | contado o plan en cuotas. La elegida es negra |
 | Quiero la unidad {código} | botón claro de ancho completo, dentro de la cotización negra | WhatsApp en tres líneas: unidad, plan y una pregunta |
-| Hablar con un asesor | enlace `#816127` en `#cierre` | el mismo WhatsApp |
+| Reservar unidad elegida | botón negro en `#cierre`, con la selección debajo | abre WhatsApp para solicitar la reserva de esa unidad, con piso, modelo, plan y adicionales elegidos. Deshabilitado si no hay una selección disponible |
+| Agendar asesoría por WhatsApp | botón blanco con borde e icono de WhatsApp en `#cierre` | abre un mensaje independiente para coordinar un horario. No exige elegir una unidad |
 | Cerrar vista | círculo blanco del visor | cierra el visor |
 | Departamento / Planta / Ficha | tres pastillas del visor | cambian la imagen. No aparecen cuando el visor muestra solo el esquema del edificio |
 
@@ -191,7 +197,18 @@ La fuente de estos números es una sola. Hoy es la lista oficial con fecha. No s
 
 ### `#cierre`
 
-Centrada. Título, un párrafo, enlace “Hablar con un asesor”. `pb-16`. Al entrar aquí la barra inferior desaparece.
+Centrada. Título, un párrafo y dos opciones mediante `ProjectContactActions`. `pb-16`. Al entrar aquí la barra inferior y el acceso circular de WhatsApp desaparecen; el menú de secciones permite volver a otra sección.
+
+1. **Reservar unidad elegida.** Botón negro; debajo del rótulo muestra el código y piso elegidos, o el modelo y la banda de pisos cuando eso es lo que publica la fuente. En Garden Zen conserva el chocolate. No inventa un código de unidad ni un piso exacto.
+2. **Agendar asesoría por WhatsApp.** Botón blanco con borde, icono negro y texto oscuro. Siempre disponible, incluso si la unidad está vendida, reservada o todavía no se eligió una.
+
+En móvil, las dos opciones se apilan; desde `sm`, comparten una fila (`mx-auto grid max-w-xl gap-3 sm:grid-cols-2`). Altura mínima `min-h-16`. Si no hay una selección disponible, la reserva queda deshabilitada y aparece el enlace “Elige una unidad disponible para reservar”, que vuelve al cotizador.
+
+> **Comentario de Codex · Actualización del 28 de noviembre de 2026: reserva y asesoría.**
+>
+> El usuario aprobó la prueba en ONA y pidió extenderla a todos los proyectos del catálogo. El icono flotante sirve para llegar al cierre; las dos acciones finales abren WhatsApp con mensajes distintos. Solicitar la reserva no confirma ni bloquea una unidad automáticamente. Agendar asesoría solicita horarios; no afirma que haya una cita confirmada.
+>
+> Los precios, inventarios, cotizadores y las secciones vigentes de cada proyecto se conservan. La reserva usa la disponibilidad de la selección actual, no la de otro modelo que quedó seleccionado anteriormente.
 
 ---
 
@@ -243,9 +260,10 @@ Se oculta cuando `activeSection === "cierre"`.
 
 1. Precios, metrajes, estados y adicionales salen del material oficial. Una unidad vendida sin precio publicado no muestra un número.
 2. Parqueo y moto van fuera del precio por metro.
-3. El mensaje de WhatsApp tiene tres líneas: la unidad, el plan y una pregunta. No repite los tres montos. Si hay un adicional elegido, va en la línea del plan, sin el monto. Se registra el lead al tocar.
-4. Compartir usa `https://{origen}/{slug}`, no una URL de otro proyecto.
-5. La portada del mapa y la imagen OG usan la misma fachada completa.
+3. Los mensajes de WhatsApp tienen tres líneas. La consulta del cotizador conserva unidad, plan y pregunta. La reserva conserva los datos de unidad/modelo, piso o banda, plan y adicionales, y pide confirmar disponibilidad y coordinar la reserva. La asesoría identifica el proyecto, expresa el interés en comparar opciones y pide horarios, sin atribuir una unidad ni un presupuesto. No se repiten los tres montos ni se inventan cargos.
+4. El acceso flotante solo desplaza la página. El lead se registra cuando se toca una acción que abre WhatsApp. En `extraFilters.intencion`, usar `consulta_unidad`, `reserva` o `asesoria`, conservando el identificador del proyecto también cuando es un slug. La asesoría no lleva unidad, plan ni presupuesto de una selección incidental. Mantener un solo evento Meta `Lead` por clic de contacto.
+5. Compartir usa `https://{origen}/{slug}`, no una URL de otro proyecto.
+6. La portada del mapa y la imagen OG usan la misma fachada completa.
 
 ---
 
@@ -275,10 +293,17 @@ Se oculta cuando `activeSection === "cierre"`.
 1. Escritorio 44 / 56. Móvil, una columna. La fachada llena la columna. El texto va sobre un degradado al pie. No hay bloque de color.
 2. Arriba a la derecha: Compartir y, si aplica, Cerrar. Nada más.
 3. Barra inferior: desde, entrega, Brochure, Elegir unidad. Oculta en `#cierre`. Sin compartir.
-4. Menú circular negro escondido hasta pasar la navegación de `#intro`.
+4. Menú circular negro y acceso de WhatsApp escondidos hasta pasar la navegación de `#intro`. El icono de WhatsApp baja al cierre y se oculta allí.
 5. Nueve secciones, en el orden de la tabla del apartado 0.
 6. `h2` de `#intro` empieza con “Vive en {nombre}.”
 7. `#tipologias` y el paso 1 muestran el departamento entero y la franja de planta, arriba de la barra.
 8. El visor tapa la pantalla y tiene Departamento, Planta y Ficha.
 9. `#disponibilidad` tiene cuatro pasos y una cotización de tres columnas. Contado muestra `—` en el saldo.
 10. No hay Insights, no hay plusvalía, no hay “en vivo” si no hay Excel.
+11. El cierre ofrece reservar la selección y agendar asesoría por WhatsApp. La reserva de una selección no disponible está deshabilitada. Cada mensaje tiene tres líneas y conserva el proyecto correcto.
+
+## 11. Experiencia móvil del catálogo
+
+Al deslizar una tarjeta en el carrusel de una sola tarjeta (ancho menor a 1024 px), el mapa centra el proyecto con zoom **14,6** para mostrar más calles del entorno. No se aplica el acercamiento del hover de escritorio a una pantalla táctil. El comportamiento del carrusel de escritorio se conserva.
+
+Las preguntas de dormitorios, zona, presupuesto y entrega ofrecen **Saltar**, visible junto a la pregunta. Saltar elimina únicamente la respuesta de esa pregunta, avanza a la siguiente y conserva los demás criterios. En presupuesto elimina tanto el mínimo como el máximo. Si no corresponde preguntar entrega, se pasa a resultados. El usuario puede buscar solo con presupuesto, sin elegir dormitorios ni zona.
